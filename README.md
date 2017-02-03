@@ -1,6 +1,6 @@
 # Today I Learned
 
-JayJin이 오늘 새로 배운 것을 다음의 규칙으로 commit 합니다. [thoughtbot til 참고](https://github.com/thoughtbot/til)
+voidSatisfaction이 오늘 새로 배운 것을 다음의 규칙으로 commit 합니다. [thoughtbot til 참고](https://github.com/thoughtbot/til)
 
 ## 작성 규칙
 - 문서 생성은 [GFM (Github Flavored Markdown)](https://help.github.com/articles/github-flavored-markdown/) 을 사용한다. (확장자 `.md`)
@@ -20,6 +20,11 @@ $ [sudo] gem install gollum
 $ curl get.pow.cx | sh
 
 $ curl get.pow.cx/uninstall.sh | sh
+```
+*pow가 global루비 버전을 제대로 인식하지 못할 경우에는 `~/.powconfig`를 이하와 같이 설정해준다.*
+```sh
+# 루비 위치에 대한 환경 변수 설정 / rbenv에 존재하는 현 루비 버전의 위치(global)
+export PATH="/Users/tech-camp-064/.rbenv/versions/2.3.1/bin:$PATH"
 ```
 
 ### 사용법
