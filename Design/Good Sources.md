@@ -25,6 +25,7 @@
 ## [Google Material Design](https://design.google.com/)
 
 # Color
+
 ## [Pantone - color of the year](http://www.pantone.com/color-of-the-year-2016)
 팬톤이 발표하는 올해의 색. 정말 좋은 색들이다.
 
@@ -32,7 +33,9 @@
 조화로운 색을 일상 / 자연으로부터 아이디어를 얻어서 제공해주는 좋은 사이트.
 
 # Bootstrap
+
 ## Web
+
 ### [Material Design](http://www.material-ui.com/#/)
 구글에서 개발하고 있는 Web Design의 Bootstrap같은 느낌. 무료. 공부의 툴로도 적합.
 
@@ -42,6 +45,7 @@
 ### Bootstrap
 
 ## App
+
 ### Shoutemui
 
 ### Native Base
