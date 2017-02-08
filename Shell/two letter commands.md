@@ -1,0 +1,28 @@
+# Two letter commands
+
+- ar — ARchive
+- as — ASsembler
+- bc — Basic Calculator
+- cc — C Compiler
+- cp — CoPy files and directories
+- dc — Desk Calculator
+- dd — Data Description: convert and copy a file
+- df — Disk Free: report file system disk space usage
+- du — Disk Usage
+- ed — EDitor
+- ld — Link eDitor
+- ln — make LiNks between files
+- lp — Line Printer
+- ls — LiSt directory contents
+- mv — MoVe (rename) files
+- nl — Number Lines of file
+- nm — NaMe list
+- od — Octal Dump
+- pg — PaGinate
+- pr — (PRetty) PRint
+- ps — Process Status: report a snapshot of the current proceses.
+- rm — ReMove files or directories
+- sh — SHell
+- su — run a command with Substitute User and group ID / originally Super User
+- vi — VIsual editor
+- wc — Word Count
