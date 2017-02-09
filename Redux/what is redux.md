@@ -1,14 +1,14 @@
 # Motivation
 
 - As the requirements for JavaScript single-page applications have become increasingly complicated, our code must manage more state than ever before. 
-- lost control over the when, why, and how of its state.
+- so lost control over the when, why, and how of its state.
 - new requirements becoming common in front-end product development.
-- **mutation** / **asynchronocity**
+- blame for **mutation** / **asynchronocity**
 - Redux attempts to make state mutations predictable
 
 # Core Concepts
 
-## State = plain object without setters.
+## Store = plain object without setters.
 
 ```js
 
@@ -25,16 +25,39 @@
 
 ```
 
-## Action = the object that describes what happened
+## Action = the **object** that describes what happened
 
 If something changed, we know why it changed.
+Action creator can be asynchronous and have side-effect(ex AJAX)
 
 ```js
-
+// Actions
 { type: 'ADD_TODO', text: 'Go to swimming pool' }
 { type: 'TOGGLE_TODO', index: 1 }
 { type: 'SET_VISIBILITY_FILTER', filter: 'SHOW_ALL' }
 
+//Action Creators
+// portable and easy to test
+function addTodo(text) {
+  return {
+    type: Add_TODO,
+    text
+  }
+}
+
+// initiate action creator
+dispatch(addTodo(texte));
+dispatch(completeTodo(index));
+
+// bound action creator
+const boundAddTodo = (text) => dispatch(addTodo);
+const boundCompleteTodo = (index) => dispatch(completeTodo(index));
+
+// you can use it like
+store.dispatch();
+
+// but it is better using helper
+connect();
 ```
 
 ## Reducer = just a function that takes state and action as arguments, and returns the next state of the app
@@ -83,7 +106,7 @@ function todoApp(state = {}, action) {
 
 ## State is read-only
 
-**State change === emit an action(plain object)
+**State change === emit an action(plain object)**
 
 neither the views nor the network callbacks will ever write directly to the state.
 
