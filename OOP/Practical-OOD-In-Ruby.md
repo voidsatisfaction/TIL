@@ -7,7 +7,7 @@
 **OOD(Object Oriented Design)의 핵심**
 
 - 객체와 디자인
-  - Desining classes with *Single Responsibility*
+  - Designing classes with *Single Responsibility*
   - *Dependencies* management
 - 객체 사이의 인터페이스
   - Creating _Flexible Interfaces_
@@ -19,4 +19,3 @@
   - Designing cost-effective tests
 
 ## Ch1 Object Oriented Design
-
