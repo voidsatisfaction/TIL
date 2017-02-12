@@ -2,6 +2,10 @@
 
 voidSatisfaction이 오늘 새로 배운 것을 다음의 규칙으로 commit 합니다. [thoughtbot til 참고](https://github.com/thoughtbot/til)
 
+## 기술되는 내용
+- 나무보다 숲을 알 수 있는 내용.
+- 다른 사람들이 봤을때도 알기 쉽도록 **지나친 추상화는 되도록 피한다.**
+
 ## 작성 규칙
 - 문서 생성은 [GFM (Github Flavored Markdown)](https://help.github.com/articles/github-flavored-markdown/) 을 사용한다. (확장자 `.md`)
 - 언어나 기술명으로 폴더를 만든다. (root에 문서를 만들지 않는다.)
