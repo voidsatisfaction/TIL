@@ -24,7 +24,7 @@
 
 - Generic Architecture
   - DDD(Domain Driven Design)
-  - ヘキサコード化
+  - ヘキサコナル
   - Onion
   - Clean
 
