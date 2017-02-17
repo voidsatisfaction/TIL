@@ -1,6 +1,6 @@
 # Motivation
 
-- As the requirements for JavaScript single-page applications have become increasingly complicated, our code must manage more state than ever before. 
+- As the requirements for JavaScript single-page applications have become increasingly complicated, our code must manage more state than ever before.
 - so lost control over the when, why, and how of its state.
 - new requirements becoming common in front-end product development.
 - blame for **mutation** / **asynchronocity**
@@ -64,7 +64,7 @@ connect();
 
 ```js
 
-function visibilityFilter(state = 'SHOW_ALL', action) { // 파라미터 안의 할당이 뭘까?
+function visibilityFilter(state = 'SHOW_ALL', action) { // 파라미터 안의 할당이 뭘까?(값이 없을때에는 할당되는것을 반영, 값을 넘겨받으면 그냥 그 값으로 활용)
   if (action.type === 'SET_VISIBILITY_FILTER') {
     return action.filter;
   } else {
