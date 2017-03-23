@@ -10,3 +10,5 @@
 ## Usability over Design
 
 문제는 "이쁘게 만드는 디자인"이 아니라 "사용자가 얼마나 쉽게 사용할 수 있는가"이다.
+
+[Apple I](https://en.wikipedia.org/wiki/Apple_I)
