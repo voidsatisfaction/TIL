@@ -41,15 +41,15 @@ Code School 은 루비와 레일스뿐만 아니라 자바스크립트, HTML, CS
 
 ## Ruby on Rails
 
-[레일스와 함께하는 애자일 웹 개발](http://www.insightbook.co.kr/books/programming-insight/%EB%A0%88%EC%9D%BC%EC%8A%A4%EC%99%80-%ED%95%A8%EA%BB%98%ED%95%98%EB%8A%94-%EC%95%A0%EC%9E%90%EC%9D%BC-%EC%9B%B9-%EA%B0%9C%EB%B0%9C)
-
-레일스와 함께하는 애자일 웹 개발
-국내에서 3.2.x 버전에 맞춘 책은 이 책이 유일하고 아마 레일스를 학습하고자 하시는 분들은 대부분 이 책을 구입하셨을 겁니다. 인사이트 출판사에서 이번에 개정판을 냈고 ebook 으로도 제공하고 있으니 영어에 약하시는 분들은 무조건 이 책으로 학습하시면 될 것 같습니다. 하지만 제 개인적으로는 이 책(번역판)을 심도있게 보지 못했기 때문에.. 번역이 좋은지는 잘 모르겠네요.  
-
 [Rails Tutorial](http://ruby.railstutorial.org/)
 
 Rails Tutorial
 영어가 되신다면 전 위 책보다 이 책을 더 추천합니다. 온라인으로 무료로 공개되어있는 레일스 튜토리얼 책인데 최신 트렌드를 잘 반영해서 Step By Step 으로 프로젝트를 진행할 수 있는 문서입니다. 저도 Ruby 도 Rails 도 아무것도 모를때 이 책만 두 번정도 따라하면서 감을 잡았네요. 영어가 생각보다 쉽게 쓰여져있어서 생각보다 수월하게 읽히는 장점이 있습니다. Rails 뿐만 아니라 웹 프로그래밍 입문자를 고려해서 Heroku, Twitter Bootstrap, RSpec 등 다양한 도구와 라이브러리들을 활용해서 트위터와 비슷한 SNS 서비스를 만드는 걸 목표로 하고 있습니다. 챕터1부터 챕터11까지 따라만 가면 Ruby 와 Rails 도 배우고 TDD 도 하고 SNS 서비스 만들어서 Heroku 에 바로 배포까지 하는거죠. 굉장히 강추하는 책입니다. :)  
+
+[레일스와 함께하는 애자일 웹 개발](http://www.insightbook.co.kr/books/programming-insight/%EB%A0%88%EC%9D%BC%EC%8A%A4%EC%99%80-%ED%95%A8%EA%BB%98%ED%95%98%EB%8A%94-%EC%95%A0%EC%9E%90%EC%9D%BC-%EC%9B%B9-%EA%B0%9C%EB%B0%9C)
+
+레일스와 함께하는 애자일 웹 개발
+국내에서 3.2.x 버전에 맞춘 책은 이 책이 유일하고 아마 레일스를 학습하고자 하시는 분들은 대부분 이 책을 구입하셨을 겁니다. 인사이트 출판사에서 이번에 개정판을 냈고 ebook 으로도 제공하고 있으니 영어에 약하시는 분들은 무조건 이 책으로 학습하시면 될 것 같습니다. 하지만 제 개인적으로는 이 책(번역판)을 심도있게 보지 못했기 때문에.. 번역이 좋은지는 잘 모르겠네요.  
 
 [Rails Guide](http://guides.rubyonrails.org/)
 
