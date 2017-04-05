@@ -10,11 +10,15 @@ What design is ...
 
 - Identity
 
+The object shows this is who I am.
+
 - Story
 
 - Harmony
 
 - For extrimist
+
+What satisfy extrimists is what satisfy almost everyone.
 
 - Simplicity
 
