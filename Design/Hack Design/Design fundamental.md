@@ -1,6 +1,6 @@
 # What Design?
 
-[Objectified](http://documentaryheaven.com/objectified/)
+- [Objectified](http://documentaryheaven.com/objectified/)
 
 - How everything fits together in harmony
 
