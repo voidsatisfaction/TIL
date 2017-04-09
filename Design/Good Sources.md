@@ -55,6 +55,8 @@ Bootstrap을 사용하지 않고 plain javascript + css로 멋진 효과를 가�
 
 ### Web
 
+---
+
 #### [Material Design](http://www.material-ui.com/#/)
 구글에서 개발하고 있는 Web Design의 Bootstrap같은 느낌. 무료. 공부의 툴로도 적합.
 
@@ -72,6 +74,8 @@ Jquery의 간단한 문법만으로 아주 편하게 인터렉션 관리도 가�
 But 리액트는 기본적으로 jQuery를 지원하지 않으므로 좀 아쉽다... 그리고 jQuery자체도 좀 유행에서 벗어나고 있는것 같고..
 
 ### App
+
+---
 
 #### Shoutem-ui
 
