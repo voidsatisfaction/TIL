@@ -12,14 +12,14 @@
 
 ### \&\& 과 \|\|
 
-```rb
+```ruby
 a = false && 4 # false
 b = false || 4 # 4
 ```
 
 ### block을 갖는 method
 
-```rb
+```ruby
 def square(a, b)
   for x in a..b
     yield(x, x ** 2)
@@ -37,6 +37,6 @@ square(1,3){|i, v|
 
 ### method parameter initialize
 
-```rb
+```ruby
 def m(a, b, c=0, d="default")
 ```

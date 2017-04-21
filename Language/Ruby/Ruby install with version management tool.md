@@ -10,7 +10,7 @@
 
 - bash_profile & zshrc
 
-```rb
+```ruby
 
 $ vim ~/.bash_profile
 # 以下の二行を貼り付けて保存
