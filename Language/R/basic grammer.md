@@ -20,7 +20,7 @@ a[2:4] # 2 3 4
 #### 3. 행렬
 ```R
 matrix(벡터, ncol=열사이즈, nrow=행사이즈, byrow=F)
-m <- matrix(x(1,2,3,4,5,6),ncol=3)
+m <- matrix(c(1,2,3,4,5,6),ncol=3)
 dim(m) # 행렬의 차수
 ```
 
