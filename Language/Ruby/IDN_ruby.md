@@ -40,3 +40,61 @@ square(1,3){|i, v|
 ```ruby
 def m(a, b, c=0, d="default")
 ```
+
+### 루비에서 sort할때의 주의
+
+```ruby
+# 3가지의 조건으로 num_array를 정렬하고 싶을 때
+num_array.sort! do |a,b|
+  if a.length < b.length
+    return -1
+  elsif a.length > b.length
+    return 1
+  end
+
+  a_sum = a.split('').map{ |e| e.to_i }.reduce(:+)
+  b_sum = b.split('').map{ |e| e.to_i }.reduce(:+)
+  if a_sum < b_sum
+    return -1
+  elsif a_sum > b_sum
+    return 1
+  end
+
+  if a < b
+    return -1
+  elsif a > b
+    return 1
+  end
+end
+```
+
+위의 코드는 언뜻보면 맞는 듯 하지만 사실은 `unexpected return (LocalJumpError)`로 에러가 나온다.
+
+위의 코드를 원하는 방향대로 동작하게 하기 위해서는 `return`을 `next`로 바꿀 필요가 있다.
+
+```ruby
+# 3가지의 조건으로 num_array를 정렬하고 싶을 때
+num_array.sort! do |a,b|
+  if a.length < b.length
+    next -1
+  elsif a.length > b.length
+    next 1
+  end
+
+  a_sum = a.split('').map{ |e| e.to_i }.reduce(:+)
+  b_sum = b.split('').map{ |e| e.to_i }.reduce(:+)
+  if a_sum < b_sum
+    next -1
+  elsif a_sum > b_sum
+    next 1
+  end
+
+  if a < b
+    next -1
+  elsif a > b
+    next 1
+  end
+end
+```
+
+이렇게 하면 원하는 대로 동작한다.
