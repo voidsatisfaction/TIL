@@ -27,7 +27,7 @@
 Google web font
 
 - Open sans
-- Lato
+- **Lato**
 - Railway
 - Monsterrat
 - PT Sans
