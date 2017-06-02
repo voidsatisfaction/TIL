@@ -19,17 +19,25 @@
 
 ## 디자인 프로세스에서 사용되는 표현
 
+디자인은 Probes => Divergence(Sketch) => Convergence(Prototype)의 연속.
+
+c.f 브레인스토밍의 아이디어들을 내는것들은 sketch는 아니다. 그것들을 잘 조합해서 조직화 하는것이 스케치.
+
 ### 1. Prototype
 
 공적이다.
 
 아이디어의 수속
 
+이것으로 가자!
+
 ### 2. Sketch
 
 사적이다.
 
 아이디어의 확장
+
+무엇이 있을까?
 
 ### 3. Probes
 
