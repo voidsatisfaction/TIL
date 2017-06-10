@@ -70,4 +70,6 @@ async function save(something) {
 
 ## IDN
 
-non-blocking / blocking?
+blocking은 어떠한 동작을 기다린다.
+
+non-blocking은 어떠한 동작을 기다리지 않는 것이다.
