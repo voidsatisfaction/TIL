@@ -6,7 +6,7 @@
 
 heroku의 데이터베이스는 postgre를 사용하므로 젬파일을 production을 분리한다.
 
-```rb
+```ruby
 
 source 'https://rubygems.org'
 
@@ -49,6 +49,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 `heroku keys:add`
 
 `git push heroku master`
+
+`heroku run rails db:migrate`
 
 ## help
 
