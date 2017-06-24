@@ -133,7 +133,7 @@ docker hub에 접속하면 새로운 이미지를 확인할 수 있다.
 
 > :tag를 명시하지 않는 경우, 가장 마지막 버전의 이미지를 사용한다(latest)
 
-## Cheat sheet
+### Cheat sheet
 
 ```docker
 docker build -t friendlyname .  # Create image using this directory's Dockerfile
@@ -228,8 +228,201 @@ localhost를 방문
 
 `docker stack rm getstartedlab`
 
+**몇초간의 딜레이 발생**
+
 하지만 one-node swarm은 여전히 작동하고 있다.(`docekr node ls`)
 
 swarm까지 종료
 
 `docker swarm leave --force`
+
+### Cheat sheet
+
+```docker
+docker stack ls              # List all running applications on this Docker host
+docker stack deploy -c <composefile> <appname>  # Run the specified Compose file
+docker stack services <appname>       # List the services associated with an app
+docker stack ps <appname>   # List the running containers associated with an app
+docker stack rm <appname>                             # Tear down an application
+```
+
+## Swarms
+
+이 어플리케이션을 다수의 machines에서 작동하도록 클러스터에 배포한다.
+
+다수의 machines을 `swarm`이라 불리는 **Dockerized** 클러스터에 합류시키므로써, 멀티 컨테이너 혹은 멀티 머신 어플리케이션을 만들 수 있다.
+
+### Swarm clusters의 이해
+
+swarm이란, 클러스터에 합류된 도커를 실행하는 기계의 그룹을 말한다.
+
+클러스터에서 `swarm manager`로 실행.
+
+`swarm`에 속한 기계들은 물리적일 수 있고 가장적일 수 있다.
+
+`swarm`에 포함된 이후로는 `nodes`로서 참조.
+
+Swarm manager는 여러가지 방법으로 컨테이너들을 실행할 수 있는데, "empiest node", "global" ... 등이 있다. Swarm manager는 이러한 방식들을 Compose file을 이용해서 작동할 수 있게 한다.
+
+Swarm manager는 swarm에서 명령들을 실행할 수 있는 유일한 기계이며 혹은 다른 기계들이 swarm에 `workers`로서 참여할 수 있게한다.
+
+지금까지는 Docker를 `single-host mode로` 사용했는데, Docker는 `swarm mode`로 변경 가능하다.
+
+### 1. Swarm의 설정
+
+swarm 모드 사용 + 현재의 machine을 swarm manager로 한다.
+
+`docker swarm init`
+
+다른 worker가 될 machine에서는 그 swarm에 join한다.
+
+`docker swarm join`
+
+**가상 머신을 이용한 예제**
+
+VirtualBox driver를 이용하여 도커 가상머신을 생성한다.
+
+`docker-machine create --driver virtualbox myvm1` manager
+`docker-machine create --driver virtualbox myvm2` worker
+
+docker-machine확인
+
+`docker-machine ls`
+
+docker-machine에 명령 보내기
+
+`docker-machine ssh myvm1 "docker swarm init"`
+
+**여기서 결과로 나온 내용 저장**
+
+docker-machine2를 docker-machine1의 swarm에 worker로 등록하기
+
+`docker-machine ssh myvm2`
+
+`docker swarm join ...(위에서 저장한 내용 붙여넣기) `
+
+### 2. 배포하기
+
+`docekr-machine ssh myvm1 "docker stack deploy -c docker-compose.yml getstartedlab"`
+
+`docker-machine ssh myvm1 "docker stack ps getstartedlab"`
+
+...결과 표시
+
+### Cheat Sheet
+
+```
+docker-machine create --driver virtualbox myvm1 # Create a VM (Mac, Win7, Linux)
+docker-machine create -d hyperv --hyperv-virtual-switch "myswitch" myvm1 # Win10
+docker-machine env myvm1                # View basic information about your node
+docker-machine ssh myvm1 "docker node ls"         # List the nodes in your swarm
+docker-machine ssh myvm1 "docker node inspect <node ID>"        # Inspect a node
+docker-machine ssh myvm1 "docker swarm join-token -q worker"   # View join token
+docker-machine ssh myvm1   # Open an SSH session with the VM; type "exit" to end
+docker-machine ssh myvm2 "docker swarm leave"  # Make the worker leave the swarm
+docker-machine ssh myvm1 "docker swarm leave -f" # Make master leave, kill swarm
+docker-machine start myvm1            # Start a VM that is currently not running
+docker-machine stop $(docker-machine ls -q)               # Stop all running VMs
+docker-machine rm $(docker-machine ls -q) # Delete all VMs and their disk images
+docker-machine scp docker-compose.yml myvm1:~     # Copy file to node's home dir
+docker-machine ssh myvm1 "docker stack deploy -c <file> <app>"   # Deploy an app
+```
+
+## Stack
+
+stack이란, interrelated인 services의 의존성을 공유하는 그룹이다. 그리고 같이 orchestrated하고 scaled된다.
+
+하나의 `stack`은 전체 어플리케이션의 기능을 정의하고 조화시킬 수 있다(매우 복잡한 어플리케이션은 다양한 stack을 사용할 수 있다)
+
+### 새로운 service와 재베포
+
+`docker-compose.yml`을 다음과 같이 추가하고, deploy한다.
+
+```yml
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: username/repo:tag
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+networks:
+  webnet:
+```
+
+### 데이터 베이스 추가
+
+```yaml
+
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: username/repo:tag
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+networks:
+  webnet:
+
+```
+
+## 어플리케이션 베포
+
+도커 클라우드와 연결
+
+swarm생성
+
+앱 베포
