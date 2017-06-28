@@ -52,6 +52,29 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 `heroku run rails db:migrate`
 
-## help
-
 `heroku help`
+
+## Puma도입하기
+
+Puma는 WeBrick가 감당하지 못하는 많은 리퀘스트도 감당 할 수 있도록 하는 웹서버이다.
+
+```ruby
+# puma.rb
+workers Integer(ENV['WEB_CONCURRENCY'] || 2)
+threads_count = Integer(ENV['RAILS_MAX_THREADS'] || 5)
+threads threads_count, threads_count
+
+preload_app!
+
+rackup      DefaultRackup
+port        ENV['PORT']     || 3000
+environment ENV['RACK_ENV'] || 'development'
+
+on_worker_boot do
+  # Worker specific setup for Rails 4.1+
+  # See: https://devcenter.heroku.com/articles/
+  # deploying-rails-applications-with-the-puma-web-server#on-worker-boot
+  ActiveRecord::Base.establish_connection
+end
+
+```
