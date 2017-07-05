@@ -1,5 +1,9 @@
 # Docker Getting Started
 
+container에 직접 들어가기
+
+`docker exec -it <container id> /bin/bash`
+
 ## 계층
 
 1. Container
