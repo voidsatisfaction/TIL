@@ -30,3 +30,43 @@
 ### 4. Plugins
 
 Loaders가 filebase인 반면, Plugins는 compilations / chunk 베이스. 그 말인 즉, 번들된 js파일에 적용되는 변환을 말한다. `require`로 불러올 필요가 있다. `config`내에서 같은 plugin을 재활용 하는 경우도 있으므로, `new`를 사용하여 인스턴스를 생성해준다.
+
+## 예제
+
+```js
+// webpack.config.dev.js
+var path = require('path')
+var webpack = require('webpack')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+
+module.exports = {
+  devtool: 'cheap-eval-source-map',
+  entry: [
+    './src/index'
+  ],
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders: [{
+      test: /\.css$/,
+      loaders: ['style-loader', 'css-loader']
+    }, {
+      test: /\.js$/,
+      loaders: ['babel-loader'],
+      include: path.join(__dirname, 'src') /* exclude: /node_modules/ */
+    }]
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    })
+  ],
+  devServer: {
+    contentBase: './dist',
+    hot: true
+  }
+}
+```
