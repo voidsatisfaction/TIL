@@ -88,9 +88,206 @@ $root.appendChild(createElement(a));
 
 이제는 old virtual Tree와 new virtual Tree를 비교해서 적용하는 "변화 적용"부분을 구현하자.
 
-변화의 정의
+**변화의 정의**
 
 1. appendChild
 2. removeChild
 3. replaceChild
 4. different node types
+
+```js
+/** @jsx h */
+
+if (module.hot) {
+  module.hot.accept();
+}
+
+function h(type, props, ...children) {
+  return { type, props: props || {}, children };
+}
+
+/* ---------- ELEMENT ------------ */
+
+function createElement(node) {
+  if (typeof node === 'string') {
+    return document.createTextNode(node);
+  }
+  const $el = document.createElement(node.type);
+  setProps($el, node.props);
+  node.children
+    .map(createElement)
+    .forEach($el.appendChild.bind($el));
+  return $el;
+}
+
+function changed(node1, node2) {
+  return typeof node1 !== typeof node2 ||
+         typeof node1 === 'string' && node1 !== node2 ||
+         node1.type !== node2.type
+}
+
+function updateElement($parent, newNode, oldNode, index=0) {
+  if (!oldNode) {
+    $parent.appendChild(
+      createElement(newNode)
+    );
+  } else if (!newNode) {
+    $parent.removeChild(
+      $parent.childNodes[index]
+    );
+  } else if (changed(newNode, oldNode)) {
+    $parent.replaceChild(
+      createElement(newNode),
+      $parent.childNodes[index]
+    );
+  } else if (newNode.type) {
+    const newLength = newNode.children.length;
+    const oldLength = oldNode.children.length;
+    for (let i = 0; i < newLength || i < oldLength; i++) {
+      updateElement(
+        $parent.childNodes[index],
+        newNode.children[i],
+        oldNode.children[i],
+        i
+      );
+    }
+  }
+}
+
+/* ---------------------- */
+
+const f = (
+  <ul style="list-style: node;">
+    <li className="item">item 1</li>
+    <li className="item">
+      <input type="checkbox" checked={true} />
+      <input type="text" disabled={false} />
+    </li>
+  </ul>
+);
+
+const $root = document.getElementById('root');
+
+$root.appendChild(createElement(f));
+```
+
+## Props의 적용
+
+다음과 같은 동작이 필요하다.
+
+1. setProps
+2. removeProps
+3. updateProps
+
+```js
+// custom prop, class prop ,boolean prop, normal prop
+
+function isCustomProp(name) {
+  return false;
+}
+
+function setBooleanProp($target, name, value) {
+  if (value) {
+    $target.setAttribute(name, value);
+    $target[name] = true;
+  } else {
+    $target[name] = false;
+  }
+}
+
+function setProp($target, name, value) {
+  if (isCustomProp(name)) {
+    return;
+  } else if (name === 'className') {
+    $target.setAttribute('class', value);
+  } else if (typeof value === 'boolean') {
+    setBooleanProp($target, name, value);
+  } else {
+    $target.setAttribute(name, value);
+  }
+}
+
+function setProps($target, props) {
+  Object.keys(props).forEach((name) => {
+    setProp($target, name, props[name]);
+  });
+}
+
+function removeBooleanProp($target, name) {
+  $target.removeAttribute(name);
+  $target[name] = false;
+}
+
+function removeProp($target, name, value) {
+  if (isCustomProp($target)) {
+    return;
+  } else if (name === 'className') {
+    $target.removeAttribute('class');
+  } else if (typeof value === 'boolean') {
+    removeBooleanProp($target, name);
+  } else {
+    $target.removeAttribute(name);
+  }
+}
+
+function updateProp($target, name, newVal, oldVal) {
+  if (!newVal) {
+    removeProp($target, name, oldVal);
+  } else if (!oldVal || newVal !== oldVal) {
+    setProp($target, name, newVal);
+  }
+}
+
+function updateProps($target, newProps, oldProps = {}) {
+  const props = { ...newProps, ...oldProps };
+  Object.keys(props).forEach((name) => {
+    updateProp($target, name, newProps[name], oldProps[name]);
+  });
+}
+```
+
+위와 같이 정의한다. 그리고 ui로 토글 버튼을 적용한 코드는 아래와 같다.
+
+```js
+const f = (
+  <ul style="list-style: none;">
+    <li className="item">item 1</li>
+    <li className="item">
+      <input type="checkbox" checked={true} />
+      <input type="text" disabled={false} />
+    </li>
+  </ul>
+);
+
+const g = (
+  <ul style="list-style: none;">
+    <li className="item item2">item 1</li>
+    <li style="background: red;">
+      <input type="checkbox" checked={false}/>
+      <input type="text" disabled={true}/>
+    </li>
+  </ul>
+)
+
+const $root = document.getElementById('root');
+const $reload = document.getElementById('reload');
+
+updateElement($root, f);
+$reload.addEventListener('click', () => {
+  if ($reload.className == 'active') {
+    $reload.className = null;
+    updateElement($root, g, f);
+  } else {
+    $reload.className = 'active';
+    updateElement($root, f, g);
+  }
+})
+```
+
+## Events적용
+
+querySelector, addEventListener보다 멋진 방법으로 이벤트를 등록하자.
+
+```js
+<button onClick={() => alert('hi!')}></button>
+```
