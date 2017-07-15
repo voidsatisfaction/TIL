@@ -6,7 +6,7 @@
 
 > [Hack Design](https://hackdesign.org/lessons)
 
-개인적으로 설명이 필요없는 디자인 입문자를 위한 최의의 사이트라고 생각.
+개인적으로 설명이 필요없는 디자인 입문자를 위한 최고의 사이트라고 생각.
 
 ## General
 
@@ -42,6 +42,11 @@
 Bootstrap을 사용하지 않고 plain javascript + css로 멋진 효과를 가진 웹 컴포넌트를 만들 수 있다.
 
 라이브러리에 의존하고 싶지 않은 사람들에게 추천. 연습하자.
+
+### [NnWorld](https://www.nxworld.net/tips/design-parts-using-css-gradient.html)
+버튼이나 hover event등의 멋진 이펙드를 html, css만으로 구현한다.
+
+디자인 좋아하는 사람들에게 추천.
 
 ## Color
 
