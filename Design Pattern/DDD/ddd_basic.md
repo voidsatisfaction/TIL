@@ -32,7 +32,7 @@ Software developement는 business의 자동화나 실제 세상의 문제들을 
 
 도메인 모델은 단순한 diagram이 아니라, 지식의 선택이고 축약이다. 모델링으로 만들어진 diagram은 model을 나타내고 동시에 의사소통가능하게 한다. model화 할때 무엇을 버리고 무엇을 취할것인지 항상 생각해야한다.(c.f system thinking의 모델화)
 
-![what model is](./assets/model.png)
+![what_model_is](./assets/model.png)
 
 Domain에 대한 디자이너, PM, 전문가와의 지식 공유(커뮤니케이션)는 필수적이다. 그러기 위해서는 공통 언어 혹은 그림과 같은 매개체가 필요하다.
 
@@ -47,7 +47,7 @@ Model이 바람직하게 표현된 다음에 그제서야 우리는 `code design
 
 ### 핵심
 
-![domain model](./assets/domain_model_stakeholders.png)
+![domain_model](./assets/domain_model_stakeholders.png)
 
 결국에 가장 중요한 것들은 이하와 같다.
 
