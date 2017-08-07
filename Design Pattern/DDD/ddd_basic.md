@@ -47,7 +47,7 @@ Model이 바람직하게 표현된 다음에 그제서야 우리는 `code design
 
 ### 핵심
 
-![domain model](./assets/domain_model_stake_holders.png)
+![domain model](./assets/domain_model_stakeholders.png)
 
 결국에 가장 중요한 것들은 이하와 같다.
 
