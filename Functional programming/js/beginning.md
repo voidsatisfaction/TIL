@@ -11,7 +11,7 @@ y = f(x)
 - 함수는 반드시 인자(argument)를 받는다.
 - 함수는 항상 값을 반환한다.
 - 함수는 outside world가 아닌 arguments에 대하여 행동해야 한다.
-- 일정한 X가 argument로 주어지면 반환값은 항상 Y이다.
+- 일정한 X가 argument로 주어지s면 반환값은 항상 Y이다.
 
 > Functional programming is a paradigm in which we will be **creating functions that are going to work out its logic by depending only on its input.** This ensures that a function, when called multiple times, is going to return the same result. **The function also won't change any data in the outside world**, leading to cacheable and testable codebase.
 
