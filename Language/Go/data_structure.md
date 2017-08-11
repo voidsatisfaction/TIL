@@ -73,6 +73,8 @@ func HasConsonantSuffix(s string) bool {
 
 ### 번외) 테스트 코드 작성
 
+#### 1. 일반 테스트
+
 ```go
 // hangul_test.go
 package hangul
@@ -96,6 +98,10 @@ func TestHasConsonantSuffix(t *testing.T) {
   }
 }
 ```
+
+#### 2. example 테스트
+
+...
 
 ### 바이트 단위 처리
 
@@ -475,3 +481,308 @@ a = a[:len(a)-k]
 ```
 
 포인터를 포함한 구조체의 경우에는 위의 코드에서 `nil`대신에 구조체 이름을 T라고 하면 T{}을 넣어준다.
+
+### 스택
+
+Last In First Out. 슬라이스로도 충분히 구현이 가능하다.
+
+삽입: `append`
+삭제: 마지막 제거
+
+```go
+func Eval(expr string) int {
+	var ops []string
+	var nums []int
+	pop := func() int {
+		last := nums[len(nums)-1]
+		nums = nums[:len(nums)-1]
+		return last
+	}
+	reduce := func(higher string) {
+		for len(ops) > 0 {
+			op := ops[len(ops)-1]
+			if strings.Index(higher, op) < 0 {
+				return
+			}
+			ops = ops[:len(ops)-1]
+			if op == "(" {
+				return
+			}
+			b, a := pop(), pop()
+			switch op {
+			case "+":
+				nums = append(nums, a+b)
+			case "-":
+				nums = append(nums, a-b)
+			case "*":
+				nums = append(nums, a*b)
+			case "/":
+				nums = append(nums, a/b)
+			}
+		}
+	}
+	for _, token := range strings.Split(expr, " ") {
+		switch token {
+		case "(":
+			ops = append(ops, token)
+		case "+", "-":
+			reduce("+-*/")
+			ops = append(ops, token)
+		case "*", "/":
+			reduce("*/")
+			ops = append(ops, token)
+		case ")":
+			reduce("+-*/(")
+		default:
+			num, _ := strconv.Atoi(token)
+			nums = append(nums, num)
+		}
+	}
+	reduce("+-*/")
+	return nums[0]
+}
+
+func ExampleEval() {
+	fmt.Println(eval.Eval("5"))
+	fmt.Println(eval.Eval("1 + 2"))
+	fmt.Println(eval.Eval("1 - 2 + 3"))
+	fmt.Println(eval.Eval("3 * ( 3 + 1 * 3 ) / 2"))
+	fmt.Println(eval.Eval("3 * ( ( 3 + 1 ) * 3 ) / 2"))
+	// Output:
+	// 5
+	// 3
+	// 2
+	// 9
+	// 18
+}
+```
+
+## 맵
+
+맵은 해시테이블로 구현된다. 해시맵은 키와 값으로 되어있다. 키를 이용해서 값을 상수 시간에 가져올 수 있다. 대신에 순서는 존재하지 않는다.
+
+**만일 해당 키가 없으면, 값의 자료형의 기본값을 반환한다.**
+
+```go
+// 이는 맵을 읽을 수는 있지만 변경할 수 없다.
+var m map[keyType]valueType
+
+// 맵의 생성
+m := make(map[keyType]valueType)
+m := map(keyType)valueType{}
+```
+
+### 맵 사용하기
+
+```go
+package count
+
+func Count(s string, codeCount map[rune]int) {
+	for _, r := range s {
+		codeCount[r]++
+	}
+}
+
+```
+
+맵은 슬라이스와 다르게, 맵 변수 자체에 다시 할당하는 일이 없으므로, 포인터를 취하지 않아도 맵을 변경할 수 있다. 그래서 `codeCount *map[rune]int`로 쓸 필요가 없다. 물론 맵 자체를 다른 맵으로 바꿔치기하기 위해서는 포인터를 넘겨줘야하는데 이는 흔한 케이스가 아니다.
+
+위와 같은 Count서브루틴은 어떻게 테스트 하면 좋을까? 맵은 순서가 없다.
+
+```go
+// 방법 1
+func TestCount(t *testing.T) {
+	codeCount := map[rune]int{}
+	count.Count("가나다나", codeCount)
+	if !reflect.DeepEqual(
+		map[rune]int{'가': 1, '나': 2, '다': 1},
+		codeCount,
+	) {
+		t.Error("codeCount mismatch:", codeCount)
+	}
+}
+
+// 방법 2 - 하지만 지정한 키 이외의 다른 키가 있을경우는 잘못된 테스트가 될 가능성이 있다.
+func ExampleCount() {
+	codeCount := map[rune]int{}
+	count.Count("가나다나", codeCount)
+	for _, key := range []rune{'가', '나', '다'} {
+		fmt.Println(string(key), codeCount[key])
+	}
+	// Output:
+	// 가 1
+	// 나 2
+	// 다 1
+}
+
+// 방법 3
+func ExampleCount() {
+	codeCount := map[rune]int{}
+	count("가나다나", codeCount)
+	var keys sort.IntSlice
+	for _, key := range keys {
+		keys = append(keys, int(key))
+	}
+	sort.Sort(keys)
+	for _, key := range keys {
+		fmt.Println(string(key), codeCount[rune(key)])
+	}
+	// Output:
+	// 가 1
+	// 나 2
+	// 다 1
+}
+
+```
+
+### 집합
+
+map을 이용하여 집합을 만들 수 있다.
+
+```go
+// 오버헤드가 있는 set(bool때문에 그럼)
+func HasDupeRune(s string) bool {
+	runeSet := map[rune]bool{}
+	for _, r := range s {
+		if runeSet[r] {
+			return true
+		}
+		runeSet[r] = true
+	}
+	return false
+}
+
+// 오버헤드가 없는 set: 빈 구조체를 넘겨준다.
+func HasDupeRune(s string) bool {
+	runeSet := map[rune]struct{}{}
+	for _, r := range s {
+		if _, exists := runeSet[r]; exists {
+			return true
+		}
+		runeSet[r] = struct{}{}
+	}
+	return false
+}
+
+```
+
+`srcut{}`는 아무런 필드가 없는 구조체이므로, 값이 아니라 자료형이다.
+
+삭제는 `delete(m, key)`이렇게 한다.
+
+맵의 키에는 변경될 수 있는 것들이 들어가면 안된다. 왜냐하면 해시 테이블이 깨지기 때문이다.
+
+### rune vs string 꿀팁
+
+```go
+func ExampleDeleteMap() {
+	src := map[rune]int{'가': 1, '갈': 3, '갱': 5}
+	delete(src, '갈')
+	fmt.Println(src['가'])
+	fmt.Println(src['갈'])
+	dst := map[string]int{"고": 1}
+	fmt.Println(dst["고"])
+	// Output:
+	// 1
+	// 0
+	// 1
+}
+```
+
+위의 코드에서 알 수 있듯이, 단따옴표는 unicode의 `rune`을 뜻하며, 쌍따옴표는 `string`을 나타내는 것을 알 수있다.
+
+## 입출력
+
+Go의 입출력에 대한 표준 라이브러리는 `io`에 들어있다. 그리고, fmt패키지에 형식을 이용한 입출력도 구현되어 있다.
+
+### io.Reader과 io.Writer
+
+바이트들을 읽고 쓸 수 있는 인터페이스. fmt패키지에서는 F로 시작하는 함수들이 `io.Reader`와 `io.Writer`를 인자로 받는다.
+
+```go
+fmt.Fprintln(os.Stdout, s) == fmt.Println(s)
+fmt.Fprintf(os.Stdout, format, ...) == fmt.Println(format, ...)
+fmt.Scanf(foramt, ...) == fmt.Fscanf(os.Stdin, format, ...)
+```
+
+따라서 기본 입출력 역시 파일을 읽고 쓰는 것과 거의 동일한 방법으로 읽고 쓸 수 있다. 함수를 작성할 때, `io.Reader`혹은, `io.Writer`등을 받아서 처리하게 작성하면 표준 입출력, 파일, 네트워크 등 모두 적용할 수 있으며, 테스트 등을 할 떄 좋다.
+
+### 파일 읽기
+
+```go
+f, err := os.Open("my_text.txt")
+if err != nil {
+	fmt.Println(err)
+}
+defer f.Close() // 해당 함수를 벗어날 때 호출할 함수를 등록
+var num int
+if _, err := fmt.Fscanf(f, "%d\n", &num); err == nil { // 하나만 읽으므로 몇개를 읽었는지는 _로 무시한다.
+	fmt.Println(num)
+}
+```
+
+위의 코드에서 보이듯이 `os.Open()`는 파일 **오브젝트**와 에러를 반환한다. 실제로 파일을 읽는 함수는 `fmt.Fscanf()`이다.
+
+### 파일 쓰기
+
+```go
+f, err := os.Create("my_write.txt")
+if err != nil {
+	fmt.Println(err)
+}
+defer f.Close()
+if _, err := fmt.Fprintf(f, "%d\n", 12345); err != nil {
+	fmt.Println(err)
+}
+```
+
+### 텍스트 리스트 읽고 쓰기
+
+```go
+func WriteTo(w io.Writer, lines []string) error {
+	for _, line := range lines {
+		if _, err := fmt.Fprintln(w, line); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ReadFrom(r io.Reader, lines *[]string) error {
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		*lines = append(*lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+
+func ExampleWriteTo() {
+	lines := []string{
+		"bill@mail.com",
+		"tom@mail.com",
+		"jane@mail.com",
+	}
+	if err := io_part.WriteTo(os.Stdout, lines); err != nil {
+		fmt.Println(err)
+	}
+	// Output:
+	// bill@mail.com
+	// tom@mail.com
+	// jane@mail.com
+}
+
+func ExampleReadFrom() {
+	r := strings.NewReader("bill\ntom\njane\n")
+	var lines []string
+	if err := io_part.ReadFrom(r, &lines); err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(lines)
+	// Output:
+	// [bill tom jane]
+}
+```
