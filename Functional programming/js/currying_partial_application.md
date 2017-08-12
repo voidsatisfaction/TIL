@@ -47,6 +47,25 @@ autoCurriedAdd(2)(2) // 4
 
 ### Currying Use Cases
 
+커링의 일반화
+
+```js
+export const curry = (fn) => {
+  if (typeof fn !== 'function') {
+    throw Error('No function provided');
+  }
+
+  return function curriedFunction(...args) {
+    if (fn.length > args.length) {
+      return function() {
+        return curriedFunction.apply(null, (args.concat( [].slice.call(arguments) )));
+      };
+    }
+    return fn(...args);
+  };
+};
+```
+
 ### Currying in Action
 
 ## Data Flow
@@ -76,6 +95,10 @@ export const partial = (fn, ...partialArgs) => {
 const delayTenMs = lib.partial(setTimeout, undefined, 10); // 가운데의 인자가 undefined이다. (만약, currying이라면 가운데에 undefined를 두는 것이 불가능하다. 그래서 인자의 순서를 wrapper function을 이용해서 바꿔야 하는데 이는 오버헤드)
 delayTenMs(() => 'Do Y task');
 ```
+
+위에서 보면, `partial(fn, ...partialArgs)`이므로, fn에 원래 사용하려던 함수가 들어가고, partialArgs는 인자로서 **순서대로** 삽입된다. 위의 예에서 undefined가 나오는 것은, `setTimeout`함수가 차례로 함수인자를 받고 숫자인자를 받는데, 아직 함수가 정의되지 않았다는 것이다.
+
+*위의 partial함수는 함정이 있으므로 주의(args의 클로저에 관한...)*
 
 ## 어떨때 currying, 어떨때 partial application?
 
