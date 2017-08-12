@@ -47,7 +47,7 @@ const projectTitleAndAuthor = (book) => ({ title: book.title, author: book.autho
 const queryGoodBooks = partial(arrayUtils.filter, undefined, filterGoodBooks); // queryGoodBooks함수는 아직 array를 알지 못한다.(앞으로 array만 받으면 됨)
 const mapTitleAndAuthor = partial(arrayUtils.map, undefined, projectTitleAndAuthor); // mapTitleAndAuthor함수는 아직 array를 알지 못한다.
 
-const titleAndAuthorForGoodBooks = lib.compose(mapTitleAndAuthor, queryGoodBooks);
+const titleAndAuthorForGoodBooks = compose(mapTitleAndAuthor, queryGoodBooks);
 
 const got = titleAndAuthorForGoodBooks(apressBooks); // [{ title: 'C# 6.0', author: 'ANDREW TROELSEN' }];
 ```
@@ -66,6 +66,23 @@ export const compose = (...fns) => (
 ```
 
 보기만해도 매력적인 코드다.
+
+c.f 페이스북에서는..
+
+```js
+// Compose function used in redux, recompose
+export const compose = (...funcs) => {
+  if (funcs.length === 0) {
+    return arg => arg;
+  }
+
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+
+  return funcs.reduce((a, b) => (...args) => a(b(...args)));
+};
+```
 
 ## Pipelines / Sequence
 

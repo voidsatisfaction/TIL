@@ -4,7 +4,7 @@
 
 - Unary Function: 인자를 하나만 받는 함수
 - Binary Function: 인자를 두개만 받는 함수
-- Variadic Function: 넘겨받는 인자의 개수만큼을 받는 함(arguments이용)
+- Variadic Function: 넘겨받는 인자의 개수만큼을 받는 함수(arguments이용)
   - ES6이후로는 Spread Operator를 이용하여 여러 인자를 받을 수 있다.
 
 ```js
@@ -72,7 +72,7 @@ export const curry = (fn) => {
 
 ### Partial Application
 
-애초에 `unary function`과 전혀관계가 없고, 맨 앞에 함수를 넣고, 그다음 인수중에 나중에 결정되는 인수를 넣어주는 방법.
+애초에 `unary function`과 전혀관계가 없고, 맨 앞에 실행하고 싶은 함수를 넣고, 그 함수에 인수를 넣어주는데, 인수가 지금 상황에서는 undefined되어있는 것들도 미리 정의해 두었다가 나중에 호출하면서 undefined였던 인자에 대한 인수를 넣어줘서 함수를 실행하는 방법(예를 보는게 더 이해하기 쉽다)
 
 함수의 인자를 부분적으로 적용하는 방법. `partial`을 n개의 인자를 받는 어떠한 함수에도 적용할 수 있다.
 
@@ -92,8 +92,11 @@ export const partial = (fn, ...partialArgs) => {
   };
 };
 
-const delayTenMs = lib.partial(setTimeout, undefined, 10); // 가운데의 인자가 undefined이다. (만약, currying이라면 가운데에 undefined를 두는 것이 불가능하다. 그래서 인자의 순서를 wrapper function을 이용해서 바꿔야 하는데 이는 오버헤드)
-delayTenMs(() => 'Do Y task');
+const delayTenMs = lib.partial(setTimeout, undefined, 10); // 현재 상황에서는 setTimeout에 어떠한 함수인자로 넘길지 미정
+delayTenMs(() => 'Do Y task'); // 지금 setTimeout에 어떠한 함수인자로 넘길지 정함(바로 실행)
+
+// 위의 lib.partial(setTimeout, undefined, 10);를 보면, 가운데의 인자가 undefined이다.
+// (만약, currying이라면 가운데에 undefined를 두는 것이 불가능하다. 그래서 인자의 순서를 wrapper function을 이용해서 바꿔야 하는데 이는 오버헤드)
 ```
 
 위에서 보면, `partial(fn, ...partialArgs)`이므로, fn에 원래 사용하려던 함수가 들어가고, partialArgs는 인자로서 **순서대로** 삽입된다. 위의 예에서 undefined가 나오는 것은, `setTimeout`함수가 차례로 함수인자를 받고 숫자인자를 받는데, 아직 함수가 정의되지 않았다는 것이다.
