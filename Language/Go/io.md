@@ -93,3 +93,98 @@ func ExampleReadFrom() {
 	// [bill tom jane]
 }
 ```
+
+### stdio로부터 한줄씩 읽기
+
+[Go でファイルや標準入力からテキストを一行ずつ読む](http://www.yunabe.jp/tips/golang_readlines.html)
+
+#### bufio.Scanner
+
+`bufio.Scanner`를 사용하여 파일/표준입력으로 부터 텍스트를 한줄씩 읽을 수 있다. `s.Scan()`이 파일의 말미에 도착하면 false를 반환하므로, for루프를 돌린다. 행의 내용은 `Text()`로 string으로서 취득하고, 이때, 개행문자(`'\n'`)는 포함하지 않으므로, strings.Trim은 필요 없다. 만약, 제대로 파일의 말미까지 도달했는지 알고 싶으면, `s.Err()`를 확인해서 문제가 없다면 `nil`을 반환한다.
+
+- 파일의 경우: `os.Open(path)`
+- 표준 입출력의 경우: `os.Stdin`
+
+```go
+// file ver
+func readLines(path string) {
+    f, err := os.Open(path)
+    if err != nil {
+        log.Fatal(err)
+        return
+    }
+    s := bufio.NewScanner(f)
+    for s.Scan() {
+        log.Print(strconv.Quote(s.Text()))
+    }
+    if s.Err() != nil {
+        // non-EOF error.
+        log.Fatal(s.Err())
+    }
+}
+
+// stdio ver
+func readLines(path string) {
+    s := bufio.NewScanner(os.Stdin)
+    for s.Scan() {
+        log.Print(strconv.Quote(s.Text()))
+    }
+    if s.Err() != nil {
+        // non-EOF error.
+        log.Fatal(s.Err())
+    }
+}
+```
+
+#### bufio.Reader
+
+`bufio.Scanner`뿐 아니라 `bufio.Reader`를 이용해서 한 행 씩 파일을 읽는 것도 가능하다. 대신에 `r.ReadString('\n')`을 써야하는것이 차이. 반환값으로 문말의 개행문자를 포함하므로 `strings.TrimLeft`등을 이용해 개행문자를 제거해야할 필요가 있다.
+
+```go
+func readLines(f *file.File) {
+    r := bufio.NewReader(f)
+    for {
+        // line includes '\n'.
+        line, err := r.ReadString('\n')
+        if err == io.EOF {
+            break
+        } else if err != nil {
+            log.Fatal(err)
+        }
+        log.Print(strconv.Quote(line))
+    }
+}
+```
+
+### stdio를 이용해서 출력하기
+
+`fmt.Println`은 매우 편리하지만 성능상 `bufio.NewWriter(os.Stdou)`를 이용한 방법에 비하면 엄청나게 느리다. 20배 정도(?!) 차이난다(백준 온라인 저지에서 확인).
+
+```go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	var M, N int
+	fmt.Scanf("%d %d", &M, &N)
+	nums := make([]bool, N+1)
+	out := bufio.NewWriter(os.Stdout)
+	for i := 2; i < N+1; i++ {
+		if nums[i] {
+			continue
+		}
+		if i >= M {
+			fmt.Fprintln(out, i)
+		}
+		for j := i * 2; j <= N; j += i {
+			nums[j] = true
+		}
+	}
+	out.Flush()
+}
+```
