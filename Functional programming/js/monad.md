@@ -14,7 +14,7 @@
 
 특히 마지막에 `mergeViaMayBe("functional programming")`을 실행한뒤에 데이터 구조를 변환시키는데에만 엄청나게 많은 코드를 써야한다.
 
-## Solvint the Problem via join
+## Solving the Problem via join
 
 ### join Implementation
 
