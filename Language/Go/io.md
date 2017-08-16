@@ -156,6 +156,10 @@ func readLines(f *file.File) {
 }
 ```
 
+### fmt.Scanf()
+
+어떠한 형식으로 입력될지 이미 알고 있다면 C언어에서처럼 Scanf()함수를 사용하는 것도 좋을것이다.
+
 ### stdio를 이용해서 출력하기
 
 `fmt.Println`은 매우 편리하지만 성능상 `bufio.NewWriter(os.Stdou)`를 이용한 방법에 비하면 엄청나게 느리다. 20배 정도(?!) 차이난다(백준 온라인 저지에서 확인).
