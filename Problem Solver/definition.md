@@ -1,8 +1,8 @@
 # Problem Solver
 
-내가 지향하는 나의 미래 모습을 나는 Problem Solver라고 정의한다.
+내가 지향하는 나의 미래 모습을 나는 **Problem Solver**라고 정의한다. 동등한 말로는 **Architect**가 있다.
 
-Software == Design == Me(Architect) == Modeling(with team? personal) == Understanding Core == Real World Problem
+Software == Design == Me(Architect) == Modeling(with team? personal?) == Understanding Core == Real World Problem
 
 ## 외연적 정의
 
@@ -21,11 +21,14 @@ Software == Design == Me(Architect) == Modeling(with team? personal) == Understa
   - OOP
   - ...
 - 컴퓨터 공학에 풍부한 **기초** 지식을 갖고 있으며 활용할 수 있다.
+- 다른 개발자, 혹은 도메인전문가와의 커뮤니케이션을 잘 행할 수 있다.
+  - Ubiquitous Language
+  - Domain Language
 
 경영학적 관점
 
 - 조직을 정확히 이해한다
-- 마켓을 이해하려고 노력하고, 직접 유저와 부딯혀본다.
+- 마켓을 이해하려고 노력하고, 직접 유저와 부딪쳐본다.
 - 가설을 세우고 그것을 검증을 할 수 있는 사람이 된다.
 
 ## 배움
@@ -42,8 +45,13 @@ Software == Design == Me(Architect) == Modeling(with team? personal) == Understa
 
 1. DataScience
 2. Open Source Commit
+3. Low level Programming(Assembly, C, C++)
 
 ## 자세
+
+### Challenge
+
+도전하지 않으면 아무런 이야기도 시작되지 않는다. 내 자신의 인생을 돌아봐도 도전으로 인해서 많은 것을 깨달았다. 물론, 도전 자체가 나에게 코스트가 되기도 하지만 그 열매는 달다.
 
 ### Give it five minutes
 
