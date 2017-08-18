@@ -52,7 +52,64 @@ Entities는 Domain model에서 매우 중요한 역할을 차지하지만, 모�
 - 쉽게 쓰이고 쉽게 버려진다.
 - **Sharable & Immutable**: golden rule
   - 언제든지 복제하고 언제든지 버릴 수 있다.
+- 또한 value object가 entity를 포함할 수 있다.
+
+![](./assets/value_object.png)
+
+#### Services
+
+domain을 분석하고, 모델을 구성하는 main objects를 정의할 때, 몇몇 측면의 도메인은 objects로 쉽게 매핑되지 않는 경우가 있다. 예를들어, "돈을 하나의 계좌에서 다른 계좌로 넘기는 것"은 sending account의 기능인가 receiving account의 기능인가?
+
+만일, 이러한 행위가 도메인에서 관찰되었을 때에는 Service(오브젝트의 일종)로 정의하는것이 바람직하다.
+
+서비스
+
+- 내부 state가 없음
+- 도메인에게 functionality를 제공
+- 명확하게 선언되어야 함
+- operation의 인터페이스
+
+서비스는 operation을 실행하는 오브젝트와 operation의 대상이되는 오브젝트와 관계가 있다. 즉, 서비스는 많은 오브젝트들을 연결하는 포인트가 된다. 오브젝트간의 loosely coupled된 connection을 유지하기 위해서도 중요한 개념이다.
+
+서비스의 특징
+
+1. 서비스가 행하는 operation은 domain concept를 나타내지만, entity나 value object에 속하지 않는다.
+2. 그 operation은 도메인의 다른 objects로부터 참조된다.
+3. operation은 상태를 갖지 않는다.
+
+도메인 속의 매우 종요한 process나 transformation이 entity나 value object의 자연스러운 책임이 아니라면, Service의 형태로 model에 그 operation을 추가하고, 그 interface를 model language와 Ubiquitous language의 형태로 표현하라. 그리고 서비스를 stateless하게 하라.
+
+서비스를 사용할때, domain layer를 분리시키는 것이 중요하다. 그리고 service를 각 층의 어느쪽에 속하는지 판별하는 것도 중요하다. operation이 어느쪽에 속하는지에 따라서 service가 어느쪽에 속하는지 판단하는 것이 중요.
+
+#### 예시
+
+웹 reporting application이 있다고 하자.
+
+- UI layer
+  - (UI)
+  - 웹 페이지에서 유저가 보는 부분
+- Application layer
+  - (Redux, Client side controller?)
+  - 얇은 층으로, UI와 데이터베이스 인프라, 로그인 작업, 도메인층과의 상호작용을 담당
+  - ex) redux, redux-saga(최근에는 그렇게 얇은 층 같지도 않다. interaction이 많기 때문)
+- Domain layer
+  - (Server Logic?)
+  - 도메인의 핵심을 포함. 위의 경우에서는 reports와 직접 관련이 있는 오브젝트들을 포함한다.
+  - Report / Template
+  - 레포트 생성에 직접적인 관여
+- Infrastructure layer
+  - (DB API, File Access API)
+  - 데이터 베이스 접근
+  - 파일 접근
+
+그렇다면, reportID와 일치하는 report object를 받는 operation은 어디에 속해야 할까?
+
+정답은 Service를 새로 정의해서 report id에 대응하는 report를 받는 operation을 포함하도록 만들어야 할 것이다. 이는 domain layer의 서비스가 될 것이다. 그런데 이 서비스의 인터페이스 자체는 application layer에 backend와의 api로서 있을 수 있다. 그리고 그것도 하나의 서비스가 될 것이다.
 
 ### 2. Modules
+
+모델이 너무 거대해지면, 전체적으로 파악하기 힘들어진다. 그래서 모듈로 나눈다. 모듈은 관련 개념들을 구성하는 방법으로 사용되고, 복잡도를 줄이는 수단이다. 모듈간의 상호작용을 파악하면 전체의 모델을 파악할 수 있다.
+
+또한, 모듈은 코드 퀄리티 향상에도 도움을 준다.
 
 ### 3. Aggregates
