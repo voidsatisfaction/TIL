@@ -89,3 +89,15 @@ Ubiquitous言語の定義がない場合は、なるべく相手がわかりや�
 単純に「人生を設計する」ということよりは、本を読んだり、インターネットから情報を調べたりすることで自分の人生をきちんと設計する。
 
 モデル化する。
+
+## 13. オススメの読み物
+
+1. [現場で役立つシステム設計の原則](https://www.amazon.co.jp/gp/product/477419087X/ref=ox_sc_act_title_1?ie=UTF8&psc=1&smid=AN1VRQENFRJN5)
+2. [スッキリわかるJAVA入門](https://www.amazon.co.jp/%E3%82%B9%E3%83%83%E3%82%AD%E3%83%AA%E3%82%8F%E3%81%8B%E3%82%8BJava%E5%85%A5%E9%96%80-%E7%AC%AC2%E7%89%88-%E3%82%B9%E3%83%83%E3%82%AD%E3%83%AA%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA-%E4%B8%AD%E5%B1%B1-%E6%B8%85%E5%96%AC/dp/484433638X)
+3. [いけがやゆうじ](https://www.google.co.jp/search?q=%E3%81%84%E3%81%91%E3%81%8C%E3%82%84%E3%82%86%E3%81%86%E3%81%98&oq=%E3%81%84%E3%81%91%E3%81%8C%E3%82%84%E3%82%86%E3%81%86%E3%81%98&aqs=chrome..69i57j0l5.4800j0j7&sourceid=chrome&ie=UTF-8)
+4. [DDD - Eric Evans](https://www.amazon.co.jp/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215)
+5. [The Healthy Programmer](https://www.amazon.co.jp/Healthy-Programmer-Better-Pragmatic-Programmers/dp/1937785319)
+6. [なぜあなたの仕事はおわらないのか](https://www.amazon.co.jp/%E3%81%AA%E3%81%9C%E3%80%81%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E4%BB%95%E4%BA%8B%E3%81%AF%E7%B5%82%E3%82%8F%E3%82%89%E3%81%AA%E3%81%84%E3%81%AE%E3%81%8B-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%81%AF%E6%9C%80%E5%BC%B7%E3%81%AE%E6%AD%A6%E5%99%A8%E3%81%A7%E3%81%82%E3%82%8B-%E4%B8%AD%E5%B3%B6%E8%81%A1/dp/4905073413)
+7. [有限オートマトン](https://ja.wikipedia.org/wiki/%E6%9C%89%E9%99%90%E3%82%AA%E3%83%BC%E3%83%88%E3%83%9E%E3%83%88%E3%83%B3)
+8. [オブジェクト指向開発の神髄と匠の技](https://www.amazon.co.jp/%E3%82%A2%E3%82%B8%E3%83%A3%E3%82%A4%E3%83%AB%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E9%96%8B%E7%99%BA%E3%81%AE%E5%A5%A5%E7%BE%A9-%E7%AC%AC2%E7%89%88-%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E6%8C%87%E5%90%91%E9%96%8B%E7%99%BA%E3%81%AE%E7%A5%9E%E9%AB%84%E3%81%A8%E5%8C%A0%E3%81%AE%E6%8A%80-%E3%83%AD%E3%83%90%E3%83%BC%E3%83%88%E3%83%BBC%E3%83%BB%E3%83%9E%E3%83%BC%E3%83%81%E3%83%B3/dp/4797347783)
+9. [すごいHaskellを学ぼう](https://www.amazon.co.jp/%E3%81%99%E3%81%94%E3%81%84Haskell%E3%81%9F%E3%81%AE%E3%81%97%E3%81%8F%E5%AD%A6%E3%81%BC%E3%81%86-Miran-Lipova%C4%8Da/dp/4274068854/ref=sr_1_1?s=books&ie=UTF8&qid=1504251685&sr=1-1&keywords=%E3%81%99%E3%81%94%E3%81%84haskell%E3%81%9F%E3%81%AE%E3%81%97%E3%81%8F%E5%AD%A6%E3%81%BC%E3%81%86)
