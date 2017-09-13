@@ -192,3 +192,21 @@ func main() {
 	out.Flush()
 }
 ```
+
+### Go의 io최적화(대회용)
+
+```go
+s := bufio.NewScanner(os.Stdin)
+o := bufio.NewWriter(os.Stdout)
+
+for i := 0; i < N-1; i++ {
+	s.Scan()
+	fmt.Sscanf(s.Text(), "%d %d", &a, &b)
+	...
+}
+
+fmt.Fprintln(o, ans[i])
+
+이러한
+
+```
