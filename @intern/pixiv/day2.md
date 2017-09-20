@@ -1,4 +1,4 @@
-# Day1 Lessons
+# Day2 Lessons
 
 ## Frontend engineerとしてもまだ、足りないところがいっぱいある。
 
