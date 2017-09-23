@@ -155,6 +155,10 @@ Memory가 DB보다 빠르기 때문에 `Redis`나 `Memcache`와 같은 제품을
 
 인프라 엔지니어는 `설계`라는 즐거움이 있다.
 
+참고로 하테나의 아키텍쳐
+
+![](./assets/hatena_architecture.png)
+
 ## 질문
 
 Q) 앱 서버 배포시에 애러는 어떻게 확인하는가?
