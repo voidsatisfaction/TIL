@@ -159,6 +159,14 @@ Memory가 DB보다 빠르기 때문에 `Redis`나 `Memcache`와 같은 제품을
 
 ![](./assets/hatena_architecture.png)
 
+다른 모 서비스의 아키텍쳐1
+
+![](./assets/architecture_example1.png)
+
+다른 모 서비스의 아키텍쳐2
+
+![](./assets/architecture_example2.png)
+
 ## 질문
 
 Q) 앱 서버 배포시에 애러는 어떻게 확인하는가?
