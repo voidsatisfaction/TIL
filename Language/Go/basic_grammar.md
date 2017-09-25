@@ -2,10 +2,250 @@
 
 ## 출처
 
-[Go Programming](https://www.youtube.com/watch?v=CF9S4QZuV30)
+- [Go Programming](https://www.youtube.com/watch?v=CF9S4QZuV30)
 [Go Tour]
+- [예제로 배우는 GO 프로그래밍](http://golang.site/)
 
 ## 내용
+
+### variable, constant
+
+#### 변수
+
+사용되지 않는 변수는 에러를 발생시킨다.
+
+변수를 선언하면서 초기값을 지정하지 않으면, Go는 Zero Value를 기본적으로 할당한다. e.g: 숫자형 0, bool타입 false, string ""
+
+`:=`(Short Assignment Statement)도 사용가능(타입 추론)
+
+```go
+var f float32 = 11
+var i, j, k int // 0 0 0
+var i, j, k int = 1, 2, 3 // 1 2 3
+num := 4
+```
+
+#### 상수
+
+```go
+const c int = 10
+const c = 10 // 타입추론
+const (
+  Visa = "Visa"
+  Master = "MasterCard"
+  Amex = "American Express"
+)
+const (
+  Apple = iota //0
+  Grape // 1
+  Orange // 2
+)
+```
+
+### Data type
+
+#### GO데이터 타입
+
+- 부울린
+  - bool
+- 문자열
+  - string: immutable type
+- 정수형
+  - int int8 int16 int32 int64
+  - uint uint8 uint16 uint32 uint64 uintptr
+- Float & 복소수
+  - float32 float64 complex64 complex128
+- etc(byte, rune)
+  - byte: uint8과 동일하며 바이트 코드에 사용
+  - rune: int32와 동일하며 유니코드 코드 포인트에 사용
+
+#### 문자열
+
+- \`\`: Raw String Literal 문자열이 별도로 해석되지 않고 있는 그대로의 값을 갖음. 복수 라인의 문자열 표현할때 자주 사용.
+- "": Interpreted String Literal 인용부호안의 Escape 문자열은 특별한 의미로 해석. +로 문자열을 여러 라인에 결합하여 사용. 복수 라인에 걸쳐 쓸 수 없음.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+  rawLiteral := `아리랑\n
+  아리랑\n
+  아라리요`
+
+  interLiteral := "아리랑알랑\n아라리요"
+}
+```
+
+#### 데이터 타입 변환
+
+```go
+package main
+
+func main() {
+	var i = 100
+	var u = uint(i) // 100
+	var f = float32(i) // +1.000000e+002
+	println(f, u)
+
+	str := "ABC"
+	bytes := []byte(str) // [3/32]0xc42003df48
+	str2 := string(bytes) // ABC
+	println(bytes, str2)
+}
+
+```
+
+### 연산자
+
+산술연산자(+ - * / % ++ --)
+
+관계연산자(== != >=)
+
+논리연산자(&& || NOT)
+
+Bitwise연산자(& << |): XOR AND OR
+
+할당연산자(= += &= <<=)
+
+포인터연산자(*, &): 산술포인터는 제공하지 않는다.
+
+### 조건문
+
+#### if문
+
+조건문 사용하기 이전에 간단한 문장을 함께 실행할 수 있다. 대신 이때 정의된 변수 val은 if문 블럭 안에서만 사용가능하다.
+
+```go
+if k == 1 { // {가 반드시 if와 같은 라인에 있어야 한다.
+  println("One")
+}
+
+if val := i * 2; val < max {
+  println(val)
+}
+val ++ // 이는 에러
+```
+
+#### switch문
+
+```go
+var name string
+var category = 1
+
+switch category {
+case 1:
+  name = "paper book"
+case 2:
+  name = "ebook"
+case 3:
+  name = "blog"
+default:
+  name = "other"
+}
+println(name)
+
+// Expression을 사용한 경우
+switch x := category << 2; x - 1 {
+  // ...
+}
+```
+
+Go만의 특성
+
+1. **switch뒤에 expression이 없을 수 있음**: 이 경우 switch expression을 true로 생각하고 첫번째 case문으로 이동
+2. **case문에 expression을 쓸 수 있음**: case문에 복잡한 expression을 쓸 수 있음
+3. **No default fall through**: 다음 case로 자동으로 가지 않는다.
+4. **type switch**: 변수의 type에 따라서 case분기도 가능하다.
+
+```go
+func grade(score int) {
+    switch {
+    case score >= 90:
+        println("A")
+    case score >= 80:
+        println("B")
+    case score >= 70:
+        println("C")
+        fallthrough
+    case score >= 60:
+        println("D")
+    default:
+        println("No Hope")
+    }
+}
+grade(75) // C D
+```
+
+### 반복문
+
+1. for문
+2. for문 - 조건식만 쓰는 for루프
+3. for문 - 무한루프
+4. for range 문
+5. break, continue, goto문
+
+#### 1. for문
+
+```go
+sum := 0
+for i := 1; i <= 100; i++ {
+    sum += i
+}
+println(sum) // 5050
+```
+
+#### 2. for문 - 조건식만 쓰는 for루프
+
+```go
+n := 1
+for n < 100 {
+  n *= 2
+}
+println(n) // 128
+```
+
+#### 3. for문 - 무한루프
+
+```go
+for {
+  println("Infinite loop")
+}
+```
+
+#### 4. for range문
+
+```go
+names := []string{"a", "b", "c"}
+
+for i, name := range names {
+  println(i, name)
+}
+```
+
+#### 5. break, continue, goto문
+
+```go
+var a = 1
+for a < 15 {
+  if a == 5 {
+    a += a
+    continue
+  }
+  a++
+  if a > 10 {
+    break
+  }
+}
+if a == 11 {
+  goto END
+}
+println(a)
+
+END:
+  println("END") // END
+```
 
 ### export
 
@@ -22,6 +262,7 @@ favNums2[0] = 163
 ...
 
 favNums3 := [5]float64 {1, 2, 3, 4, 5}
+// favNums3 := [...]float64 {1, 2, 3, 4, 5} // 위와 같음 자동으로 길이 정해줌
 
 for i, value := range favNums3 {
   fmt.Println(value, i)
@@ -39,6 +280,9 @@ array를 from to로 나누어서 자를 수 있게 한다.
 루비의 `a[1..2]`와 같다.
 
 ```go
+var a []int
+a = []int{1, 2, 3}
+
 numSlice := []int {5, 4, 3, 2, 1}
 
 numSlice2 := numSlice[3:5]
@@ -60,9 +304,36 @@ numSlice3 = append(sumSlice3, 0, -1)
 fmt.Println(numSlice3)
 ```
 
+슬라이스 병합
+
+```go
+func main() {
+  sliceA := []int{1, 2, 3}
+  sliceB := []int{4, 5, 6}
+
+  sliceA = append(sliceA, sliceB...)
+
+  fmt.Println(sliceA) // [1 2 3 4 5 6]
+}
+```
+
 ### Map
 
 루비의 해시와 같은 역할. 파이선의 dictionary.
+
+key에 대응하는 값(value)을 신속히 찾는 해시테이블을 구현한 자료구조이다.
+
+```go
+var idMap map[int]string // nil Map이므로 데이터를 쓸 수 없다.
+idMap = make(map[int]string) // make함수로 초기화 가능(데이터 쓸 수 있다)
+tickers := map[string]string{ // Literal로 초기화
+  "GOOG": "Google Inc",
+  "MSFT": "Microsoft",
+  "FB": "FaceBook",
+}
+
+println(tickers["GOOG"]) // Google Inc
+```
 
 ```go
 presAge := make(map[string]int)
@@ -80,7 +351,112 @@ delete(presAge, "John F. Kennedy")
 fmt.Println(presAge) // map[ThedoreRoosevelt]
 ```
 
+**Map Key check**
+
+map을 사용하는 경우 종종 map안에 특정 키가 존재하는지를 체크할 필요가 있다. 이를 위해 Go에서는 map변수[키] 읽기를 수행할 때 2개의 리턴값을 리턴한다. 첫번째는 키에 사응ㅇ하는 값이고, 두번째는 키가 존재하는지 아닌지를 나타내는 bool값이다.
+
+```go
+func main() {
+  tickers := map[string]string {
+    "GOOG": "Google Inc",
+    "MSFT": "Microsoft",
+    "FB": "FaceBook",
+    "AMZN": "Amazon",
+  }
+
+  val, exists := tickers["MSFT"]
+  if !exists {
+    println("No MSFT ticker")
+  }
+}
+```
+
+**for loop를 사용한 map열거**
+
+```go
+func main() {
+  myMap := map[string]string {
+    "A": "Apple",
+    "B": "Banana",
+    "C": "Charlie",
+  }
+
+  for key, val := range myMap {
+    fmt.Println(key, val)
+  }
+}
+```
+
 ### Functions
+
+파라미터 전달 방식은 `Pass By Value`와 `Pass By Reference`가 있다.
+
+#### 1. Pass By value
+
+msg의 값 "Hello"문자열이 복사되어서 함수 say()에 전달된다.
+
+```go
+package main
+func main() {
+  msg := "Hello"
+  say(msg)
+}
+
+func say(msg string) { // Pass By Value
+  println(msg)
+}
+```
+
+#### 2. Pass By Reference
+
+```go
+package main
+func main() {
+  msg := "Hello"
+  say(&msg)
+  println(msg)
+}
+
+func say(msg *string) {
+  println(*msg)
+  *msg = "Changed"
+}
+```
+
+#### 3. Variadic Function(가변인자함수)
+
+```go
+package main
+func main() {
+  say("This", "is", "a", "book")
+  say("Hi")
+}
+
+func say(msg ...string) {
+  for _, s := range msg {
+    println(s)
+  }
+}
+```
+
+#### 4. 함수 리턴값
+
+Named Return Prameter들에 리턴값들을 할당하여 리턴할 수 있음.
+
+```go
+func main() {
+  count, total := sum(1, 7, 3, 5, 9)
+  println(count, total)
+}
+
+func sum(nums ...int) (count int, total int) {
+  for _, n := range nums {
+    total += n
+  }
+  count = len(nums)
+  return // 반드시 return을 붙여줘야함.
+}
+```
 
 Just one value returns
 
@@ -132,6 +508,39 @@ func subtractThem(args ...int) int {
 	return finalValue
 }
 ```
+
+### Lambda(Anonymous Function)
+
+함수명을 갖지 않는 함수를 익명함수라고 한다.
+
+Go에서는 함수가 first class citizen이므로, 기본 타입과 동일하게 취급되며, 다른 함수의 파라미터로 전달하거나 다른 함수의 리턴값으로도 사용될 수 있다.
+
+```go
+package main
+
+type calculator func(int, int) int
+
+func main() {
+  add := func(i int, j int) int {
+    return i + j
+  }
+
+  r1 := calc(add, 10, 20)
+  println(r1) // 30
+
+  r2 := calc(func(x int, y int) int { return x - y }, 10, 20)
+  println(r2) // -10
+}
+
+func calc(f calculator, a int, b int) int {
+  result := f(a, b)
+  return result
+}
+```
+
+또한, `type`문을 사용해서 함수의 원형을 정의할 수 있다. 보통 `type`문은 구조체, 인터페이스 등 custom type을 정의하기 위해 사용된다. 또, 함수의 원형을 정의하는데에 사용될 수 있다.
+
+이렇게 함수의 원형을 정의하고 함수를 타 메서드에 전달하고 리턴받는 기능을, Delegate라 부른다.
 
 ### Closures
 
@@ -276,6 +685,65 @@ func changeXValNow(yPtr *int) {
 ```
 
 ### Structs
+
+Custom Data Type를 표현하는데 사용. Go의 struct는 필드들의 집합체이며 필드들의 컨테이너이다. Go에서 struct는 필드 데이터만을 가지며, 메서드를 갖지 않는다.
+
+메서드는 별도로 분리하여 정의한다.
+
+패키지 외부에서 사용할 수 있게 하려면 struct명의 가장 앞 글자를 대문자로 변경하면 된다.
+
+```go
+type Person struct {
+  name string
+  age int
+}
+
+func main() {
+  p := person{}
+
+  p.name = "Lee"
+  p.age = 10
+
+  fmt.Println(p)
+}
+```
+
+Struct객체 생성
+
+```go
+var p1 Person
+p1 = Person{"Bob", 20}
+p2 := Person{name: "Bob", age: 50} // 일부 필드가 생략될 경우, Zero value가 된다.
+p := new(Person)
+p.name = "Lee" // p가 포인터라도 .을 사용한다. 포인터는 자동으로 dereference된다.
+```
+
+Go에서 struct는 기본적으로 mutable 개체로서 필드값이 변화할 경우, 해당 개체 메모리에서 직접 변경된다. 하지만, struct 개체를 다른 함수의 파라미터로 넘긴다면, Pass by Value에 따라 객체를 복사해서 전달하게 된다. **그래서 만약 Pass by Reference로 struct를 전달하고자 한다면, struct의 포인터를 전달해야 한다.**
+
+**생성자(constructor) 함수**
+
+때로 구조체의 필드가 사용 전에 초기화 되어야 하는 경우가 있다.
+
+e.g. struct의 필드가 map타입인 경우 map을 사전에 초기화해 놓으면, 외부 struct사용자가 매번 map을 초기화 해야한다는 것을 기억할 필요가 없음.
+
+```go
+package main
+
+type dict struct {
+  data map[int]string
+}
+
+func newDict() *dict {
+  d := dict{}
+  d.data = map[int]string{}
+  return &d
+}
+
+func main() {
+  dic := newDict()
+  dic.data[1] = "A"
+}
+```
 
 ```go
 func main() {
