@@ -353,7 +353,7 @@ fmt.Println(presAge) // map[ThedoreRoosevelt]
 
 **Map Key check**
 
-map을 사용하는 경우 종종 map안에 특정 키가 존재하는지를 체크할 필요가 있다. 이를 위해 Go에서는 map변수[키] 읽기를 수행할 때 2개의 리턴값을 리턴한다. 첫번째는 키에 사응ㅇ하는 값이고, 두번째는 키가 존재하는지 아닌지를 나타내는 bool값이다.
+map을 사용하는 경우 종종 map안에 특정 키가 존재하는지를 체크할 필요가 있다. 이를 위해 Go에서는 map변수[키] 읽기를 수행할 때 2개의 리턴값을 리턴한다. 첫번째는 키에 상응하는 값이고, 두번째는 키가 존재하는지 아닌지를 나타내는 bool값이다.
 
 ```go
 func main() {
@@ -579,9 +579,9 @@ func factorial(num int) int {
 }
 ```
 
-### Defer
+### 지연실행 defer
 
-자기자신을 감싸는 함수의 실행이 끝나고 나중에 실행된다.
+자기자신을 감싸는 함수가 리턴하기 직전에 실행된다. 마지막에 Clean-up작업을 위해 사용된다.
 
 ```go
 func main() {
@@ -599,7 +599,32 @@ func printTwo() { fmt.Println(2) }
 */
 ```
 
-recover의 이용
+### panic 함수
+
+panic은 go언어의 runtime error를 일으킨다.
+defer속의 lambda 함수가 error message를 넘겨받고 출력해준다.
+
+```go
+func main() {
+	demPanic()
+}
+
+func demPanic() {
+	defer func() {
+		fmt.Println(recover())
+	}()
+
+	panic("PANIC")
+}
+/*
+결과
+PANIC
+*/
+```
+
+### recover 함수
+
+panic 함수에 의한 패닉상태를 다시 정상상태로 되돌리는 함수이다.
 
 recover함수는, 에러가 나도 exit하지 않고 그냥 계속 실행하게 만든다.
 
@@ -626,29 +651,6 @@ func safeDiv(num1, num2 int) int {
 결과
 0
 1
-*/
-```
-
-panic의 이용
-
-panic은 go언어의 runtime error를 일으킨다.
-defer속의 lambda 함수가 error message를 넘겨받고 출력해준다.
-
-```go
-func main() {
-	demPanic()
-}
-
-func demPanic() {
-	defer func() {
-		fmt.Println(recover())
-	}()
-
-	panic("PANIC")
-}
-/*
-결과
-PANIC
 */
 ```
 
@@ -765,7 +767,153 @@ func (rect *Rectangle) area() float64 {
 }
 ```
 
+### Go 메서드(Method)
+
+Go에서의 객체지향 프로그래밍의 지원방식. struct가 필드만을 가지며, 메서드는 별도로 분리되어 정의된다.
+
+Go메서드는 함수 정의에서 func 키워드와 함수명 사이에 "그 함수가 어떤 struct를 위한 메서드인지"를 표시하게 한다. 흔히 receiver로 불리우는 이 부분은 메서드가 속한 struct 타입과 struct변수명을 지정하는데, struct변수명은 함수 내에서 마치 입력 파라미터 처럼 사용된다.
+
+```go
+package main
+
+type Rect struct {
+  width, height int
+}
+
+func (r Rect) area() int {
+  return r.width * r.height
+}
+
+func main() {
+  rect := Rect{10, 20}
+  area := rect.area() // 메서드 호출
+  println(area)
+}
+```
+
+**Value vs 포인터 receiver**
+
+- Value receiver는 struct의 데이터를 복사 하여 전달
+- 포인터 receiver는 struct의 포인터만을 전달한다.
+  - 메서드 내의 필드값 변경이 그대로 호출자에서 반영된다.
+
+```go
+package main
+
+type Rect struct {
+  width, height int
+}
+
+func (r *Rect) area2() int {
+  r.width++ // 포인터도 그냥 .width로 참조 가능 자동 변환
+  return r.width * r.height
+}
+
+func main() {
+  rect := Rect{10, 20}
+  area := rect.area2()
+  println(rect.width, area) // 11 220
+}
+```
+
 ### Interfaces
+
+구조체: 필드들의 집합체
+
+interface: 메서드들의 집합체, 사용자 정의 type(struct)이 구연해야 하는 메서드의 prototype들을 정의한다. 인터페이스는 struct와 마찬가지로 type문을 사용하여 정의한다.
+
+```go
+type Shape interface {
+  area() float64
+  perimeter() float64
+}
+```
+
+**인터페이스 구현**
+
+인터페이스를 구현하기 위해서는 해당 타입이 그 인터페이스의 메서드들을 모두 구현하면 된다. 위의 Shape 인터페이스를 구현하기 위해서는 아래와 같이 각 타입별로 두개의 메서드를 구현해 주면 된다.
+
+```go
+type Rect struct {
+  width, height float64
+}
+
+type Circle struct {
+  radius float64
+}
+
+func (r Rect) area() float64 { return r.width * r.height }
+func (r Rect) perimeter() float64 { return 2 * (r.width + r.height) }
+
+func (c Circle) area() float64 {
+  return math.Pi * c.radius * c.radius
+}
+func (c Circle) perimeter() float64 {
+  return 2 * math.Pi * c.radius
+}
+```
+
+**인터페이스 사용**
+
+인터페이스를 사용하는 일반적인 예로 함수가 파라미터로 인터페이스를 받아들이는 경우를 들 수 있다. 함수 파라미터가 interface인 경우, 이는 어떤 타입이든 해당 인터페이스를 구현하기만 하면 모두 입력 파라미터로 사용될 수 있다는 것을 의미한다.
+
+```go
+func main() {
+  r := Rect{10., 20.}
+  c := Circle{10}
+
+  showArea(r, c)
+}
+
+func showArea(shapes ...Shape) {
+  for _, s := range shapes {
+    a := s.area()
+    println(a)
+  }
+}
+```
+
+**인터페이스 타입**
+
+빈 인터페이스는 흔히 인터페이스 타입으로도 불리운다. Go의 모든 타입을 나타내기 위한 인터페이스다. 빈 인터페이스는 어떠한 타입도 담을 수 있는 컨테이너 이다(Dynamic Type)
+
+```go
+// func Println(a ...interface{}) (n int, err error);
+
+package main
+
+import "fmt"
+
+func main() {
+  var x interface{}
+  x = 1
+  x = "Tom"
+
+  printIt(x) // Tom
+}
+
+func printIt(v interface{}) {
+  fmt.Println(v)
+}
+```
+
+**Type Assertion**
+
+Interface type의 x와 타입 T에 대하여 `x.(T)`로 표현했을 때, 이는 x가 nil이 아니며, x는 T타입에 속한다는 점을 확인(assert)하는 것으로 이러한 표현을 "Type Assertion"이라 부른다.
+
+만약 x가 nil이거나 x의 타입이 T가 아니라면, 런타임 에러가 발생할 것이고, x가 T타입인 경우는 T타입의 x를 리턴한다.
+
+```go
+func main() {
+  var a interface{} = 1
+
+  i := a // a와 i는 dynamic type 값은1
+  j := a.(int) // j는 int 타입, 값은 1
+
+  println(i) // 포인터 주소 출력
+  println(j) // 1 출력
+}
+```
 
 polymorphism
 
@@ -805,6 +953,55 @@ func (c Circle) area() float64 {
 
 func getArea(shape Shape) float64 {
 	return shape.area()
+}
+```
+
+### 에러처리
+
+#### 1. Go 에러
+
+Go는 내장 타입으로 `error`라는 interface 타입을 갖는다. Go 에러는 이 error 인터페이스를 통해서 주고 받게 되는데, 이 interface는 다음과 같은 하나의 메서드를 갖는다. 개발자는 이 인터페이스를 구현하는 커스텀 에러 타입을 만들 수 있다.
+
+```go
+type error interface {
+  Error() string
+}
+```
+
+#### 2. Go 에러처리
+
+Go함수가 결과와 에러를 함께 리턴한다면, 이 에러가 nil인지를 체크해서 에러가 없는지를 체크할 수 있다.
+
+`log.Fatal()`은 메시지를 출력하고 `os.Exit(1)`을 호출하여 프로그램을 종료한다.
+
+```go
+package main
+
+import (
+  "log"
+  "os"
+)
+
+func main() {
+  f, err := os.Open("C:\\temp\\1.txt")
+  if err != nil {
+    log.Fatal(err.Error())
+  }
+  println(f.Name())
+}
+```
+
+또 다른 에러처리로서 error의 Type을 체크해서 여러 타입별로 별도의 에러 처리를 하는 방식이 있다. 아래 예제에서 `otherFunc()`를 호출한 후 error가 `err`로 리턴되었을 때, 이 err의 타입별로 다른 처리를 하는 것을 볼 수 있다.(switch문에서 `변수명.(type)`의 방식으로 타입 체크를 한다) 디폴트는 에러타입이 없는 경우이고, 에러가 있으면 다음 case문에서 그 에러타입이 MyError인지를 체크하고, 아니면 다음 case에서 일반 에러 케이스를 처리한다. 모든 에러는 `error`인터페이스를 구현하므로 마지막 case문은 모든 에러에 적용된다.
+
+```go
+_, err := otherFunc()
+switch err.(type) {
+default:
+  println("ok")
+case MyError:
+  log.Print("Log my error")
+case error:
+  log.Fatal(err.Error())
 }
 ```
 
@@ -905,6 +1102,104 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 ```
 
 ### Go Routines
+
+Go루틴은 Go 런타임이 관리하는 Lightweight 논리적(가상적) 쓰레드이다.
+
+Go에서 `go`키워드를 사용하여 함수를 호출하면, 런타임시 새로운 goroutine을 실행한다. goroutine은 비동기적으로(asynchronously) 함수루틴을 실행하므로, 여러 코드를 동시에(Concurrently) 실행하는데 사용된다.
+
+- gorountine은 OS쓰레드보다 훨씬 가볍게 비동기(Concurrent) 처리를 구현하기 위해서 만든 것.
+- go runtime이 자체관리.
+- 여러 go routine들이 하나의 OS쓰레드로 실행되곤 함(OS 쓰레드와 1:1대응 아님)
+- OS 쓰레드가 1메가바이트 스택 / Go루틴은 몇 킬로바이트 스택(동적 증가)
+- Go runtime은 Go 채널을 통한 Go루틴 간의 통신관리
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func say(s string) {
+	for i := 0; i < 10; i++ {
+		fmt.Println(s, "***", i)
+	}
+}
+
+func main() {
+	// 함수를 동기적으로 실행
+	say("Sync")
+
+	// 함수를 비동기적으로 실행
+	go say("Async1")
+	go say("Async2")
+	go say("Async3")
+
+	time.Sleep(time.Second * 3) // 이것이 없으면 Sync만 출력하고 바로 끝남.
+}
+```
+
+#### c.f Concurrency와 Prallelism의 차이
+
+- Concurrency: composition of independently executin processes
+  - Dealing with lots of things at once
+- Prallelism: simultaneous execution of computations
+  - Doing lots of things at once
+
+**익명함수 Go루틴**
+
+```go
+package main
+
+import (
+  "fmt"
+  "sync"
+)
+
+func main() {
+  // WaitGroup 생성. 2개의 Go루틴을 기다림.
+  var wait sync.WaitGroup
+  wait.Add(2)
+
+  go func() {
+    defer wait.Done() // 끝나면 .Done() 호출
+    fmt.Println("Hello")
+  }()
+
+  go func(msg string) {
+    defer wait.Done()
+    fmt.Println(msg) // 끝나면 .Done() 호출
+  }("Hi")
+
+  wait.Wait() // Go루틴 모두 끝날 때까지 대기
+}
+```
+
+`sync.WaitGroup`은 여러 Go루틴들이 끝날 때까지 기다리는 역할을 한다. `WaitGroup`을 사용하기 위해서는 먼저 `Add()` 메소드에 몇 개의 Go루틴을 기다릴 것 인지 지정하고, 각 Go루틴에서 `Done()`메서드를 호출한다(여기서는 `defer`를 사용) 그리고 메인루틴에서는 `Wait()` 메서드를 호출하여, Go루틴들이 모두 끝나기를 기다린다.
+
+**다중 CPU처리**
+
+Go는 디폴트로 1개의 CPU를 사용한다. 여러개의 Go루틴을 만들더라도 1개의 CPU에서 작업을 시분할하여 처리한다(Concurrent).
+
+머신이 복수개의 CPU를 가진 경우, Go 프로그램을 다중 CPU에서 병렬처리(Parallel처리) 하게 할 수 있는데, 이는 `runtime.GOMAXPROCS(CPU수)` 함수를 호출하여야 한다. (여기서 CPU 수는 Logical CPU 수를 가리킨다)
+
+```go
+package main
+
+import (
+  "runtime"
+)
+
+func main() {
+  // 4개의 CPU사용
+  runtime.GOMAXPROCS(4)
+
+  // ...
+}
+```
+
+---
 
 `go count(i)`하면 루틴을 하나 새로 만든다.
 
@@ -1043,9 +1338,9 @@ func main() {
 
 ### Channels
 
-Go routines간의 데이터를 주고 받는다.
+Go routines간의 데이터를 주고 받기 위한 통로이다.
 
-루틴간의 데이터 통로라고 생각하면 될 듯.
+`make()`함수를 통해 미리 생성되어야 하며, 채널 연산자 `<-`를 통해 데이터를 주고 받는다. 채널은 흔히 goroutine들 사이 데이터를 주고 받는데 사용되는데, 상대편이 준비될 때까지 채널에서 대기함으로써 별도의 lock을 걸지 않고 데이터를 동기화 하는데 사용된다.
 
 ```go
 

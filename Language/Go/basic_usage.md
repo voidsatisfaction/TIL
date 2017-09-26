@@ -2,6 +2,68 @@
 
 ## Package and Library
 
+package를 통해 코드의 모듈화, 코드의 재사용 기능 제공.
+
+표준 라이브러리는 `GOROOT/pkg`안에 존재한다. Go에 사용하는 표준패키지는 [이곳](https://golang.org/pkg)에 자세히 설명되어 있다.
+
+**Main 패키지**
+
+일반적으로 패키지는 라이브러리로서 사용되지만, "main"이라고 명명된 패키지는 Go Compiler에 의해 특별하게 인식된다. 해당 패키지를 공유 라이브러리가 아닌 실행 프로그램으로 만든다. 그리고 이 main패키지 안의 `main()`함수가 프로그램의 시작점(Entry Point)가 된다.
+
+GOROOT/pkg: 표준 패키지
+GOPATH/pkg: 사용자 패키지 / 3rd party패키지
+
+**패키지 Scope**
+
+패키지 내의 함수, 구조체, 인터페이스, 메서드 등의 이름이 첫 문자가 대문자로 시작하면 이는 public으로 사용할 수 있다. 즉, 패키지 외부에서 이들을 호출하거나 사용할 수 있게 된다. 반면, 이름이 소문자로 시작하면 이는 non-public으로 패키지 내부에서만 사용될 수 있다.
+
+**패키지 init함수와 alias**
+
+개발자가 패키지를 작성할 때, 패키지 실행시 처음으로 호출되는 `init()`함수를 작성할 수 있다.
+
+```go
+package testlib
+
+var pop map[string]string
+
+func init() {
+  pop = make(map[string]string)
+}
+```
+
+경우에 따라 import하면서 그 패키지 안의 `init()`함수만을 호출하고자 하는 케이스가 있는데, 이때에는 import할 때, `_`라는 alias를 지정한다.
+
+```go
+package main
+
+import _ "other/xlib"
+```
+
+만일 패키지 이름이 동일하지만, 서로 다른 버전 혹은 서로 다른 위치에서 로딩하고자 할 때는, 패키지 alias를 사용해서 구분할 수 있다.
+
+```go
+import (
+  mongo "other/mongo/db"
+  mysql "other/mysql/db"
+)
+func main() {
+  mondb := mongo.Get()
+  mydb := mysql.Get()
+}
+```
+
+**사용자 정의 패키지 생성**
+
+사용자 정의 라이브러리 패키지는 일반적으로 폴더를 하나 만들고 그 폴더 안에 `.go`파일들을 만들어 구성한다. 하나의 서브 폴더안에 있는 `.go`파일들은 동일한 패키지명을 가지며, 패키지명은 해당 폴더의 이름과 같게 한다. 즉, 해당 폴더에 있는 여러 `*.go`파일들은 하나의 패키지로 묶인다.
+
+사이즈가 큰 복잡한 라이브러리는 `go install` 명령을 사용하여 라이브러리를 컴파일하여 Cache할 수 있다(빌드 타임 감소)
+
+라이브러리 탐색 순서
+
+1. GOROOT
+2. GOPATH
+3. ~~자기자신이 있는 폴더~~(정확하지 않음)
+
 go tool을 이용할 경우에는 directory하나가 한 패키지가 된다. 한 패키지는 메인 패키지 혹은 라이브러리 패키지가 될 수 있다.
 
 - 메인 패키지로 설치: 실행파일이 bin 아래에 생성
