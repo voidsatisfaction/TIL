@@ -1105,6 +1105,8 @@ func handler2(w http.ResponseWriter, r *http.Request) {
 
 Go루틴은 Go 런타임이 관리하는 Lightweight 논리적(가상적) 쓰레드이다.
 
+다른 함수를 동시에 실행할 수 있는 함수(Concurrent)
+
 Go에서 `go`키워드를 사용하여 함수를 호출하면, 런타임시 새로운 goroutine을 실행한다. goroutine은 비동기적으로(asynchronously) 함수루틴을 실행하므로, 여러 코드를 동시에(Concurrently) 실행하는데 사용된다.
 
 - gorountine은 OS쓰레드보다 훨씬 가볍게 비동기(Concurrent) 처리를 구현하기 위해서 만든 것.
@@ -1112,6 +1114,8 @@ Go에서 `go`키워드를 사용하여 함수를 호출하면, 런타임시 새�
 - 여러 go routine들이 하나의 OS쓰레드로 실행되곤 함(OS 쓰레드와 1:1대응 아님)
 - OS 쓰레드가 1메가바이트 스택 / Go루틴은 몇 킬로바이트 스택(동적 증가)
 - Go runtime은 Go 채널을 통한 Go루틴 간의 통신관리
+
+고루틴을 이용하면 즉시 다음 줄로 실행 흐름이 반환되고 함수 호출이 완료되기까지 기다리지 않는다.
 
 ```go
 package main
@@ -1338,66 +1342,119 @@ func main() {
 
 ### Channels
 
-Go routines간의 데이터를 주고 받기 위한 통로이다.
+Go routines간의 데이터를 주고 받기 위한 통로이다. 또한, 실행흐름을 동기화 하는 수단을 제공한다.
 
 `make()`함수를 통해 미리 생성되어야 하며, 채널 연산자 `<-`를 통해 데이터를 주고 받는다. 채널은 흔히 goroutine들 사이 데이터를 주고 받는데 사용되는데, 상대편이 준비될 때까지 채널에서 대기함으로써 별도의 lock을 걸지 않고 데이터를 동기화 하는데 사용된다.
 
 ```go
+package main
 
-var pizzaNum = 0
-var pizzaName = ""
+import (
+	"fmt"
+	"time"
+)
 
-func makeDough(stringChan1 chan string) {
-	pizzaNum++
-
-	pizzaName = "Pizza #" + strconv.Itoa(pizzaNum)
-
-	fmt.Println("Make Dough and Send for Sauce")
-
-	stringChan1 <- pizzaName
-
-	time.Sleep(time.Millisecond * 10)
-}
-
-func addSauce(stringChan1, stringChan2 chan string) {
-	pizza := <-stringChan1
-
-	fmt.Println("Add Sauce and Send", pizza, "for toppings")
-
-	stringChan2 <- pizzaName
-
-	time.Sleep(time.Millisecond * 10)
-}
-
-func addToppings(stringChan2 chan string) {
-	pizza := <-stringChan2
-
-	fmt.Println("Add Toppings to", pizza, "and ship")
-
-	time.Sleep(time.Millisecond * 10)
-}
-
-func main() {
-	stringChan1 := make(chan string)
-	stringChan2 := make(chan string)
-
-	for i := 0; i < 3; i++ {
-		go makeDough(stringChan1)
-		go addSauce(stringChan1, stringChan2)
-		go addToppings(stringChan2)
-
-		time.Sleep(time.Millisecond * 5000)
+func pinger(c chan string) {
+	for {
+		c <- "ping"
 	}
 }
 
-/*
+func printer(c chan string) {
+	for {
+		msg := <- c
+		fmt.Println(msg)
+		time.Sleep(time.Millisecond * 1000)
+	}
+}
 
-Make Dough and Send for Sauce
-Add Sauce and Send Pizza #1 for toppings
-Add Toppings to Pizza #1 for ship
+func main() {
+	// var c chan string = make(chan string)
+	c := make(chan string)
 
-....
+	go pinger(c)
+	go printer(c)
 
-*/
+	var input string
+	fmt.Scanln(&input)
+}
 
 ```
+
+위의 코드의 결과는 `ping`이 끊임없이 출력되는 것이다. `<-`(왼쪽 화살표) 연산자는 채널에 메시지를 전달하고 채널로부터 메시지를 전달받는 데 사용한다. 두 고루틴은 동기화된다. `pinger`가 메시지를 채널에 전송하려고 시도할 경우 `printer`가 해당 메시지를 받을 준비가 될 때까지 대기(blocking)
+
+```go
+c <- "ping" // 채널에 메시지를 전달
+msg := <- c // 메시지를 받아 그것을 msg에 저장
+```
+
+**채널 방향**
+
+```go
+func pinger(c chan<- string) // 채널c는 함수 내에서 보내기만 할 수 있다.
+
+func printer(c <-chan string) // 채널c는 함수 내에서 받기만 할 수 있다.
+```
+
+**Select**
+
+`switch`와 비슷하게 동작하지만 채널에 대해서만 동작하는 `select`구문
+
+하나 이상의 채널이 준비되면 어느 채널로부터 메시지를 받을지 무작위로 선택한다. 준비된 채널이 없으면 사용 가능해질 때까지 문장 실행이 차단된다.
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	c1 := make(chan string)
+	c2 := make(chan string)
+
+	go func() {
+		for {
+			c1 <- "from1"
+			time.Sleep(time.Second * 2)
+		}
+	}()
+
+	go func() {
+		for {
+			c2 <- "from2"
+			time.Sleep(time.Second * 3)
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case msg1 := <-c1:
+				fmt.Println(msg1)
+			case msg2 := <-c2:
+				fmt.Println(msg2)
+      case <- time.After(time.Second):
+        fmt.Println("timeout")
+			}
+		}
+	}()
+
+	var input string
+	fmt.Scanln(&input)
+}
+
+```
+
+default는 준비된 채널이 없을때 즉시 실행된다.
+
+**버퍼 채널**
+
+채널을 만들 때 `make`함수에 두 번째 매개변수를 전달하는 것도 가능하다.
+
+```go
+c := make(chan int, 1)
+```
+
+용량이 1인 버퍼 채널이 만들어진다. 보통 채널은 동기적이다. 즉, 채널의 양쪽이 다른 쪽이 준비될 때 까지 기다린다. 버퍼채널은 비동기적이다. 즉, 메시지를 보내거나 받을 때 채널이 꽉 차 있지 않는 이상 기다리지 않는다.
