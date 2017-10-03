@@ -85,6 +85,8 @@ Go의 string이 항상 UTF-8인게 아니고, string literals가 UTF-8이다.
 
 요약하자면, strings는 임의의 바이트들을 포함할 수 있는데, string literals로 부터 만들어졌을때, 그러한 bytes들은 거의 항상 UTF-8이다.
 
+**참고: 영어는 1바이트 아시아문자는 3바이트**
+
 ### Code points, characters, and runes
 
 Unicode 표준에서는 **code point** 라는 말을 쓰며, 이는 단일 값에 대한 item을 나타낸다. 앞서 예제에서는 코드포인트 `U+2318`는 symbol`⌘`를 나타낸 것이다. 마찬가지로 a의 유니코드 코드포인트는 `U+0061`이다.
