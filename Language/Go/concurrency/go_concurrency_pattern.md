@@ -26,6 +26,8 @@ Concurrency란, 개별적으로 실행되는 계산들의 구성이다.
 
 Parallelism과는 다르다. 하나의 processor는 concurrent할 수는 있지만 parallel할 수 는 없다. 반면, 잘 쓰여진 concurrent program은 parallel multiprocessor에서 효과적으로 작동할 수 있다.
 
+> Concurrency is about dealing with lots of things at once. Parallelism is about doing lots of things at once.
+
 ## 3. Concurrency의 아이디어 원천
 
 ### 소프트웨어 공학을 위한 모델
