@@ -8,6 +8,7 @@
 - Adding report letters validation
 - Adding new screen for pinned toots
 
-## [Boostnote(1)](https://github.com/BoostIO/Boostnote/commits?author=voidsatisfaction)
+## [Boostnote(2)](https://github.com/BoostIO/Boostnote/commits?author=voidsatisfaction)
 
 - Adding Korean translation for debug and developement docs
+- Adding right click notelist delete
