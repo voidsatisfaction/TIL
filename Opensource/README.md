@@ -4,7 +4,7 @@
 
 - Adding Korean translation for inner mastodon page
 - Fix streaming server url sensitive bug
-- Smartphone screen button not showing debug
+- Debug Smartphone screen button not showing
 - Adding report letters validation
 - Adding new screen for pinned toots
 
