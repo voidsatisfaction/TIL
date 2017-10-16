@@ -12,3 +12,11 @@
 
 - Add Korean translation for debug and developement docs
 - Add right click notelist delete
+
+# Opensource Guide
+
+오픈 소스 활동을 처음 시작하는 분들을 위하여
+
+## [네이버 오픈소스 가이드](https://naver.github.io/OpenSourceGuide/book/)
+
+오픈 소스 활동하기 전에 알아두면 좋은 내용들을 담은 책. 무턱대고 기여하려고 하면 어디서부터 어떻게 해야할지 모르기때문에 이 자료를 읽고 시작하는것을 권합니다. 오픈소스에대해서 매우 잘 다루고있는 짧은 분량의 책입니다.
