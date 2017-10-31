@@ -1,5 +1,7 @@
 # All of the opensources that I contributed
 
+오픈소스를 이용해서 자라왔던 내가, 오픈소스에 공헌할 수 있다는 것은 크나큰 축복이며 영광이다.
+
 ## [Mastodon(5)](https://github.com/tootsuite/mastodon/commits?author=voidsatisfaction)
 
 - Add Korean translation for inner mastodon page
