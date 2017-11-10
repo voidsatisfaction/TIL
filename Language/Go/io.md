@@ -2,6 +2,30 @@
 
 Go의 입출력에 대한 표준 라이브러리는 `io`에 들어있다. 그리고, fmt패키지에 형식을 이용한 입출력도 구현되어 있다.
 
+### Args(Command-line arguements)
+
+```go
+os.Args // slice of strings
+```
+
+`os.Args`의 첫번째 요소는 실행파일의 위치를 나타낸다. 두번쨰 요소부터 parameter를 나타냄.
+
+### Query String
+
+| query string | explanation |
+| %d | decimal integer |
+| %x, %o, %b | integer in hexadecimal, octal, binary |
+| %f, %g, %e | floating-point number 3.141593 3.141592653589793 3.141593e+00 |
+| %t | boolean: true or false |
+| %c | rune (Unicode code point) |
+| %s | string |
+| %q | quoted string "abc" or rune 'c' |
+| %v | any value in a natural format |
+| %T | type of any value |
+| %% | literal percent sign (no operand) |
+
+보통 f로 끝나는 함수 `Printf`, `Errorf` 등은 `fmt.Printf`의 formatting rule을 따른다. 반면 `Println`과 같이 ln으로 끝나는 함수들은 arguments를 `%v`로 포맷한 뒤에 새 줄을 출력한다. `%v`이기 때문에 느리다.
+
 ### io.Reader과 io.Writer
 
 바이트들을 읽고 쓸 수 있는 인터페이스. fmt패키지에서는 F로 시작하는 함수들이 `io.Reader`와 `io.Writer`를 인자로 받는다.
