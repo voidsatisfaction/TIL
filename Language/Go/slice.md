@@ -159,7 +159,7 @@ nums := make([]int, 0, 15)
 #### 슬라이스 내부 구현
 
 - 슬라이스는 배열을 가지고 있는 구조체이다.
-- 슬라이스는 **시작 주소**, **길이**, **용량**이라는 필드들로 이루어져 있다.
+- 슬라이스는 **시작 주소**, **길이**, **용량** 이라는 필드들로 이루어져 있다.
 - 복사가 일어나서 이동이 일어났다고 했을 때에는 그 슬라이스는 다른 배열을 보고 있게 된다. 그래서 배열을 `append`함수에서 두 번 써주어야 한다.
 
 ```go
@@ -366,5 +366,53 @@ func ExampleEval() {
 	// 2
 	// 9
 	// 18
+}
+```
+
+## 슬라이스와 sorting
+
+### 슬라이스가 정수만 포함하고 있을 때 간단히 sorting하는 방법
+
+```go
+func main() {
+	s := []int{5, 2, 6, 3, 1, 4}
+	sort.Ints(s)
+	fmt.Println(s) // [ 1 2 3 4 5 6 ]
+}
+```
+
+sort.Ints(s)는 s를 `IntSlice`라는 타입으로 변화시킨 후(IntSlice는 이미 소팅을 위한 메소드가 정의되어 있다)
+
+`Sort()`함수를 적용시킨다.
+
+### 슬라이스가 struct을 포함하고 있을 때 struct의 특정 필드 기준으로 sorting하는 법
+
+```go
+type Person struct {
+	Name string
+	Age int
+}
+
+func (p Person) String() string {
+	return fmt.Sprintf("%s: %d", p.Name, p.Age)
+}
+
+type ByAge []Person
+
+func (a ByAge) Len() int { return len(a) }
+func (a ByAge) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+
+func main() {
+	people := []Person{
+		{"Bob", 31},
+		{"John", 42},
+		{"Michael", 17},
+		{"Jenny", 26},
+	}
+
+	fmt.Println(people) // [ Bob John Michael Jenny ]
+	sort.Sort(ByAge(people))
+	fmt.Println(people) // [ Michael Jenny Bob John ]
 }
 ```
