@@ -24,6 +24,18 @@ Exif란, jpg사진에 넣는 메타데이터로 `사진기 기종, 날짜, 크�
 
 그래서 웹앱은 Exif안의 Orientation을 참고해서 올바른 방향으로 보이게 업로드를 해야한다. 또한 브라우저가 Orientation을 보정하는 경우가 있으므로 사진을 Orientation에 기반하여 보정한 후에는 Exif 데이터를 지워주어야 이용자가 원하는 방향으로 이미지를 보여줄 수 있게 된다.
 
+## exiftool을 이용한 exif의 수정
+
+`exiftool`이라는 커맨드라인 툴을 이용한다. 여기서는 Orientation을 수정하고 열람하는 법을 알아본다.
+
+```sh
+# orientation의 확인
+exiftool -verbose fileName | grep Orientation
+
+# orientation의 수정
+exiftool -Orientation=3 -n fileName
+```
+
 ## 이미지 보정 코드
 
 - 이미지 보정을 위하여 `imaging`이라는 go의 라이브러리를 사용하였다. 프로그래머가 수학을 잘 몰라도 쉽게쉽게 보정할 수 있도록 추상화가 잘 되어있다. 업데이트도 꾸준히 되고 있다.
@@ -82,6 +94,10 @@ func checkFileOrientation(f *os.File) (int, error) {
 	orientation, err := tag.Int(0)
 	if err != nil {
 		return -1, err
+	}
+
+	if orientation < 1 || orientation > 8 {
+		return -1, nil
 	}
 	return orientation, nil
 }
