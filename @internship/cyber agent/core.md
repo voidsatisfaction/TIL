@@ -29,17 +29,29 @@ Goを初めて書いて見ました！
 
 MVCモデルに沿って実装されている。MとCの間にServiceという層を挟んで、責務を分担している。そして、ロジックの再利用を促進する。
 
+- [서버리스 아키텍쳐](http://blog.aliencube.org/ko/2016/06/23/serverless-architectures/)
+
 ### JSON Schema
 
 サーバーサイドのAPIレスポンステストに適用できるJSON Schema。これをまとめると、htmlページで人が見やすい形に形成することができる。なお、テストを実行するときに、定義したSchemaとresponseが同じ形になっているのかをチェックし、そうでなければエラーを出してくれるので、非常にありがたい。
 
+- [JSON-Schema 韓国語翻訳](https://github.com/mcchae/JSON-Schema/blob/master/JSON-Schema.md)
+
 ### テスト
 
-非常に大規模で様々な機能が入っていたので、やはりテストが非常に充実している。APIテストとUnitテストに別れて実装されているl。
+非常に大規模で様々な機能が入っていたので、やはりテストが非常に充実している。APIテストとUnitテストに別れて実装されている。
+
+- [GoのTestに対する考え方](https://qiita.com/Jxck_/items/8717a5982547cfa54ebc)
 
 ### GO言語
 
 楽しい！そして、可愛い！
+
+#### Go Blog
+
+本当に役に立つ情報がいっぱい！
+
+- [Go Blog](https://blog.golang.org/index)
 
 #### Go routineと Channel
 
@@ -47,11 +59,15 @@ Apiを並行的に実行したり、一つのApiを複数送るときにSequenti
 
 それだけではなくて、Async的な処理が必要なときには、go routineを積極的に使おう。
 
+- [Goルーチンで並行化する方法: 6秒かかる処理を3秒にしよう](https://qiita.com/suin/items/82ecb6f63ff4104d4f5d)
+
 #### Go http
 
 Goのhttpのpackageを詳しく見て見た。`http RountTripper`というものを使って、httpリクェストに対するモックデータを生成できる。
 
 TCP/IPのところのような中のロジックを勉強しておきたい。
+
+- [godoc http](https://golang.org/pkg/net/http/#Transport.RoundTrip)
 
 #### Go exec
 
@@ -59,7 +75,8 @@ Go言語はなんと、コマンドを実行することができ、その結果
 
 #### Go image
 
-[golang package image](https://golang.org/pkg/image/#Image)
+- [godoc image](https://golang.org/pkg/image/#Image)
+- [golang image package blog](https://blog.golang.org/go-image-package)
 
 Go言語は、イメージデータも内蔵packageを通じて扱うことができる。今回の場合、exifファイルのorientationを補正するために使った。
 
@@ -77,6 +94,7 @@ Gooseを使ってDBのマイグレーションを管理する。
 
 #### Go オススメ
 
+- [Go empty struct](https://dave.cheney.net/2014/03/25/the-empty-struct)
 - [Goのinterface設計](http://jxck.hatenablog.com/entry/20130325/1364251563)
 - [GopherCon 2014](https://github.com/gophercon/2014-talks)
 
