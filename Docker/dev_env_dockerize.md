@@ -11,6 +11,12 @@
 
 위의 기술들 외에도 기본적으로 `hot-reloading`이 가능한 기술들을 사용한다면 더 편리하게 도커 개발 환경을 즐길 수 있다.
 
+## 참고
+
+- [Docker-Compose를 이용한 개발환경 구축하기](http://ggoals.tistory.com/61)
+- [Webpack and Docker for Development and Deployment](https://medium.com/@andyccs/webpack-and-docker-for-development-and-deployment-ae0e73243db4)
+- [Dockerを使ったGolang開発環境](http://unknownplace.org/archives/golang-development-enviroment-with-docker.html)
+
 ## 도커화
 
 ### Dockerfile 준비
