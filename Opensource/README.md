@@ -17,6 +17,13 @@
 - Enable not focused note right click pin to top and show right context menu
 - Add multiselect notes delete and move and pin function(manipulating react state and using promise.all)
 
+## [Golang-spec](https://github.com/golangkorea/golang-spec/commits?author=voidsatisfaction)
+
+Translation
+
+- string-types
+- array-types
+
 # Opensource Guide
 
 오픈 소스 활동을 처음 시작하는 분들을 위하여
