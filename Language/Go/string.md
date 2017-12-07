@@ -372,4 +372,4 @@ func ExampleDeleteMap() {
 }
 ```
 
-위의 코드에서 알 수 있듯이, 단따옴표는 unicode의 `rune`을 뜻하며, 쌍따옴표는 `string`을 나타내는 것을 알 수있다.
+**위의 코드에서 알 수 있듯이, 단따옴표는 unicode의 `rune`을 뜻하며, 쌍따옴표는 `string`을 나타내는 것을 알 수있다.**
