@@ -31,7 +31,7 @@ name = "marius"
 
 ### 함수
 
-```
+```scala
 def addOne(m: Int): Int = m + 1
 
 def timesTwo(i: Int): Int = {
@@ -42,7 +42,7 @@ def timesTwo(i: Int): Int = {
 
 매개변수가 없는 함수의 경우, 호출시 괄호를 생략할 수 있다.
 
-```
+```scala
 def three() = 1 + 2
 
 three() // 3
@@ -51,7 +51,7 @@ three // 3
 
 #### 람다함수
 
-```
+```scala
 val addOne = (x: Int) => x + 1 // 리턴값의 타입을 쓰지 않는다?
 addOne(1) // 2
 
@@ -65,7 +65,7 @@ val timesTwo = { i: Int =>
 
 함수 호출시 밑줄(_)을 이용해 일부만 적용할 수 있다. 그렇게 하면 새로운 함수를 얻는다.
 
-```
+```scala
 def adder(m: Int, n: Int) = m + n
 
 val add2 = adder(2, _:Int)
@@ -74,7 +74,7 @@ add2(3) // 5
 
 #### 커리 함수(Curried functions)
 
-```
+```scala
 def multiply(m: Int)(n: Int): Int = m * n
 multiply(2)(3) // 6
 
@@ -86,7 +86,7 @@ timesTwo(3) // 6
 
 #### 가변 길이 매개변수
 
-```
+```scala
 def capitalizeAll(args: String*) = {
   args.map { arg =>
     arg.capitalize
@@ -100,7 +100,7 @@ capitalizeAll("rarity", "applejack")
 
 클래스 안에서 메소드는 `def`로, 필드는 `val`로 정의한다. 메소드는 단지 클래스(객체)의 상태에 접근할 수 있는 함수에 지나지 않는다. `immutable`
 
-```
+```scala
 calss Calculator {
   val brand: String = "HP"
   def add(m: Int, n: Int): Int = m + n
@@ -115,7 +115,7 @@ calc.brand // "HP"
 
 생성자가 특별한 메소드로 따로 존재하지 않느다. 클래스 몸체에서 메소드 정의 부분 밖의 모든 코드가 생성자 코드가 된다.
 
-```
+```scala
 class Calculator(brand: String) {
   val color: String = if (brand == "TI") {
     "blue"
@@ -136,7 +136,7 @@ Function은 값이나, Method는 그자체가 값이 아니다.
 
 ### 상속
 
-```
+```scala
 class ScientificCalculator(brand: String) extends Calculator(brand) {
   def log(m: Double, base: Double) = math.log(m) / math.log(base)
 }
@@ -144,7 +144,7 @@ class ScientificCalculator(brand: String) extends Calculator(brand) {
 
 ### 메소드 중복정의(Overloading)
 
-```
+```scala
 class EvenMoreScientificCalculator(brand: String) extends ScientificCalculator(brand) {
     def log(m: Int): Double = log(m, math.exp(1))
 }
@@ -154,7 +154,7 @@ class EvenMoreScientificCalculator(brand: String) extends ScientificCalculator(b
 
 메소드 정의는 있지만 구현은 없는 클래스. 대신 이를 상속한 하위 클래스에서 메소드를 구현.
 
-```
+```scala
 abstract class Shape {
   def getArea():Int
 }
@@ -168,7 +168,7 @@ class Circle(r: Int) extends Shape {
 
 다른 클래스가 확장 하거나 섞어 넣을 수 있는(Mix in) 필드와 동작의 모음.
 
-```
+```scala
 trait Car {
   val brand: String
 }
@@ -184,7 +184,7 @@ class BMW extends Car {
 
 클래스는 여러 트레잇을 `with`키워드를 사용해 확장할 수 있다.
 
-```
+```scala
 class BMW extends Car with Shiny {
   val brand = "BMW"
   val shineRefraction = 12
@@ -199,7 +199,7 @@ class BMW extends Car with Shiny {
 
 일반적(generic)인 함수를 만들 수 있다. 이럴때에는 각괄호`([])`안에 타입 매개변수를 추가한다.
 
-```
+```scala
 trait Cache[K, V] {
   def get(key: K): V
   def put(key: K, value: V)
