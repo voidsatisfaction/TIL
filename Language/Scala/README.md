@@ -101,7 +101,7 @@ capitalizeAll("rarity", "applejack")
 클래스 안에서 메소드는 `def`로, 필드는 `val`로 정의한다. 메소드는 단지 클래스(객체)의 상태에 접근할 수 있는 함수에 지나지 않는다. `immutable`
 
 ```scala
-calss Calculator {
+class Calculator {
   val brand: String = "HP"
   def add(m: Int, n: Int): Int = m + n
 }
