@@ -28,7 +28,7 @@ Perl is Humble Language.
   - awk의 정규식, sed의 치환 편집, C와 유사한 구조, sh의 단순함.
 - 효율적(Efficiency)
   - 사용하기 쉬으므로 생선적인 언어이다.
-- C언어에 삽입할 수 있고, C언어를 이용해서 확장할 수 있다(Embedible, Expandable)
+- C언어에 삽입할 수 있고, C언어를 이용해서 확장할 수 있다(Embeddable, Expandable)
 - TCP/IP 네트웍 처리 가능
 - 내장 디버거 기능
 - CPAN에는 웬만한 것이 있다.
@@ -44,6 +44,7 @@ Perl is Humble Language.
   - `@rray`
   - 값을 얻을 때는 `$array[1]`이런 식으로(스칼라가 된다)
 - Hash(해시)
+  - `%ash`
 
 ### use strict; use warnings; 는 일단 붙인다.
 
