@@ -2,6 +2,10 @@
 
 트리 기초
 
+## 종류
+
+- [이진 탐색 트리 - Binary Search Tree](./Binary_search_tree/README.md)
+
 ## 정의
 
 폐로가 없는 연결 그래프.
