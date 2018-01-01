@@ -14,7 +14,7 @@
 
 ### Literal(리터럴)
 
-source code representation of a value of a type
+A literal is how you represent a value in your source code. A literal is not the result of a calculation or an I/O operation; it’s data that you type directly into your program.
 
 ### Interface(인터페이스)
 
