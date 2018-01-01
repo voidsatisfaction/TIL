@@ -14,6 +14,8 @@ p.s 참고로 이 글을 쓰고 있는 지금은 2017년 12월 25일. 크리스�
 
 ## 철학
 
+Perl: Practical Extraction and Report Language
+
 TIMTOWTDI(There Is More Than One Way To Do It)
 
 ## Perl의 장점
@@ -33,6 +35,7 @@ Perl is Humble Language.
 - 내장 디버거 기능
 - CPAN에는 웬만한 것이 있다.
 - 텍스트 데이터를 다루는 데에 환상적이다.
+- 배우기 힘들지만 사용하기 쉽다.
 
 ## 기본 정리
 
