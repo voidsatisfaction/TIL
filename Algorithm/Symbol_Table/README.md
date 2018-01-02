@@ -54,11 +54,17 @@ associative array abstraction
 - min(): 가장 작은 키에 대응하는 값은?
 - max()
 - select(n): n번째 키에 대응하는 값은?
-- ceiling(key Key) Key: key이후의 가장 작은 key는?
-- floor(key Key) Key
+- ceiling(key Key) Key: key보다 큰 key들 중에서 이후의 가장 작은 key는?
+- floor(key Key) Key: key보다 작은 key들 중에서 가장 큰 key는?
 
 ## 이진 탐색 트리 응용 심볼 테이블
 
 [이진 탐색 트리 참고](../Tree/Binary_search_tree/README.md)
 
-모든 API의 효율이 `O(h)` h는 트리의 높이를 말한다(Iteration을 제외)
+모든 API의 효율이 `O(h)`이며 여기서, h는 트리의 높이를 말한다(Iteration을 제외)
+
+## 편향 레드블랙트리를 응용한 심볼 테이블
+
+[편향 레드블랙트리 트리 참고](../Tree/Binary_search_tree/README.md)
+
+모든 API의 효율이 `O(logn)`
