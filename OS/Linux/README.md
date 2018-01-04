@@ -215,3 +215,85 @@ apt-get install apache2 # /etc/init.d(데몬들이 모여있는 곳)에 설치
 service apache2 start # 데몬 프로그램을 실행
 service apache2 stop # 데몬 프로그램을 멈춤
 ```
+
+## 14. 정기적 실행: cron
+
+- 리눅스 자체에서 정기적으로 프로그램을 실행할 수 있도록 도와주는 유틸리티 소프트웨어
+- `apt-get install cront`
+- `crontab -e`: 정기적으로 실행할 프로그램을 지정
+- 도커 내에서는 크론을 지정해도 그냥 실행이 되지 않을 수 있으므로 검색이 필요
+
+```sh
+m h  dom mon dow   command
+
+# 1분마다 date >> date.log를 실행, 기본적으로 경로가 주어지지 않으면 ~를 지칭
+*/1 * * * * date >> date.log
+```
+
+## 15. 쉘을 시작할 때 실행: Startup script
+
+c.f) `alias l='ls -al'` l을 입력하면 `ls -al`이 실행됨.
+
+`~/.bashrc`의 내용을 변경하면 쉘이 시작할때 실행된다.
+
+## 16. 다중 사용자
+
+- `id`
+  - 나는 누구인가.
+  - uid, gid, groups를 알 수 있다.
+- `who`
+  - 현재 자신의 컴퓨터에 접속한 사람들을 알 수 있다.
+
+- 자기자신이 super user(슈퍼 유저)가 될 수 있다.
+- 자신이 어떤 유저인지 확인
+  - `#`: 슈퍼유저
+  - `$`: 일반유저
+  - `root@ef55708f5be5:~#`이는 슈퍼유저이다.
+
+- `su - root`: 슈퍼유저가 될 수 있다.
+- `sudo passwd -u root`: 슈퍼유저의 잠금 풀음
+- `sudo passwd -l root`: 슈퍼유저의 잠금 걸음
+- 일반적인 경우에 루트사용자를 잠금 시켜놓는것이 좋다.
+- 루트 사용자의 루트 디렉토리는 `/root`
+- 일반 사용자는 `/home/username`
+
+### 사용자 추가
+
+- `sudo useradd -m koro`: koro라는 이름을 가진 사용자를 추가.
+- `sudo passwd koro`: koro라는 이름을 가진 사용자의 패스워드를 추가
+- `sudo usermod -a -G sudo koro`: koro에게 sudo권한을 부여
+
+### 권한
+
+- 권한의 대상: 파일 & 디렉터리
+- 권한의 종류: 읽기 & 쓰기 & 실행
+- `-rw-r--r-- 1 root root       6 Jan  4 02:06 perm.txt`
+  - 맨 앞의 `-`나 `d`: 타입. 파일인가 디렉터리인가
+  - `rw-r--r--`: 접근 모드(access mode)
+    - `rw-`: 오너의 권한(owner)
+    - `r--`: 그룹의 권한(group)
+    - `r--`: 등록된 다른 모든 사용자들(other)
+  - `rwx`
+    - r: 읽기권한(read)
+    - w: 쓰기권한(write)
+    - x: 실행권한(execute)
+  - `root(소유자) root(그룹)`
+- `chmod`로 권한 변경 가능
+  - `chmod o+r perm.txt`: 다른 사용자들(other)에게 perm.txt파일에 대하여 읽기권한을 추가하겠다.
+  - `chmod u-r perm.txt`: 소유자(user)가 perm.txt를 읽지 못하게 권한 삭제
+  - `chmod u+x hi-machine.sh`: 소유자가 hi-machine.sh를 실행할 수 있도록 한다.
+    - 실행에 관해서 운영체제는 `./hi-machine.sh`를 보면, 운영체제는 가장 먼저 현재 유저가 실행하는 권한이 있는지 확인한 뒤에, `#!/bin/bash`를 보고 그 파서로 프로그램을 실행한다.
+- 디렉터리의 경우 `w`권한이 없으면 그 안에서 파일 작성, 파일 삭제, 파일 편집, 디렉터리 생성 등이 불가능하다. `x`권한이 없으면 `cd`커맨드를 이용해서 들어갈 수 없다.
+  - `chmod -R o+w perm`: perm내의 모든 디렉터리와 파일들에 재귀적으로 편집 권한을 부여한다.
+- chmod의 팔진수(octal)모드: [참고 - 위키피디아](https://en.wikipedia.org/wiki/Chmod)
+  - `chmod 777 perm.txt`
+
+### 그룹
+
+c.f) `!!`는 직전에 입력했던 명령어를 의미
+
+그룹 단위로 권한을 제어
+
+- `sudo groupadd developer`: developer이라는 그룹 추가
+- `sudo usermod -a -G developer momo`: momo라는 사용자를 developer그룹에 추가
+- `chown`: 파일이나 디렉터리의 소유자나 그룹을 바꿀 수 있다.
