@@ -115,3 +115,12 @@ sub created {
 ```perl
 $self->{_created} //= # 何か処理
 ```
+
+### DDP: 오브젝트 내부를 시원하게 간결하게 봐 보자
+
+DDP: Data::Dumper보다 더 오브젝트 데이터를 쉽게 볼 수 있는 방법
+
+```perl
+use DDP;
+p $abc; # utf8 + CodeRef + 보기편한 형식
+```
