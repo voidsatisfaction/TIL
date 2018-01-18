@@ -110,7 +110,7 @@ sub created {
 ```
 
 - 덧붙여 설명하자면 아래와 같은 코드 작성은 메모화를 위한 관습이다.
-  - 샘플 코드는 `||=` 이나, 과거 버전(5.10미만)에서는 [Defined-or-operator](https://perldoc.perl.org/perlop.html#Logical-Defined-Or) 를 사용할 수 없었으므로, undef의 경우만 값을 넣고 싶으면 `\\=`를 써야한다.
+  - 샘플 코드는 `||=` 이나, 과거 버전(5.10미만)에서는 [Defined-or-operator](https://perldoc.perl.org/perlop.html#Logical-Defined-Or) 를 사용할 수 없었으므로, undef의 경우만 값을 넣고 싶으면 `//`를 써야한다.
 
 ```perl
 $self->{_created} //= # 何か処理
