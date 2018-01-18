@@ -30,3 +30,13 @@ A literal is how you represent a value in your source code. A literal is not the
   - 언어에서 미리 행동이 정의된 이름
 - 연산자와 구두점
 - 리터럴
+
+### Path parameter vs Query string
+
+- Path parameter
+  - 필수적인 매개변수를 넘겨주는 것이 좋음
+  - `GET /employee/{id}`
+- Query string
+  - 선택적 매개변수를 넘겨주는 것이 좋음(사이즈, 시작점)
+  - 필터와 같은 느낌
+  - `GET /employee?start=1&size=10`
