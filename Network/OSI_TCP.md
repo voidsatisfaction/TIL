@@ -156,7 +156,7 @@
 
 ### IPv4 패킷 헤더
 
-![ipv4 header](./images/ip_packet_header.png)
+![ipv4 header](./images/ipv4_packet_header.png)
 
 - IPv4 패킷을 목적지로 전송하기 위한 모든 정보 제공
   - 그래서 데이터그램으로 불린다.
