@@ -155,7 +155,7 @@ public Value get(Key key) {
   return null;
 }
 
-public void get(Key key) {
+public void put(Key key) {
   int i = hash(key);
   for (Node x = st[i]; x != null ; x = x.next ) {
     if (key.equals(x.key)) {

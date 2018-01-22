@@ -68,3 +68,32 @@ associative array abstraction
 [편향 레드블랙트리 트리 참고](../Tree/Binary_search_tree/README.md)
 
 모든 API의 효율이 `O(logn)`
+
+## 해시를 이용한 심볼 테이블
+
+[해시 참고](../Hash/README.md)
+
+## 심볼 테이블의 응용
+
+### SET: 집합
+
+각각의 구별되는 키들의 집합
+
+- API
+  - add(key Key)
+  - contains(key Key)
+  - remove(key Key)
+  - size()
+  - iterator()
+
+### Dictionary Client: 딕셔너리
+
+- key-value의 페어로 데이터를 저장
+- key를 어떠한 기준으로 저장해나갈 것인가가 중요
+
+### 인덱싱
+
+- 예
+  - 파일 내에 단어가 등장한 줄을 출력
+
+### Sparse vectors
