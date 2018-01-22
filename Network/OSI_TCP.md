@@ -154,7 +154,7 @@
   - 인터네트워킹(Internetworking)
   - 라우팅
 
-### IPv4 헤더
+### IPv4 패킷 헤더
 
 ![ipv4 header](./images/ip_packet_header.png)
 
@@ -184,6 +184,7 @@
     - Wi-Fi의 경우: 2304옥텟(MPDU Mac Protocol Data Unit역시 포함되는 사이즈)
 - 아이덴티티피케이션(Identification)
   - IPv4를 유일하게 식별하기위한 연속된 숫자
+  - 패킷 분열이 발생한 경우 조각을다시 결합할때 원래의 데이터를 식별하기 위해서 사용
   - `출발지 주소`, `도착지 주소`, `프로토콜` 필드와 함꼐 사용된다.
 - 플레그 & 프레그먼트 오프셋
   - 패킷 파편화에 사용
@@ -228,3 +229,113 @@ MTU Ethernet
 MTU Wi-Fi
 
 ![mtu-wifi](./images/mtu-wifi.png)
+
+### IPv6 패킷 헤더
+
+![ip_v6_header](./images/ipv6_header.png)
+
+- IPv6 패킷이 목적지에 도달하기 위한 모든 정보 제공(데이터 그램)
+- 버전(Version)
+  - IP 패킷의 버전을 구분하기 위함
+  - 값은 6
+- DS & ECS(8비트)
+  - DS(6비트)
+    - 서비스의 우선순위를 구별
+  - ECN(2비트)
+    - 네트워크 속도 지연을 감지
+- Flow Label
+  - 원래는 실시간 애플리케이션을 위한 레이블
+  - 지금은 라우터(스위치)에게 라우팅 경로 변경을 적용하지 말라는 명시적인 레이블(수신자가 이 패킷을 다시 순서를 짜맞추지 않을것이기 때문)
+- Payload Length(16비트)
+  - 확장 헤더를 포함하는 payload의 길이를 옥텟단위로 표현
+  - 최대 payload사이즈는 2^16-1옥텟
+  - c.f IPv6 Jumbogram
+    - 2^32-1옥텟(4GB)
+      - Payload Length필드는 0으로 설정
+    - Jumbo Payload Option 확장 헤더를 사용해야함
+- Next Header(8비트)
+  - 다음 헤더의 타입을 나타냄(확장 헤더 or Transport 레이어 헤더)
+  - TCP, UDP, ICMP, IGMP, ENCAP, OSPF, SCTP
+  - 확장 헤더
+    - IPv6헤더는 여러가지 확장 헤더를 붙일 수 있음
+    - 각각의 헤더는 다른 형식을 갖음, 대개는 **TLV(Type Length Value + Padding)** 형식
+    - ESP(Encapsulating Security Payload), AH(Authentication Header)는 IPv6 보안을 위해 있음
+- Hop Limit(8비트)
+  - 중간 노드(라우터)를 거칠 때 마다 1씩 줄어들음
+  - HL=0이면 버려짐
+- 출발지 & 목적지 주소
+  - IPv6 출발지 & 목적지 주소
+    - 각각 128비트 주소
+    - 8그룹의 16비트(4의 16진수 자릿수)
+    - 8그룹 x 4 16진수 자릿수 x 4자리수/16진수
+    - e.g   `2ac1:05b8:123e:0000:0000:0000:03a0:c234`
+    - 1 : 2 : 3 : 4 : 5 : 6 : 7 : 8 groups
+      - 4개의 16진수 자리수앞의 0들은 생략될 수 있다.
+      - 1이상의 연속된 0의 그룹은 ::로 대체 될 수 있는데, 이는 IPv6 주소에서 한 번만 할 수 있다.
+      - `2ac1:05b8:123e:0000:0000:0000:03a0:c234` == `2ac1:5b8::3a0:c234`
+    - Unspecified Address `::/128`(서브넷 마스크가 전부 111)
+      - 모든 0인 주소
+      - IPv4의 `0.0.0.0/32`와 같음
+    - 기본 라우터 주소(Default Router) `::/0`
+      - 모든 라우터 주소가 0이고 서브넷 마스크도 모드 0
+      - IPv4의 `0.0.0.0/0`과 같음
+    - IPv4을 IPv6으로 매핑하기 `::ffff:0:0/96`
+      - 약간의 예외가 있음
+  - CIDR(Classless Inter-Domain Routing) 표기법이 사용됨
+
+## UDP(User Datagram Protocol)
+
+![udp](./images/udp.png)
+
+![udp_connection](./images/udp_connection.png)
+
+- UDP는 애플리케이션 연결에 있어서 포트 정보를 제공
+- 연결 없음
+  - UDP는 엔드 포인트-엔드 포인트 연결에 있어서 별도의 확인을 하지 않는다.
+- 포트
+  - UDP는 출발지의 목적지 컴퓨터의 애플리케이션 연결을 위한 포트 정보를 제공함.
+  - UDP헤더는 출발지 포트와 목적지 포트를 포함함
+- 길이
+  - 길이 필드는 UDP 부분의 전체 길이를 포함하며, UDP 헤더와 데이터 둘다 포함한다.
+- 체크섬
+  - UDP 헤더의 비트 에러를 감지
+  - TCP와 IPv4헤더의 체크섬과 같은 알고리즘 사용
+  - 에러가 감지되면, 그 세그먼트는 버려지며, 복구 기능은 동작하지 않는다.
+  - UDP의 체크섬 필드사용은 선택이다(쓰지 않으면 필드 전체가 0이 됨)
+
+## TCP(Transmission Control Protocol)
+
+![tcp_header](./images/tcp_header.png)
+
+- TCP 헤더의 최소 길이는 20옥텟
+- TCP 헤더는 `flow control`의 역할을 담당하는 다양한 데이터 부분이 존재함
+- 필드 설명
+  - 체크섬
+    - 에러 감지 코드
+    - 모의 TCP 헤더, TCP 데이터를 갖음
+  - 데이터 오프셋(4비트)
+    - TCP헤더의 32비트 단어(word)의 숫자
+      - 최소 TCP 헤더의 길이는 20옥텟
+    - 추가 옵션이 사용되면, TCP헤더가 32비트 단어들의 배수가 되도록 패딩이 추가될 수 있다.
+  - 비축(reserved 4비트)
+    - 매래의 사용을 위한 비트
+  - 출발지 & 목적지 포트(16 비트)
+    - 자주 사용되는 포트 번호
+      - 20 = FTP(File Transfer Protocol)
+      - 21 = FTP Control
+      - 23 = Telnet
+      - 25 = SMTP(Simple Mail Transfer Protocol)
+      - 35 = Private Printer Server Protocol
+      - 53 = DNS(Domain Name System)
+      - 80 = HTTP(Hypertext Transfer Protocol)
+      - 123 = NTP(Network Time Protocol): 시간 동기화
+      - 143 = IMAP(Internet Message Access Protocol): 이메일 메시지 관리
+  - PSH 플레그(1비트): 푸시 작용
+    - `PSH = 1`은 데이터 조각을 받는 애플리케이션으로 푸시함
+    - 푸시는 받게되는 데이터 조각들이 빠르게 애플리케이션에 의해서 사용되게 함(원래는 각각 분리된 데이터 조각이 일정 단위로 다시 합쳐져야 애플리케이션이 사용할 수 있으나 이 플레그가 참이면 바로 사용된다)
+  - URG(Urgent 긴급한) 플레그(1비트)
+    - 헤더의 Urgent Pointer field가 사용됨
+  - UP(Urgent Pointer 16비트)
+    - Urgent data location을 가르킴
+    - 수신자가 얼마나 많은 urgent data가 오는지 확인 가능
+    - SN(Sequence number) + UP(Urgent Pointer) = Urgent data의 마지막 sequence number를 나타냄
