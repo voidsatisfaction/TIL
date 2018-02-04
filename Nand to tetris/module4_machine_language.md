@@ -465,11 +465,11 @@ R) 많은 사람들은 고수준의 언어를 사용함. 대신 컴파일러를 
 
 ## 예시 코드
 
-### 예시1: R[2] = R[0] * R[1]
+### 예시1: RAM[2] = RAM[0] * RAM[1]
 
 ```asm
-// R[0]과 R[1]을 곱한 결과를
-// R[2]에 저장하는 코드
+// RAM[0]과 RAM[1]을 곱한 결과를
+// RAM[2]에 저장하는 코드
 
 // initialization
 @R1
@@ -652,11 +652,11 @@ M=0
 ### 예시3: 소수 구하는 프로그램
 
 ```asm
-// R[0]에 있는 숫자가 소수인지 아닌지 판별
-// 소수이면 R[1]에 1을
-// 소수가 아니면 R[1]에 0을 저장
-// check whether R[0] is prime or not
-// the result is saved to R[1]
+// RAM[0]에 있는 숫자가 소수인지 아닌지 판별
+// 소수이면 RAM[1]에 1을
+// 소수가 아니면 RAM[1]에 0을 저장
+// check whether RAM[0] is prime or not
+// the result is saved to RAM[1]
 @R0
 D=M
 @n
@@ -682,7 +682,7 @@ M=D
   // i*i <= n
   D=D-M
   @STOP_TRUE
-  D+1;JEQ
+  D;JEQ
 
   @temp // temp for calculating D%M
   M=0
