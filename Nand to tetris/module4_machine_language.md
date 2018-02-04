@@ -462,3 +462,189 @@ R) 기계어는 사람들이 프로그래밍 하기 쉽게 디자인 되어 있�
 
 Q) 사람들은 기계어를 사용해서 고통받아야 하는가?
 R) 많은 사람들은 고수준의 언어를 사용함. 대신 컴파일러를 만들어야 함. 컴파일러를 이해하기 위해서는 컴파일러가 생산하는 기계어를 이해해야만 함. 성능이 매우 중요한 프로그램에서는 기계어를 수정해서 최적화 하는 경우도.
+
+## 예시 코드
+
+### 예시1: RAM[2] = RAM[0] * RAM[1]
+
+```asm
+// RAM[0]과 RAM[1]을 곱한 결과를
+// RAM[2]에 저장하는 코드
+
+// initialization
+@R1
+D=M
+@n
+M=D
+@i
+M=0
+@sum
+M=0
+@SUMLOOP
+0;JMP
+
+(SUMLOOP)
+  // check stop condition i
+  @i
+  D=M
+  @n
+  D=D-M
+  @STOP
+  D;JGE
+
+  // add summation
+  @R0
+  D=M
+  @sum
+  M=M+D
+
+  // refresh looping variables
+  @i
+  M=M+1
+
+  // goto next loop
+  @SUMLOOP
+  0;JMP
+
+(STOP)
+  // after loop
+  @sum
+  D=M
+  @R2
+  M=D
+
+  @END
+  0;JMP
+
+(END)
+  // infinite loop for end
+  @END
+  0;JMP
+
+```
+
+### 예시2
+
+```asm
+// 화면의 모든 픽셀을
+// 키보드의 키를 눌렀을 때 검은색
+// 키보드의 키를 누르지 않았을 때 흰색
+// 으로 보여주는 어셈블리코드(핵 컴퓨터의 예시)
+
+@LOOP
+0;JMP
+
+(LOOP)
+  // write initialization
+  @KBD
+  D=M
+  @keyin
+  M=D
+  @32
+  D=A
+  @m
+  M=D
+  @256
+  D=A
+  @n
+  M=D
+  @i
+  M=0
+  @k
+  M=0
+  @keyin
+  D=M
+  @SCREEN_BLACK
+  D;JGT
+  @SCREEN_WHITE
+  0;JMP
+
+(SCREEN_BLACK)
+  // check stop condition i
+  @j
+  M=0
+  @i
+  D=M
+  @n
+  D=D-M
+  @i
+  M=M+1
+  @LOOP
+  D;JGE
+  @SCREEN_BLACK_INNER
+  0;JMP
+
+(SCREEN_BLACK_INNER)
+  // check stop condition j
+  @j
+  D=M
+  @m
+  D=D-M
+  @SCREEN_BLACK
+  D;JGE
+
+  // make SCREEN pointer
+  @SCREEN
+  D=A
+  @addr
+  M=D
+
+  // assign new value to pointer value
+  @k
+  D=M
+  @addr
+  A=M+D
+  M=-1
+
+  // refresh looping variables
+  @j
+  M=M+1
+  @k
+  M=M+1
+
+  // goto next loop
+  @SCREEN_BLACK_INNER
+  0;JMP
+
+(SCREEN_WHITE)
+  @j
+  M=0
+  @i
+  D=M
+  @n
+  D=D-M
+  @i
+  M=M+1
+  @LOOP
+  D;JGE
+  @SCREEN_WHITE_INNER
+  0;JMP
+
+(SCREEN_WHITE_INNER)
+  @j
+  D=M
+  @m
+  D=D-M
+  @SCREEN_WHITE
+  D;JGE
+
+  @SCREEN
+  D=A
+  @addr
+  M=D
+
+  @k
+  D=M
+  @addr
+  A=M+D
+  M=0
+
+  @j
+  M=M+1
+  @k
+  M=M+1
+
+  @SCREEN_WHITE_INNER
+  0;JMP
+
+```
