@@ -127,7 +127,7 @@ plackup -e 'sub { die "Foo" }'
   - `plackup -E production app.psgi`
   - -E 옵션으로 development이외의 값을 설정
 
-### Plack::App - 편리한 애프릴케이션 군
+### Plack::App - 편리한 애플리케이션 군
 
 - 다양한 기능
   - 스타팅 파일의 송신
@@ -215,6 +215,7 @@ my $mw = sub {
     my $temp = (rand(1) > 0.5) ? '1.2.3.4' : $env->{REMOTE_ADDR};
     $env->{REMOTE_ADDR} = $temp;
     $env->{DEF} = 'hihihihi';
+    print "first\n";
     $app->($env);
   };
 };
@@ -224,13 +225,19 @@ my $mw_query_string = sub {
   return sub {
     my $env = shift;
     $env->{ABC} = 'so much fun';
+    print "second\n";
     $app->($env);
   };
 };
 
 $app = $mw->($mw_query_string->($app));
+
 # $env안에
 # 'DEF' => 'hihihihi'
 # 'ABC' => 'so much fun'
 # 포함
+# first
+# second
+# 순으로 출력
+# 즉, 미들웨어의 경우는 $mw가 먼저 반영된다.
 ```

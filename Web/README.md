@@ -76,6 +76,7 @@ curl -v http://hatenablog.com/
   - 리소스의 작성, 변경, 삭제
   - 변경, 삭제는 원래 `PUT`, `DELETE`메소드가 담당해야 함
   - 하지만 HTML의 폼(form)이 `GET/POST`밖에 지원하지 않으므로 `POST`로 대체하는 것도 일반적임
+    - 사실 요즈음은 폼같은 경우도, 자바스크립트의 ajax를 많이 이용한다(`DELETE/PUT`사용 가능)
   - 인자는 URI와는 별개로 body에 넣는다.
     - URI길이의 제한을 받지 않음
 
@@ -89,8 +90,10 @@ curl -v http://hatenablog.com/
 - 200 OK
 - 301 Moved Permanently
   - 영구적 리다이렉트
+  - 원래의 리소스가 더이상 존재하지 않아서 리다이렉트 된다는 뜻
 - 302 Found
   - 일시적 리다이렉트
+  - 원래의 리소스가 일시적으로 존재하지 않아서 리다이렉트 된다는 뜻
 - 400 Bad Request
   - 리퀘스트가 잘못됨
   - 클라이언트쪽 문제
