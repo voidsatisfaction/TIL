@@ -24,6 +24,10 @@ Translation
 - string-types
 - array-types
 
+## [Hatena-Textbook](https://github.com/hatena/Hatena-Textbook/commits?author=voidsatisfaction)
+
+While doing new employee training, I fixed typos and invalid expression of textbook of Hatena
+
 # Opensource Guide
 
 오픈 소스 활동을 처음 시작하는 분들을 위하여
