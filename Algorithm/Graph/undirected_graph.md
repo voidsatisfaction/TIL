@@ -1,3 +1,5 @@
+# Undirected Graph
+
 ## dfs(depth first search)
 
 ![graph_maze](./images/graph_maze.png)
