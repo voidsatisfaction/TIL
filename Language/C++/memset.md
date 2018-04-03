@@ -4,6 +4,7 @@
 
 ```c++
 #include <cstdio>
+// cstring을 반드시 포함해야 함
 #include <cstring>
 
 int cache[10][10];
