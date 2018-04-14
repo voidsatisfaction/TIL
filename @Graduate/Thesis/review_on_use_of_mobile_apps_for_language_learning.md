@@ -137,7 +137,7 @@
 
 ## suggestion
 
-- Self-regulated learning can be developed by transforming these devices usage for learning the language.
+- **Self-regulated learning** can be developed by transforming these devices usage for learning the language.
   - Students choose what they will learn, how they will learn, and decide for themselves how they will assess their own learning
 - which age group can handle the technology better based on the activities that are designed.
 - The third can be in dealing with off-line mobile apps in poor economic countries
