@@ -654,6 +654,129 @@ res0: String = C
 
 정답은 C이다. extends하는 순서를 바꾸면 B가 됨
 
+## 암묵적 형변환 / 매개변수(implicit conversion/parameter)
+
+- 암묵적 형변환
+- 암묵적 매개변수
+
+### 일반적인 형변환
+
+```scala
+def stringToInt(s: String): Int = {
+  Integer.parseInt(2, 10)
+}
+
+"20" / 5 // 타입 에러가 됨
+stringToInt("20") / 5 // ok
+```
+
+### 암묵적 형변환(implicit)
+
+```scala
+implicit def stringToInt(s: String): Int = {
+  Integer.parseInt(2, 10)
+}
+
+"20" / 5 // 계산가능
+```
+
+- 요구하는 타입을 얻을 수 없는 경우, **같은 스코프** 안의 `implicit`선언을 조사해서 자동으로 변환해 줌
+- /의 왼쪽에는 수치타입만 나타날 수 있으나, 문자열이 나타났으므로, `implicit`에서 정의한 변환 함수가 호출됨
+- 그러니 위와 같은 활용은 하지 않음
+
+#### 활용: 기존의 타입을 확장하는 것 처럼 보여줌(pimp my library패턴)
+
+```scala
+class GreatString(val s: String) {
+  def bang: String = s + "!!!!"
+}
+implicit def str2greatStr(s: String): GreatString = {
+  new GreatString(s)
+}
+
+"hello".bang // String에 새로운 메서드가 생긴 것 처럼 보임
+```
+
+```scala
+implicit class GreatString(s: String) {
+  def bang: String = s + "!!!!"
+}
+
+"hello".bang
+```
+
+#### 활용: 암묵적 매개변수
+
+- 미리 암묵적 인자를 받는 함수를 정의
+- 호출시 스코프내의 `implicit`선언을 조사하여 자동적으로 인자로서 받음
+
+```scala
+def say(msg: String)(implicit suffix: String) = msg + suffix
+
+say("hello")("!!!!!") // => hello!!!!! 일반적인 호출
+implicit val mySuffix = "!?!?!!1" // 암묵적 인자를 제공
+say("hello") // => hello!?!?!!1
+```
+
+- 다음과 같은 경우는?
+
+```scala
+def say(msg: String)(implicit suffix: String) = msg + suffix
+implicit val superSuffix: String = "!23"
+implicit val superSuffix2: String = "123$$$$$"
+
+println(say("monokuro")) // ambiguous implicit values: Error!!!
+```
+
+##### 활용1: 컨텍스트 오브젝트(context object)를 계속해서 사용하는 경우
+
+```scala
+def findById(id: Int, dbContext: DBContext) = ???
+def findByName(name: String, dbContext: DBContext) = ???
+
+val dbContext = new DBContext()
+findById(1, dbContext)
+findByName("hakobe", dbContext) // 매번 컨텍스트를 넘겨줘야하므로 귀찮음
+```
+
+```scala
+def findById(id: Int)(implicit dbContext: DBContext) = ???
+def findByName(name: String)(implicit dbContext: DBContext) = ???
+
+implicit val dbContext = new DBContext()
+findById(1)
+findByName("hakobe") // dbContext는 암묵적으로 제공되므로 귀찮을 것이 없음
+```
+
+##### 활용2
+
+- 타입 클래스 구현
+- `adhoc`다형성의 구현
+  - c.f `adhoc`이란, **특별한 목적을 위해서** 라는 뜻
+  - 함수 정의를 타입마다 다르게 대체할 수 있음
+  - 스코프 마다 대체할 수 있음(adhoc)
+  - 타입의 소스코드에 접근 권한이 없어도 구현을 제공할 수 있음(adhoc)
+- 자세한 것은 다음의 url참조
+  - http://nekogata.hatenablog.com/entry/2014/06/30/062342
+  - http://eed3si9n.com/learning-scalaz/ja/polymorphism.html
+
+```scala
+trait FlipFlapper[T] {
+  def doFlipFlap(x: T): T
+}
+implicit object IntFlipFlapper extends FlipFlapper[Int] {
+  def doFlipFlap(x: Int) = -x
+}
+implicit object StringFlipFlapper extends FlipFlapper[String] {
+  def doFlipFlap(x: String) = x.reverse
+}
+
+def flipFlap[T](x: T)(implicit flipFlapper: FlipFlapper[T]) = flipFlapper.doFlipFlap(x)
+
+flipFlap(1) // => -1
+flipFlap("string") // => "gnirts"
+```
+
 #### Function vs Method
 
 Function은 값이나, Method는 그자체가 값이 아니다.
@@ -732,3 +855,191 @@ trait Cache[K, V] {
 
 def remove[K](key: K)
 ```
+
+## 타입 매개변수(type parameter)
+
+- 스칼라의 `List`등은 그 리스트의 요소가 모두 같은 타입이라면, `String`이나 `Int`와 같은 다양한 타입을 넣는 것이 가능. 이를 타입 매개변수라 함
+- `List[A]`와 같이 정의되어있으며, `A`의 부분이 타입 매개변수
+- `List[String]`은 그 리스트가 문자열만 다룰 수 있게 하고, `List[Int]`라고 하면 정수만 다룰 수 있게 함
+
+```scala
+val l: List[Int] = List("a", "b") // 컴파일 에러
+```
+
+- 자신이 정의한 함수의 매개변수의 타입을 임의의 타입으로 하고 싶은경우 등에 다음과 같이 정의 가능
+
+```scala
+def example[A](l: List[A]): A = l.head
+
+example(List(1, 2)) // Int = 1
+example(List("a", "b")) // String = a
+```
+
+- 타입 매개변수는 유연하게 지정하는 것이 가능해서, 예를들면 클래스의 파생 클래스만 매개변수로 받고싶은 경우에도 지정할 수 있음. 보다 자세한것은 **타입 경계**, **변위지정 어노테이션** 등의 키워드를 찾아보자
+
+## 복수의 인자 리스트
+
+- 함수를 정의할 때 복수의 인자 리스트를 만들 수 있음
+- **값을 받는 매개변수와 함수를 받는 매개변수를 나누어** 두면 사용하는 사람이 편함
+
+```scala
+def example(x: Int)(y: Int) = x * y
+
+example(2)(4)
+```
+
+```scala
+def example(i: Int)(f: Int => Int) = f(i)
+
+example(2) { i =>
+  i * 2
+}
+```
+
+위와 같이 `example`이라는 새로운 문(statement)를 정의한것 처럼 적을 수 있음
+
+### 가변길이 인자
+
+- 임의의 길이의 인자를 받음
+- 함수 내부에서는 받은 인자를 `Seq`로 다룸(`foreach`를 사용할 수 있음)
+
+```scala
+def example(ss: String*): Unit = ss.foreach(println)
+
+example("AA")
+example("AA", "BB")
+example("AA", "BB", "CC")
+
+val sq = Seq("AA", "BB")
+example(sq: _*) // 컬렉션을 넘겨줄 경우
+// AA
+// BB
+```
+
+## 문자열 보간(String interpolation)
+
+- `s"..."`와 같이 문자열 리터럴 앞에 접두사를 붙여서, 리터럴 안의 `$name`타입으로 변수명을 지정하여 그 값을 넣을 수있음
+
+```scala
+val name = "foo"
+val value = 3
+s"$name is $value" // foo is 3
+s"7 * 8 = ${7 * 8}" // 이와 같이 쓸 수 있음
+```
+
+## 오브젝트 지향과 함수형 프로그래밍 언어의 이야기
+
+- 스칼라는
+  - 오브젝트 지향언어
+  - 함수형 프로그래밍 언어
+
+### 오브젝트 지향
+
+- 오브젝트 지향 언어의 특징
+  - 오브젝트가 존재, 데이터를 보존하는 장소(필드)와 그러한 데이터를 조작하거나  이용해서 어떠한 행동(메서드)을 하는 것이 존재
+  - 계승
+  - 캡슐화
+  - 다형성(polymorphism)
+
+#### 계승
+
+- 이미 정의가 끝난 객체의 특성을 상속하는 것
+- 상속 받은 부모클래스의 메서드를 자식클래스가 사용할 수 있음
+
+```scala
+class Parent {
+  def helloWorld() = println("hello world")
+}
+
+class Child extends Parent {
+  def helloChild() = println("hello child")
+}
+
+new Child().helloWorld()
+// hello world
+```
+
+#### 캡슐화
+
+- 오브젝트 내부의 데이터 은폐
+- 오브젝트 행위 은폐
+- 오브젝트 실제의 타입을 은폐
+  - 관계없는 외부의 오브젝트가 이러한 내부 데이터나 행위를 다룰 수 없게 함
+  - **프로그램의 영향 범위 한정시킴**
+
+```scala
+class Capsule {
+  private def secretMethod() = println("stick")
+
+  def publicMethod() = secretMethod()
+}
+
+new Capsule().secretMethod() // error
+new Catsule().publicMethod() // "stick"
+```
+
+#### 다형성
+
+- 어떠한 오브젝트의 조작이 호출하는 쪽이 아니라, 호출 받는 쪽의 오브젝트에 의해서 정해지는 특성
+- 아래의 예
+  - `printHelloWorld`메서드는 `trait`을 받아들여서, 그 동작을 호출하고 있으나, 그 결과는 실제로 호출 받는 클래스에 위탁됨
+
+```scala
+trait HelloWorld {
+  def HelloWorld: String
+}
+
+class En extends HelloWorld {
+  def helloWorld: String = "hello world"
+}
+
+class Ja extends HelloWorld {
+  def helloWorld: String = "こんにちは、世界"
+}
+
+def printHelloWorld(hw: HelloWorld) = println(hw.helloWorld)
+
+printHelloWorld(new En)
+printHelloWorld(new Ja)
+```
+
+### 함수형 프로그래밍 언어
+
+- 스칼라는 함수평 프로그래밍 언어이기도 함
+  - 함수가 제1급 오브젝트
+  - 함수형 프로그래밍 스타일 추천
+    - 가능한 한 부작용을 갖지 않는 식이나 함수를 조합함
+    - 파괴적 대입은 피함
+    - 어떠한 변수가 상태를 갖거나 일부를 변경하거나 하는 것은 하지 않음
+- 참조 투명성이 항상 성립하는 언어를 순수함수형 프로그래밍 언어라고 함
+  - 스칼라는 비순수함수형 프로그래밍 언어
+  - 스칼라는 함수형 프로그래밍 스타일을 지원하기 위한 다양한 방법이 존재
+
+#### 함수가 제1급 오브젝트
+
+- 함수를 인자로 주거나
+- 함수 결과를 함수로 돌려주거나
+- 함수를 변수에 속박하거나 할 수 있음
+
+```scala
+val l = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+l.filter(i => i % 2 == 0) // List(2, 4, 6, 8, 10)
+
+val isEven = (i: Int) => i % 2 == 0
+
+l.filter(isEven) // List(2, 4, 6, 8, 10)
+```
+
+#### 부작용
+
+- 부작용을 갖지 않는 코드가 바람직함
+  - 변수의 값을 변경하고 싶음(var 보다도 val)
+  - 주변 변수의 상태에 동작을 의존하지 않음
+  - 파일이나 데이터베이스의 입출력이 없음
+- 이유
+  - 클래스 등의 내부의 상태를 신경쓰지 않아도 되므로, 예측하기 쉬운 코드가 됨
+  - 상태나 환경에 의존하지 않으므로 테스트를 쓰기 쉬움
+  - 상태나 환경을 공유하지 않으므로 멀티스레드로 돌려도 문제가 없음
+- 스칼라에 있어서의 부작용
+  - `var`, `mutable`컬렉션
