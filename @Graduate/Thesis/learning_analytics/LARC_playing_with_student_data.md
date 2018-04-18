@@ -53,6 +53,8 @@
   - not including thinking time(limitation of capturing all learning activities)
   - not including other resource finding and understanding time
   - being watched? surveillance culture?
+  - anaylsis is really accurate??
+    - maybe using ~% student is satisfied with the result
 
 ## Future works
 
