@@ -43,6 +43,7 @@ object Main {
 
 - Slick
   - Functional Relational Mapping Library(FRM)
+    - jdbc를 보다 편하게 사용하기 위한 라이브러리
     - 오브젝트 모델과 데이터베이스 모델 사이의 갭을 줄여줌
     - 데이터 베이스 모델을 스칼라로 가져옴
       - 인메모리 데이터를 다루는 것 처럼 데이터베이스를 다룸

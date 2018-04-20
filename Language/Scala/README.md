@@ -432,6 +432,42 @@ val result = for {
 - `for`식을 사용하면 어떠한 타입의 값도 연결해서 처리해서 이쁘게 코드를 짤 수 있음
   - 어떻게 연결할 것인지는 `flatMap`의 구현에 따름
   - `Option`타입의 경우, `Some`의 경우에는 처리가 이어져도 `None`의 경우에는 멈춤
+- **하지만 위의 코드는 어디에서 어떤 에러가 나는지 모르지 않는가?**
+  - `Ether`타입과 `toLeft`, `toRight`메서드를 이용해서 값이 있으면 왼쪽, 에러면 오른쪽을 반환 이렇게 생각할 수도 있음
+  - 결국 `for`식의 결과 값은 Ether가 반환되므로 에러가 어느 메서드에서 생겼는지 확인 가능
+
+#### for 이해하기
+
+```scala
+// ex1
+for(x <- c1; y <- c2; z <- c3) { ... }
+
+c1.foreach(x => c2.foreach(y => c3.foreach(z => {...})))
+```
+
+```scala
+// ex2
+for(x <- c1; y <- c2; z <- c3) yield { ... }
+
+c1.flatMap(x => c2.flatMap(y => c3.map(z => { ... })))
+```
+
+```scala
+// ex3
+for(x <- c; if cond) yield { ... }
+
+c.withFilter(x => cond).map(x => { ... })
+
+// fallback
+c.filter(x => cond).map(x => { ... })
+```
+
+```scala
+// ex4
+for(x <- c; y = ...) yield { ... }
+
+c.map(x => (x, ...)).map((x, y) => { ... })
+```
 
 #### 모나드
 
@@ -555,10 +591,14 @@ val hachi = Cat.create("hachi")
 #### case 클래스
 
 - 클래스와 닮음
-- 데이터 구조를 정의 하기 쉽게 커스터마이징 되어있음
 - 몇가지 메서드가 좋은 느낌으로 있음
   - toString/hashCode
   - apply/unapply(동료 오브젝트에)
+  - getter/setter
+- 클래스 비교 가능(deepEqual)
+- 패턴 매칭 가능
+- 데이터 구조를 정의 하기 쉽게 커스터마이징 되어있음
+  - 불변 데이터 구조의 모델 클래스로 재격
 
 ```scala
 case class Cat(name: String) { // name은 그 자체로 field가 됨
