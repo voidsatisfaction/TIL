@@ -124,3 +124,8 @@ DDP: Data::Dumper보다 더 오브젝트 데이터를 쉽게 볼 수 있는 방�
 use DDP;
 p $abc; # utf8 + CodeRef + 보기편한 형식
 ```
+
+### 리스트에 관한 유용한 메서드
+
+- 참고: http://d.hatena.ne.jp/minesouta/20070914/p1
+- `use List::Util qw(first, max, min, maxstr, minstr, shuffle, reduce)`
