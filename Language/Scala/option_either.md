@@ -1,13 +1,29 @@
 # Option Either
 
-## Option 사용법
+## Option의 정의
+
+```scala
+// Option의 추상클래스. 갖을 수도 있을 값의 타입을 파라미터로 갖음
+sealed abstract class Option[+A] extends Product
+
+// Some은 Option을 계승한 값이 있는 경우를 표현함
+// 생성자에 실제로 값을 갖음
+final case class Some[+A](x: A) extends Option[A]
+
+// None은 값이 없는 경우를 나타냄. Option타입 파라미터는 공변이므로
+// Option[Nothing]은 모든 Option[A]타입의 서브타입이 됨. 그러므로 싱글톤
+case object None extends Option[Nothing]
+```
 
 ### 패턴매칭으로 예외 처리 하는 경우
+
+- Option타입의 `get`메서드를 이용해서 값을 추출할 수 있지만 `None`에서는 에러가 나므로 이는 바람직하지 않음
+- 패턴매치 사용
 
 ```scala
 val map = Map("a" -> 1, "b" -> 2)
 
-map.get("a") match {
+map.get("a") match { // Option타입은 sealed로 지정되어 있으며, Some[A]는 케이스 클래스 이므로 Option타입에 대한 패턴 매칭을 작성할 수 있음
   case Some(n) => println(n) // 1
   case None => println("Nothing")
 }
@@ -17,6 +33,122 @@ map.get("c") match {
   case None => println("Nothing") // Nothing
 }
 ```
+
+### Option대신 null을 사용할 때에 문제점
+
+- 해시 맵에서 키 자체가 없는 경우 `null`이 반환되는데 이것이 `null`인지 아닌지를 항상 확인해야 함
+  - 이러한 확인을 컴파일러가 제대로 하고 있는지 판단하지 못함
+  - 사람의 인지에 의존해서 반드시 `null`을 체크해줘야 함
+- 해시 맵에서 키 자체가 없으면 `null`을 반환해야 하는데, 키는 존재해도 값이 `null`인 경우도 `null`을 반환하므로 구별이 되지 않음
+  - js는 그래서 `undefined`가 있는건가부다
+
+### 스칼라에서는 `Option`으로 해결가능
+
+- 강제적으로 Some혹은 None을 사용하도록 함
+- 빠트린 경우는 컴파일 에러
+- 값 자체가 없으면 None 이고, null 값이 들어가 있으면 null
+- **스칼라에서 `null`이 등장하는 경우는 `Option`으로 치환해야 하는 곳**
+
+### Option을 고개함수를 이용해서 다루자
+
+#### Map
+
+- `Option#Map[B](f: (A) => B): Option[B]`
+- Some의 경우는 인자의 `f:(A) => B`타입의 함수 오브젝트에 이미 보유하고 있는 값을 넘겨서 변환한 결과를 `Some[B]`로 반환, `None`이면 `None`인채로 둠
+
+#### getOrElse
+
+- `Option#getOrElse[B >: A](default: => B): B`
+- Some인 경우에는 갖고 있는 값을 반환, None이면 인자에 준 값을 반환
+- 디폴트 값을 지정할 떄 사용
+
+```scala
+val map = Map("foo" -> "bar", "hoge" -> null)
+
+def valueLength(key: String) = map.get(key) match {
+  case Some(v) if v == null => "key %s value is null" format(key)
+  case Some(v) => "key %s value's length is %d" format(key, v.length)
+  case None => "key %s is not contains." format(key)
+}
+```
+
+#### `foreach`에 의한 처리
+
+- `Option#foreach[U](f: (A) => U): Unit`
+- Some이면 가지고 있는 값을 인자인 함수 오브젝트에 넘겨줘서 처리를 호출, None이면 아무것도 하지 않음
+  - List등의 foreach와 같음
+
+#### `orElse`에 의한 처리
+
+- `Option#orElse[B >: A](alternative: => Option[B]): Option[B]`
+- Some에 대해서 호출하면 자기자신을 반환, None에 대해서 호출하면 Option을 반환
+
+```scala
+verbose orElse deprecation foreach{ v => throw new IllegalArgumentException } // verbose가 none이면 deprecation을 반환, deprecation이 none이면 foreach는 실행되지 않음
+```
+
+#### `collect`에 의한 처리
+
+- `collect[B](pf: PartialFunction[A, B]): Option[B]`
+- 인자에 PartialFunction을 넘겨주어, PF가 적용 가능한 경우에만 map함
+
+#### `exists`에 의한 처리
+
+- `exists(p: (A) => Boolean): Boolean`
+- Option값에 대해서, 인자의 p가 true를 반환하는가 확인. None에 대해서는 항상 false
+
+```scala
+opts.get("d").exists { s => s == "./bin" } // true
+```
+
+#### `filter`에 의한 처리
+
+- `filter(p: (A) => Boolean): Option[A]`
+- 인자의 p가 true를 반환할경우만 `Some[A]`를 반환. false를 반환하는 경우는 None이 됨
+
+```scala
+opts.get("verbose").filter{ v => v.nonEmpty } // Option[String] = None
+
+opts.get("classpath").filter{ v => v.nonEmpty } // Option[String] = Some(./:./lib)
+```
+
+#### `flatMap`에 의한 처리
+
+- `flatMap[B](f: (A) => Option[B]): Option[B]`
+- `(A) => Option[B]`의 결과가 Some[B]라면 Some[B]를, None이면 None을 반환
+  - **collection에서의 flatMap과는 다소 다른 움직임을 보임**
+  - 컬랙션에서는 map -> flat의 움직임
+
+```scala
+val res3 = map.get("a").toRight(null).right.flatMap{ a => // 앞서 결과가 Left(a+b)이므로 Left(a+b)를 반환
+  map.get("b").toLeft(null).left.map{ b => // Left(a+b)반환
+    a + b
+  }
+}
+println(res3) // Left(3)
+
+// Opts에서 값이 지정된 것만 추출
+// 컬렉션에서의 flatMap호출
+// map -> flatten
+opts.flatMap {
+  case (k, "") => None
+  case (k, v) => Some(v)
+}
+// scala.collection.immutable.Iterable[String] = List(./:./lib, .bin)
+```
+
+#### `Option`과 `for`
+
+```scala
+for( cp <- opts.get("classpath"); d <- opts.get("d") ) {
+  | println(" classpath: %s" format cp )
+  | println(" dest     : %s" format d )
+| }
+// classpath: ./:./lib
+// dest     : ./bin
+```
+
+## Option 사용법
 
 ### getOrElse로 예외 처리
 
