@@ -378,3 +378,6 @@ r max s // r.max(s)
 ```
 
 아래에 가면 갈 수록 우선순위가 높아지는 문자(JAVA, C와 같음)
+
+- a + b ^? c ?^ d less a ==> b | c
+  - ((a + b) ^? (c ?^ d)) less ((a ==> b) | c)
