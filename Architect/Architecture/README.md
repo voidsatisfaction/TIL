@@ -1,10 +1,15 @@
 # 아키텍쳐 기본
 
+- 참조
+  - [미들웨어 실행환경의 다양화를 고려한 인프라스트럭처 아키텍처](https://speakerdeck.com/masayoshi/study-on-web-system-architecture-number-2)
+
 ## 어떠한 애플리케이션도 구현의 기본은 아키텍쳐
 
-## 헥사고날 아키텍쳐
+## 헥사고날 아키텍처
 
 ![](./images/hexagonal_architecture.png)
+
+![](./images/hexagonal_architecture2.png)
 
 하나의 프로그램은 인터페이스와 애플리케이션과 도메인으로 나뉜다.
 
@@ -16,4 +21,14 @@
 
 앞으로 프로그램을 만들 때 헥사고날 아키텍쳐를 생각하면서 만들면 큰 도움이 된다고 생각한다. 애초에 UI와 도메인로직을 분리하므로써, 자연스럽게 레이어 아키텍쳐를 구성할 수 있게 될 뿐 아니라, 뷰와 도메인로직의 분리로 인해서 보다 복잡도가 낮은 프로그램을 만들 수 있기 때문이다.
 
+단순히 UI뿐 아니라, DB와 같은 인프라 부분도 가장 바깥 레이어에서 다룸
+
 크나큰 깨달음을 준 하테나에 감사한다.
+
+## 어니언 아키텍처
+
+![](./images/onion_architecture.png)
+
+## 클린 아키텍처
+
+![](./images/clean_architecture.png)
