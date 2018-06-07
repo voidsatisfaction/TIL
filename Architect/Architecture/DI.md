@@ -233,7 +233,7 @@ class EntrySpec extends FunSpec with Matchers {
     new TestableApp {
       override def canonicalizationService: CanonicalizationService =
         new CanonicalizationService() {
-          override def canonicalization(url: URL): CanonicalURL = url match {
+          override def canonicalize(url: URL): CanonicalURL = url match {
             case URL("http://example.com/1?foo=bar") => CanonicalURL("http://example.com/1")
             case _ => sys.error("unexpected")
           }
