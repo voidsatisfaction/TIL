@@ -252,3 +252,224 @@ const pinNumber = html.match(/[0-9]+-[0-9]+-[0-9]+-[0-9]+/i)[0]; // 문화상품
   - regex: -@?@?@?-
   - fm: **--**XX-@-XX-@@-XX-@@@-XX-@@@@-XX-@@-@@-
   - am: **--**XX**-@-**XX**-@@-**XX**-@@@-**XX-@@@@-XX**-@@-**@@-
+
+## 수량자2
+
+### {n}
+
+정확히 몇개를 나타내는지 지정
+
+- source
+  - One ring to bring them all and in the darkness bind them
+- case1
+  - regex: .{5}
+  - fm: **One r** ing to bring them all and in the darkness bind them
+  - am: **One ring to bring them all and in the darkness bind the**m
+- case2
+  - regex: [els]{1,3}
+  - fm: On**e** ring to bring them all and in the darkness bind them
+  - am: On**e** ring to bring th**e**m a**ll** and in th**e** darkn**ess** bind th**e**m
+- case3
+  - regex: [a-z]{3,}
+  - fm: One **ring** to bring them all and in the darkness bind them
+  - am: One **ring** to **bring** **them** **all** **and** in **the** **darkness** **bind** **them**
+
+### ? * + 를 {n}으로 나타낼 수 있음
+
+- source
+  - AA ABA ABBA ABBBA
+- case1
+  - regex: AB*A
+  - fm: **AA** ABA ABBA ABBBA
+  - am: **AA** **ABA** **ABBA**
+- case2
+  - regex: AB{0,}A
+  - fm: **AA** ABA ABBA ABBBA
+  - am: **AA** **ABA** **ABBA**
+- case3
+  - regex: AB+A
+  - fm: AA **ABA** ABBA ABBBA
+  - am: AA **ABA** **ABBA** **ABBBA**
+- case4
+  - regex: AB{1,}A
+  - fm: AA **ABA** ABBA ABBBA
+  - am: AA **ABA** **ABBA** **ABBBA**
+- case5
+  - regex: AB?A
+  - fm: **AA** ABA ABBA ABBBA
+  - am: **AA** **ABA** ABBA ABBBA
+- case6
+  - regex: AB{0,1}A
+  - fm: **AA** ABA ABBA ABBBA
+  - am: **AA** **ABA** ABBA ABBBA
+
+### 여러가지 표현
+
+수량자뒤에 ? -> 가장 적은 단위를 표현
+
+*?의 경우는 그냥 수량자 0이됨(*가 0 ~ 다수 이므로 여기에서 가장 적은 단위는 0)
+
+- source
+  - One ring to bring them all and in the darkness bind them
+- case1
+  - regex: r.*
+  - fm: One **ring to bring them all and in the darkness bind them**
+  - am: One **ring to bring them all and in the darkness bind them**
+- case2
+  - regex: r.*?
+  - fm: One **r**ing to bring them all and in the darkness bind them
+  - am: One **r**ing to b**r**ing them all and in the da**r**kness bind them
+- case3
+  - regex: r.+
+  - fm: One **ring to bring them all and in the darkness bind them**
+  - am: One **ring to bring them all and in the darkness bind them**
+- case4
+  - regex: r.+?
+  - fm: One **ri**ng to bring them all and in the darkness bind them
+  - am: One **ri**ng to b**ri**ng them all and in the da**rk**ness bind them
+- case5
+  - regex: r.?
+  - fm: One **ri**ng to bring them all and in the darkness bind them
+  - am: One **ri**ng to b**ri**ng them all and in the da**rk**ness bind them
+- case6
+  - regex: r.??
+  - fm: One **r**ing to bring them all and in the darkness bind them
+  - am: One **r**ing to b**r**ing them all and in the da**r**kness bind them
+
+실제 활용
+
+- source
+  - <div>test</div><div>test2</div>
+- case1
+  - regex: <div>.+</div>
+  - m: <div>test</div><div>test2</div>
+  - 탐욕적인 수량자(greedy quantifier)
+    - 가능하면 가장 큰 덩어리를 찾으려 함
+- case2
+  - regex: <div>.+?</div>
+  - m: <div>test</div>
+  - 게으른 수량자(lazy quantifier)
+    - 가능하면 가장 작은 덩어리를 찾으려 함
+
+## 경계
+
+### 단어
+
+\\w는 [A-z0-9_]와 같음
+
+- source
+  - A1 B2 e3 d_4 e:5 ffGG77--___--
+- case1
+  - regex: \\w
+  - fm: **A**1 B2 e3 d_4 e:5 ffGG77--___--
+  - am: **A1** **B2** **e3** **d_4** **e**:**5** **ffGG77**--**___**--
+- case2
+  - regex: \\w*
+  - fm: **A1** B2 e3 d_4 e:5 ffGG77--___--
+  - am: **A1** **B2** **e3** **d_4** **e**:**5** **ffGG77**--**___**--
+- case3
+  - regex: [a-z]\w*
+  - fm: A1 B2 **e3** d_4 e:5 ffGG77--___--
+  - am: A1 B2 **e3** **d_4** **e**:5 **ffGG77**--___--
+- case4
+  - regex: \\w{5}
+  - fm: A1 B2 e3 d_4 e:5 **ffGG7**7--___--
+  - am: A1 B2 e3 d_4 e:5 **ffGG7**7--___--
+- case5
+  - regex: [A-z0-9_]
+  - fm: **A**1 B2 e3 d_4 e:5 ffGG77--___--
+  - am: **A1** **B2** **e3** **d_4** **e**:**5** **ffGG77**--**___**--
+
+### 단어2
+
+\\W는 [^A-z0-9_]과 같음(w의 정반대의 의미)
+
+- source
+  - AS_34:AS11.23 @#$%12^*
+- case1
+  - regex: \\W
+  - fm: AS_34 **:** AS11.23 @#$%12^*
+  - am: AS_34 **:** AS11 **.** 23 **@#$%** 12 **^***
+
+### 숫자
+
+ \\d는 [0-9]와 같음(digit)
+
+ - source
+   - Page 123; published: 1234 id=12#24@112
+ - case1
+   - regex: \\d
+   - fm: Page **123**; published: 1234 id=12#24@112
+   - am: Page **123**; published: **1234** id=**12**#**24**@**112**
+ - case2
+   - regex: \\D
+   - fm: **P**age 123; published: 1234 id=12#24@112
+   - am: **Page** 123 **; published:** 1234 **id=**12 **#** 24 **@** 112
+
+### 단어 경계
+
+\\b 단어가 시작하는 지점과 끝나는 지점을 기준으로 나눠줌
+
+- source
+  - Ere iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+- case1
+  - regex: \b.
+  - fm: **E**re iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+  - am: **E**re **i**ron **w**as **f**ound or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+  - am: Ere iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago. (모든 단어의 가장 앞 글자 표현)
+- case2
+  - regex: \b\w+\b
+  - fm: **Ere** iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+  - am: **Ere** **iron** **was** **found** or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.(모든 단어 선택)
+
+\\B \\b의 반대 의미
+
+- source
+  - cat concat
+- case1
+  - regex: \\B.
+  - fm: c**at** concat
+  - am: c**at** **concat**
+- case2
+  - regex: \\bcat
+  - fm: **cat** concat
+  - am: **cat** concat
+- case3
+  - regex: cat\\b
+  - fm: **cat** concat
+  - am: **cat** con**cat**
+
+### 문자열의 가장 첫부분을 매칭함
+
+\\A는 문자열의 가장 앞만 매칭 가능(^는 새 줄이 생길때 마다 매칭)
+\\Z는 문자열의 가장 끝만 매칭 가능($는 새 줄이 생길떄 마다 매칭)
+
+- source
+  - Ere iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+- case1
+  - regex: \\A...
+  - fm: **Ere** iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+  - am: **Ere** iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long ago.
+- case2
+  - regex: ...\\Z
+  - Ere iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long a **go.**
+  - Ere iron was found or tree was hewn, When young was mountain under moon; Ere ring was made, or wrought was woe, It walked the forests long a **go.**
+
+## Assertions
+
+(?=<pattern>)은 문자열을 검색할때 pattern을 쓰고, 문자열을 매칭할때는 고려하지 않음
+
+- source
+  - AAAX---aaax---111
+- case1
+  - regex: \\w+(?=X)
+  - fm: **AAA**X---aaax---111
+  - am: **AAA**X---aaax---111
+- case2
+  - regex: \\w+
+  - fm: **AAAX**---aaax---111
+  - am: **AAAX**---**aaax**---**111**
+- case3
+  - regex: \\w+(?=\\w)
+  - fm: **AAA**X---aaax---111
+  - am: **AAA**X--- **aaa** x---**11** 1
