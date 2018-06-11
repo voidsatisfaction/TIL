@@ -339,15 +339,15 @@ const pinNumber = html.match(/[0-9]+-[0-9]+-[0-9]+-[0-9]+/i)[0]; // 문화상품
 실제 활용
 
 - source
-  - <div>test</div><div>test2</div>
+  - `<div>test</div><div>test2</div>`
 - case1
-  - regex: <div>.+</div>
-  - m: <div>test</div><div>test2</div>
+  - regex: `<div>.+</div>`
+  - m: `<div>test</div><div>test2</div>`
   - 탐욕적인 수량자(greedy quantifier)
     - 가능하면 가장 큰 덩어리를 찾으려 함
 - case2
-  - regex: <div>.+?</div>
-  - m: <div>test</div>
+  - regex: `<div>.+?</div>`
+  - m: `<div>test</div>`
   - 게으른 수량자(lazy quantifier)
     - 가능하면 가장 작은 덩어리를 찾으려 함
 
