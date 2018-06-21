@@ -10,8 +10,9 @@
 - Add report letters validation
 - Add new screen for pinned toots
 
-## [Boostnote(4)](https://github.com/BoostIO/Boostnote/commits?author=voidsatisfaction)
+## [Boostnote(5)](https://github.com/BoostIO/Boostnote/commits?author=voidsatisfaction)
 
+- Fix MacOs 'M' key issue
 - Add Korean translation for debug and developement docs
 - Add right click notelist delete
 - Enable not focused note right click pin to top and show right context menu
@@ -23,6 +24,8 @@ Translation
 
 - string-types
 - array-types
+
+Reviews
 
 ## [Hatena-Textbook](https://github.com/hatena/Hatena-Textbook/commits?author=voidsatisfaction)
 
