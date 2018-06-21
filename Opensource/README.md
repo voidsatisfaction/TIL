@@ -4,19 +4,20 @@
 
 ## [Mastodon(5)](https://github.com/tootsuite/mastodon/commits?author=voidsatisfaction)
 
-- Add Korean translation for inner mastodon page
+- Add new screen for pinned toots
 - Fix streaming server url sensitive bug
 - Debug Smartphone screen button not showing
 - Add report letters validation
-- Add new screen for pinned toots
+- Add Korean translation for inner mastodon page
 
 ## [Boostnote(5)](https://github.com/BoostIO/Boostnote/commits?author=voidsatisfaction)
 
+- Add multiselect notes delete and move and pin function(manipulating react state and using promise.all)
 - Fix MacOs 'M' key issue
-- Add Korean translation for debug and developement docs
 - Add right click notelist delete
 - Enable not focused note right click pin to top and show right context menu
-- Add multiselect notes delete and move and pin function(manipulating react state and using promise.all)
+- Add Korean translation for debug and developement docs
+
 
 ## [Golang-spec](https://github.com/golangkorea/golang-spec/commits?author=voidsatisfaction)
 
