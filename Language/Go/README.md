@@ -2,6 +2,10 @@
 
 ## Go의 등장
 
+- 사상
+  - **Simplicity**
+  - **Scalability**
+
 Google내의 기존 언어를 사용한 시스템의 복잡성에 대한 고통. 한 곳을 고치면 다른 곳이 탈나고 다른곳을 고치면 또 다른 곳이 탈나는 악순환.
 
 > Simplicity is the key to good software
