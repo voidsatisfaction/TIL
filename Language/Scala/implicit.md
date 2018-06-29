@@ -137,3 +137,21 @@ trait WithCart {
 ```
 
 - `WithCart`는 위와같은 구현
+
+### 암묵 클래스
+
+```scala
+trait BookmarkRelationComponent {
+  self: CanonicalizationComponent with EntryRepositoryComponent =>
+  
+  implicit class BookmarkRelation(bookmark: BookmarkEntity) {
+    def toEntity(): Option[EntryEntity] = {
+      val canonicalUrl = bookmark.url.canonicalized
+      entryRepository.findByUrl(canonicalUrl)
+    }
+  }
+}
+
+// val bookmark = BookmarkEntity()
+// bookmark.toEntity() 암묵 클래스에 의해서 이와 같은 동작이 가능. 메서드 확장
+```
