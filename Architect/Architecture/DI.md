@@ -4,7 +4,7 @@
 
 소프트웨어 컴포넌트는 상호 의존하고 있으므로, 의존관계가 밀접하고 복잡한 것이 되면 컴포넌트 모듈성의 성질이 엷어지고, 소프트웨어 전체를 거대한 하나의 덩어리 모듈로 다룰 수 밖에 없게 됨
 
-그러나, 레이어 아키텍처의 계층간의 의존관계에서 봤듯, 웹 애플리케이션은 어떠한 의미로는 떼어낼 수 없는 거대한 하나의 덩어리가 될 수 밖에 없으며, 레이어나 컴포넌트는 그 덩어리의 안에서 구별되는 것을 구별한 것이며, 레이어나 컴포넌트는 그것 하나 만으로 기능을 하지 않음. 결국, 웹 애플리케이션과 같은 거대한 소프트웨어의 안에 나타나는 컴포넌트의 모듈성이라는 것은 다음과 같은 성질을 말함
+그러나, 레이어 아키텍처의 계층간의 의존관계에서 봤듯, 웹 애플리케이션은 어떠한 의미로는 떼어낼 수 없는 거대한 하나의 덩어리가 될 수 밖에 없으며, 레이어나 컴포넌트는 그 덩어리의 안에서 구별되는 로직을 구별한 것이며, 레이어나 컴포넌트는 그것 하나 만으로 기능을 하지 않음. 결국, 웹 애플리케이션과 같은 거대한 소프트웨어의 안에 나타나는 컴포넌트의 모듈성이라는 것은 다음과 같은 성질을 말함
 
 - 은폐성
   - 컴포넌트는 다른 컴포넌트의 기능을 그 자세한 구현을 알지 못해도 이용함
@@ -17,13 +17,29 @@
 
 DI를 구현하는 방법은 여러가지 있으나, 스칼라의 불변 스타일과 잘 맞아떨어지지 않는 모델은 회피해야 함. 또한, 도메인 기반 설계를 진행하는데에 있어서, DI를 위해 도메인층의 인터페이스를 왜곡하는 것도 피하고 싶음. 그 해법으로 **Cake패턴** 을 소개함. 레이어 사이를 포함해서 큰 의존성의 표현으로서 이 방법은 매우 유용함
 
+- 왜 DI가 필요한 것인가?
+  - 간단한 목
+  - 횡단적 구현의 교체
+- 안티패턴
+  - 자바에 있어서의 전통적인 방법
+  - 생성자 전달
+  - 메서드 전달
+  - Reader 모나드
+- Cake패턴
+  - 하나의 덩어리로서의 애플리케이션
+  - 컴포넌트의 분할
+  - 컴포넌트의 결합
+  - 컴포넌트의 테스트
+  - 패턴에의 비판과 올바른 사용장소
+  - 참고문헌
+
 ## 왜 DI가 필요한 것인가?
 
-먼저, DI가 필요한 장면을 구체적인 예로 보자. 구체적인 예시로서는 테스트를 작성하는 경우를 새각함. DI가 효과를 발휘하는 것은 테스트를 작성하는 경우만 한정되는 것이 아니라, 단순히 알기 쉬운 예시를 들기 위해서.
+먼저, DI가 필요한 장면을 구체적인 예로 보자. 구체적인 예시로서는 테스트를 작성하는 경우를 생각함. DI가 효과를 발휘하는 것은 테스트를 작성하는 경우만 한정되는 것이 아니라, 단순히 알기 쉬운 예시를 들기 위해서.
 
 ### 간단한 목(mock)
 
-예를들면, `bookamrkApplication.add()`에서 유저의 북마크가 추가되어, `entryApplication.get()`에서 시스템 상에 존재하는 웹 페이지 엔트리 정보를 얻어, 누군가가 어떠한 URL을 북마크 했을 경우는 그 URL을 정규화 한 것을 갖는 엔트리가 생성된다고 하자. 북마크의 추가로 엔트리가 생성되는 것, 혹은 그 엔트리를(정규화 전의)URL을 단서로 취득 가능한것, 취득된 엔트리에 이어지는 URL은 정규화된 것이라는 것을 테스트하기 위해서는 다음과 같은 테스트코드를 작성하게 됨. 이 예시는 `http://example.com/1?foo=bar`은 `http://example.com/1`로 정규화 되는것이라고 하자.
+예를들면, `bookamrkApplication.add()`으로 유저의 북마크가 추가되어, `entryApplication.get()`으로 시스템 상에 존재하는 웹 페이지 엔트리 정보를 얻어, 누군가가 어떠한 URL을 북마크 했을 경우는 그 URL을 정규화 한 것을 갖는 엔트리가 생성된다고 하자. 북마크의 추가로 엔트리가 생성되는 것, 혹은 그 엔트리의(정규화 전의)URL을 단서로 취득 가능한것, 취득된 엔트리에 이어지는 URL은 정규화된 것이라는 것을 테스트하기 위해서는 다음과 같은 테스트코드를 작성하게 됨. 이 예시는 `http://example.com/1?foo=bar`은 `http://example.com/1`로 정규화 되는것이라고 하자.
 
 ```scala
 class EntrySpec extends FunSpec with Matchers {
@@ -110,7 +126,7 @@ class EntrySpec extends FunSpec with Matchers {
 
 ### 횡단적인 구현의 교체
 
-다른 하나의 예를 보자. 시스템의 광범위하게 넘겨져서 이용되고 있는 컴포넌트, 예를들면 데이터베이스 핸들러의 구현을 테스트 때에만 바꾸고 싶은은 경우가 있다.
+다른 하나의 예를 보자. 시스템에서 광범위하게 넘겨져서 이용되고 있는 컴포넌트, 예를들면 데이터베이스 핸들러의 구현을 테스트 때에만 바꾸고 싶은은 경우가 있다.
 
 예를들어, `bookmarkApplication`에 모든 유저가 붙인 북마크의 총 수를 계산하는 메서드 `countUpAllBookmarks()`가 정의되어 있다고 하자. 북마크를 전부 추가하지 않은 단계(서비스 운용 개시 전)에서는 총 수는 0이므로, 북마크를 추가할 때마다 증가해 나가는 것을 확인하고 싶을 것이다.
 
@@ -157,11 +173,67 @@ class BookmarkSpec extends FunSpec with Matchers {
 
 ### Java에서의 전통적인 방법
 
+```scala
+object BookmarkApplication {
+  var canonicalizer: Canonicalizer = null
+
+  def add(user: UserEntity, url: URL): Unit = {
+    val canonicalUrl = canonicalizer.canonicalize(url)
+    ...
+  }
+}
+def bookmarkApplication = BookmarkApplication
+```
+
+```scala
+bookmarkApplication.canonicalizer = new MockCanonicalizer
+```
+
 ### 생성자 전달
+
+```scala
+class BookmarkApplication(canonicalizer: Canonicalizer) {
+  def add(user: UserEntity, url: URL): Unit = {
+    val canonicalUrl = canonicalizer.canonicalize(url)
+    ...
+  }
+}
+def bookmarkApplication(canonicalizer) = new BookmarkApplication(canonicalizer)
+```
+
+```Scala
+bookmarkApplication(canonicalizer).add(user, url)
+```
 
 ### 메서드 전달
 
+```scala
+class EntryDB extends EntryRepository {
+  def findByUrl(url: URL)(implicit db: DB): Option[EntryEntity] = db.run {
+    sql"SELECT * FROM entry WHERE url = $url".as[EntryEntity]
+  }
+}
+```
+
+```scala
+trait EntryRepository {
+  def findByUrl(url: URL)(implicit db: DB): Option[EntryEntity]
+}
+```
+
 ### Reader 모나드
+
+```scala
+trait EntryRepository {
+  def findByUrl(url: URL): Reader[DB, Option[EntryEntity]]
+}
+```
+
+```scala
+implicit class BookmarkRelation(bookmark: BookmarkEntity) {
+  def toEntry(): Reader[(DB, EntryRepository, Canonicalizer), Option[EntryEntity]] = ...
+}
+```
 
 ## Cake 패턴
 
@@ -292,6 +364,8 @@ trait BookmarkRelationComponent {
 
 이러한 의존 컴포넌트를 계승해야 할까요? 컴포넌트로서는 이러한 코드는 독립하고 있으므로 상속하는 것도 이상한 이야기 입니다. 그러나 의존하고 있는 것은 의심할 여지가 없기 때문에, `BookmarkRelationComponent`가 인스턴스화 될 때는, `CanonicalizationComponent`와 `EntryRepositoryComponent`도 믹스인 되는 것을 강제해야 하고, 또한, `BookmarkRelationComponent`의 안에서 `canonicalized`나 `entryRepository`가 호출될 수 있도록 하는 것이 이상적입니다. 스칼라에서는 이러한 것을 실현할 수 있도록 자기타입 어노테이션이 존재합니다(self type annotation)
 
+p.s 자기타입 어노테이션은 자기 자신 컴포넌트가 사용되는 장소에서는 반드시 어노테이션 된 의존성이 존재해야 한다는 것이다. 아래의 예의 경우에서는 BookmarkRelationComponent가 사용되는 장소 에서는 반드시 CanonicalizationComponent와 EntryRepositoryComponent가 의존하고 있어야(눈에 보여야) 한다(믹스인으로든 상속으로든 로컬 구현이든)
+
 ```scala
 trait BookmarkRelationComponent {
   self: CanonicalizationComponent with EntryRepositoryComponent =>
@@ -357,7 +431,7 @@ trait TestableDBHandlerComponent extends DBHandlerComponent {
 object TestableApp extends App with TestableDBHandlerComponent
 ```
 
-이쪽도 매우 간단합니다. `TestableDBHandlerComponent.db`쪽을 더 우선시 하고 싶으므로, `DBHandlerComponent`보다도 나중에 믹스인 하지 않으면 안되는 점만 주의해주세요.
+이쪽도 매우 간단합니다. `TestableDBHandlerComponent.db`쪽을 더 우선시 하고 싶으므로, `DBHandlerComponent`보다도 나중에 믹스인 해야 한다는 점만 주의해주세요.
 
 ### 컴포넌트의 테스트
 
