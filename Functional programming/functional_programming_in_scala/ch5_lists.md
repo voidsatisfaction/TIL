@@ -441,3 +441,48 @@ def mapFun[T, U](xs: List[T], f: T => U): List[U] =
 def lengthFun[T](xs: List[T]): Int =
   (xs foldRight 0)((_, acc) => acc + 1)
 ```
+
+## 5.6 Reasoning About Concat
+
+- 함수 프로그램이 올바르다는 것의 의미
+  - 프로그램의 정의가 규칙을 따른다는 것
+  - 이러한 규칙은 항의 동등성을 나타냄
+
+### Concat의 규칙
+
+- 문제
+  - concatenation은 associative하다는 것을 증명하기
+  - Nil이 neutral element라는 것을 증명하기
+- `structural induction`을 함
+
+### 자연 귀납법(natural induction) 복습
+
+n >= 4
+factorial(n) >= power(2, n)
+
+- Base case
+  - n == 4 => 24 >= 16
+- Induction step
+  - factorial(n) >= 2^n 이라고 가정하고, factorial(n+1)도 같다는 것을 증명
+
+### 참조 투명성
+
+![](./images/referential_transparency.png)
+
+### 구조적 귀납법(structural induction)
+
+![](./images/structural_induction.png)
+
+### 구조적 귀납법 예제
+
+- 스칼라의 모든 리스트의 concatenation이 associative하고, Nil이 neutral element라는 것을 증명하기
+
+## 5.7 보다 큰 리스트의 동등성 증명
+
+### A Law of Reverse
+
+![](./images/law_of_reverse.png)
+
+- 증명 순서
+  - basic case
+  - induction step
