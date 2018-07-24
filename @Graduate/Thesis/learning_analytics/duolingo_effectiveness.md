@@ -1,4 +1,4 @@
-# Duolingo Effectiveness Study
+# Duolingo Effectiveness Study(2012 - ROUMEN'VESSELINOV)
 
 ## SUMMARY
 
