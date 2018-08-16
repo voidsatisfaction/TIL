@@ -41,13 +41,14 @@ trait MyAppComponent {
 ```
 
 - 위와 같은 코드의 경우, `MyAppComponent`의 `MyApplication`의 `someMethod`의 Either속의 whatError의 타입을 정하기가 난감하다.
+  - `whatError`타입은 domain layer의 에러도 포함하고 application layer의 에러도 포함해야하는데, 보통 두 레이어의 에러는 의미적으로 격리되어있으므로 패키지도 나누어져 있다.
 - 내가 이 문제를 해결한 방식은 다음과 같다
   - 도메인 층의 에러를 애플리케이션 층으로 끄집어 내는것은 불합리적이므로, 애플리케이션 층의 에러를 도메인층으로 내려보낸다.
   - 즉, `NotFound`라는 에러를 도메인 층에서 정의하여, `whatError`역시 도메인 층에서 정의하는 것으로 타입의 레이어를 맞춰준다.
 - 하테나의 타라오씨(부서의 리드 엔지니어)는 application층과 domain층 둘다 같은 에러를 정의하는 것을 추천하셨다.
   - 이름은 같아도 레이어에 따라서 의미가 다를 수 있기 때문에
   - 원래 DDD는 레이어 사이의 데이터 타입의 차이를 밸런스 있게 잘 조정해야 한다.
-    - Domain층의 Entity를 단순히 application에서 사용하기 보다는 또 다른 application층 에서 다루기 쉬운 case class를 정의하여 만들어서 사용한다던지
+    - 비슷한 예) Domain층의 Entity를 단순히 application에서 사용하기 보다는 또 다른 application층 에서 다루기 쉬운 case class를 정의하여 만들어서 사용한다던지
   - 결국 레이어나 컴포넌트 사이의 의존관계가 더러워지지 않는 선에서 관리하는 것이 중요
 
 ## JS / TS편
