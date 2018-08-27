@@ -4,7 +4,7 @@ Unixという考え方(유닉스라는 사고방식)이라는 책은 유닉스�
 
 ## 참조
 
-- Unixという考え方
+- Unixという考え方(유닉스라는 사고방식)
 - [UNIX哲学 - Wikipedia](https://ja.wikipedia.org/wiki/UNIX%E5%93%B2%E5%AD%A6)
 
 ## 9개의 대정리
