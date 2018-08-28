@@ -2,6 +2,7 @@
 
 - 참고
   - [What Is Object-Oriented Design?](http://web.archive.org/web/20131031015906/http://www.objectmentor.com:80/omSolutions/oops_what.html)
+  - [객체 지향의 사실과 오해 - 메모](https://taehwanno.github.io/post/oop/2016/09/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%EC%9D%98-%EC%82%AC%EC%8B%A4%EA%B3%BC-%EC%98%A4%ED%95%B4)
 - 목차
   - Introduction
   - The principles of Object Oriented Design and Dependency Management
