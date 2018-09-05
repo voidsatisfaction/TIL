@@ -9,3 +9,4 @@
 ## 글
 
 1. [핵심은 아키텍트다 - 전규현](http://m.zdnet.co.kr/column_view.asp?artice_id=20170810153934#imadnews)
+2. [프로그래머로서의 성장을 도왔던 태도들 - 안희종](http://ahnheejong.name/articles/becoming-better-programmer)
