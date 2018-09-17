@@ -43,6 +43,8 @@
 
 ![](./images/picasso_cow.jpg)
 
+![](./images/mondrian_tree_series.jpg)
+
 ![](./images/computer_abstraction.png)
 
 - 정의
