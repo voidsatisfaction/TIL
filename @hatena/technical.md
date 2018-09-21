@@ -9,6 +9,8 @@
 - DDD를 팀 내에 도입하는 것은 엔지니어가 충분히 공부를 해야 한다는 코스트가 생기게 되는데 어떻게 대처할 것인가?
 - 스칼라의 타입 엘리어스
 - 마이크로 서비스의 단점
+- 수직적 구성 / 수평적 구성
+- 함수형 프로그래밍과 불변성과 효율
 
 ## 상태와 무상태성(state, stateless)
 
@@ -92,3 +94,110 @@ type EntryId = Long
 - 수평적 구성
   - composition으로 인한 추상화
   - nominal subtyping
+
+## 함수형 프로그래밍과 불변성(immutability)과 효율
+
+- 함수형 프로그래밍을 할 때, 불변성을 유지하기 위해서 오브젝트를 항상 새로 생성하고 없애고 하는데 이는 시간적 / 공간적 성능상 오버헤드를 야기하지 않는가?
+  - 스칼라 컴파일러가 내부를 최적화 함. 캡슐화를 이용해서 내부에서는 `var`같은 상태를 갖는 변수도 많이 씀
+  - **[공부를 위해서는 스칼라 코드 자체를 봐 보자](https://github.com/scala/scala/blob/2.13.x/src/library/scala/collection/immutable/List.scala)**
+
+## 타입을 이용한 추상화를 잘 하는 방법은 무엇인가?
+
+- 사실 차근차근 생각해보면 어렵지 않음
+- 표준 라이브러리를 뜯어보면 매우 좋은 공부가 된다.
+- 다음 코드는 두 Seq의 join을 추상화 한 예시
+
+```scala
+// 사용 예시
+val (titleEntities, titleLogsWithCreated) = immigrationEntryTitles
+  .join(locations).on(_.url, _.url)
+  .join(users).on(_._1.accountId, _.accountId) // case ((entryTitles, locations), users)
+
+// implicit
+
+def join[B](other: Iterable[B]): Join.Inner[A, B, It] =
+  new Join.Inner(it, other)
+
+// join 내부 구조
+package types
+package collection
+package relation
+
+import scala.collection.{breakOut, IterableLike}
+import scala.collection.generic.CanBuildFrom
+import scala.language.{higherKinds, implicitConversions}
+
+/** A class to describe a join of two sequences. */
+case class Join[A, B, K, It[X] <: IterableLike[X, It[X]]](
+  left: It[A],
+  right: Iterable[B],
+  leftKey: A => K,
+  rightKey: B => K,
+  default: K => Option[B]
+) {
+  private type R = (A, B)
+
+  private def applyTo[It2[X] <: IterableLike[X, It2[X]], R2, That](
+    f: R => R2,
+    s: It2[A]
+  )(implicit bf: CanBuildFrom[It2[A], R2, That]): That = {
+    val m = {
+      val m: Map[K, Option[B]] =
+        right.map(x => rightKey(x) -> Some(x))(breakOut)
+      m.withDefault(default)
+    }
+    s.flatMap(x => m(leftKey(x)).map(y => f((x, y))))
+  }
+
+  def into[R2](f: R => R2)(implicit
+    bf: CanBuildFrom[It[A], R2, It[R2]]
+  ): It[R2] = applyTo(f, left)
+
+  def result(implicit bf: CanBuildFrom[It[A], R, It[R]]): It[R] =
+    applyTo(identity, left)
+
+  def toStream: Stream[R] = applyTo(identity, left.toStream)(breakOut)
+}
+object Join {
+  class Inner[A, B, It[X] <: IterableLike[X, It[X]]](
+    left: It[A],
+    right: Iterable[B]
+  ) {
+    def on[K](
+      leftKey: A => K,
+      rightKey: B => K
+    ): Join[A, B, K, It] = Join(left, right, leftKey, rightKey, _ => None)
+  }
+
+  class Left[A, B, It[X] <: IterableLike[X, It[X]]](
+    left: It[A],
+    right: Iterable[B]
+  ) {
+    def on[K](
+      leftKey: A => K,
+      rightKey: B => K
+    ): Left.On[A, B, K, It] = Left.On(left, right, leftKey, rightKey)
+  }
+  object Left {
+    case class On[A, B, K, It[X] <: IterableLike[X, It[X]]](
+      left: It[A],
+      right: Iterable[B],
+      leftKey: A => K,
+      rightKey: B => K
+    ) {
+      private def toJoin(default: K => Option[B]): Join[A, B, K, It] =
+        Join(left, right, leftKey, rightKey, default)
+
+      def apply(default: B): Join[A, B, K, It] =
+        toJoin(_ => Some(default))
+
+      def apply(default: K => B): Join[A, B, K, It] =
+        toJoin(x => Some(default(x)))
+    }
+  }
+
+  implicit def toStream[A, B, K, It[X] <: IterableLike[X, It[X]], Col](
+    join: Join[A, B, K, It]
+  ): Stream[(A, B)] = join.toStream
+}
+```
