@@ -100,6 +100,7 @@ type EntryId = Long
 - 함수형 프로그래밍을 할 때, 불변성을 유지하기 위해서 오브젝트를 항상 새로 생성하고 없애고 하는데 이는 시간적 / 공간적 성능상 오버헤드를 야기하지 않는가?
   - 스칼라 컴파일러가 내부를 최적화 함. 캡슐화를 이용해서 내부에서는 `var`같은 상태를 갖는 변수도 많이 씀
   - **[공부를 위해서는 스칼라 코드 자체를 봐 보자](https://github.com/scala/scala/blob/2.13.x/src/library/scala/collection/immutable/List.scala)**
+  - 또한, Purely Functional DataStructure이라는 책을 참조해보자
 
 ## 타입을 이용한 추상화를 잘 하는 방법은 무엇인가?
 
