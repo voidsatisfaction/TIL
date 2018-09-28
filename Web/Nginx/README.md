@@ -35,6 +35,9 @@
 
 ### 정적 컨텐츠 제공
 
+- 웹 서버의 중요한 기능 중 하나
+- 설정 파일은 여러개의 포트 번호와 이름으로 구별되는 서버 블록을 갖고 있을 수 있음
+
 ```
 http {
   server {
@@ -49,9 +52,29 @@ http {
 }
 ```
 
+- `http://localhost/images/example.png`에 대한 응답은 `/data/images/example.png`이다.
+  - 파일이 존재하지 않으면 404에러 돌려줌
+- `/images/`로 uri가 시작하는 경우
+  -  `http://localhost/some/example.html`에 대한 응답은 `/data/www/some/example.html`파일이다.
+- 설정을 바꾼다음에는 재시작 해야함
+  - `nginx -s reload`
+
 ### 프록시 서버
 
+- 요청(request)을 받고, 그것을 프록시된 서버에 넘겨주고, 프록시된 서버로부터 응답을 받고, 다시 그것을 클라이언트로 보냄
+
 ```
+# 서버
+server {
+  listen 8080;
+  root /data/upl;
+
+  location / {
+
+  }
+}
+
+# 리버스 프록시 서버
 server {
   location / {
       proxy_pass http://localhost:8080/;
@@ -62,6 +85,15 @@ server {
   }
 }
 ```
+
+- 서버
+  - 포트 8080에서 요청 대기(초기 설정은 80)
+  - 모든 요청을 `/data/upl`로 매핑
+- 프록시 서버
+  - 요청에 대한 응답은 prefix가 긴 location부터 참조
+  - 정규 표현식은 ~ 뒤에 나온다.
+  - `.gif` `.jpg` `.png`파일들을 `/data/images` 디렉터리로 매핑함
+  - 그 외의 다른 요청들은 리버스 프록시된 서버로 보냄
 
 ### Fast CGI 프록시
 
