@@ -129,3 +129,12 @@ p $abc; # utf8 + CodeRef + 보기편한 형식
 
 - 참고: http://d.hatena.ne.jp/minesouta/20070914/p1
 - `use List::Util qw(first, max, min, maxstr, minstr, shuffle, reduce)`
+
+### 특수기호들
+
+펄에 존재하는 표현력 높은 기호들
+
+- $$
+  - process ID
+- $@
+  - eval error
