@@ -6,4 +6,4 @@ On wednesday, Dow johns average index was dropped deeply. One of the biggest rea
 
 ## Emergency landing of a space rocket
 
-A space rocket which was on two astraunants had emergency landing because of the rocket booster problem.
+A space rocket which was on boarding two astronauts had emergency landing because of the rocket booster problem.
