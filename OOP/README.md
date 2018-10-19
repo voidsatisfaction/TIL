@@ -75,27 +75,109 @@
   - **새롭고 계획되지 않은 의존성의 추가**
 - 오브젝트 지향 프로그래밍의 핵심
 
-### 오브젝트 지향 클래스의 디자인
+# 오브젝트 지향 클래스의 디자인
 
-#### The Open Closed Principle
+## OCP: The Open Closed Principle
 
 > 모듈은 확장에는 열려있고, 변경에는 닫혀있어야 한다.
 
 - 코드의 변경 없이 모듈이 변화하도록 해야함
   - 무조건 확장으로
 - 추상화가 키 포인트
+- 장점
+  - 변경 없이 확장 가능함
+    - 현재 코드에 새로운 코드만 작성해서 기능 확장 가능
+  - 부분적 OCP원칙이 적용되기만 해도 많은 개선이 될 수 있음
+  - **코드의 변경이 현재 작동하고 있는 코드에 영향을 주지 않는 것이 베스트**
 
-##### 동적 다형성(Dynamic Polymorphism)
+### 동적 다형성(Dynamic Polymorphism)
+
+![](./images/dynamic_polymorphism.png)
 
 ```cpp
-struct Modem
+class Modem
 {
-  enum Type {hayes, courrier, ernie} type;
+  virtual void Dial(const string& pno) = 0;
+  virtual void Send(char) = 0;
+  virtual char Recv() = 0;
+  virtual void Hangup() = 0;
 };
 
-struct Hayes
+void LogOn(Modem& m, string& pno, string& user, string& pw)
 {
-  Modem::Type type;
-  // Hayes related stuff
+  m.Dial(pno);
+  // you get the idea.
 }
 ```
+
+### 정적 다형성(Static Polymorphism)
+
+- 템플릿이나 제네릭을 사용
+
+```cpp
+template <typename MODEM>
+void LogOn(MODEM& m, string& pno, string& user, string& pw)
+{
+  m.Dial(pno);
+  // you get the idea
+}
+```
+
+## LSP: The Liskov Substitution Principle
+
+![](./images/lsp1.png)
+
+- 서브 클래스들은 기본 클래스에 의해서 교체 가능해야만 한다
+- 언뜻보면 당연한거 같은데 딜레마가 존재
+
+### 원 / 타원 딜레마
+
+- 원의 속성 / 메서드
+  - 속성
+    - 중앙 점
+    - 반지름
+  - 메서드
+    - 원주
+    - 넓이
+- 타원의 속성
+  - 초점A, 초점B, 중심축
+
+그러므로 원이 타원을 상속하게 되면, 필요 없는 속성과 메서드를 상속하게 되게 됨
+
+가벼운 공간상의 오버헤드를 무시하면 다음과 같이 설정은 가능
+
+```cpp
+void Circle::SetFoci(const Point& a, const Point& b)
+{
+  itsFocusA = a;
+  itsFocusB = a;
+}
+```
+
+### 클라이언트가 모든 것을 망친다
+
+- 위의 모델은 자기일관성을 유지
+- 하지만 다른 엔티티와 상호작용을 해야함
+  - 파블릭 인터페이스가 존재함(계약)
+
+```
+void f(Ellipse& e)
+{
+  Point a(-1,0);
+  Point b(1,0);
+  e.SetFoci(a,b);
+  e.SetMajorAxis(3);
+  assert(e.GetFocusA() == a);
+  assert(e.GetFocusB() == b);
+  assert(e.GetMajorAxis() == 3);
+}
+```
+
+- 위의 코드에 Ellipse의 인스턴스를 넣으면 잘 됨
+- Circle의 인스턴스를 넣으면 에러
+  - Circle은 명시적 계약
+
+### 계약에 의한 디자인
+
+- 교체 가능하기 위해서는, 기본 클래스의 계약이 반드시 파생 클래스에서도 존중 받아야 함
+- `Circle`은 `Ellipse`의 암묵적 계약을 존중하지 않기 때문에, 이는 교체가능하지도 않고 LSP를 위반하는 것이 됨
