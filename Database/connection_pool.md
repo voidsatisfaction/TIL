@@ -36,3 +36,16 @@ DBCP는 라이브러리를 이용해서 손쉽게 관리 가능
 |maxIdle|Connection Pool에 반납할 때 최대로 유지될 수 있는 커넥션 개수|
 |minIdle|최소한으로 유지할 커넥션 개수|
 |initialSize|최초로 getConnection() 메서드를 통해 커넥션 풀에 채워 넣을 커넥션 개수|
+
+### DBCP 설정
+
+- maxActive >= initialSize
+  - 최대 허용 커넥션수는 초기에 생성할 커넥션 개수와 같거나 크게 설정해야 한다.
+- maxActive = maxIdle
+  - 만일 maxActive > maxIdle 인 경우에는, 일부 커넥션을 매번 생성했다가 닫았다가 하는 경우가 발생할 수 있음
+- initialSize == maxActive == maxIdle == minIdle 항목의 값을 모두 통일 해도 무방하다
+- 사용자가 많은 경우에는 maxActive 값을 충분히 크게 설정해야 한다. 그렇지 않으면 병목 지점일 발생
+- WAS의 스레드 수와 커넥션 풀의 수의 관계
+  - 웹 애플리케이션 서버가 요청을 스레드를 발행해서 처리하는 경우에는, thread개수 > db커넥션 풀 갯수로 설정하면 좋다
+  - 이는 모든 웹 애플리케이션 처리가 데이터베이스 접근이 필요한 것은 아니기 때문이다.
+  - **최적화 하기 위해서는 테스트를 해보면 좋다.**
