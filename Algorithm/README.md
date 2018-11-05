@@ -1,47 +1,194 @@
-# Algorithm & Data structure 기초
+# 자료구조 / 알고리즘
 
-## 알고리즘 문제 풀이 전략
+- 알고리즘 문제 해결 팁
+  - 파인만 알고리즘
+  - 문제 풀이과정은 노트에 정자로
+- 자료구조
+  - 자료구조의 정의
+  - 추상적 자료형의 정의
+  - 종류
+    - 데이터 타입
+    - 선형 데이터 구조
+    - 트리
+    - 해시 기반 구조
+    - 그래프
+    - 그 외
+- 알고리즘(기초)
+  - 정렬
+  - 탐색
+  - 그래프
+    - 최단거리
+    - 최소 신장 트리
+    - 최대 유량
+    - Union find
+  - 문자열
+    - kmp
 
-- 풀 때
-  - 일정 시간 반드시 생각
-  - 어떠한 테마의 문제인가?
-  - 완전히 새로운 각도에서 접근
-    - 풀이가 전혀 생각나지 않을 경우 유효
-    - 한번에 어려운 문제로 생각하지 말고, 쉬운 문제로 변형해서 접근
-  - 복잡도
-    - 시간적 복잡도는?
-    - 공간적 복잡도는?
-  - 제출 전 특이 케이스 생각
-    - n = 1인 케이스, n = N인 케이스 ...
-- 풀고 나서
-  - 타인의 코드 적어도 하나는 읽고 해석
-  - 좋은 문제는 TIL에 저장
+## 알고리즘 문제 해결 팁
 
-## Algorithm & Data structure 팁
+- 파인만 알고리즘
+  - 문제를 쓴다
+  - 답을 생각한다
+  - 답을 작성한다
+- 문제 풀이과정은 노트에 정자로
+  - 문제 풀이과정은 무조건 또박또박 정자로 쓰자
+    - 빠르게 풀려고 막 쓰지 말자
+    - 아이디어에 휘말리지 말자
+    - 코딩은 그냥 생각을 옮기는 작업에 불과
 
-자료 구조가 중요한 이유는 문제 해결을 효과적으로 하기 위해서이다. 즉, 주어진 자원을 적절하게 최대한 사용하기 위해서 자료 구조와 알고리즘이 중요하다.
+## 자료구조
 
-각각의 자료구조와 알고리즘의 **장단점**을 명확히 파악하고 있어야 한다.
+### 자료구조(Data Structure)의 정의
 
-시간적 효율성과 공간적 효율성을 동시에 생각할 줄 알아야 한다.
+추상적 자료이 정의한 연산들을 구현한 구현체
 
-특히 중요한 자료구조는 **해시** 와 **트리** 가 있다. 왜냐하면 이 두 자료구조는 방대한 데이터를 다룰때 시간적으로/공간적으로 최적의 방법을 제시하는 경우가 많기 때문이다. 하지만 이 둘이 꼭 능사는 아니므로 반드시 시간적/공간적 장단점을 **반드시** 생각해야 한다.
+### 추상적 자료형(Abstract Data Type)의 정의
 
-## 자료구조의 분류
+알고리즘이 문제를 해결하는데 필요한 자료의 형태와 자료를 사용한 연산들을 수학적으로 정의 모델
 
-![category of datastructrue](./assets/category_of_datastructure.jpg)
+예) 스택의 예를 들면, 함수 호출을 관리하기 위해 후입선출의 성질을 가진 추상적 자료형이 필요하니 pop과 push를 가지도록 스택이라는 추상적 자료형을 정의하고, 그것을 구현해서 함수 호출을 관리하는데 사용하는 구현체, 즉 자료구조를 콜 스택이라고 부르는 것이다.
 
-- 선형 구조: 자료 간의 연결 관계가 1:1 관계를 갖는 구조
-- 비선형 구조: 자료 간에 선형 구조가 아닌 계층 구조나 망 구조를 갖는 자료구조
+- 스택 ADT
+  - top()
+  - length()
+  - pop()
+  - push(e)
+- 이 스택을 어떻게 구체적으로 구현할지는 리스트나 배열 둘 다 사용가능. 각각의 구현에 장단점이 존재함.
 
-## 대규모 서비스와 알고리즘 트리 & 해시
+### 종류
 
-대규모 서비스에서는 알고리즘과 자료구조가 매우 중요하다. 아키텍트가 기술을 선정할 때 왜 그 기술을 선정하는가를 장점과 단점을 잘 따져서 선택하는 것과 같이, 알고리즘과 자료구조 역시 왜 그러한 방식대로 하는가가 매우 중요하다.
+분류하는 기준이 매우 다양하다. 여기서는 [위키피디아 - 영문](https://en.wikipedia.org/wiki/List_of_data_structures) 를 참조하도록 한다
 
-> 대부분의 대규모서비스는 O(n^2)의 성능으로는 느리기때문에, O(nlogn)의 효율을 자랑하는 트리와 일정 메모리까지 O(1)을 자랑하는 해시를 중요시 여긴다.
+- 데이터 타입
+  - **구현 레벨에서의 타입은 프로그래밍 언어마다 차이가 있음**
+    - 어떤 언어는 리스트가 원시 타입일 수 있음
+    - js는 enum이 없음
+  - 원시 타입
+    - Boolean
+    - Character
+    - Floating-point numbers
+    - Fixed-point numbers
+    - Integer
+    - Reference(pointer or handle)
+      - 일부는 pointer를 지원하지 않는다.
+    - Enumerated type
+      - consisting of a set of named values called elements, members, enumeral, or enumerators of the type.
+  - 복합 타입(Composite types) 혹은 원시 타입이 아닌 타입(Non-primitive type)
+    - Array
+    - Record(tuple, structure)
+    - String(스트링)
+    - Union
+      - 같은 메모리 위치에 다양한 데이터 저장 가능
+      - c.f) struct는 다양한 필드를 선형적으로 배치
+      - *union의 활용?*
+    - *Tagged union(variant)?*
+  - 추상 데이터 타입(ADT)
+    - Container(collection)
+      - 컴퓨터 공학에서 문제를 해결하기 위해서 어떠한 제어된 방식으로 다뤄야 하거나 함꼐 그룹화 해야하는 데이터 개체의 그룹
+    - List
+    - Tuple
+    - Associative array
+      - map, symbol table, dictionary
+      - (key, value) pair
+    - Multimap
+    - Heap
+    - Set
+    - Multiset
+    - Stack
+    - Queue
+    - Double-ended queue(Dequeue)
+    - Priority queue
+    - Tree
+    - Graph
+- 선형 데이터 구조(Linear data structure)
+  - Array
+    - *Bit array*
+    - *Bit field*
+    - *Bitboard*
+    - *Bitmap*
+    - *Circular buffer*
+    - *Control table*
+    - *Image*
+    - *Dope vector*
+    - *Dynamic array*
+    - *Gap buffer*
+    - *Hashed array tree*
+    - *Heightmap*
+    - *Lookup table**
+    - *Matrix*
+    - *Parallel array*
+    - *Sorted array*
+    - *Sparse matrix*
+  - Lists
+    - Linked list
+    - *Doubly linked list*
+    - *Array list*
+    - *Self-organizing list*
+    - *Skip list*
+    - *Unrolled linked list*
+    - *VList*
+    - *Conc-tree list*
+    - *Xor linked list*
+    - *Zipper*
+    - *Doubly connected edge(half-edge)*
+    - *Difference list*
+    - *Free list*
+- 트리
+  - Binary trees
+    - Binary search tree
+    - Binary tree
+    - *AVL tree*
+  - B-trees
+    - B-tree
+    - 2-3 tree
+  - Heaps
+    - Heap
+  - *Tries*
+  - *Multiway trees*
+  - Space-partitioning trees
+    - Segment tree
+  - Application-specific trees
+- 해시 기반 구조
+  - Hash table
+  - *Hash tree*
+  - *Hash array mapped trie*
+  - *Hash trie*
+  - *Koorde*
+  - *Prefix hash tree*
+  - *Rolling hash*
+  - *MinHash*
+  - *Quotient filter*
+  - *Ctrie*
+  - *Bloom filter*
+  - *Count-Min sketch*
+  - *Distributed hash table*
+- 그래프
+  - Adjacency list
+  - Adjacency matrix
+  - Directed graph
+  - *Directed acyclic graph*
+  - *Propositionally directed acyclic graph*
+  - *Graph-structured stack*
+  - *Scene graph*
+  - *Decision tree*
+    - *Binary dicision diagram*
+  - *Zero-suppressed decision diagram*
+  - *And-inverter graph*
+  - *Multigraph*
+  - *Hypergraph*
+- 그 외
+  - *Lightmap*
+  - *Winged edge*
+  - *Quad-edge*
+  - *Routing table*
+  - Symbol table
+    - (key value)페어로 구성된 자료구조
 
-단순히 여기에서 끝나는 것이 아니고, 해시를 사용한다면 이 해시가 **몇 MB나 GB까지 차지하는지, 그리고 그것이 현실적인 해법인지**까지 생각해야 한다. 즉 정당성의 문제이다.
+|Structure|Order|Unique|
+|---------|-----|------|
+|List|yes|no|
+|Associative array|no|yes|
+|Set|no|yes|
+|Multiset(bag)|no|no|
 
-해시에서 정당성을 찾을 수 없다면 이제 트리로 넘어간다. 트리 역시 단순히 자료구조가 있어서 사용한다의 차원을 넘어서 트리의 정당성과 다양한 활용에 대해서 생각할 수 있어야 한다.
-
-물론 이와 같은 내용을 말로 잘 설명할 수 있어야 한다.
+## 알고리즘
