@@ -16,6 +16,7 @@
     - 패러다임에 따른 분류
     - 구현에 따른 분류
     - 최적화 문제 해법에 따른 분류
+    - 시간 복잡도에 따른 분류
     - 프로그래밍 대회를 위한 분류
       - 정렬
       - 탐색
@@ -48,7 +49,7 @@
 
 ### 추상적 자료형(Abstract Data Type)의 정의
 
-알고리즘이 문제를 해결하는데 필요한 자료의 형태와 자료를 사용한 연산들을 수학적으로 정의한 모델
+알고리즘이 문제를 해결하는데 필요한 자료의 형태와 연산들을 수학적으로 정의한 모델
 
 예) 스택의 예를 들면, 함수 호출을 관리하기 위해 후입선출의 성질을 가진 추상적 자료형이 필요하니 pop과 push를 가지도록 스택이라는 추상적 자료형을 정의하고, 그것을 구현해서 함수 호출을 관리하는데 사용하는 구현체, 즉 자료구조를 콜 스택이라고 부르는 것이다.
 
@@ -264,11 +265,13 @@
   - 최적 해에 근접한 해를 비교적 적은 시간에 찾을 수 있는 장점
   - e.g
     - 유전 알고리즘
-- By complexity
-  - Constant time
-  - Linear time
-  - Logarithmic time
-  - Polynomial time
-  - Exponential time
+
+#### By complexity
+
+- Constant time
+- Linear time
+- Logarithmic time
+- Polynomial time
+- Exponential time
 
 #### 프로그래밍 대회를 위한 분류
