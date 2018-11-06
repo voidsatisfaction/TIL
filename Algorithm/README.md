@@ -275,3 +275,43 @@
 - Exponential time
 
 #### 프로그래밍 대회를 위한 분류
+
+- 동적 계획법
+  - top down
+  - buttom up
+- 정렬
+  - quick sort
+    - quick select
+  - merge sort
+- 탐색
+  - binary search
+  - 기본 탐색
+    - dfs
+    - bfs
+    - *A\**
+  - back tracking
+- 그래프
+  - 최단거리
+    - dijkstra
+    - *bellman-ford*
+    - *floyd-warshall*
+  - 최소 신장 트리
+    - *kruskal*
+    - *prim*
+  - *최대 유량*
+  - *Union find*
+  - *매칭*
+  - *topology sort*
+- 문자열
+  - *kmp*
+- ADT(추상 자료 타입)
+  - 선형
+    - *priority queue*
+  - 비선형
+    - 트리
+      - *segment tree*
+      - *fenwick tree*
+      - *heap*
+    - 비트마스크
+- 정수론
+  - *유클리드 호제법*
