@@ -218,7 +218,7 @@
   - e.g
     - 몬테 카를로 알고리즘
 - Reduction of complexity
-  - 어려운 문제를 이미 알고 해법이 나름 최적화 되어있는 기존문제로 변형 후 해결하는 법
+  - 어려운 문제를, 이미 알고 해법이 나름 최적화 되어있는 기존문제로 변형 후 해결하는 법
   - e.g
     - 정렬되지 않은 배열 안에서 median값을 구하기
       - 정렬 후 가운데 값을 구함
@@ -272,6 +272,12 @@
 
 #### 프로그래밍 대회를 위한 분류(자료구조까지도 포괄적으로 포함)
 
+- 최적화 테크닉
+  - two pointer
+    - 복수개의 포인터를 두어서 배열 내 구간의 최적화를 도와주는 기술
+    - [예시 문제 1](https://www.acmicpc.net/problem/2003)
+    - [예시 문제 2](https://www.acmicpc.net/problem/2461)
+  - sliding window
 - 동적 계획법
   - top down
   - buttom up
@@ -281,6 +287,7 @@
   - merge sort
 - 탐색
   - binary search
+    - parametric search
   - 기본 탐색
     - dfs
     - bfs
