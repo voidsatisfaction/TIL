@@ -2,6 +2,12 @@
 
 스칼라의 기초에 관한 요약을 [Scala School](https://twitter.github.io/scala_school/ko/basics.html)에 기초하여 만들어 보았다.
 
+## 좋은 강좌
+
+- [Scala で書くコンソール・ゲーム](http://eed3si9n.com/ja/console-games-in-scala)
+- [コーディング面接とSnakeゲームに唯一共通すること](https://postd.cc/coding-interviews-and-the-snake-game-have-this-one-thing-in-common/)
+- [「Scala言語らしさ」を理解しよう！ オブジェクト指向と関数型プログラミングの融合とは？](https://employment.en-japan.com/engineerhub/entry/2018/09/11/110000)
+
 ## 실행
 
 ```sh

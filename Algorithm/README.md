@@ -100,6 +100,9 @@
   - Priority queue
   - Tree
   - Graph
+  - succinct data struture
+    - e.g
+      - [cookpad - ruby optimization](https://techlife.cookpad.com/entry/2018/10/17/115126)
 
 #### 선형 데이터 구조(Linear data structure)
 

@@ -1,5 +1,14 @@
 # 모나드와 비동기 프로그래밍
 
+- 콜백
+- 프로미스
+
+[참고 - Callback에서 Future로](http://seoh.blog/2015/05/28/callback-to-future-functor-applicative-monad/)
+
+[참고 - promise_monad](https://gist.github.com/MaiaVictor/bc0c02b6d1fbc7e3dbae838fb1376c80)
+
+[참고 - Monad Programming with Scala Future](http://tech.kakao.com/2016/03/03/monad-programming-with-scala-future/)
+
 ## 콜백
 
 자바스크립트 계열의 언어에서 비동기 프로그래밍을 시행할 경우, 가장 원시적인 방법은 콜백을 이용하는 것이다.

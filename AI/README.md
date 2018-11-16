@@ -4,6 +4,10 @@
 
 - 쿠키런 자동 클리어 AI를 내 힘으로 만들어보기
 
+## 좋은 강좌
+
+- [machine-learning/crash-course - Google](https://developers.google.com/machine-learning/crash-course/)
+
 ## 좋은 사람들 좋은 글들
 
 - [김태훈 님 블로그](https://carpedm20.github.io/about/)
