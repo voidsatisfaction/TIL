@@ -52,6 +52,7 @@
   - 세상에 대해 약간 알 수도 있다
 - 세상은 계속 변한다
   - 세상이 변하더라도 가까운 미래는 먼 미래에 비해 현재와 비슷하다
+- 세상에서 일어나는 일은 그냥 그런 것이지, 어떠한 시비도 존재하지 않는다
 
 ## 기획
 
@@ -232,20 +233,26 @@
 
 일본어와 영어를 기반으로 다른 문화의 엔지니어들의 활약과 생각을 알 수 있다는 것을 생각하자. 특히 일본 기업의 기술 블로그나 기술 사이트도 돌아다니면 좋을 듯
 
-- 시중의 책
-- 블로그
-- 커뮤니티
-  - okky
-- stack overflow
-- 인터넷 강의 사이트
-- Moocs
-- youtube
-- **[논문](http://www.laputan.org/drc/drc.html)**
-- 여러 회사의 기술 블로그
-  - [라이엇 게임즈 - 스펠과 티어의 관계](https://na.leagueoflegends.com/en/page/turbo-mode-data-behind-your-spell-spamming)
-    - 진짜 인상깊었던 내용. 게임에서 스펠 하나하나를 기록하는구나 싶었다. 유저 데이터 취득과 분석의 중요성
-- 뉴스 레터
-- 인터넷 큐레이터 사이트
-  - [en - エンジニアhub](https://employment.en-japan.com/engineerhub/entry/2018/02/28/110000)
-  - [하테나 북마크 - ]
+- 온라인
+  - 전자책
+  - 개인 블로그
+  - 여러 회사의 기술 블로그
+    - [라이엇 게임즈 - 스펠과 티어의 관계](https://na.leagueoflegends.com/en/page/turbo-mode-data-behind-your-spell-spamming)
+      - 진짜 인상깊었던 내용. 게임에서 스펠 하나하나를 기록하는구나 싶었다. 유저 데이터 취득과 분석의 중요성
+  - 커뮤니티 사이트
+    - okky
+  - 컨퍼런스 동영상
+  - 인터넷 강의 사이트
+  - Moocs
+  - youtube
+  - **[논문](http://www.laputan.org/drc/drc.html)**
+  - 뉴스 레터
+  - 인터넷 큐레이터 사이트
+    - [en - エンジニアhub](https://employment.en-japan.com/engineerhub/entry/2018/02/28/110000)
+    - [하테나 북마크 - ]
+  - slack 그룹
+- 오프라인
+  - 책
+  - 스터디
+  - 컨퍼런스 참석
 - 등등...
