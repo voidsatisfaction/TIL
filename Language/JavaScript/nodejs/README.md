@@ -34,6 +34,13 @@
 
 ## 사전 지식
 
+### [RTE(RunTime Environment)](https://www.techopedia.com/definition/5466/runtime-environment-rte)
+
+- OS나 OS위의 어떠한 플랫폼에 의해서(e.g nodejs) 제공되는 애플리케이션이나 소프트웨어의 실행 환경
+- RTE에서는 그 애플리케이션은 지시나 명령을 프로세서에 보내거나 RAM과 같은 다른 시스템 자원을 접근할 수 있음
+  - 고 수준의 프로그래밍 언어들이 접근 가능하게 해주도록 추상화 해줌
+  - 고 수준의 프로그래밍 언어를 어떻게해서든 바이너리 코드로 변환 시켜줌
+
 ### call stack
 
 ![](./images/call-stack.png)
@@ -103,6 +110,8 @@
 #### task queue
 
 - IO작업으로 인한 콜백들을 저장해주는 장소
+- 처음에 스크립트를 시작하는 것도 task에 속함
+- 현재 작업중인 task는 현재의 microtask queue가 empty가 되어야지 끝남
 
 #### microtask queue(ES6에서 공식지원)
 
@@ -111,10 +120,12 @@
   - `If the stack of script settings objects is now empty, perform a microtask checkpoint`
   - e.g
     - 태스크 큐에 이미 작업이 있었다고 해도, 마이크로 태스크 큐의 작업이 더 빨리 실행이 됨
+- 어떠한 task가 종료되면 다시 실행이 됨
 - Promise가 settle되거나 이미 settle되었으면 microtask 큐에 그에 기반한 콜백을 삽입
-  - Promise callback을 async로 취급해줌
-  - `Promise.resolve().then(yay, nay)` 이것은 then이후의 callback이 microtask queue에 바로 삽입됨
+  - `Promise.resolve().then(yay, nay)` 이것은 `Promise then`이 microtasks에 바로 삽입
+  - `Promise callback`은 js stack(콜스택)에 삽입
 - e.g
+  - reacting to a batch of actions
   - HTML 엘리먼트의 attribute 변경 등의 태스크
   - Promise callback(`then`)
 - c.f `async`, `await`은 Promise의 문법설탕
