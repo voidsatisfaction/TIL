@@ -1,6 +1,6 @@
 # Clean architecture
 
-![](./images/clean-architecture.png)
+![](./images/clean-architecture.jpg)
 
 ## Clean architecture의 본질
 
