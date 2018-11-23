@@ -5,6 +5,7 @@
   - [객체 지향의 사실과 오해 - 메모](https://taehwanno.github.io/post/oop/2016/09/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%EC%9D%98-%EC%82%AC%EC%8B%A4%EA%B3%BC-%EC%98%A4%ED%95%B4)
 - 목차
   - Introduction
+  - SOLID
   - The principles of Object Oriented Design and Dependency Management
     - 썩은 디자인의 증상
     - 의존성 관리
@@ -27,6 +28,27 @@
 - 실제 세상의 물체들에 기반한 소프트웨어 시스템 모델링
   - e.g 뱅킹 시스템은 고객, 계좌 오브젝트를 포함하는 등
 - 올바르게 사용하는 것이 매우 중요
+
+## SOLID
+
+- 로버트 마틴이 2000년대 초반에 명명한 객체 지향 프로그래밍 및 설계의 다섯 가지 기본 원칙
+- Single Responsibility Principle
+  - 한 클래스는 하나의 책임만 가져야 한다
+- Open / Closed principle
+  - 소프트웨어 요소는 확장에는 열려 있으나 변경에는 닫혀 있어야 한다
+- Liskov substitution principle
+  - 프로그램의 오브젝트는 프로그램의 정확성을 깨뜨리지 않으면서 하위 타입의 인스턴스로 바꿀 수 있어야 한다
+  - e.g
+    - 원 타원의 모순
+- Interface segregation principle
+  - 특정 클라이언트를 위한 인터페이스 여러 개가 범용 인터페이스 하나보다 낫다
+  - 클라이언트가 자신이 이용하지 않는 메서드에 의존하지 않아야 한다(인터페이스의 분리)
+- Dependency inversion principle
+  - 프로그래머는 "추상화"에 의존해야지, "구체화"에 의존하면 안된다.
+  - 의존성 주입은 이 원칙을 따르는 방법 중 하나다.
+  - 내용
+    - *상위 모듈은 하위 모듈에 의존해서는 안된다 / 상위 모듈과 하위 모듈 모두 추상화에 의존해야 한다*
+    - 추상화는 세부 사항에 의존해서는 안된다. **세부사항이 추상화에 의존해야 한다.**
 
 ## The principles of Object Oriented Design and Dependency Management
 
