@@ -5,6 +5,7 @@
     - 정의
     - 역사
   - 디자인 패턴과 언어
+  - 디자인 패턴의 분류
   - 대표적인 디자인 패턴(Head first)
     1. Strategy Pattern
     2. Observer Pattern
@@ -26,6 +27,27 @@
   - e.g
     - OOP 지향 언어의 오브젝트의 컨스트럭터
     - 루비의 `module` 키워드(mixin)
+
+## [디자인 패턴의 분류](https://en.wikipedia.org/wiki/Software_design_pattern)
+
+이미 알고있는 것은 기울기가 없는 글자로 표현
+
+- Gang of Four patterns
+  - Creational
+    - *Abstract factory / Builder / Factory method / Prototype / Singleton*
+  - Structural
+    - *Adapter / Bridge / Composite / Decorator / Facade / Flyweight / Proxy*
+  - Behavioral
+    - Strategy / Observer / Template method
+    - *Chain of responsibility / Command / Interpreter / Iterator / Mediator / Memento / State / Template method / Visitor*
+- Concurrency patterns
+  - *Active object / Balking / Binding properties / Double-checked locking / Event-based asynchronous / Guarded suspension / Join / Lock / Monitor / Proactor / Reactor / Read write lock / Scheduler / Thread pool / Thread-local storage*
+- Architectural patterns
+  - Inversion of control
+  - *Front controller / Interceptor / MVC / MVP / MVVM / ECS / n-tier / Specification / Publish-subscribe / Naked objects / Service locator / Active record / Identity map / Data access object / Data transfer object / Model 2*
+- Other patterns
+  - Dependency injection
+  - *Blackboard / Business delegate / Composite entity / Intercepting filter / Lazy loading / Mock object / Null object / Object pool / Servant / Twin / Type tunnel / Method chaining / Dlegation*
 
 ## 대표적인 디자인 패턴
 
