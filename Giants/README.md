@@ -16,6 +16,14 @@
 
 - [사이트](http://www.paulgraham.com/articles.html)
 
+## 로버트 마틴
+
+![](./images/robert_martin.png)
+
+SOLID원칙, 클린 아키텍처, Code of Conduct, Agile, Clean Coders, Craftmanship
+
+- [로버트 마틴(엉클 밥) - 위키피디아](https://en.wikipedia.org/wiki/Robert_C._Martin)
+
 # 내가 좋아하는 프로그래머
 
 ## [사부](https://github.com/g6ling?tab=repositories)
@@ -34,6 +42,5 @@
 
 디자인, 데이터분석 등을 깊은 고찰과 함꼐 탐구하시는 기획 겸 프로그래머
 
-[인간을 프로그래밍 하기](https://www.youtube.com/watch?v=n3HgZjK4b8E) 에서도 좋은 말씀을 해주셨다.
-
-[모든 게임의 패턴, 구글 애널리틱스 파악할 수 있습니다](http://game.donga.com/79496/)
+- [인간을 프로그래밍 하기](https://www.youtube.com/watch?v=n3HgZjK4b8E) 에서도 좋은 말씀을 해주셨다.
+- [모든 게임의 패턴, 구글 애널리틱스 파악할 수 있습니다](http://game.donga.com/79496/)
