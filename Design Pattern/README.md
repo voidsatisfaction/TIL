@@ -1,11 +1,151 @@
 # 디자인 패턴
 
 - 목차
+  - 디자인 패턴이란
+    - 정의
+    - 역사
   - 디자인 패턴과 언어
+  - 대표적인 디자인 패턴(Head first)
+    1. Strategy Pattern
+    2. Observer Pattern
+    3. Decorator Pattern
+
+## 디자인 패턴이란
+
+- 정의
+  - 설계 문제에 대한 해답을 문서화하기위해 고안된 형식 방법
+  - **과거의 소프트웨어 개발 과정에서 발견된 설계의 노하우를 축적하여 이름을 붙여, 이후에 재이용하기 좋은 형태로 특정의 규약을 묶어서 정리한 것**
+- 역사
+  - 크리스토퍼 알렉산더가 제안한, 건축의 여러 기법을 틀로 고안한 아이디어. 기존의 작은 패턴을 묶어서 조합하여 건물 / 도시를 설계
+  - 각각의 패턴은 **패턴 언어**를 통해 기술 / 정리
+    - 건축가가 아닌 사람도 원하는 설계를 전문가에게 정확히 전달할 수 있게 도와줌
 
 ## 디자인 패턴과 언어
 
 - 디자인 패턴에서 나온 다양한 패턴들을 언어 자체가 언어의 명세로서 구현하는 경우도 있다.
   - e.g
     - OOP 지향 언어의 오브젝트의 컨스트럭터
-    - 루비의 `module` 키워드
+    - 루비의 `module` 키워드(mixin)
+
+## 대표적인 디자인 패턴
+
+![](./images/uml_is_a_has_a.png)
+
+- 화살표의 방향으로 **의존한다** 라는 뜻
+  - A <- B
+    - B는 A에 의존한다
+- is_a 관계
+  - `A <|- B`
+  - B는 A의 종류중 하나
+- has_a 관계
+  - `A <- B`
+  - B는 A를 갖고 있음
+
+### 1. Strategy Pattern
+
+![](./images/uml_strategy_pattern.png)
+
+- Defines a family of algorithms
+- Encapsulate & Interchangeable
+- Independent to client that uses it
+  - decouple
+
+```scala
+trait IFlyBehavior {
+  def fly(): Unit
+}
+
+trait IQuackBehavior {
+  def quack(): Unit
+}
+
+trait IDisplayBehavior {
+  def display(): Unit
+}
+
+class Duck(
+  flyingBehavior: IFlyBehavior,
+  quackBehavior: IQuackBehavior,
+  displayBehavior: IDisplayBehavior
+) {
+  def fly(): Unit =
+    flyingBehavior.fly
+
+  def quack(): Unit =
+    quackBehavior.quack
+
+  def display(): Unit =
+    displayBehavior.display
+}
+
+val wildDuck: Duck = new Duck(fb, qb, db)
+val mountainDuck: Duck = new Duck(fb2, qb2, db2)
+```
+
+- 적용
+  - 암호화폐 자동거래 시스템의 시뮬레이터
+    - 다양한 전략이 존재하기 때문에, 그전략들을 돌아가면서 검증해야 함
+    - 이 떄에 strategy 패턴을 사용해서, 각각의 전략의 parameter를 Interchangeable하게 하면 검증하고 테스트하기 쉬울 듯
+
+### 2. Observer Pattern
+
+![](./images/2_uml_observer_pattern.png)
+
+- Polling vs Pushing
+  - Polling
+    - 관찰의 주체(관찰을 하는 엔티티)가 주기적으로 관찰의 대상의 상태를 확인
+  - Pushing
+    - 관찰의 대상이 자신의 상태가 변경 되었을 때, 관찰의 주체에게 그것을 알려줌
+    - 리모컨 조작
+- One-to-many dependency
+- One object change state => all of its dependency notified / updated automatically
+
+```scala
+trait IObserver {
+  def update(): Unit
+}
+
+trait IObservable {
+  def add(observer: IObserver): Unit
+  def remove(observer: IObserver): Unit
+  def notify(): Unit
+}
+
+class WeatherStation extends IObservable {
+  private var temperature: Int = 0
+  private var observers: List[IObserver] = List[IObserver]()
+
+  def add(observer: IObserver): List[IObserver] = {
+    observers = observer :: observers
+  }
+
+  def remove(observer: IObserver): Unit = {
+    observers = observers.filter(_ != observer)
+  }
+
+  def notify(): Unit = {
+    observers.foreach(_.update)
+  }
+
+  def getTemperature(): Int = temperature
+}
+
+class PhoneDisplay(weatherStation: WeatherStation): IObserver {
+  // send data via update function's parameter
+  // then, this observer does not need to have observable data
+  def update(): Unit = {
+    weatherStation.getTemperature
+
+    // ...
+  }
+}
+```
+
+- 적용
+  - 암호화폐 자동거래 시스템의 Balance 기록 시스템
+    - 물론, 거래소 마다 Balance를 알아보는 것은 polling으로 밖에 할 수 없다.
+    - 하지만 그것을 wrapping해서 마치 푸시할 수 있는 것 처럼 Observable로 둔다.
+    - 그리고 Observer로 그것을 구독하게 하고, 변화가 있으면 update함수를 Observable에서 호출하면 Balance를 데이터베이스에 기록하게 한다.
+    - 이렇게 하면 DB에 데이터를 기록하는 컴포넌트와 거래소의 Balance의 변화를 탐지하는 컴포넌트가 loosely coupled된다.
+
+### 3. Decorator Pattern
