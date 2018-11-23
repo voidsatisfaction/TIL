@@ -10,3 +10,7 @@
 
 1. [핵심은 아키텍트다 - 전규현](http://m.zdnet.co.kr/column_view.asp?artice_id=20170810153934#imadnews)
 2. [프로그래머로서의 성장을 도왔던 태도들 - 안희종](http://ahnheejong.name/articles/becoming-better-programmer)
+
+## 영상
+
+1. [개발자가 갖추어야 할 9가지 기술 - 박종천 넥슨 부본부장](https://www.youtube.com/watch?v=fHyTA-UIcqs&t=1565s)
