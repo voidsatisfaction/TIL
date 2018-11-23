@@ -13,6 +13,10 @@
 
 정규화는 성능과 이상증상의 제거를 서로 고려하여 적당한 선에서 결정. 보통은 3NF, BCNF
 
+## 좋은 강좌
+
+- [High Performance MySQL: 3rd Edition](https://ridibooks.com/v2/Detail?id=2409002862&_s=search&_q=High%20Performance%20MySQL)
+
 ## Functional Dependence: 함수적 종속성
 
 ### 결정자(Determinant)와 종속자(Dependent)
