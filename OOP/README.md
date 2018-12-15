@@ -28,6 +28,11 @@
 - 실제 세상의 물체들에 기반한 소프트웨어 시스템 모델링
   - e.g 뱅킹 시스템은 고객, 계좌 오브젝트를 포함하는 등
 - 올바르게 사용하는 것이 매우 중요
+- 핵심 사상
+  - code reuse
+    - Polymorphism
+    - Encapsulationq
+    - Inheritance
 
 ## SOLID
 
@@ -93,9 +98,39 @@
 
 #### 의존성 관리
 
-- 디자인을 썩게 만드는 변화
-  - **새롭고 계획되지 않은 의존성의 추가**
+![](./images/design_pattern.png)
+
+![](./images/ioc_framework.png)
+
 - 오브젝트 지향 프로그래밍의 핵심
+- c.f) Dependency + Injection + Framework = (스프링 프레임워크)
+  - Dependency
+    - 의존 이란, 어떠한 비지니스로직을 구현하는데에 있어서, 자기 혼자 독립해서가 아닌, 다른 오브젝트나 함수와 같은 대상의 도움을 받아서 그 로직을 구현하는 것을 의미
+    - 의존 관계, Supplier의 변화가 Client에 영향을 주는 경우
+    - 의존 관계 발생
+      - Supplier가 Client의 필드
+      - Supplier가 Client 메소드의 파라미터
+      - Supplier가 Client의 로컬 변수
+      - Supplier로 메시지를 보냄
+    - Component
+      - 컴포넌트란, 이를 만든 개발자의 손이 미치지 않는 곳에서도, 아무 변경 없이, 필요에 따라 확장해서 사용될 수 있는 소프트웨어 덩어리다
+      - Client는 Component가 될 수 없음(Supplier에 의존하기 때문)
+    - **디자인 패턴의 오브젝트 패턴은 런타임시에 바뀔 수 있는, (상속 관계보다) 더 동적인 오브젝트 (의존) 관계를 다룬다**
+      - object composition을 이용한 패턴
+      - c.f) class를 이용한 패턴은 inheritance를 이용함
+  - 구현 대신 인터페이스
+    - 클래스(구현) 의존 관계 제거
+    - 클래스에 대한 의존성은 생성자 패턴처럼 제3자에 위임
+  - 오브젝트 합성 사용
+    - 인터페이스 사용
+    - 런타임시에 다른 오브젝트에 대한 레퍼런스 획득
+  - Inversion of Control
+    - Designing Resuable Classes (Ralph Johnson 1988)
+    - 프레임워크 동작방식을 설명하는 용어
+    - Design Patterns (GoF)
+      - Class scope: white box framework
+      - Object scope: black box framework
+    - callback / event-driven?
 
 # 오브젝트 지향 클래스의 디자인
 
@@ -116,6 +151,9 @@
 
 ![](./images/dynamic_polymorphism.png)
 
+- **런타임에 메시지를 받는 주체를 확정함**
+  - 컴파일 타임에는 모름
+
 ```cpp
 class Modem
 {
@@ -135,6 +173,7 @@ void LogOn(Modem& m, string& pno, string& user, string& pw)
 ### 정적 다형성(Static Polymorphism)
 
 - 템플릿이나 제네릭을 사용
+- **컴파일 타임에 메시지를 받는 주체 확정**
 
 ```cpp
 template <typename MODEM>
