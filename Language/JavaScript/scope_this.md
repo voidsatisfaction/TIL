@@ -179,6 +179,27 @@ nav.addEventListener('click', toggleNav.bind(scope, arg1, arg2), false);
 
 위와 같이 함수의 내부의 this의 scope를 변경시키며 함수 자체를 넘겨줄 수 있다.
 
+## Arrow function
+
+- 일반 함수는 런타임 리시버에 따라서 `this`의 문맥이 정해짐
+  - 함수를 실행하는 리시버는 누구인가?
+- Arrow function은 컴파일 타임에 lexical scope로 `this`의 문맥이 고정
+  - 함수가 정의된 문맥은?
+
+```js
+function Period (hours, minutes) {
+  this.hours = hours
+  this.minutes = minutes
+}
+Period.prototype.format = () => { // 전역 문맥에 고정
+  console.log(this === window) // true
+  return this.hour + ' hours and ' + this.minutes + ' minutes'
+}
+
+var walkPeriod = new Period(2, 30)
+walkPeriod.format() // undefined hours and undefined minutes
+```
+
 ## Private및 Public Scope
 
 js에는 명시적인 public/private키워드가 존재하지 않는다. 하지만 `module pattern`을 이용해서 public/private scope를 만들 수 있다.
