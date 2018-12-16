@@ -321,6 +321,9 @@
     - [en - エンジニアhub](https://employment.en-japan.com/engineerhub/entry/2018/02/28/110000)
     - [하테나 북마크 - ]
   - slack 그룹
+  - 과거의 동양 / 서양의 역사적 인물들
+    - 다산 정약용의 유배지에서 보낸 편지 등
+    - [리처드 파인만](https://www.youtube.com/watch?v=8n80LX2LGjY)
 - 오프라인
   - 책
   - 스터디
