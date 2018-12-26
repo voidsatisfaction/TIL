@@ -181,9 +181,53 @@ class PhoneDisplay(weatherStation: WeatherStation): IObserver {
     - 그리고 Observer로 그것을 구독하게 하고, 변화가 있으면 update함수를 Observable에서 호출하면 Balance를 데이터베이스에 기록하게 한다.
     - 이렇게 하면 DB에 데이터를 기록하는 컴포넌트와 거래소의 Balance의 변화를 탐지하는 컴포넌트가 loosely coupled된다.
 
-### 3. Decorator Pattern
+### Structural Pattern
+
+![](./images/uml_structural.png)
+
+#### 3. Decorator Pattern
+
+![](./images/example_decorator.png)
+
+![](./images/uml_decorator.png)
+
+- 정의
+  - 런타임에 특정 오브젝트를 변경시키지 않고, 어떠한 오브젝트의 속성이나 메서드의 행위를 변경 / 혹은 추가 시키는 방법
+  - 오브젝트의 래핑
+  - 데코레이터는 컴포넌트를 갖을 뿐아니라, 자기자신이 컴포넌트다
+  - 서브클래스의 extends보다 더 유연한 오브젝트 확장 방식을 제공
+- 적용
+
+#### 4. Adapter Pattern
+
+- 정의
+  - 클라이언트는 특정 인터페이스를 갖고 있는데, 어떠한 어댑티는 그 인터페이스를 만족하지 못하므로, 어댑터가 클라이언트의 특정 인터페이스를 만족하도록 래핑해서 클라이언트가 어댑티를 사용할 수 있도록 래핑 함
+
+#### 5. Facade Pattern
+
+- 정의
+  - 서브 시스템을 쉽게 사용할 수 있도록 추상화한 인터페이스
+  - 클라이언트가 내부의 복잡한 내용의 로직을 추상화한 Facade를 이용해서 쉽게 오브젝트의 로직을 사용할 수 있도록 함
+
+#### 6. Proxy Pattern
+
+- 정의
+  - 다른 오브젝트에 대한 접근을 제어하기 위한 같은 인터페이스의 대리 오브젝트가 존재
+  - 서브젝트라고 불리는 인터페이스를 구체적인 구현과 프록시 둘다 구현했는데, 프록시는 구체적인 구현 오브젝트를 갖고 있는 경우
+  - 구현 오브젝트에 대한 접근(access)에 더 초점을 둔 디자인 패턴
+    - 접근에 대한 제어를 목표로 함
+    - 캐싱을 위해서 사용하는 경우가 있음(HTML 캐싱 등)
+
+#### 7. Bridge Pattern
+
+- 정의
+  - 추상과 구현을 디커플링해서 독립적으로 다룰 수 있도록 함
+  - 서로 다른 다형 계층을 이어주는 패턴
+  - Strategy 패턴 + Adapter 패턴
 
 ### ?. Template Method Pattern
+
+![](./images/uml_template_method.png)
 
 - IOC(Inversion Of Control)과 깊은 관계가 있음
 - Super class에 Template method를 정의해두고 Subclass에서 Template method에 필요한 일부 서브 로직을 구현
@@ -197,3 +241,4 @@ class PhoneDisplay(weatherStation: WeatherStation): IObserver {
 - 단점
   - 상속을 이용하므로, 클래스 사이의 커플링이 심해짐.
   - 앞으로 Template method의 컨트롤 내용이 많이 변하지 않는다는 것을 전제할 때에 사용해야 함(결국 코드의 변화가 생기면 서브 클래스의 메서드를 전부 변화시켜야 할 가능성도 존재)
+  - 그냥 Strategy패턴을 사용하는 것이 좋을 수도 있음
