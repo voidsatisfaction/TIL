@@ -224,6 +224,8 @@ class PhoneDisplay(weatherStation: WeatherStation): IObserver {
   - 추상과 구현을 디커플링해서 독립적으로 다룰 수 있도록 함
   - 서로 다른 다형 계층을 이어주는 패턴
   - Strategy 패턴 + Adapter 패턴
+  - e.g
+    - Controller와 View의 합성
 
 ### ?. Template Method Pattern
 
