@@ -227,6 +227,14 @@ class PhoneDisplay(weatherStation: WeatherStation): IObserver {
   - e.g
     - Controller와 View의 합성
 
+### 8. Factory Pattern
+
+![](./images/uml_factory.png)
+
+- 정의
+  - 오브젝트를 생성하기 위한 인터페이스를 정의하는 것. 다만, 팩토리 메서드는 서브클래스가 어떤 클래스를 인스턴스화 하는가를 결정하게 함
+  - 생성 로직을 일반화시켜서 파라미터화 하는 것
+
 ### ?. Template Method Pattern
 
 ![](./images/uml_template_method.png)
