@@ -37,3 +37,55 @@
 - 연구의 무엇이 포인트인지 분명히 하자
   - **구체적으로 정확히 무엇** 을 이 연구를 통해서 보여주고 싶은것인가?
   - 해당 시스템의 어떠한 기능이 좋았던 것인가?
+
+## What is Research paper?
+
+- Novelty
+  - 선행 연구 분석을 통한 아이디어의 독자성 강조
+- Positioning
+  - 나의 연구가 왜 필요한지. 어떻게 나의 연구 성과가 현 연구의 지평을 열어가게 될 것인지
+- Soundness of procedure
+  - 해결책을 얼마나 잘 구현했는지
+- Evidence to support claim
+  - 제시한 해법이 잘 작동되는지 나타내는 데이터가 존재하는지
+- Overall coherence
+  - 논문 전체에 일관성이 존재하는지
+  - 조치는 문제를 잘 다뤄야 하고
+  - 실험 결과는 문제에 대한 답을 주어야 함
+
+### Novelty
+
+- Problem
+- Solution
+- Domain
+
+### Positioning
+
+- 관련 선행 연구의 분석을 잘 보여주고, 그것이 달성하지 못한 과제를 끌어냈는가?
+  - 다루는 문제 자체가 유사한 논문들
+  - 문제 해결 접근 방식 자체가 유사한 논문들
+- 위에서 분석한 달성하지 못한 과제들을 제안 수법에서는 잘 다루고 있는가?
+  - Novelty는 줄어들어도, Positioning에 관한 정확도는 증가해야 한다.
+
+### Soundness of procedure
+
+- Two group post test + Single group pre-post design
+  - 이렇게 해야만, 제안 수법이 유효하다는 것을 증명할 수 있음
+
+### Evidence to support claim
+
+- 수집하는 데이터는 반드시 연구 목적과 관계가 있어야 함
+- Learning Effectiveness
+  - Student performance
+    - Standardized test
+    - Create instrument
+    - Measure what is relevant
+    - Marks in regular quiz or final exam (weak)
+- Engagement
+  - Student interest, satisfaction
+    - satisfaction
+    - interest in course topics / course format
+    - attendance
+  - Measurement
+    - Questionnaire to measure perception of learning / satisfaction / interest
+    - Carefully structured interviews
