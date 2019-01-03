@@ -333,18 +333,27 @@
   - 여러 회사의 기술 블로그
     - [라이엇 게임즈 - 스펠과 티어의 관계](https://na.leagueoflegends.com/en/page/turbo-mode-data-behind-your-spell-spamming)
       - 진짜 인상깊었던 내용. 게임에서 스펠 하나하나를 기록하는구나 싶었다. 유저 데이터 취득과 분석의 중요성
-  - 커뮤니티 사이트
-    - okky
   - 컨퍼런스 동영상
   - 인터넷 강의 사이트
   - Moocs
   - youtube
+    - [토비 님](https://www.youtube.com/channel/UCcqH2RV1-9ebRBhmN_uaSNg)
   - **[논문](http://www.laputan.org/drc/drc.html)**
   - 뉴스 레터
   - 인터넷 큐레이터 사이트
-    - [en - エンジニアhub](https://employment.en-japan.com/engineerhub/entry/2018/02/28/110000)
-    - [하테나 북마크 - ]
+    - 한국
+      - [pop it](https://www.popit.kr/)
+      - [okky](https://okky.kr/articles/tech)
+        - 기본적인 커뮤니티 글들은 기술과는 직접적으로 상관이 크지는 않음
+    - 일본
+      - [en - エンジニアhub](https://employment.en-japan.com/engineerhub/entry/2018/02/28/110000)
+      - [하테나 북마크](http://b.hatena.ne.jp/)
+    - 미국
+      - [infoQ](https://www.infoq.com/)
+        - 주로 시니어 개발자 위주, 아키텍처나 devops등의 따끈따끈하고 질 높은 정보들이 축적됨
+        - 유명한 분들(Robert Martin, Paul Graham 등!!) 도 나와서 팟캐스트에 참여해주심
   - slack 그룹
+    - 나랑은 그렇게 잘 맞는것 같지는 않다
   - 과거의 동양 / 서양의 역사적 인물들
     - 다산 정약용의 유배지에서 보낸 편지 등
     - [리처드 파인만](https://www.youtube.com/watch?v=8n80LX2LGjY)
