@@ -1,8 +1,16 @@
 # 통계 기초
 
+## 좋은 자료들
+
+- [통계청](http://kostat.go.kr/portal/korea/index.action)
+  - [통계청 저널 통계 연구(논문)](http://kostat.go.kr/understand/info/info_pct/1/1/index.action)
+  - [직장 내 성희롱 피해 대응방식에 관한 연구](http://kostat.go.kr/file_total/eduSri/23-4-04.pdf)
+
 ## 통계학
 
 - 통계
+  - 의의
+    - **현 현상을 파악 / 미래를 예측 / 의사 결정의 도구**
   - **현상의 법칙성을 파악**
   - 넓게 주어져 있는 데이터를 정리하여, 유용한 정보(information)을 이끌어내는 학문
     - 데이터의 성질에 따라서 분류
