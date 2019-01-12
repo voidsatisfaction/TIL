@@ -17,6 +17,8 @@
 - SUS(System Usability Scale)
   - 10문항
   - 타 시스템의 앙케이트 결과와 정량적 비교 가능(total score)
+  - Bangor A., Kortum P.T. & Miller J.T. (2008) An Empirical Evaluation of the System Usability Scale, International Journal of Human-Computer Interaction, 24:6, 574-594
+    - 이 논문으로 일반적인 SUS스코어의 비교가 가능
 - USE(Usefulness, Satisfaction, Ease of use)
   - 많은 문항
   - 비교는 불가능
