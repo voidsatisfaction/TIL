@@ -164,7 +164,25 @@
 
 ### 직선의 맞춤
 
+![](./images/ch2/least_square.jpg)
+
 - 독립변수와 종속변수
   - x가 y를 좌우 하거나 결정하는 경우
   - y를 종속 변수, x를 독립변수
-- 최소 제곱법 / 최소 자급법
+  - 위의 x, y의 관계를 회귀 라는 관점이나 방법으로 다룸
+- 보통은 1차식으로 표현
+  - `y = b*x + a`
+- 최소 제곱법 / 최소 자급법(method of least squares / sum of squares)
+  - 어떠한 객관적인 기준으로 `y = b*x + a` 식을 도출할 것인가?
+  - xi로부터 예상되는 y값인 b*xi + a 와 현실의 모든yi의 합이 가장 적은 차이를 보이는 직선이 최적 직선 `y = b * xi + a` 이라고 할 수 있음
+  - a와 b에 대해서 편미분으로 **정규방정식(normal equation)** 을 도출
+  - 이를 풀어서 그래프 위에 직선을 그리면 회귀 방정식(regression equation) / 회귀 직선(regression line) 이라고 함
+  - `b`는 편회귀계수(partial regression coefficient)
+  - `a`는 회귀직선의 y 절편 (y-intercept)
+
+### 결정 계수(coefficient of determination)
+
+- 결정 계수
+  - `b = r * Sy / Sx`
+  - 직선 대응의 정도는 r값의 척도이기도 함
+  - 상관계수 r은 직선의 대응의 정도의 척도이기도 함
