@@ -184,6 +184,8 @@
 
 ![](./images/ch2/least_square.jpg)
 
+![](./images/ch2/normal_equation.jpg)
+
 - 독립변수와 종속변수
   - x가 y를 좌우 하거나 결정하는 경우
   - y를 종속 변수, x를 독립변수
@@ -195,12 +197,56 @@
   - xi로부터 예상되는 y값인 b*xi + a 와 현실의 모든yi의 합이 가장 적은 차이를 보이는 직선이 최적 직선 `y = b * xi + a` 이라고 할 수 있음
   - a와 b에 대해서 편미분으로 **정규방정식(normal equation)** 을 도출
   - 이를 풀어서 그래프 위에 직선을 그리면 회귀 방정식(regression equation) / 회귀 직선(regression line) 이라고 함
-  - `b`는 편회귀계수(partial regression coefficient)
+  - `b`는 편회귀계수(slope, partial regression coefficient)
   - `a`는 회귀직선의 y 절편 (y-intercept)
+- 회귀직선(simple regression)
+  - `y - y평균 = b(x - x평균)`
+  - **(x평균, y평균)을 지나는 기울기 b의 직선임**
+- 회귀식의 가설검정
+  - 해당 회귀식을 정말 믿을 수 있는가?
+    - 귀무가설: 해당 회귀식은 유용하지 않다
+    - 대립가설: 해당 회귀식은 유용하다
+- 질문
+  - *왜 기울기를 b로 놓았을까?*
 
-### 결정 계수(coefficient of determination)
+#### 결정 계수(coefficient of determination)
+
+![](./images/ch2/coefficient_of_determination.png)
 
 - 결정 계수
   - `b = r * Sy / Sx`
   - 직선 대응의 정도는 r값의 척도이기도 함
   - 상관계수 r은 직선의 대응의 정도의 척도이기도 함
+  - r^2가 1이면 정확히 모든 데이터가 `y = b*x + a` 위에 있는 것으로 **결정** 됨
+    - r^2는 독립변수 x가 종속변수 y를 결정하는 강약의 정도를 나타냄
+- 용어
+  - SSE(Sum of Square Error)
+    - 회귀식과 실제 값의 차이 제곱
+    - 회귀 후
+  - SSR(Sum of Square Regression)
+    - 회귀식과 평균값의 차이 제곱
+    - 회귀에 의한 감소
+  - SST(Sum of Square Total)
+    - 편차의 제곱합
+    - 회귀 전
+- 식
+  - `SSE = (1-r^2) * SST`
+  - `SSR = SST - SSE`
+
+### 평면의 맞춤
+
+![](./images/ch2/multiple_regression.png)
+
+- 중회귀(multiple regression)
+  - 둘 이상의 x1, x2, ... xp 를 더한 회귀식도 구할 수 있음
+  - `y = b1*x1 + b2*x2 + a`
+  - 이는 평면의 맞춤문제
+  - e.g
+    - 연령, 최고 혈압, 폐활량
+
+### 다항식 회귀
+
+![](./images/ch2/polynomial_regression.jpeg)
+
+- 어떤 데이터는 2차식이나 3차식으로 회귀식을 나타내는 것이 더 정확함
+  - 그럴떄, **다항식 회귀(polynomial regression)** 를 사용
