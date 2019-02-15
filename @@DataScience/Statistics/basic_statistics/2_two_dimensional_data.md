@@ -90,6 +90,10 @@
 
 ![](./images/ch2/pearson_correlation_coefficient_expression.png)
 
+![](./images/ch2/correlation_coefficient_equation.gif)
+
+![](./images/ch2/correlation_coefficient_example.jpeg)
+
 - 서로 다른 2차원 데이터 사이의 상관 관계의 강함을 수치로 나타낸 것
   - 여러가지 정의가 있음
   - 주로 사용되는 것: 피어슨 적률상관계수(product-moment correlation coefficient)
