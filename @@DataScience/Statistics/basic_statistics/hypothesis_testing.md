@@ -1,6 +1,15 @@
 # hypothesis testing(가설 검증)
 
-- 가설이 실현될 가능성이 5% 미만이면(보통 5%) 그 가설은 기각된다고 하자
+- 가설 검증의 아이디어
+- 에러의 확률과 힘
+- t-test와 z-test의 차이
+  - z-test란
+  - t-test란
+  - Case1: Sampling from normally distributed populations with population variances known
+  - Case2: Sampling from populations that are not normally distributed & no information about the population
+- 참고
+  - [수학 이야기 - 표본평균의 분포](https://suhak.tistory.com/entry/%ED%91%9C%EB%B3%B8%ED%8F%89%EA%B7%A0%EC%9D%98-%EB%B6%84%ED%8F%AC)
+  - [Hypothesis Testing of the Difference Between Two Population Means](https://www.kean.edu/~fosborne/bstat/07b2means.html)
 
 ## 가설 검증의 아이디어
 
@@ -111,18 +120,68 @@
   - 어떠한 실험은 Type1 에러에 치명적이고, 어떠한 실험은 Type2 에러에 치명적
     - e.g H0: 수영장의 물의 위생상태는 허용 수준, Ha: 수영장의 물은 허용이 불가능(오염)
 
-## 모비율(population proportion)에 대한 테스트
+## t-test와 z-test의 차이
 
-### 모비율 유의(significance) 테스트를 위한 가설 세우기
+![](./images/t_distribution_z_distribution.png)
 
-### 모비율 유의 테스트에 대한 z-test의 조건
+- z-test는 일반적으로 모집단의 분산을 알고 있을 경우에 사용하는 기법
+  - z분포는 언제나 표준정규분포를 따름
+- t-test는 모집단의 분산을 모를 경우에 사용하는 기법
+  - t분포는 정규화에서 쓰는 모집단의 표준편차 대신, 표본의 표준편차를 사용하므로, 표본의 크기에 따라서 분포가 달라짐
+  - 이를 t분포라고 함
+  - 표본의 크기가 작을때는 일반 표준정규분포와 큰 차이를보이나, 표본의 크기가 클 때는 표본정규분포와 거의 구분이 없다.
 
-![](./images/z-test-condition.png)
+### z-test란
 
-### 일정 비율에서 통계적 추론을 하기 위한 조건
+정규분포와 표준화를 통한 검정 방식
 
-- 임의성(Random)
-  - 데이터는 무작위 샘플로 구성되어야 함
-- 정규성(Normal)
-  -
-- 독립성(Independent)
+### t-test란
+
+t분포를 통한 검정 방식(표준 정규분포와 유사하나, 모분산대신 표본분산 사용, 자유도 존재, 자유도가 크면 클 수록 표준정규분포에 매칭)
+
+#### Case1: Sampling from normally distributed populations with population variances known
+
+- 가설 검증을 위한 알파값 설정
+- 두 모집단의 평균의 차를 알기 위해서 각각 random sampling을 하고 각각의 표본 집단을 A, B라고 하자
+- 각 표본 집단 A, B의 평균의 분포 역시 정규분포이다. - 정규분포의 성질
+- `A의 평균 ~ N(u1, sigma1^2/n1)` `B의 평균 ~ N(u2, sigma2^2/n2)` 의 분포를 따른다. - 정규분포의 성질
+- 여기서 두 집단의 평균의 차를 알아보기 위해서 `A의 평균 - B의 평균`의 확률 분포를 알아보자
+  - 확률변수인 `A의 평균 - B의 평균`은 역시 정규분포를 따른다. - 정규분포의 성질
+  - `A의 평균 - B의 평균 ~ N(u1-u2, sigma1^2/n1 + sigma2^2/n2)` - 확률분포의 기대값, 분산의 성질
+- 확률분포(정규분포) `N(u1-u2, sigma1^2/n1 + sigma2^2/n2)`를 표준정규분포로 변환시킴
+  - `Z = (A의 평균 - B의 평균) - (u1 - u2) / root(sigma1^2/n1 + sigma2^2/n2)` - 확률분포의 변형
+- 귀무가설 H0: u1 = u2 로 둔다.
+  - 대립가설 H1: u1 != u2
+- Z값을 구한다
+- Z값이 알파값에 해당하는 범위보다 바깥쪽에 있으면 귀무가설을 기각하고, 대립가설 채택
+
+#### Case2: Sampling from populations that are not normally distributed & no information about population
+
+- 가설 검증을 위한 알파값 설정
+- 두 모집단의 평균의 차를 알기 위해서 충분히 큰 표본 크기(n1, n2 >= 30)의 random sampling을 하고 각각의 표본 집단을 A, B라고 하자
+- 각 표본 집단 A, B의 평균의 분포 역시 정규분포이다. - 중심 극한정리
+- `A의 평균 ~ N(u1, sigma1^2/n1)` `B의 평균 ~ N(u2, sigma2^2/n2)` 의 분포를 따른다. - 정규분포의 성질
+- 여기서 두 집단의 평균의 차를 알아보기 위해서 `A의 평균 - B의 평균`의 확률 분포를 알아보자
+  - 확률변수인 `A의 평균 - B의 평균`은 역시 정규분포를 따른다. - 정규분포의 성질
+  - `A의 평균 - B의 평균 ~ N(u1-u2, sigma1^2/n1 + sigma2^2/n2)` - 확률분포의 기대값, 분산의 성질
+- 확률분포(정규분포) `N(u1-u2, sigma1^2/n1 + sigma2^2/n2)`를 표준정규분포로 변환시킴
+  - `Z = (A의 평균 - B의 평균) - (u1 - u2) / root(sigma1^2/n1 + sigma2^2/n2)` - 확률분포의 변형
+  - 여기서 우리는 모집단의 표준편차를 모르므로, 충분히 큰 표본 크기 (n1, n2 >= 30)에 대해서는 sigma1, sigma2를 각각 표본분산 s1, s2로 변환한다.(오차발생)
+- Z분포로 오류가 큰 분석
+  - 귀무가설 H0: u1 = u2 로 둔다.
+    - 대립가설 H1: u1 != u2
+  - 그대로 Z값을 구한다
+  - Z값이 Z분포에 있어서 알파값에 해당하는 범위보다 바깥쪽에 있으면 귀무가설을 기각하고, 대립가설 채택
+- t분포로 오류가 더 적은 분석
+  - 귀무가설 H0: u1 = u2 로 둔다.
+    - 대립가설 H1: u1 != u2
+  - t-test가 가능한지 확인(만족하지 못하면 다른 테스트를 행해야함)
+    - 대조하는 두 표본이 독립성을 만족하는지 확인
+    - 각 표본이 정규성을 만족하는지 확인
+      - *근데 어차피 중심극한정리로 표본 평균의 분포가 거의 정규분포를 그린다는것(t분포)을 확인하면 되는거 아닌가? 굳이 표본이 정규성을 만족해야하는가?*
+    - 대조하는 두 표본이 등분산성을 만족하는지 확인
+      - *이것의 이유는?*
+  - t값을 구한다
+  - t값이 t분포에 있어서 알파값에 해당하는 범위보다 바깥쪽에 있으면 귀무가설을 기각하고, 대립가설 채택
+
+그래서 보통은 모분산을 알지 못하는 경우에는 충분히 큰 표본을 갖고 z-test가 아닌, t-test로 모집단의 평균의 차의 유의성을 검증한다.
