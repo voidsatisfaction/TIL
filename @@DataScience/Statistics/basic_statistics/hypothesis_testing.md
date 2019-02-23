@@ -149,6 +149,7 @@ t분포를 통한 검정 방식(표준 정규분포와 유사하나, 모분산�
   - random sampling
     - 두 그룹은 독립적 (독립성)
   - **모집단** 의 확률변수의 분포가 정규분포를 따름 (정규성)
+    - *모집단이 정규분포를 따른다는 것을 무엇을 근거로 어떻게 가정할 수 있을까? 가정에 convention과 같은 기준이 있을까?*
   - **모집단** 의 분산값이 거의 일치함 (등분산성)
 
 #### Case1: Sampling from normally distributed populations with population variances known
