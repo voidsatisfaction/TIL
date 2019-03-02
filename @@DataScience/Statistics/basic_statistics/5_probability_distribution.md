@@ -408,16 +408,68 @@ N번의 독립 베르누이 시행에서 S가 X회 나올 때, 그 X
 
 확률 변수
 
-코시 분포의 확률 밀도 함수를 따르는 확률 변수의 집합
+어떤 확률변수(X)에 로그값을 취한 확률변수가 정규분포를 따르는 경우, 원래 확률변수 X
 
 확률 밀도 함수
 
-![](./images/ch5/cauchy_distribution.gif)
+![](./images/ch5/log_normal_distribution.gif)
 
 기댓값
 
-없음
+![](./images/ch5/log_normal_expectation.gif)
 
 분산
 
-없음
+![](./images/ch5/log_normal_variance.gif)
+
+- 대수정규분포
+  - 확률변수의 값이 낮은 곳에서는 확실한 한도가 존재하나, 확률변수의 값이 높은 곳에서 확실한 한도가 존재하지 않는경우
+  - 예시
+    - 무작위로 세대를 선택하여 그 연간 소득을 확률 변수 X로 두었을 때의, 확률 분포
+
+### 파레트 분포(pareto distribution)
+
+확률 변수
+
+파레트 분포의 확률 밀도 함수를 따르는 확률 변수의 집합
+
+확률 밀도 함수
+
+![](./images/ch5/pareto_distribution.gif)
+
+기댓값
+
+![](./images/ch5/pareto_expectation.gif)
+
+분산
+
+![](./images/ch5/pareto_variance.gif)
+
+- 파레트 분포
+  - x0 이상의 소득의 확률 분포(고소득층의 소득 확률 변수에 대한 확률 분포)
+
+### 와이블분포(Weibul distribution)
+
+확률 변수
+
+와이블 분포의 확률 밀도 함수를 따르는 확률 변수의 집합
+
+확률 밀도 함수
+
+![](./images/ch5/weibul_distribution.gif)
+
+기댓값
+
+![](./images/ch5/weibul_expectation.gif)
+
+분산
+
+![](./images/ch5/weibul_variance.gif)
+
+- 와이블 분포
+  - 어떤 물체의 고장이 우발적 고장이라면, 순간 고장율은 항상 일정한데, 이럴때는 지수분포를 따름
+  - 하지만, 현실적으로는 초기 고장 시기에는 순간 고장률이 낮고, 나중에 열화가 진행하여 고장율이 높아질 것임 이러한 내용을 반영한 확률분포가 와이블분포
+- 특성
+  - 모수 a, b는 각각 척도 모수, 형상모수라고 불림
+    - b의 값을 바꾸면 분포의 모양이 변함, b가 크면 정규분포에 가까워짐
+  - 확률변수의 분포가 정규분포를 닮았으나, 엄밀하게 정규분포가 아닌 경우의 정밀한 분포 찾기에 사용됨
