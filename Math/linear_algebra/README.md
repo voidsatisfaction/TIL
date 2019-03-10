@@ -8,6 +8,8 @@
 
 ## Essence of linear algebra 정리
 
+수학에서 직관(궁리)은 철저히 배제해야 한다고 생각했으나, 수학의 드넓은 세계를 이해하기 위해서는 직관 역시 논리와 마찬가지로 매우 중요한 요소임을 깨닫게 되었다.
+
 ### 1. Vectors, what even are they?
 
 - 벡터
@@ -140,3 +142,84 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
 ### 5. Three-dimensional linear transformations
 
 ### 6. The determinant
+
+![](./images/definition_of_determinant.png)
+
+![](./images/determinant.png)
+
+![](./images/determinant2.png)
+
+![](./images/determinant_zero.png)
+
+![](./images/determinant_two_dimention.png)
+
+- determinant
+  - 어떠한 선형 변환에 대한 단위 면적의 변화 비율
+  - 관찰
+    - 어떠한 선형 변환은 공간을 확장하거나, 공간을 축소한다.
+  - 공간의 확장과 축소
+    - 선형 변환에서 공간이 얼마나 확장되었는지 아니면 축소되었는지 확인하는것도 선형 변환을 이해하는 하나의 축
+    - 단위 면적(**단위 벡터로 이루어진** 체적)이 몇배로 확장 / 축소 되었는가?
+      - 선형 변환은 격자(grid) 라인들이 평행하고 동일한 간격을 유지하기 때문
+      - 곡선으로 이루어진 면적도, 아주 작은 격자 직사각형으로 나뉠 수 있기 때문에 잘 맞아 떨어짐
+  - determinant의 음수의 의미
+    - orientation과 관계가 있음(단위 벡터인 i햇, j햇의 위치가 변환)
+    - 2차원 종이라고 치면 종이를 뒤집은 것이랑 같음
+  - 3차원
+    - 단위 정육면체의 체적이 몇배로 확장 / 축소 되었는가?
+    - 값이 0인 경우
+      - 평면으로 차원 축소 or 직선으로 차원 축소 or 원점으로 차원 축소
+  - `det(BA) = det(B) * det(A)`
+    - 증명
+
+### 7. Inverse matrices, column space and null space
+
+> To ask the right question is harder than to answer it - Georg Cantor
+
+![](./images/usefulness_of_linear_algebra.png)
+
+![](./images/linear_equation_system.png)
+
+![](./images/linear_equation2.png)
+
+![](./images/inverse_matrix.png)
+
+![](./images/inverse_matrix2.png)
+
+선형 변환은 함수라고 생각할 수 있다(input = 벡터, output = 벡터) 여기서, 선형 변환이 일대일 대응이라면(det != 0), 그것의 역변환이 존재하는 것도 타당하다. 하지만 선형 변환이 일대일 대응이 아닌 경우(det == 0), 그것의 역변환은 존재하지 않을 것이다.
+
+- 선형대수학의 유용성
+  - **선형 방정식계의 문제를 해결하는데에 도움을 줌**
+  - 컴퓨터 그래픽 / 로보틱
+- 선형(계) 방정식(Linear system of equations)
+  - 알지 못하는 임의의 벡터가 우리가 아는 선형 변환으로 인해서 알고있는 특정 벡터로 변화했을 때, 원래 우리가 알지 못했던 임의의 벡터는 무엇인가?
+- 풀이(2차원 벡터의 선형 방정식의 경우)
+  - 선형 변환후의 기저 벡터의 span이 여전히 2차원일 경우(det != 0)
+    - 기저 벡터 span의 차원이 축소되지 않으므로 역변환 벡터의 존재가 있음을 알 수 있음
+    - 변환 후 벡터에 대한 선형 변환의 역변환으로 우리가 알고싶은 원래의 벡터를 알 수 있음
+    - 모든 차원에 적용 가능
+  - 선형 변환후의 기저 벡터의 span이 1차원일 경우(det == 0)
+    - 기저 벡터 span의 차원이 축소되므로 역변환 벡터의 존재가 없음(선형 변환은 함수니까)
+      - *그런데 이것이 참이라고 한다면 1차원의 벡터 집합의 원소의 개수는 2차원의 벡터 집합의 원소의 개수보다 적다라는 결론이 필요함(무한집합과 무한집합의 개수비교)*
+- Rank(rank of number)
+  - 선형 변환의 결과 차원의 개수
+    - 더 자세한 정의는, column space로 나타나는 차원
+  - 예시
+    - Rank1: 선형 변환을 적용한 후, 기저 벡터의 span이 선
+    - Rank2: 선형 변환을 적용한 후, 기저 벡터의 span이 2차원 평면
+  - full rank
+    - 행렬의 칼럼의 숫자와 rank가 같을 경우 full rank라고 함
+    - full rank 선형 변환
+      - 오직 영벡터만 영벡터 그자리에 그대로 존재
+    - non full rank 선형 변환
+      - 서로 다른 수많은 벡터가 영벡터 자리로 변환될 수 있음
+- Column space
+  - 어떠한 선형 변환(행렬 A)의 결과로 표현 모든 가능한 벡터들의 집합
+    - 이름의 유래는, 기저 벡터가 어디로 변환 되는지를 행렬의 칼럼들의 span이 모든 공간상의 벡터를 나타내기 때문
+  - 특징
+    - [0 0]은 언제나 column space에 포함됨
+- Null space(Kernel)
+  - 어떠한 선형 변환으로 인하여 영벡터 자리로 변환되는 벡터들의 집합
+    - a linear map L : V → W between two vector spaces V and W, is the set of all elements v of V for which L(v) = 0, where 0 denotes the zero vector in W
+
+![](./images/null_space.png)
