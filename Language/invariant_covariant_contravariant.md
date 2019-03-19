@@ -1,5 +1,13 @@
 # 무공변성(nonvariant) 공변성(covariant) 반공변성(contravariant)
 
+- 내용
+  - Polymorphism
+  - Variance
+  - 표기법
+  - Covariance
+  - Contravariance
+  - Invariance
+
 ## Polymorphism
 
 - 서로 다른 타입의 엔티티에 대한 하나의 인터페이스의 제공 또는 다양한 서로 다른 타입을 표현하기 위한 하나의 심볼의 사용
@@ -16,21 +24,12 @@
     - single and dynamic dispatch
     - virtual function
 
-## Subtype
-
-서브 타이핑(inclusion polymorphism)이란 타입 다형성(polymorphism)의 한 형태로서 한 서브 타입은 하나의 데이터 타입인데 그 타입은 다른 데이터 타입(수퍼 타입)과 대체성의 관점에서 관련이 있으며, 이는 수퍼 타입의 구성요소에서 동작하도록 작성 프로그램 구성요소들(주로 서브루틴 혹은 함수들)이 서브타입의 구성요소에서도 동작할 수 있도록 하는 것을 의미한다.
-
-In programming language theory, subtyping (also subtype polymorphism or inclusion polymorphism) is a form of type polymorphism in which a subtype is a datatype that is related to another datatype (the supertype) by some notion of substitutability, meaning that program elements, typically subroutines or functions, written to operate on elements of the supertype can also operate on elements of the subtype.
-
-Subtyping should not be confused with the notion of (class or object) inheritance from object-oriented languages;[1] subtyping is a relation between types (interfaces in object-oriented parlance) whereas inheritance is a relation between implementations stemming from a language feature that allows new objects to be created from existing ones. In a number of object-oriented languages, subtyping is called interface inheritance, with inheritance referred to as implementation inheritance.
-
 ## Variance
 
-복잡한 타입들 사이의 서브 타이핑과 그 복잡한 타입을 이루는 간단한 타입들 사이의 서브타이핑과의 관계.
-Variance refers to how subtyping between more complex types relates to subtyping between their components.
-
-Depending on the variance of the type constructor, the subtyping relation of the simple types may be either preserved(covariant), reversed(contravariant), or ignored(invariant) for the respective complex types.
-
+- 정의
+  - 복잡한 타입들 사이의 서브 타이핑과 그 복잡한 타입을 이루는 간단한 타입들 사이의 서브타이핑과의 관계.
+  - Depending on the variance of the type constructor, the subtyping relation of the simple types may be either preserved(covariant), reversed(contravariant), or ignored(invariant) for the respective complex types.
+  - parametric polymorphism과 subtyping의 상호작용으로 발생
 - 예시
   - 간단한 타입들(S, T)이 다음과 같은 관계(서브타입에 관한)를 갖음
     - `S <: T`
