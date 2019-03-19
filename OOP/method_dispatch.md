@@ -83,10 +83,18 @@ trait Post {
 
 class Text extends Post {
   def postOn(sns: SNS) {
+    // 올바른 구현
     // dynamic dispatch based on sns
     // parameter dynamic dispatch는 지원하지 않으므로, paramter를 receiver로 치환해서 dynamic dispatch를 구현
     sns.post(this)
   }
+
+  // 올바르지 못한 구현
+  // multiple dispatch
+  // error at scala / java / etc
+  // arguments(not this) cannot be bound
+  def postOn(sns: Facebook): Unit = println("text -> Facebook")
+  def postOn(sns: Twitter): Unit = println("text -> Twitter")
 }
 
 class Picture extends Post {
