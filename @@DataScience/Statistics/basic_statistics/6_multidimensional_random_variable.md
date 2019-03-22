@@ -1,5 +1,31 @@
 # 다차원 확률 변수
 
+- 개괄
+- 동시확률분포와 주변확률분포
+- 조건부확률분포와 독립 확률변수
+- 다차원 정규분포
+- 독립 확률 변수의 합
+
+## 개괄
+
+### 다차원의 확률 변수가 서로 관계가 있는 경우
+
+- 기댓값의 선형성 만족
+
+### 다차원의 확률 변수가 서로 관계가 없는 경우
+
+#### 서로 상관이 없는 경우
+
+- 기댓값의 선형성 만족
+- 분산의 가법성 만족
+
+#### 서로 독립인 경우
+
+- 기댓값의 선형성 만족
+- 분산의 가법성 만족
+- 동시 확률 분포
+  - `f(x, y) = g(x) * h(y)`
+
 ## 동시확률분포와 주변확률분포
 
 ### 동시확률분포(Joint probability distribution)
@@ -66,6 +92,7 @@
     - `Cov < 0`
       - X, Y는 대소가 반대 경향
     - X, Y의 관계의 방향을 나타내지만 그 강함의 절대적 정도를 판단할 기준이 없음
+      - 또한, 측정 단위의 크기에 따라 값이 크게 차이가 나므로 비교가 불가능(단위의 차원)
   - 예시
     - 주식 투자에서 A석유 회사, B석유 회사 주식에 동시 투자를 하는 것은 일반적으로 좋지 못함
       - 두 주식의 같은 방향으로의 연동 성이 강하면(Cov > 0) 위기에 대한 리스크가 크다
@@ -148,8 +175,166 @@
   - 조건부 기댓값
   - 조건부 분산
 
-### 독립 확률 변수
+### 독립(independent) 확률 변수
 
+독립의 정의
 
+![](./images/ch6/independent1.gif)
+
+독립의 특성
+
+![](./images/ch6/independent2.gif)
+
+![](./images/ch6/independent3.gif)
+
+- 독립
+  - `f(x, y) = g(x) * h(y)`이 만족하면 독립 이라고 함
+    - *만일 위의 식을 만족하는 확률 변수 X, Y가 존재하나, 독립이 아닌데도 우연히 저 식이 만족되는 경우는 존재할까?*
+  - **관계가 없음을 의미하지만 "무상관" 이라는 개념보다 강한 개념**
+    - 독립 => 공분산은 0(상관계수 0) (o)
+    - 공분산이 0 => 독립 (x)
+      - 확률변수가 X, X^2 이고 X의 확률분포가 확률 밀도함수로 -1 <= X <= 1에서 uniformly distributed되어있을 경우 `Cov(X, X^2) = E(X * X^2) - E(X) * E(X^2)`
+    - 독립성은 확률분포 자체에 대한 가정이고, 무상관은 확률분포에서 나타나는 평균적 성질
+- 특성
+  - 두 확률변수가 독립이면, X, Y의 동시 확률분포는 X, Y의 각각의 분포를 아는 것으로 구할 수 있으며, 동시 확률 분포를 개별적으로 알지 않아도 됨
+    - 두 확률변수가 관계가 없음을 의미
+- 예시
+  - 주사위를 두번 던졌을 때, 첫번째 던졌을 때의 눈을 확률변수 X, 두번째 던졌을 때의 눈을 확률변수 Y로 생각한 경우
+  - 확률 밀도 함수의 곱의 2차원 그래프
+
+기댓값의 곱
+
+![](./images/ch6/independent_expectation.gif)
+
+독립과 무상관
+
+- 독립 => 무상관 (o)
+- 무상관 => 독립 (x)
+
+*독립 확률변수의 합과 모멘트 모함수*
+
+![](./images/ch6/independent_moment.gif)
 
 ## 다차원 정규분포
+
+- 배경
+  - 복잡하고 다양한 현상을 통계학에서 다룰 때에는, 많은 변수를 생각해야 하고 각각의 관계에 대해서 생각해야 함.
+    - e.g) 경제현상 => 국민총소득, 국제수지, 물가지수, 실업률 등등
+    - e.g) 인간의 지적능력 평가 => 언어 테스트 점수, 수행 테스트 점수 등등
+- 다차원 정규분포
+  - 독립이 아니라, 오히려 관련하는 다수의 확률변수를 처음부터 가정해서 사용되는 확률분포(n차원 정규분포)
+
+
+### 2차원 정규분포의 구성
+
+*유도공식에 변환 이라는 개념이 사용됨*
+
+- 어떤 2차원 정규분포도 표준 정규분포 N(0, 1)에 따르는 난수(정규 난수)로부터 간단히 만들 수 있음
+  - `Y1 = aX1 + bX2, Y2 = cX1 + dX2`
+  - *선형대수와 유사성이 있어보임(2차원의 기저벡터로 어떠한 2차원 벡터도 선형 조합을 통해서 만들 수 있음)*
+
+Y1, Y2의 기댓값
+
+![](./images/ch6/two_dimentional_normal_distribution_expectation.gif)
+
+Y1, Y2의 분산과 공분산과 상관계수 p
+
+![](./images/ch6/two_dimentional_normal_distribution_variance.gif)
+
+![](./images/ch6/two_dimentional_normal_distribution_covariance.gif)
+
+![](./images/ch6/two_dimentional_normal_distribution_correlation_coefficient.gif)
+
+Y1, Y2의 동시확률밀도함수 g(y1, y2)
+
+![](./images/ch6/two_dimentional_normal_distribution.gif)
+
+이를 일반화 하면 다차원 정규분포(multivariate normal distribution)를 정의할 수 있음
+
+## 독립 확률변수의 합
+
+- 배경
+  - 기본적으로 확률변수의 합의 분포를 구하는 것이 의외로 어려우나, 두 확률변수의 확률 분포가 독립 이라 다루기 쉬워짐
+
+### 분산의 가법성
+
+합은 확률 변수가 독립이 아니어도 다음 식이 성립
+
+![](./images/ch6/independent_sum_expectation.gif)
+
+분산은 확률 변수가 독립일 때 다음 식이 성립
+
+![](./images/ch6/independent_sum_variance1.gif)
+
+일반적인 경우
+
+![](./images/ch6/independent_sum_variance2.gif)
+
+### n개의 경우
+
+![](./images/ch6/independent_sum_expectation_general.gif)
+
+![](./images/ch6/independent_sum_variance_general.gif)
+
+### 동일 분포
+
+![](./images/ch6/same_distribution_expectation.gif)
+
+![](./images/ch6/same_distribution_variance.gif)
+
+### 상가평균(additive mean)
+
+*이 내용은 확률변수가 다 같은 분포를 갖는다고 가정했을 때의 이야기인가? 아니면 일반적인 경우의 이야기인가?*
+
+![](./images/ch6/additive_mean.gif)
+
+![](./images/ch6/additive_mean_expectation.gif)
+
+![](./images/ch6/additive_mean_variance.gif)
+
+- 상가평균의 분포
+  - 평균은 `mu`
+  - 분산은 n에 반비례하면서 감소하며, 0에 수속함
+    - 안정화의 경향
+    - **대수의 법칙과 연관이 있음**
+
+### 합의 확률분포
+
+*convolution이라는 개념을 잘 모르겠다*
+
+![](./images/ch6/convolution1.gif)
+
+![](./images/ch6/convolution2.gif)
+
+- convolution
+  - 확률 변수 X, Y가 독립이며, 그 확률 분포가 각각 g(x), h(y)라고 하자. 합 X+Y의 확률 분포 k(z)는 확률 P(X + Y = z)를 생각하면 얻을 수 있음
+    - X = x, Y = z - x의 형태로 x, z-x를 더하여 z가 되는 모든 조합을 구할 수 있음 그것을 확률의 곱으로 표현
+    - k = g *(convolution) h
+- 활용
+  - 이미 잘 알려진 확률 분포에 대해서, 자명한 결과를 얻을 수 있음
+
+이항 분포
+
+![](./images/ch6/convolution_binominal.gif)
+
+포아슨 분포
+
+![](./images/ch6/convolution_poisson.gif)
+
+정규분포
+
+![](./images/ch6/convolution_normal.gif)
+
+- convolution의 결과로서, 전혀 다른 분포가 아니라 다시 같은 종류의 확률 분포가 얻어지면, 이를 재생적(reproductive)라 함
+  - 이항분포, 포아슨 분포, 정규분포, 감마분포, 부의 이항분포는 재생성이 성립
+
+### 정규분포의 재생성
+
+정규분포에 대해서, 재생성은 큰 메리트를 갖고, 통계적 추측에서 잘 사용됨
+
+- X1, X2, ... Xn이 독립이고, 각각이 정규분포 N(mu1, sig1^2), N(mu2, sig2^2), ... N(mun, sign^2)에 따른다면
+  - `(X1+X2+ ... +Xn) ~ N(mu1+mu2+...+mun, sig1^2+sig2^2+...+sign^2)`
+  - `c1X1+c2X2+ ... +cnXn ~ N(c1mu1+c2mu2+...+cnmun,` c1^2sig1^2+c2^2sig2^2+...+cn^2sign^2)
+- 특히 X1, ..., Xn의 혹률분포가 전부 정규분포 N(mu, sig^2)라면
+  - `(X1+X2+ ... +Xn) ~ N(nmu, nsig^2)`
+  - `Xbar = (X1+x2+ ... +Xn)/n ~ N(mu, sig^2/n)`
