@@ -2,6 +2,13 @@
 
 > In a sense, there is no such thing as a random number, For example, is 2 a random number? Rather, we speak of a sequence of independent random numbers with a specified distribution - Donald Knuth
 
+- 진정한 난수 생성
+- 유사 난수 생성
+  - 주사위의 예시
+  - 유사 난수 생성 방식
+  - 유사 난수 특징
+  - 특정 분포를 따르는 난수
+
 ## 진정한 난수 생성
 
 - 자연의 상태를 이용한 이용한 진정한 난수 생성기
