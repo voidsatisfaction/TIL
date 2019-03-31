@@ -144,3 +144,46 @@
     - mu와 sigma^2는 분포의 위치와 분포를 규정하기 때문
     - 모집단분포가 정규분포의 경우, 이 두 모수 mu, sigma^2로 모집단분포의 특성을 완전히 나타내기 때문
 - 위의 이유로, 표본 평균, 표본 분산이 단서가 됨
+
+#### 표본 평균
+
+표본 평균
+
+![](./images/ch9/sample_mean.gif)
+
+표본 평균의 평균
+
+![](./images/ch9/sample_mean_expectation.gif)
+
+표본 평균의 분산
+
+![](./images/ch9/sample_mean_variance.gif)
+
+- X bar(표본 평균)는 mu를 과대, 과소도 아닌 평균적으로 추정 함
+- 또한, n이 커질수록 mu에 집중하는 경향이 보임
+
+#### 표본 분산
+
+표본 분산(불편 분산)(unbiased variance)
+
+![](./images/ch9/sample_variance.gif)
+
+- n-1로 나누고 있는 점에 주의
+  - 표본 분산의 기댓값 `E(s^2) = sigma^2`로 만들기 위해서
+  - 이는 모분산을 과대 혹은 과소가 아닌 편중되지 않게 추정하기 위함
+- *자유도(degree of freedom)*
+  - 자유롭게 움직일 수 있는 변수의 개수
+  - `(X1 - X bar) + (X2 - X bar) + ... + (Xn - X bar) = 0`
+    - 마지막 변수 Xn - X 는 자유롭게 움직일 수 없음
+  - 위의 예시의 `n-1`
+    - 1만큼 자유도가 줄어듬
+
+#### 통계량의 의의
+
+표본평균 표본 분산과 모평균 모분산의 관계 표현
+
+![](./images/ch9/sample_and_population.gif)
+
+- 통계량은 모집단과 표본을 잇는 중요한 양
+
+## 통계량의 표본분포
