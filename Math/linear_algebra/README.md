@@ -2,6 +2,16 @@
 
 선형대수(linear algebra)는 덧셈과 곱셈의 연산 후에 나타나는 변화와 구조에 더 많은 초점을 두고 있다. 선형대수는 행렬이론이나 벡터공간이론 등을 활용해 선형방정식의 해를 구하는 것을 핵심적으로 하고 있다. 즉, 행렬은 주어진 선형시스템 내에서 현상을 보다 효과적으로 표현 가능하도록 해주며, 벡터(vector)는 제한된 공간 안에서의 선형사상을 표현하는데 유용하게 사용된다. 여기에서 선형(線型)이란 자연과 사회에서 나타나는 현상들을 선형사상(linear map)으로 표현하고 이해하고자 하는 하나의 패러다임이다.
 
+- 좋은 자료
+- Essence of linear algebra 정리
+  - 1 Vectors, what even are they?
+  - 2 Linear combinations, span, and basis vectors
+  - 3 Linear transformation and metrices
+  - 4 Matrix multiplication as composition
+  - 5 Three-dimensional linear transformation
+  - 6 The determinant
+  - 7 Inverse matrices, column space and null space
+
 ## 좋은 자료
 
 - [3Blue1Brown - Essence of linear algebra](https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
@@ -135,7 +145,7 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
   - 기저를 이용한 선형변환의 구성을 기술 가능
     - 이는 연속적인 변환의 process를 무시하고 연속적인 변환의 결과만 나타냄
   - 선형변환
-    - 선형변환을 나타내는 행렬의 det = 0 이면, 그 전의 기저 벡터들이 어떠한 위치 벡터를 가지고 있더라도 한 현재 기저벡터의 개수 - 1 차원 위에 위치하게 된다.
+    - 선형변환을 나타내는 행렬의 det = 0 이면, 그 전의 기저 벡터들이 어떠한 위치 벡터를 가지고 있더라도 한 현재 기저벡터의 개수 - 1 이하의 차원 위에 위치하게 된다.
 - 행렬의 곱
   - **한 선형 변환을 적용하고 나서 다른 선형 변환을 적용한 것과 같음**
   - 연속적인 선형 변환은 오른쪽에서 왼쪽으로 읽어나가야 함
