@@ -322,6 +322,10 @@ a = Min{X1, X2, ..., Xn}, b = Max{X1, X2, ..., Xn}
   - 결국 하나의 표본으로 부터 신뢰구간을 구체적인 수치로서 추정하면, 이것은 신뢰구간에 포함되거나 포함되지않거나 둘 중 하나.
   - 신뢰구간의 의미
     - 반복해서 많은 서로 다른 표본에 대해서 신뢰구간을 계산한 경우, theta를 구간 안에 포함하는 것의 **비율** 이 `1-alpha`임(o)
+      - `P(L <= theta <= U)`에서, 통계량의 표본분포의 확률 밀도함수를 적분하여 1-alpha 의 넓이가 되는 구간에 theta^가 존재.
+      - 즉, 반대로 생각하면 표본 추출의 경우의 수에서 alpha의 비율로 L보다 작고 U보다 큰 영역에 theta^가 존재한다는 것인데, 이러할 때에 theta를 추정하는 경우에는, 구간`[L, U]` 사이에 theta가 존재하지 않음
+      - **어차피 mu는 정해져있으므로, mu가 구체적 X bar기반의 해당 신뢰구간에 속하는지 아닌지로만 경우의 수가 나뉨**
+        - 즉, 표본 평균의 분포에서 mu가 해당 구간에 속하는 경우의 비율이 95%라는 소리다.
     - 구체적으로 수치로서 계산한 현실의 신뢰구간에 대해서, 1-alpha의 확률로 theta를 포함하는것(x)
   - 신뢰구간의 폭 `d = U - L`
     - alpha가 일정할 경우, 표본의 크기 n이 크게 될 수록 작게 됨
@@ -360,3 +364,39 @@ a = Min{X1, X2, ..., Xn}, b = Max{X1, X2, ..., Xn}
   - n=2000, +-2.2%
   - n=3000, +-1.8%
   - n이 커지면 커질수록 최대오차허용범위가 줄어듦
+
+### 정규모집단의 모평균, 모분산의 구간추정
+
+#### 모평균의 신뢰구간
+
+**모분산을 아는경우 - 표준정규분포**
+
+추정을 위한 식
+
+![](./images/ch10/interval_inference_normal_distribution1.gif)
+
+신뢰 구간
+
+![](./images/ch10/interval_inference_normal_distribution2.gif)
+
+**모분산을 모르는경우 - t분포**
+
+추정을 위한 식
+
+![](./images/ch10/interval_inference_normal_distribution3.gif)
+
+신뢰 구간
+
+![](./images/ch10/interval_inference_normal_distribution4.gif)
+
+#### 모분산의 신뢰구간
+
+*1-alpha/2인 점이 오히려 앞에 존재한다?!*
+
+추정을 위한 식
+
+![](./images/ch10/interval_inference_normal_distribution5.gif)
+
+신뢰 구간
+
+![](./images/ch10/interval_inference_normal_distribution6.gif)
