@@ -69,7 +69,7 @@
 - Facebook Graph API
   - 노드와 엣지와 필드로 구성되어 데이터를 읽고 쓸 수 있게 하는 API(HTTP로 이루어져있음)
 - UID
-  - ser Identification
+  - User IDentification
   - 유저의 계정 정보를 파악 할 수 있는 고유한 숫자 조합
 - 프로토콜
   - 서로 다른 두 프로그램 / 컴퓨터가 데이터를 주고 받기 위한 통신 규약
@@ -107,8 +107,8 @@
   - Cost Per Install
   - 지출 / 인스톨 수
 - CPM
-  - Cost per Mille
-  - 지출 / 1000개 노출당 비용
+  - Cost per Mille or Cost per Thousand Impression
+  - 지출 / 광고 노출 수 * 1000
   - 웹 광고시장의 과금 형태 중 가장 오래 사용됨
   - 모바일 시장
     - eCPM
@@ -152,3 +152,91 @@
     - MoPub, IronSource, AdMob
 - Re-Engagement Campaign
   - 오랫동안 게임에 접속하지 않은 유저들을 다시 게임에 유입시키기 위해 진행하는 광고
+
+## 경영지원
+
+- KPI
+  - Key Performance Indicator
+  - 성과를 측정하기 위한 여러가지 지표 중 가장 핵심적인 지표
+  - Must
+- ROI
+  - Return On Investment
+  - 투자대비 수익률
+  - 수익 / 투입비용
+- R&R
+  - Role and Responsibility
+  - 역할과 책임
+- CDP
+  - Career Development Plan
+  - 경력개발 계획
+- TF
+  - Task Force
+  - 특수 업무 전담 팀(임시)
+  - 예시
+    - Flash -> Web TF
+- BEP
+  - Break Even Point
+  - 손익분기점
+    - 수익 - 비용 = 0 이 되는 시점
+- 연말정산
+  - 국가 세금 정산 제도
+
+## 아트
+
+- Dummy Image
+  - 실제 유사하게 꾸며본 이미지, 스케치 등
+- Loader Image
+- Image
+  - Bitmap Image
+    - 픽셀 단위로 렌더링, 스케일 확대할 경우 이미지 퀄리티가 떨어짐
+    - CPU연산 부담이 적음
+  - Vector Image
+    - 점과 선으로 렌더링
+    - CPU연산이 고비용
+- Layout
+  - 컴퓨터 그래픽 디자인이나 소프트웨어 디자인에서 각 구성요소를 제한된 공간 안에 효과적으로 배열하고 디자인 하는 일
+- Modeling
+  - 원화를 바탕으로 3D툴을 이용하여 오브젝트를 제작하는 과정(조각)
+- FB
+  - Facebook Fan Page Image
+    - 게임과 직접적으로 연동되는 페이지 / 각종 게시물이 올라옴
+  - Open Graph
+    - 페이스북에 심사를 통해서 등록 시키는 뉴스피드 바이럴 이미지(200 x 200)
+- 툴
+  - Animate CC
+    - 어도비에서 개발한 벡터 애니메이션 제작 및 편집과 액션스크립트 3.0을 이용한 스크립트 작업이 가능한 툴
+  - Unity 3D
+    - 쿡앱스 내에서 주로 모바일 게임 제작에 사용되는 엔진
+    - WebGL 대응을 위한 변화가 이루어지는 툴
+  - Unity 2D System
+    - 유니티 3D 엔진 내부에 있는 2D구현 시스템
+  - Unity Particle System
+    - 유니티 3D 엔진 내부에 있는 파티클 이펙트 구현 시스템
+  - 3D MAX
+    - 3D 이미지, 애니메이션, 이펙트 등 3D 전반적인 모든 리소스 제작 작업이 가능하게 만들어주는 툴
+  - After Effect
+    - 이팩트 제작 툴
+    - 웹 게임 제작에 필수
+- Animation
+  - 게임 내부에서 움직이는 모든 것들을 말함
+- Effect
+  - 게임 내부에서 발생하는 모든 특수효과
+
+## 사운드
+
+- BGM
+  - BackGround Music
+  - 게임의 로비나 인게임에서 사용되는 배경음악
+  - 1-2분
+- SFX
+  - Sound Effect
+  - 게임내 연출, UI버튼 등 각종 효과에 사용되는 짧은 음원
+- Jingle
+  - 멜로디성 효과음
+  - 클리어, 패배, 스타트시 사용
+  - 3-5초
+- Stereo
+  - 동시에 좌, 우 2채널 출력
+  - 좌우 각 다른 소리를 내므로써 공간감 상승, 현실적 실감 상승
+- Mono
+  - 좌우의 구분 없이 하나의 채널로 통합 출력
