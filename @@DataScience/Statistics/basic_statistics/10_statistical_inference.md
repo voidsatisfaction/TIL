@@ -400,3 +400,46 @@ a = Min{X1, X2, ..., Xn}, b = Max{X1, X2, ..., Xn}
 신뢰 구간
 
 ![](./images/ch10/interval_inference_normal_distribution6.gif)
+
+### 두 정규모집단의 모평균의 차, 모분산의 비의 구간추정
+
+- 배경
+  - 모집단 분포가 `N(mu1, sigma1^2), N(mu2, sigma2^2)`인 두 정규모집단 존재
+  - 개별적으로 두 표본 X1, X2, ..., Xm과 Y1, Y2, ..., Yn을 추출했을 때
+  - 모평균의 차 mu1 - mu2의 구간추정에 대해서 생각
+
+**두 모분산이 같을 경우 - `sigma1^2 = sigma2^2 = sigma^2`**
+
+- 기본적으로 t-test를 이용함
+
+표본분산
+
+![](./images/ch10/interval_inference_normal_distribution_diff1.gif)
+
+통계량
+
+![](./images/ch10/interval_inference_normal_distribution_diff2.gif)
+
+추정을 위한 식
+
+![](./images/ch10/interval_inference_normal_distribution_diff3.gif)
+
+신뢰 구간
+
+![](./images/ch10/interval_inference_normal_distribution_diff4.gif)
+
+**두 모분산이 같다고 할 수 없는 경우**
+
+- 기본적으로 welch's t-test를 이용함
+
+통계량
+
+![](./images/ch10/interval_inference_normal_distribution_diff5.gif)
+
+자유도
+
+![](./images/ch10/interval_inference_normal_distribution_diff6.gif)
+
+신뢰 구간
+
+![](./images/ch10/interval_inference_normal_distribution_diff7.gif)
