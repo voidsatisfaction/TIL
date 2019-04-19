@@ -112,8 +112,8 @@
   - 웹 광고시장의 과금 형태 중 가장 오래 사용됨
   - 모바일 시장
     - eCPM
-- eCPM
-  - Effective Cost per Thousand
+- *eCPM*
+  - Effective Cost per Mille
   - 유료광고 노출 1000회당 비용
   - 집행과 수익
     - 집행
