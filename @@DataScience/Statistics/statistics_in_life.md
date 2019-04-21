@@ -66,3 +66,54 @@
   - 통계학은 우리의 일상에서도 이렇게 찾아볼 수 있어서 너무 재미있었다. 사실 칸아카데미에서 들었던 수업의 설명이 너무 적절했다. 그리고, 그것을 TIL에 적어 둔 덕분에 이러한 발상이 생겼다고 생각한다. 뜬금없이 스시먹다가 말이다.
 
 ### Ep2: 도서관의 화장실의 좌석칸이 비어있을 확률이 얼머나 될까?
+
+### Ep3: 모집단이 이항분포를 따르는 경우 A/B 테스트에서, 어떻게 모집단의 평균을 비교할 수 있을까?
+
+- 자료
+  - [The Math Behind A/B Testing](https://web.archive.org/web/20150921174256/https://developer.amazon.com/public/apis/manage/ab-testing/doc/math-behind-ab-testing)
+- 배경
+  - 어떠한 A, B마케팅 캠페인을 실행해서, Conversion과 Conversion Rate와 Change(두 캠페인간의 Conversion Rate의 차이), Confidence(해당 결과의 신뢰도)를 다음과 같이 구했다.
+  - A
+    - Conversions / Views = 320 / 1064
+    - Conversion Rate 30.08% +- 2.32%
+  - B
+    - Conversions / Views = 250 / 1043
+    - Conversion Rate 23.97% +- 2.18%
+    - Change -20.30%
+    - Confidence 99.92%
+  - 원래는 물론 Conversions와 Views만 우리는 알 수 있는데, 이를 바탕으로 어떻게 Conversion Rate와 Confidence와 진짜 A, B사이에 Significant하게 다르다는 것을 알 수 있었는가?
+- 관점
+  - 표본의 각각의 요소는 모집단의 분포를 따르며, 표본의 요소는 각각 독립이다.(문제에서)
+  - 이항분포는 재생성을 갖고 있으므로, 이항분포를 따르는 확률변수의 합 역시 이항분포를 따른다.(재생성)
+  - 이항분포는 n이 충분히 크다면 정규분포로 근사가 가능하다(중심극한정리)
+- 생각
+  - 캠페인 A의 모집단의 Conversion Rate를 pa라고 표현하고, 실제 마케팅을 실행해서 얻은 Conversion Rate를 pa^라고 하자.
+  - 즉, 모집단 확률변수 ~ Bi(1, pa)
+  - 그럼 이항분포의 재생성과 중심극한정리에 의해서 다음이 성립한다.
+    - X1, X2, ... Xm은 표본의 각 확률변수(0과 1의 값을 갖으며, 1은 Conversion했을 경우, 0은 Conversion하지 않았을 경우)
+
+![](./images/a_b_binomial_inference1.gif)
+
+![](./images/a_b_binomial_inference2.gif)
+
+추정식
+
+![](./images/a_b_binomial_inference3.gif)
+
+pa의 신뢰구간
+
+![](./images/a_b_binomial_inference4.gif)
+
+위의 신뢰구간에서 신뢰구간의 폭은 다음과 같다.
+
+![](./images/a_b_binomial_inference5.gif)
+
+- 해당 폭에서는 pa가 사용되고 있는데, 이는 모집단의 Conversion Rate이므로, 우리는 알 수 없다.
+- 하지만 m이 충분히 클 때, 우리는 큰 수의 법칙을 적용할 수 있으므로, pa를 pa^ 로 치환해서 생각 할 수 있다.
+  - 사실은 이 방법 말고도, 이항분포의 경우 신뢰구간을 생각할 때에 m이 작은 경우나 pa가 매우 작다고 예상되는 경우에 다른 보다 좋은 식이 존재한다.
+  - [참고](https://web.archive.org/web/20150919204533/https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval)
+- 결국은 우리는 pa의 신뢰구간을 다음과 같이 변경할 수 있다.
+
+![](./images/a_b_binomial_inference6.gif)
+
+이렇게 모집단이 이항분포를 따를 경우에 이항분포의 재생성과 점근정규성을 이용, 또, 큰 수의 법칙을 사용해서 모수(pa)를 구할 수 있다.
