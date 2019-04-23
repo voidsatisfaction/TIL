@@ -465,3 +465,26 @@ F분포는 카이제곱분포를 따르는 두 확률변수를 나눈 확률변�
 신뢰 구간
 
 ![](./images/ch10/interval_inference_ratio_of_variance2.gif)
+
+#### 이항, 포아슨 모집단의 각 모수의 신뢰구간
+
+- 모집단이 이항분포인 경우
+  - 모집단이 모수 p의 베르누이 분포 Bi(1, p)일 때, p^으로 추정
+  - n이 매우 클 경우에는, 중심극한정리를 이용하여 신뢰구간을 근사적으로 구함
+  - 모평균 p, 모분산 p(1-p)이므로, 중심극한정리에 의해서 아래와 같은 식 도출 가능
+
+![](./images/ch10/binomial_inference1.gif)
+
+여기서 p에 대해서 식을 변형하면
+
+![](./images/ch10/binomial_inference2.gif)
+
+미지의 모수 p가 신뢰구간 속에 들어가있지만, 대수의 법칙으로 인하여 샘플 사이즈 n이 충분히 클 때, p^를 p와 같다고 생각할 수 있음
+
+![](./images/ch10/binomial_inference3.gif)
+
+- 모집단이 포아슨 분포인 경우
+
+신뢰구간
+
+![](./images/ch10/poisson_inference.gif)
