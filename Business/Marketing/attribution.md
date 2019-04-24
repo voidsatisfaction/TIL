@@ -5,6 +5,7 @@
 - An Attribution Model is a rule, or set of rules, used to determine how credit for an event is assigned to touchpoints in conversion paths
   - 유저가 전환을 하기 까지의 발생하는 데이터 포인트, 즉 실행과 이벤트를 어떻게 분배할지 결정 광고성과를 측정하고 최적화 하는것
   - **성과에 대한 광고의 기여도 측정**
+    - 예) 어떤 광고가 해당 인스톨에 기여했는가?
 - UA(User Acquisition)과 re-engagement의 최적화를 위한 존재
 - 각 모바일 마케팅 생태계의 플랫폼들마다 저마다의 mobile attribution model을 갖고있음
   - 또한 attribution window 역시 플랫폼들마다 다름
@@ -19,6 +20,7 @@
   - 특정 페이지에 도달할 수 있는 링크
 - 모바일 딥링크
   - 모바일 애플리케이션의 특정 페이지에 도달 할 수 있는 링크
+    - 애플리케이션 내부를 검색엔진이 탐색할 수 있게 하므로써, 검색엔진이 내부 컨텐츠 인덱싱을 가능하게 한다.
   - 예시
     - 뮤직 앱 버튼을 터치하면 뮤직앱이 실행된다.
 - 모바일 딥링크의 문제
