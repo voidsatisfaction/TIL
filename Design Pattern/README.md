@@ -191,11 +191,90 @@ class PhoneDisplay(weatherStation: WeatherStation): IObserver {
 
 ![](./images/uml_decorator.png)
 
+**Decorator Pattern 코드 예시**
+
+```scala
+package DesignPattern
+
+object DesignPattern extends App {
+  val espressoWithCaramel: Beverage = new Caramel(new Espresso())
+
+  println(espressoWithCaramel.cost())
+}
+
+abstract class Beverage {
+  def cost(): Int
+}
+
+class Espresso extends Beverage {
+  override def cost(): Int = 4
+}
+
+abstract class AddOnDecorator extends Beverage {
+  def cost(): Int
+}
+
+class Caramel(val beverage: Beverage) extends AddOnDecorator {
+  def cost(): Int = beverage.cost() + 2
+}
+
+```
+
+**함수형 프로그래밍에서의 유사 Decorator Pattern**
+
+```js
+// aws lambda를 hexagonal architecture형태로 구현하기
+// 오브젝트를 꾸며주는 것이 아니므로, decorator pattern이라고 할 수는 없으나, 함수를 래핑해준다는 점에서 참고할만함
+
+// 일반적으로, application은 다음과 같은 모양을 띔(DI를 적용한 경우)
+const app = (input, { dependency1, dependency2 }) => {
+  // business logics
+  // ...
+  return output
+}
+
+// 하지만 최종적으로 lambda핸들러는 (event, context, callback) => ... 형태를 띄어야 함
+const handler = (adapter) => (event, context, callback) => {
+  // business 로직을 실행하기 위한 dependency들
+  const createDependencies = () => ({
+    dependency1: createDependency1(),
+    dependency2: createDependency2()
+  })
+  // ....
+  adapter(event, createDependencies())
+}
+
+// handler와 app의 서로 다른 인터페이스를 이어주기 위해서 adapter를 생성
+const adapter = (app) => (event, { dependency1, dependency2 }) => {
+  return response(app(convertToInput(event), { dependency1, dependency2 }));
+}
+
+// app의 비즈니스 로직을 handler와 adapter로 래핑
+exports.handler = handler(adapter(app))
+```
+
+**Decorator Pattern vs 미들웨어(특히 서버에서)**
+
+- Decorator Pattern
+  - 가장 초기에 생성한 오브젝트를 변경하지 않음(immutability)
+  - 단순히 래핑해서 responsibility가 확장
+    - 특히, 오브젝트의 행위의 responsibility확장
+- Middleware
+  - 가장 초기에 생성한 오브젝트를 변경할 수 있음(mutability)
+  - 실행의 흐름을 변경할 수 있음(부작용 존재)
+    - 인증 middleware를 이용해서, 로그인상태가 아닌 유저를 login페이지로 리다이렉팅 시킴
+    - https로 주소 연결을 하지 않은 클라이언트를 강제로 https로 redirect시켜줌
+
 - 정의
   - 런타임에 특정 오브젝트를 변경시키지 않고, 어떠한 오브젝트의 속성이나 메서드의 행위를 변경 / 혹은 추가 시키는 방법
+    - 동적으로(런타임에서) 특정 오브젝트의 역할을 늘려줌
   - 오브젝트의 래핑
   - 데코레이터는 컴포넌트를 갖을 뿐아니라, 자기자신이 컴포넌트다
   - 서브클래스의 extends보다 더 유연한 오브젝트 확장 방식을 제공
+  - Open Close Principle를 지원
+  - 상속관계에서 Interface Segregation Principle을 지킬 수 있도록 함
+    - 부모클래스가 Beverage고, 자식 클래스가 Espresso인 경우에 Beverage에 있는 메서드가 Espresso에서는 필요 없는 경우가 생김.
+    - Decorator Pattern은 위의 문제를 해결 가능
 - 적용
 
 #### 4. Adapter Pattern
