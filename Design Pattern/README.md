@@ -279,32 +279,169 @@ exports.handler = handler(adapter(app))
 
 #### 4. Adapter Pattern
 
+![](./images/uml_adapter.png)
+
+**코드 에제**
+
+```scala
+package DesignPattern
+
+object AdapterPattern extends App {
+  val adapter: ITarget = new Adapter(new Adaptee())
+  val client: Client = new Client(adapter)
+
+  client.doSomething()
+}
+
+class Client(val target: ITarget) {
+  def doSomething(): Unit = {
+    // do...
+    target.request()
+    // ...
+  }
+}
+
+trait ITarget {
+  def request(): Unit
+}
+
+class Adapter(val adaptee: Adaptee) extends ITarget {
+  def request(): Unit = adaptee.specificRequest()
+}
+
+class Adaptee() {
+  def specificRequest(): Unit = {
+    println("this is specific request")
+  }
+}
+```
+
 - 정의
   - 클라이언트는 특정 인터페이스를 갖고 있는데, 어떠한 어댑티는 그 인터페이스를 만족하지 못하므로, 어댑터가 클라이언트의 특정 인터페이스를 만족하도록 래핑해서 클라이언트가 어댑티를 사용할 수 있도록 래핑 함
+  - Client는 request라는 메서드를 실행하고 싶은데, 그것을 실행하는 대상은 request라는 메서드 인터페이스를 따르지 않으므로, adapter를 만들어서, adapter가 request라는 메서드로 메시지를 받고 그것을 원래 실행하려던 대상에게 다시 메시지를 보내서 원하는 결과를 받음
+- 특성
+  - 원래의 client를 변경하지 않아도 adaptee의 인터페이스 변화를 대처할 수 있음
+    - 만약 adaptee가 외부 라이브러리라면?
+    - OCP
+  - 원래 갖고 있던 logic을 변화시키는 것이 아님. 의존하는 모듈 / 모브젝트의 인터페이스의 변화에 OCP원칙을 지켜가며 대처하기 위함
+  - 혹은 기존의 구현에다가 adapter를 씌워서 interface를 변화시키는 용도로 사용할수도 있음
+    - 이 용도도, 기존 코드를 직접 변경하지 않음
+- 어댑터 패턴의 종류
+  - 동적 합성
+  - 다중 상속
 
 #### 5. Facade Pattern
 
+![](./images/uml_facade_pattern.png)
+
 - 정의
-  - 서브 시스템을 쉽게 사용할 수 있도록 추상화한 인터페이스
+  - 서브 시스템을 쉽게 사용할 수 있도록 추상화한 통합된 인터페이스
   - 클라이언트가 내부의 복잡한 내용의 로직을 추상화한 Facade를 이용해서 쉽게 오브젝트의 로직을 사용할 수 있도록 함
 
 #### 6. Proxy Pattern
 
+![](./images/uml_proxy_pattern.png)
+
+**구현 예시**
+
+```scala
+trait IBookParser {
+  def getPageNumber(): Int
+}
+
+class BookParser(val filePath: String) extends IBookParser {
+  val book = // really huge book, takes so long time to parse from the file path
+  def getPageNumber: Int = book.getNumber()
+}
+
+class LazyBookParserProxy extends IBookParser {
+  var bookParser = None
+  def getPageNumber(): Int = bookParser match {
+    case None => {
+      // lazy instantiation
+      bookParser = Some(new BookParser("filePath"))
+      bookParser.getNumber()
+    }
+    case Some(bookParser) = bookParser.getNumber()
+  }
+}
+```
+
 - 정의
-  - 다른 오브젝트에 대한 접근을 제어하기 위한 같은 인터페이스의 대리 오브젝트가 존재
-  - 서브젝트라고 불리는 인터페이스를 구체적인 구현과 프록시 둘다 구현했는데, 프록시는 구체적인 구현 오브젝트를 갖고 있는 경우
+  - 다른 오브젝트에 대한 **접근** 을 제어하기 위해서 같은 인터페이스의 대리 오브젝트를 제공하는 것
   - 구현 오브젝트에 대한 접근(access)에 더 초점을 둔 디자인 패턴
     - 접근에 대한 제어를 목표로 함
     - 캐싱을 위해서 사용하는 경우가 있음(HTML 캐싱 등)
+  - **인터페이스의 변환은 없음**
+    - 캐싱이나 로깅을 위해서 사용되는 경우가 있음
+    - decorator 패턴과의 차이
+- 종류
+  - remote
+    - 원격에 있는 요소를 접근하기 위해서 사용
+    - 예시
+      - 원격 서버
+      - 원격 code project
+  - virtual
+    - 생성하는데에 많은 자원을 사용하는 요소를 접근하기 위해서 사용
+    - 캐싱 / lazy evalution 과 비슷한 개념
+  - protection
+    - protection되고 있는 자원을 사용할 수 있는 권한이 있는 유저만 사용할 수 있도록 함
 
 #### 7. Bridge Pattern
 
+![](./images/uml_bridge_pattern.png)
+
+**구현 코드 예시**
+
+```scala
+package DesignPattern
+
+object BridgePattern extends App {
+  val resource: IResource = new ArtistResource(new Artist("min"))
+  val longFormView: LongForm = new LongForm(resource)
+
+  longFormView.show
+}
+
+abstract class View {
+  def show(): Unit
+}
+
+class LongForm(val resource: IResource) extends View {
+  def show(): Unit = {
+    println(resource.snippet)
+    println(resource.title)
+  }
+}
+
+trait IResource {
+  def snippet(): String
+  def title(): String
+}
+
+class ArtistResource(val artist: Artist) extends IResource {
+  def snippet(): String = artist.bio + " snippet"
+  def title(): String = artist.genre + " title"
+}
+
+class Artist(val name: String) {
+  def bio(): String = "My bio " + name
+  def genre(): String = "My genre is " + name
+}
+```
+
 - 정의
-  - 추상과 구현을 디커플링해서 독립적으로 다룰 수 있도록 함
-  - 서로 다른 다형 계층을 이어주는 패턴
+  - 구현으로부터 추상성을 디커플링해서 서로를 독립적으로 다룰 수 있도록 함
+  - 서로 다른 다형 계층(polymorphic hierarchy)을 이어주는 패턴
   - Strategy 패턴 + Adapter 패턴
+  - Class들의 Cartesian Product문제 해결가능
   - e.g
     - Controller와 View의 합성
+      - 물론 이 경우에는 Controller가 View를 갖고, View가 Controller를 갖게 구현할 수 있음
+
+---
+structural pattern end
+---
 
 ### 8. Factory Pattern
 
