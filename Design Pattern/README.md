@@ -6,10 +6,11 @@
     - 역사
   - 디자인 패턴과 언어
   - 디자인 패턴의 분류
+  - UML 표기 소개
   - 대표적인 디자인 패턴(Head first)
-    1. Strategy Pattern
-    2. Observer Pattern
-    3. Decorator Pattern
+    - Creational Pattern
+    - Structural Pattern
+    - Behavioral Pattern
 
 ## 디자인 패턴이란
 
@@ -60,7 +61,20 @@
   - Dependency injection
   - *Blackboard / Business delegate / Composite entity / Intercepting filter / Lazy loading / Mock object / Null object / Object pool / Servant / Twin / Type tunnel / Method chaining / Dlegation*
 
-## 대표적인 디자인 패턴
+---
+
+또 다른 분류 방법
+
+- Creational pattern
+  - 오브젝트 생성 매커니즘을 다룸
+  - 각 상황에 맞도록 오브젝트를 생성하도록 도와줌
+- Structural pattern
+  - 엔티티들 사이의 관계를 쉽게 확인할 수 있는 방법을 구현
+    - 엔티티의 관계 구조를 명확히 할 수 있도록 하는 패턴
+- Behavioral pattern
+  - 오브젝트 사이의 공통 커뮤니케이션 패턴을 확인하여 커뮤니케이션을 행하는데에 유연함을 제공
+
+## UML소개
 
 ![](./images/uml_is_a_has_a.png)
 
@@ -74,118 +88,21 @@
   - `A <- B`
   - B는 A를 갖고 있음
 
-### 1. Strategy Pattern
+## 대표적인 디자인 패턴
 
-![](./images/uml_strategy_pattern.png)
+### Creational pattern
 
-- Defines a family of algorithms
-- Encapsulate & Interchangeable
-- Independent to client that uses it
-  - decouple
+#### 1. Factory Pattern
 
-```scala
-trait IFlyBehavior {
-  def fly(): Unit
-}
+![](./images/uml_factory.png)
 
-trait IQuackBehavior {
-  def quack(): Unit
-}
+- 정의
+  - 오브젝트를 생성하기 위한 인터페이스를 정의하는 것. 다만, 팩토리 메서드는 서브클래스가 어떤 클래스를 인스턴스화 하는가를 결정하게 함
+  - 생성 로직을 일반화시켜서 파라미터화 하는 것
 
-trait IDisplayBehavior {
-  def display(): Unit
-}
+### Structural pattern
 
-class Duck(
-  flyingBehavior: IFlyBehavior,
-  quackBehavior: IQuackBehavior,
-  displayBehavior: IDisplayBehavior
-) {
-  def fly(): Unit =
-    flyingBehavior.fly
-
-  def quack(): Unit =
-    quackBehavior.quack
-
-  def display(): Unit =
-    displayBehavior.display
-}
-
-val wildDuck: Duck = new Duck(fb, qb, db)
-val mountainDuck: Duck = new Duck(fb2, qb2, db2)
-```
-
-- 적용
-  - 암호화폐 자동거래 시스템의 시뮬레이터
-    - 다양한 전략이 존재하기 때문에, 그전략들을 돌아가면서 검증해야 함
-    - 이 떄에 strategy 패턴을 사용해서, 각각의 전략의 parameter를 Interchangeable하게 하면 검증하고 테스트하기 쉬울 듯
-
-### 2. Observer Pattern
-
-![](./images/2_uml_observer_pattern.png)
-
-- Polling vs Pushing
-  - Polling
-    - 관찰의 주체(관찰을 하는 엔티티)가 주기적으로 관찰의 대상의 상태를 확인
-  - Pushing
-    - 관찰의 대상이 자신의 상태가 변경 되었을 때, 관찰의 주체에게 그것을 알려줌
-    - 리모컨 조작
-- One-to-many dependency
-- One object change state => all of its dependency notified / updated automatically
-
-```scala
-trait IObserver {
-  def update(): Unit
-}
-
-trait IObservable {
-  def add(observer: IObserver): Unit
-  def remove(observer: IObserver): Unit
-  def notify(): Unit
-}
-
-class WeatherStation extends IObservable {
-  private var temperature: Int = 0
-  private var observers: List[IObserver] = List[IObserver]()
-
-  def add(observer: IObserver): List[IObserver] = {
-    observers = observer :: observers
-  }
-
-  def remove(observer: IObserver): Unit = {
-    observers = observers.filter(_ != observer)
-  }
-
-  def notify(): Unit = {
-    observers.foreach(_.update)
-  }
-
-  def getTemperature(): Int = temperature
-}
-
-class PhoneDisplay(weatherStation: WeatherStation): IObserver {
-  // send data via update function's parameter
-  // then, this observer does not need to have observable data
-  def update(): Unit = {
-    weatherStation.getTemperature
-
-    // ...
-  }
-}
-```
-
-- 적용
-  - 암호화폐 자동거래 시스템의 Balance 기록 시스템
-    - 물론, 거래소 마다 Balance를 알아보는 것은 polling으로 밖에 할 수 없다.
-    - 하지만 그것을 wrapping해서 마치 푸시할 수 있는 것 처럼 Observable로 둔다.
-    - 그리고 Observer로 그것을 구독하게 하고, 변화가 있으면 update함수를 Observable에서 호출하면 Balance를 데이터베이스에 기록하게 한다.
-    - 이렇게 하면 DB에 데이터를 기록하는 컴포넌트와 거래소의 Balance의 변화를 탐지하는 컴포넌트가 loosely coupled된다.
-
-### Structural Pattern
-
-![](./images/uml_structural.png)
-
-#### 3. Decorator Pattern
+#### 1. Decorator Pattern
 
 ![](./images/example_decorator.png)
 
@@ -277,7 +194,7 @@ exports.handler = handler(adapter(app))
     - Decorator Pattern은 위의 문제를 해결 가능
 - 적용
 
-#### 4. Adapter Pattern
+#### 2. Adapter Pattern
 
 ![](./images/uml_adapter.png)
 
@@ -330,7 +247,7 @@ class Adaptee() {
   - 동적 합성
   - 다중 상속
 
-#### 5. Facade Pattern
+#### 3. Facade Pattern
 
 ![](./images/uml_facade_pattern.png)
 
@@ -338,7 +255,7 @@ class Adaptee() {
   - 서브 시스템을 쉽게 사용할 수 있도록 추상화한 통합된 인터페이스
   - 클라이언트가 내부의 복잡한 내용의 로직을 추상화한 Facade를 이용해서 쉽게 오브젝트의 로직을 사용할 수 있도록 함
 
-#### 6. Proxy Pattern
+#### 4. Proxy Pattern
 
 ![](./images/uml_proxy_pattern.png)
 
@@ -387,7 +304,7 @@ class LazyBookParserProxy extends IBookParser {
   - protection
     - protection되고 있는 자원을 사용할 수 있는 권한이 있는 유저만 사용할 수 있도록 함
 
-#### 7. Bridge Pattern
+#### 5. Bridge Pattern
 
 ![](./images/uml_bridge_pattern.png)
 
@@ -439,19 +356,133 @@ class Artist(val name: String) {
     - Controller와 View의 합성
       - 물론 이 경우에는 Controller가 View를 갖고, View가 Controller를 갖게 구현할 수 있음
 
----
-structural pattern end
----
+### Behavioral pattern
 
-### 8. Factory Pattern
+#### 1. Strategy Pattern
 
-![](./images/uml_factory.png)
+![](./images/uml_strategy_pattern.png)
+
+- Defines a family of algorithms
+- Encapsulate & Interchangeable
+- Independent to client that uses it
+  - decouple
+- 나는 무엇인가 하고 싶은데, 그것이 구체적으로 어떻게 구현되는지는 관심없음
+  - 그래서 외부로부터 인터페이스를 통해서 구체적인 구현을 받아들이고
+  - 나는 그 인터페이스를 통해서 필요할 때 그 기능을 호출한다
+- Program to Interfaces, not implementations
+
+```scala
+trait IFlyBehavior {
+  def fly(): Unit
+}
+
+trait IQuackBehavior {
+  def quack(): Unit
+}
+
+trait IDisplayBehavior {
+  def display(): Unit
+}
+
+class Duck(
+  flyingBehavior: IFlyBehavior,
+  quackBehavior: IQuackBehavior,
+  displayBehavior: IDisplayBehavior
+) {
+  def fly(): Unit =
+    flyingBehavior.fly
+
+  def quack(): Unit =
+    quackBehavior.quack
+
+  def display(): Unit =
+    displayBehavior.display
+}
+
+val wildDuck: Duck = new Duck(fb, qb, db)
+val mountainDuck: Duck = new Duck(fb2, qb2, db2)
+```
+
+- 적용
+  - 암호화폐 자동거래 시스템의 시뮬레이터
+    - 다양한 전략이 존재하기 때문에, 그전략들을 돌아가면서 검증해야 함
+    - 이 떄에 strategy 패턴을 사용해서, 각각의 전략의 parameter를 Interchangeable하게 하면 검증하고 테스트하기 쉬울 듯
+
+#### 2. Observer Pattern
+
+![](./images/2_uml_observer_pattern.png)
+
+- Polling vs Pushing
+  - Polling
+    - 관찰의 주체(관찰을 하는 엔티티)가 주기적으로 관찰의 대상의 상태를 확인
+  - Pushing
+    - 관찰의 대상이 자신의 상태가 변경 되었을 때, 관찰의 주체에게 그것을 알려줌
+    - 리모컨 조작
+- One-to-many dependency
+- One object change state => all of its dependency notified / updated automatically
+
+```scala
+trait IObserver {
+  def update(): Unit
+}
+
+trait IObservable {
+  def add(observer: IObserver): Unit
+  def remove(observer: IObserver): Unit
+  def notify(): Unit
+}
+
+class WeatherStation extends IObservable {
+  private var temperature: Int = 0
+  private var observers: List[IObserver] = List[IObserver]()
+
+  def add(observer: IObserver): List[IObserver] = {
+    observers = observer :: observers
+  }
+
+  def remove(observer: IObserver): Unit = {
+    observers = observers.filter(_ != observer)
+  }
+
+  def notify(): Unit = {
+    observers.foreach(_.update)
+  }
+
+  def getTemperature(): Int = temperature
+}
+
+class PhoneDisplay(weatherStation: WeatherStation): IObserver {
+  // send data via update function's parameter
+  // then, this observer does not need to have observable data
+  def update(): Unit = {
+    weatherStation.getTemperature
+
+    // ...
+  }
+}
+```
+
+- 적용
+  - 암호화폐 자동거래 시스템의 Balance 기록 시스템
+    - 물론, 거래소 마다 Balance를 알아보는 것은 polling으로 밖에 할 수 없다.
+    - 하지만 그것을 wrapping해서 마치 푸시할 수 있는 것 처럼 Observable로 둔다.
+    - 그리고 Observer로 그것을 구독하게 하고, 변화가 있으면 update함수를 Observable에서 호출하면 Balance를 데이터베이스에 기록하게 한다.
+    - 이렇게 하면 DB에 데이터를 기록하는 컴포넌트와 거래소의 Balance의 변화를 탐지하는 컴포넌트가 loosely coupled된다.
+
+#### 3. Command Pattern
+
+![](./images/uml_command_pattern.png)
 
 - 정의
-  - 오브젝트를 생성하기 위한 인터페이스를 정의하는 것. 다만, 팩토리 메서드는 서브클래스가 어떤 클래스를 인스턴스화 하는가를 결정하게 함
-  - 생성 로직을 일반화시켜서 파라미터화 하는 것
+  - 리퀘스트(command)를 오브젝트로 캡슐화 하여, 이를 파라미터화 해서 큐잉하거나 로깅하거나 undo할 수 있도록 함
+  - invoker에게 command를 심어주고, command를 실행하면 receiver의 특정한 행동을 실행시킴
+  - 예시
+    - 리모트 콘트롤러
+- 특성
+  - 단순히 커맨드를 한 오브젝트에 구현하는게 아니고, Command를 래핑하므로써, undo역시 가능하게 함
+  - 또한, Macro Command를 두어서, 다양한 Command를 하나의 Command가 실행할 수 있도록 함
 
-### ?. Template Method Pattern
+### 4. Template Method Pattern
 
 ![](./images/uml_template_method.png)
 
