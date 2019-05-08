@@ -473,6 +473,40 @@ class PhoneDisplay(weatherStation: WeatherStation): IObserver {
 
 ![](./images/uml_command_pattern.png)
 
+**구현 코드**
+
+```scala
+package DesignPattern
+
+object CommandPattern extends App {
+  val invoker = new Invoker(new Command(new Receiver()))
+
+  invoker.clickOn()
+  invoker.clickOff()
+}
+
+class Invoker(val lightOnCommand: ICommand) {
+  def clickOn(): Unit = lightOnCommand.execute()
+  def clickOff(): Unit = lightOnCommand.unExecute()
+}
+
+trait ICommand {
+  def execute(): Unit
+  def unExecute(): Unit
+}
+
+// Macro command is also possible
+class Command(val receiver: Receiver) extends ICommand {
+  def execute(): Unit = println(receiver.on)
+  def unExecute(): Unit = println(receiver.off)
+}
+
+class Receiver {
+  val on = "on"
+  val off = "off"
+}
+```
+
 - 정의
   - 리퀘스트(command)를 오브젝트로 캡슐화 하여, 이를 파라미터화 해서 큐잉하거나 로깅하거나 undo할 수 있도록 함
   - invoker에게 command를 심어주고, command를 실행하면 receiver의 특정한 행동을 실행시킴
