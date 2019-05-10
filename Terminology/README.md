@@ -10,6 +10,9 @@
 - Literal
 - Interface
 - Overhead
+- 클로저
+- 호이스팅
+- 이름공간
 
 ## 용어
 
@@ -22,6 +25,8 @@
 ### Parameter(매개변수)
 
 ### Literal(리터럴)
+
+- 프로그램 안에서 계산되지 아니하고 값을 하드코딩 하는 방법
 
 A literal is how you represent a value in your source code. A literal is not the result of a calculation or an I/O operation; it’s data that you type directly into your program.
 
@@ -67,3 +72,8 @@ A literal is how you represent a value in your source code. A literal is not the
 ### 호이스팅
 
 자바스크립트 및 액션스크립트 코드를 인터프리터가 로드할 때, 변수의 정의가 그 범위에 따라 선언과 할당으로 분리되어, 변수의 선언을 항상 최상위로 끌어 올리는 것(함수도 가능)
+
+### 이름공간(Name space)
+
+- In computing, a namespace is a set of symbols that are used to organize objects of various kinds, so that these objects may be referred to by name.
+- 이름으로 오브젝트들을 참조할 수 있도록, 다양한 종류의 오브젝트들을 조직화하는데에 사용되는 심볼들의 집합
