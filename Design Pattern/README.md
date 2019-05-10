@@ -63,7 +63,7 @@
 
 ---
 
-또 다른 분류 방법
+### 또 다른 분류 방법
 
 - Creational pattern
   - 오브젝트 생성 매커니즘을 다룸
@@ -170,6 +170,22 @@ const adapter = (app) => (event, { dependency1, dependency2 }) => {
 exports.handler = handler(adapter(app))
 ```
 
+- 정의
+  - 런타임에 특정 오브젝트를 변경시키지 않고, 어떠한 오브젝트의 속성이나 메서드의 행위를 변경 / 혹은 추가 시키는 방법
+    - 동적으로(런타임에서) 특정 오브젝트의 역할을 늘려줌
+  - 오브젝트의 래핑
+  - 데코레이터는 컴포넌트를 갖을 뿐아니라, 자기자신이 컴포넌트다
+  - 서브클래스의 extends보다 더 유연한 오브젝트 확장 방식을 제공
+  - Open Close Principle를 지원
+  - 상속관계에서 Interface Segregation Principle을 지킬 수 있도록 함
+    - 부모클래스가 Beverage고, 자식 클래스가 Espresso인 경우에 Beverage에 있는 메서드가 Espresso에서는 필요 없는 경우가 생김.
+    - Decorator Pattern은 위의 문제를 해결 가능
+- 특성
+  - 코드 속 오브젝트는 어차피 결국은 메모리의 위치를 의미하므로, 데코레이터 패턴을 이용해서, 특정 오브젝트를 root node로 하는 decorator의 트리를 만들 수 있음
+- 적용
+
+---
+
 **Decorator Pattern vs 미들웨어(특히 서버에서)**
 
 - Decorator Pattern
@@ -182,17 +198,6 @@ exports.handler = handler(adapter(app))
     - 인증 middleware를 이용해서, 로그인상태가 아닌 유저를 login페이지로 리다이렉팅 시킴
     - https로 주소 연결을 하지 않은 클라이언트를 강제로 https로 redirect시켜줌
 
-- 정의
-  - 런타임에 특정 오브젝트를 변경시키지 않고, 어떠한 오브젝트의 속성이나 메서드의 행위를 변경 / 혹은 추가 시키는 방법
-    - 동적으로(런타임에서) 특정 오브젝트의 역할을 늘려줌
-  - 오브젝트의 래핑
-  - 데코레이터는 컴포넌트를 갖을 뿐아니라, 자기자신이 컴포넌트다
-  - 서브클래스의 extends보다 더 유연한 오브젝트 확장 방식을 제공
-  - Open Close Principle를 지원
-  - 상속관계에서 Interface Segregation Principle을 지킬 수 있도록 함
-    - 부모클래스가 Beverage고, 자식 클래스가 Espresso인 경우에 Beverage에 있는 메서드가 Espresso에서는 필요 없는 경우가 생김.
-    - Decorator Pattern은 위의 문제를 해결 가능
-- 적용
 
 #### 2. Adapter Pattern
 
