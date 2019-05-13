@@ -6,12 +6,19 @@
 
 ## 응용
 
+![](./images/1_union_find_application1.png)
+
 - 디지털 사진에서의 픽셀들
 - 컴퓨터의 네트워크들
 - 소셜 네트워크의 친구들
 - 컴퓨터 칩의 트랜지스터들
 - 수학적 집합의 요소들
 - 포트란 프로그램의 변수이름...?
+- Percolation
+  - 위와 아래의 site는 이어져있는가?
+  - 몇퍼센트의 site를 랜덤하게 열어줘야지 위와 아래가 연결되는가?
+- 이미지 프로세싱
+- 크루스칼 알고리즘
 
 ## modeling the connection
 
@@ -45,9 +52,14 @@
 
 ### 접근3: 개선
 
-- quick union을 베이스
-- weighting
+quick union을 베이스
+
+- 1 weighting
   - 트리의 깊이가 커지지 않도록 함
     - 각 트리의 size를 추적함
     - 요소가 더 적은 트리의 루트를 요소가 더 많은 트리의 루트로 함
   - 임의의 노드 x의 깊이는 최대로 logN이다.
+- 2 path compression
+  - 임의의 노드의 루트를 찾은 후, 각각의 노드의 id를 root노드를 가리키게 함
+
+![](./images/union_find_complexity.png)
