@@ -134,3 +134,67 @@ sigma^2가 미지인 경우 -> t검정
   - 그러나, 유의수준이 다르게 설정되므로 그것에 맞춘 계산이 필요함(이미 모평균보다 더 높거나 낮다는 가정이 포함되어있음)
 - 예시
   - 영어 특별강의 전후의 스코어 비교
+
+### 2. 모분산에 대한 가설 검정
+
+**정규모집단의 모분산에 대한 카이제곱 검정**
+
+검정 통계량
+
+![](./images/ch11/hypothesis_testing_chi1.gif)
+
+검정의 유의 수준을 alpha로 두면, chi^2분포표에서 아래와 같은 chi^2(n-1)의 퍼센트점을 구함
+
+![](./images/ch11/hypothesis_testing_chi2.gif)
+
+대립가설이 `모분산 != 가정한 분산`이면 양측검정 시행
+
+![](./images/ch11/hypothesis_testing_chi3.gif)
+
+대립가설이 `모분산 > 가정한 분산`이면 우측검정
+
+왜냐하면, chi^2 값에서 우리는 모분산 대신 가정한 분산을 대입할 것이므로, 대립가설이 모분산이 더 큰 경우는, 가정한 분산을 대입한 chi^2 값이 채택역의 최댓값보다 클 것이다.(왜냐면 `chi^2 = (n-1)s^2/sigma_0^2`)
+
+![](./images/ch11/hypothesis_testing_chi4.gif)
+
+대립가설이 `모분산 < 가정한 분산`이면 좌측검정
+
+![](./images/ch11/hypothesis_testing_chi5.gif)
+
+### 3. 모평균의 차의 검정
+
+- 2표본 검정(two-sample test)
+  - 새로운 치료법을 한 그룹에만 시도하여, 두 그룹의 결과의 차이를 검정
+  - 처리군(treatment group)
+    - 치료를 행한 그룹
+  - 제어군, 대조군(control group)
+    - 실험을 관리하기 위한 그룹
+
+- 두 정규모집단 N(mu1, sigma1^2), N(mu2, sigma2^2)각각으로부터 크기 m, n의 표본, X1, X2, ..., Xm, Y1, Y2, ..., Yn을 추출했다
+- 귀무가설
+  - H0: mu1 = u2
+- 대립가설
+  - 양측검정: H1: mu1 != mu2
+  - 단측검정: H1: mu1 > mu2 혹은 H1: mu1 < mu2
+
+검정방법1: 두 분산이 같은 경우
+
+합병 분산 이용
+
+![](./images/ch11/hypothesis_testing_expectation_diff2.gif)
+
+t통계량 구함(t(m+n-2))
+
+![](./images/ch11/hypothesis_testing_expectation_diff1.gif)
+
+양측검정에서는 `|t| > t_alpha/2 (m+n-2)`일 때, 귀무가설을 기각, 이외에는 기각하지 않음
+
+단측검정에서는 mu1 > mu2 라고 가정할 떄는, `t > t_alpha (m+n-2)`일 때 귀무가설 기각, mu1 < mu2라고 가정할 때는 `t < - t_alpha (m+n-2)`일 때 귀무가설 기각
+
+검정방법2: 두 분산이 같다고 할 수 없는 경우
+
+웰치의 t검정
+
+![](./images/ch11/hypothesis_testing_expectation_diff3.gif)
+
+### 4. 모분산 비의 검정
