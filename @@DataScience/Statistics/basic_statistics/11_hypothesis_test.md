@@ -212,3 +212,45 @@ t통계량 구함(t(m+n-2))
 ![](./images/ch11/hypothesis_testing_expectation_diff3.gif)
 
 ### 4. 모분산 비의 검정
+
+- F검정
+  - F통계량(피셔 분산비)을 검정 통계량으로 사용하는 검정
+- 두 정규모집단의 모평균이 같은지 아닌지 검정하는 방법은, 모분산이 같은지 아닌지(모분산의 비 = 1)에 의해서 다르므로, 분산이 같은지 아닌지의 검정이 필요함
+- 모분산이 같다는 것 자체가 의미가 있음
+
+귀무가설
+
+![](./images/ch11/hypothesis_testing_f1.gif)
+
+대립가설
+
+![](./images/ch11/hypothesis_testing_f2.gif)
+
+귀무가설에서의 피셔 분산비
+
+![](./images/ch11/hypothesis_testing_f3.gif)
+
+표본 분산들
+
+![](./images/ch11/hypothesis_testing_f4.gif)
+
+양측검정에서의 채택역
+
+![](./images/ch11/hypothesis_testing_f6.gif)
+
+양측검정에서의 기각역
+
+![](./images/ch11/hypothesis_testing_f5.gif)
+
+## 다양한 카이제곱 검정
+
+- 분포의 불규칙성에(ばらつき) 대해서의 검정 기준으로서도, 근사적으로 사용됨
+- 예시
+  - 확률분포의 적합도 검정
+  - 독립성의 검정
+
+### 1. 적합도 검정(chi^2-test of goodness of it)
+
+- 가정된 이론상의 확률분포에 대해서, 표본으로부터 관찰되어진 도수가 적합한지 아닌지 검증
+
+### 2. 독립성의 검정
