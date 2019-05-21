@@ -217,14 +217,18 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
   - 알지 못하는 임의의 벡터가 우리가 아는 선형 변환으로 인해서 알고있는 특정 벡터로 변화했을 때, 원래 우리가 알지 못했던 임의의 벡터는 무엇인가?
 - 풀이(2차원 벡터의 선형 방정식의 경우)
   - 선형 변환후의 기저 벡터의 span이 여전히 2차원일 경우(det != 0)
+    - 선형 변환의 가역성
     - 기저 벡터 span의 차원이 축소되지 않으므로 역변환 벡터의 존재가 있음을 알 수 있음
     - 변환 후 벡터에 대한 선형 변환의 역변환으로 우리가 알고싶은 원래의 벡터를 알 수 있음
     - 모든 차원에 적용 가능
   - 선형 변환후의 기저 벡터의 span이 1차원일 경우(det == 0)
-    - 기저 벡터 span의 차원이 축소되므로 역변환 벡터의 존재가 없음(선형 변환은 함수니까)
+    - 기저 벡터 span의 차원이 축소되므로 역변환 벡터의 존재가 없음
+    - det == 0 인 변환은, 차원의 축소를 의미하며, 차원이 축소되었을 때는 그 역으로 돌아갈 수 없음
+      - 변환의 불가역성 / 정보의 손실
       - *그런데 이것이 참이라고 한다면 1차원의 벡터 집합의 원소의 개수는 2차원의 벡터 집합의 원소의 개수보다 적다라는 결론이 필요함(무한집합과 무한집합의 개수비교)*
+    - 역변환 벡터가 존재하지 않더라도, 우연히 차원이 축소되었을 때, 같은 선분 / 혹은 면적(축소된 차원) 등등에 벡터가 존재한다면 방정식의 해가 존재할 수 있음
 - Rank(rank of number)
-  - 선형 변환의 결과 차원의 개수
+  - 선형 변환의 결과에서의 차원의 개수
     - 더 자세한 정의는, column space로 나타나는 차원
   - 예시
     - Rank1: 선형 변환을 적용한 후, 기저 벡터의 span이 선
@@ -233,15 +237,32 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
     - 행렬의 칼럼의 숫자와 rank가 같을 경우 full rank라고 함
     - full rank 선형 변환
       - 오직 영벡터만 영벡터 그자리에 그대로 존재
+        - 나머지는 변함
     - non full rank 선형 변환
       - 서로 다른 수많은 벡터가 영벡터 자리로 변환될 수 있음
 - Column space
   - 어떠한 선형 변환(행렬 A)의 결과로 표현 모든 가능한 벡터들의 집합
-    - 이름의 유래는, 기저 벡터가 어디로 변환 되는지를 행렬의 칼럼들의 span이 모든 공간상의 벡터를 나타내기 때문
+    - 이름의 유래는, 기저 벡터가 어디로 변환 되는지를, 선형 변환의 관점에서, 행렬의 칼럼들의 span이 모든 공간상의 벡터를 나타내기 때문
   - 특징
     - [0 0]은 언제나 column space에 포함됨
 - Null space(Kernel)
   - 어떠한 선형 변환으로 인하여 영벡터 자리로 변환되는 벡터들의 집합
     - a linear map L : V → W between two vector spaces V and W, is the set of all elements v of V for which L(v) = 0, where 0 denotes the zero vector in W
+  - `Av = [0 0]`의 해집합
 
 ![](./images/null_space.png)
+
+### 8. Nonsquare matrices as transformations between dimensions
+
+![](./images/8_transformation_between_dimension1.png)
+
+![](./images/8_transformation_between_dimension2.png)
+
+![](./images/8_transformation_between_dimension3.png)
+
+- 3 x 2 행렬
+  - 2차원의 벡터를 3차원으로 변환
+- 2 x 3 행렬
+  - 3차원의 벡터를 2차원으로 변환
+- 1 x 2 행렬
+  - 2차원의 벡터를 1차원으로 변환
