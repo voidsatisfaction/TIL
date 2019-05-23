@@ -267,6 +267,26 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
 - 1 x 2 행렬
   - 2차원의 벡터를 1차원으로 변환
 
+### 9. Dot products and duality
+
+![](./images/9_dot_product_and_duality.png)
+
+- dot product의 범위에 따른 분류
+  - dot product > 0
+    - 벡터가 같은 방향
+  - dot product == 0
+    - 두 벡터가 직교
+  - dot product < 0
+    - 두 벡터가 반대 방향
+- dot proudct의 의미
+  - *한 벡터를 다른 벡터에 projection하고 길이를 곱한다?*
+- 1x2행렬과 2x1행렬을 곱함, 즉 1x2행렬로 선형변환을 함
+  - 차원이 1차원으로 축소
+  - 1x2행렬의 앞부분을 i햇이 변화한것, 뒷부분을 j햇이 변화한 것으로 생각
+- Duality
+  - natural-but-surprising correspondence of mathematical things
+
+
 ### 10. Cross products
 
 ![](./images/10_cross_product1.png)
