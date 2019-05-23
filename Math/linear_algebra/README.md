@@ -266,3 +266,27 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
   - 3차원의 벡터를 2차원으로 변환
 - 1 x 2 행렬
   - 2차원의 벡터를 1차원으로 변환
+
+### 10. Cross products
+
+![](./images/10_cross_product1.png)
+
+![](./images/10_cross_product2.png)
+
+- 계산 방법
+  - parallelogram의 넓이 + orientation
+  - 따라서 `det(행렬 X(두 벡터를 결합한))`값이 cross product의 값이 됨
+    - 만일, 해당 벡터의 결합의 선형변환에서 기저 벡터의 orientation이 변화한다면 부호가 반대가 됨
+- 정의
+  - 두 다른 3차원 벡터로부터 새로운 3차원 벡터를 생성하는 것
+    - 새로 생성된 벡터의 길이: cross product의 결과 값
+    - 새로 생성된 벡터의 방향: 은 평행사변형에 perpendicualr한 방향
+      - 오른손 법칙을 이용함
+- 계산방법
+  - 계산방법은 duality와 관계가 있음
+  - det를 사용하는 것도 이유가 있음
+  - i, j, k의 기저를 사용하는 것도 이유가 있음
+
+![](./images/10_cross_product4.png)
+
+![](./images/10_cross_product3.png)
