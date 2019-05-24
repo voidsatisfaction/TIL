@@ -29,6 +29,15 @@
 
 ![](./images/1_calculus_example1.png)
 
+![](./images/1_calculus_example2.png)
+
 - 너무 어려운 문제에 부딪혔을 때
   - Play with the idea!
--
+- Integral
+- Derivative
+  - loosely
+    - 어떠한 함수가 작은 변화에 얼마나 민감한지를 측정한 것
+- Fundamental theorem of calculus
+  - 그래프 아래의 면적 사상의 derivative가 그 면적을 결정하는 사상 자체를 나타냄
+    - integral과 derivative를 이어줌
+    - integral이 derivative의 inverse이고 derivative가 integral의 inverse임
