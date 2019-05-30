@@ -142,6 +142,8 @@ http://www.mysqlkorea.com/sub.html?mcode=manual&scode=01&m_no=21444&cat1=7&cat2=
   - JOIN에서는 on뒤에서 다른 테이블으 어떤 칼럼이랑 비교하는지 나타내줌
 - rows
   - MySQL이 쿼리를 실행하기 위해 조사해야 하는 열의 숫자
+- filtered
+  - [참고](https://dba.stackexchange.com/questions/164251/what-is-the-meaning-of-filtered-in-mysql-explain)
 - Extra
   - MySQL이 쿼리를 어떻게 해석하는지에 관한 추가 정보제공
   - 종류
