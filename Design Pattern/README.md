@@ -554,3 +554,25 @@ class Receiver {
     - 오브젝트와 합성과 단순 오브젝트를, 공통 인터페이스를 구현하도록 함
 - 예시
   - 트리를 순회할 때, 어떤 노드가 leaf노드인지 아닌지를 조건문으로 구별하지 않고도 순회할 수 있도록 도와줌
+
+### 6. Iterator Pattern
+
+![](./images/uml_iterator_pattern.png)
+
+- 정의
+  - 내부 구조의 노출 없이 aggregate of objects 를 순차적으로 접근할 수 있는 방법을 제공
+    - 다양한 컬렉션을 내부 구조에는 관심 없이 같은 인터페이스로 iterate할 수 있도록 함
+    - collection
+      - 무엇인가의 컬렉션
+  - how to
+    - iterate something
+    - enumerate something
+    - traverse something
+- 용도
+  - 다양한 컬렉션을 내부 구조의 노출 없이 같은 인터페이스로 iterate할 수 있도록 함
+    - 다양한 언어들은 iterator pattern을 언어 차원으로 구현해둠
+      - Iterable
+  - 자기자신만의 복잡한 오브젝트들을 iterator pattern을 이용해서 iterate할 수 있도록 함
+  - lazy evalutation
+  - infinite collection의 원소들을 접근 가능
+  - iteration을 언제든지 멈추고 기존의 멈춘 위치에서 다시 시작할 수 있음
