@@ -104,7 +104,7 @@
 
 ### 3-2. 곱집합의 연산
 
-![](./images/product_set_operation.png)
+![](./images/ch2/product_set_operation.png)
 
 - `A x 공집합 = 공집합 x A = 공집합`
 - `A x (B 교 C) = (A x B) 교 (A x C)`
@@ -115,12 +115,12 @@
 
 ### 3-3. 집합족의 곱집합
 
-![](./images/product_set_operation2.png)
+![](./images/ch2/product_set_operation2.png)
 
 ---
 
 연습문제
 
-![](./images/product_set_operation3.png)
+![](./images/ch2/product_set_operation3.png)
 
-![](./images/product_set_operation4.png)
+![](./images/ch2/product_set_operation4.png)
