@@ -89,3 +89,30 @@
 직관을 뛰어넘은 논리
 
 ![](./images/ch2/family_set_operation_unsolved.png)
+
+## 3. 곱집합
+
+### 3-1. 곱집합이란?
+
+- 순서쌍
+  - `(a, b)`
+  - `= {{a}, {a, b}}`
+- 곱집합
+  - `A X B`
+  - `{(x, y) | x 포함 A and y 포함 B}`
+  - R이 실수의 집합일때, `R^2 = R * R` 을 데카르트 평면, 카르테지안 평면이라고도 함(좌표평면)
+
+### 3-2. 곱집합의 연산
+
+![](./images/product_set_operation.png)
+
+- `A x 공집합 = 공집합 x A = 공집합`
+- `A x (B 교 C) = (A x B) 교 (A x C)`
+  - `A x (B U C) = (A x B) U (A x C)`
+- `A x (B - C) = (A x B) - (A x C)`
+
+마지막 차집합의 곱집합의 증명이 재미있음!
+
+### 3-3. 집합족의 곱집합
+
+![](./images/product_set_operation2.png)
