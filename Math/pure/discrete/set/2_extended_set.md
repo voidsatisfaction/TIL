@@ -116,3 +116,11 @@
 ### 3-3. 집합족의 곱집합
 
 ![](./images/product_set_operation2.png)
+
+---
+
+연습문제
+
+![](./images/product_set_operation3.png)
+
+![](./images/product_set_operation4.png)
