@@ -96,6 +96,9 @@
 
 ## 2. 동치관계와 분할
 
+- `X/E = { Ex | x 포함 X } = P`
+- `X/P = { (x,y) | 어떤 A 포함 P, x,y 포함 A } = E`
+
 ### 2-1 용어의 정의
 
 ![](./images/ch3/partition.png)
