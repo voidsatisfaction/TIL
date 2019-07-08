@@ -143,7 +143,7 @@
 
 두 집합이 같다 <=> 한쪽이 다른 한쪽의 부분집합이 되고, 다른 한쪽이 한쪽의 부분집합이 된다.
 
-![](./images/ch3/partition3.png)
+![](./images/ch3/partition3_2.png)
 
 ---
 
