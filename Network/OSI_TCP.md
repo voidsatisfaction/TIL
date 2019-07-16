@@ -1,5 +1,6 @@
 # OSI(Open Systems Interconnection)모델과 TCP모델
 
+- 의문
 - 프로토콜에 관한 용어
 - 참조
 - 개관
@@ -9,6 +10,11 @@
 - IPv4
 - UDP
 - TCP
+
+## 의문
+
+- 데이터링크 레이어에서 *맥 주소는 Destination의 경우 Source에서 미리 아는것이 불가능하지 않은가?*
+  - *가장 근접한 장치의 Destination 맥 어드레스를 가져오는것?(라우터, 위성, 와이어리스)*
 
 ## 프로토콜에 관한 용어
 
@@ -33,8 +39,23 @@
 
 - 국제표준화기구(ISO)에서 개발한 모델로, 컴퓨터 네트워크 프로토콜 디자인과 통신을, 계층으로 나누어 설명한 것이다.
 - 데이터가 한 컴퓨터에서 다른 컴퓨터로 어떻게 전송이 되는가?
+  - 레이어로 책임 분담
+    - 각 레이어는 프로토콜의 패키지
 
 ### 1. Application layer
+
+- 네트워크 애플리케이션에 의해 사용되어지는 프로토콜의 집합(애플리케이션 마다 다른 프로토콜 사용)
+  - 웹 브라우저
+    - HTTP
+    - HTTPS
+  - 파일 관리 시스템
+    - FTP
+  - 메일 관리 프로그램
+    - SMTP
+  - 가상 터미널
+    - SSH
+- 역할
+  - 받은 데이터로 사용자의 화면에 렌더링 / 사용가능하도록 최종 형태로 변환
 
 단위: Message, Data
 
@@ -42,17 +63,56 @@
 
 ### 2. Presentational layer
 
+- 개요
+  - 해당 레이어의 프로토콜의 역할(Application layer로부터 ASCII 데이터를 받고)
+  - 데이터 마다 형태가 다른 차이를 흡수
+- 역할
+  - Translation
+    - EBCDIC
+  - Data Compression
+    - Lossy
+    - Lossless
+  - Data Encryption
+    - TLS(But application uses TLS as if it were a transport layer)
+
 단위: Message, Data
 
 대표적 프로토콜: JPEG, MPEG, ...
 
 ### 3. Session layer
 
+- 개요
+  - 컴퓨터 사이의 커넥션 세팅과 관리를 도와줌
+    - APIs헬퍼 존재
+- 역할
+  - Authentication
+  - Authorization
+  - Session Management
+
 단위: Message, Data
 
 대표적 프로토콜: TLS, SSH, ...
 
+**여기 까지가 웹 브라우저의 담당 영역**
+
+---
+
 ### 4. Transport layer
+
+- 개요
+  - 노드간 데이터 전송 관리
+- 역할
+  - Segmentation
+    - 상위 레이어에서 받은 데이터를 Segments라는 단위로 분할
+    - Port number
+      - 각 세그먼트를 올바른 애플리케이션과 대응 가능하도록 하는 숫자
+    - Sequence number
+      - 세그먼트들을 올바른 순서대로 조립가능하게 하는 숫자
+  - Flow Control
+    - 서버에서 클라이언트로 데이터가 어느 속도로 전송되는지를 관리
+  - Error Control
+    - 누락된 데이터는 Automatic Repeat Request로 다시 요청
+    - Checksum을 이용해서 데이터가 오염됐는지 확인
 
 단위: Segment
 
@@ -60,17 +120,46 @@
 
 ### 5. Network layer
 
+- 개요
+  - 서로 다른 네트워크에 속하는 두 컴퓨터를
+- 역할
+  - Logical Addressing
+    - IPv4 & IPv6 + Mask(네트워크와 호스트를 분리하기 위함)
+    - 상위 레이어에서 받은 각각의 세그먼트에 Source / Destination 아이피 주소를 부여해서 Packet이라는 데이터 단위를 만듬
+  - Routing
+    - 데이터 패킷을 Source 에서 Destination으로 보내는 것
+  - Path determination
+    - Source 에서 Destination으로 최단거리로 패킷을 보내는 방법을 찾음
+    - OSPF, BGP, IS-IS 프로토콜 사용
+
 단위: Packet, Datagram
 
 대표적 프로토콜: IP, ICMP, IGMP, ARP
 
 ### 6. Datalink layer
 
+- 개요
+- 역할
+  - 상위 레이어에서 받은 각각의 데이터 패킷에 맥주소를 포함시켜서 Frame을 생성(비트의 연속)
+    - *근데 이 맥 주소는 Destination의 경우 Source에서 미리 아는것이 불가능하지 않은가?*
+      - *가장 근접한 장치의 Destination 맥 어드레스를 가져오는것?(라우터, 위성, 와이어리스)*
+  - Access the media(Framing)
+    - 데이터가 어떻게 놓여지고, 미디어로부터 전송받는지를 제어
+      - Media Access Control
+        - 메시지 충돌 방지(CSMA(데이터 미디어를 계속 주시중))
+      - Error Detection
+        - 체크섬 같이 바이너리를 넣어줘서 데이터 오염 검증에 사용
+
 단위: Frame
 
-대표적 프로토콜: Ethernet, WLAN, PPP, FDDI
+대표적 프로토콜: Ethernet, WLAN, PPP, FDDI, CSMA
 
 ### 7. Physical layer
+
+- 바이너리의 연속을 물리적 SIGNAL로 변환후 미디어로 전달
+  - 전자적 신호
+  - 빛 신호
+  - 라디오 신호
 
 단위: Bit
 
