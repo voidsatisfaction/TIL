@@ -1,5 +1,15 @@
 # OSI(Open Systems Interconnection)모델과 TCP모델
 
+- 프로토콜에 관한 용어
+- 참조
+- 개관
+- OSI계층
+- TCP/IP 5 Layer Model
+- 애플리케이션 파일 전송의 예시
+- IPv4
+- UDP
+- TCP
+
 ## 프로토콜에 관한 용어
 
 - 1옥텟 = 1바이트 = 8비트
@@ -17,9 +27,12 @@
 
 ![OSI7_TCP5](./images/OSI7_TCP5.png)
 
+![](./images/OSI_TCP/osi_7_layer.png)
+
 ## OSI계층
 
-국제표준화기구(ISO)에서 개발한 모델로, 컴퓨터 네트워크 프로토콜 디자인과 통신을, 계층으로 나누어 설명한 것이다.
+- 국제표준화기구(ISO)에서 개발한 모델로, 컴퓨터 네트워크 프로토콜 디자인과 통신을, 계층으로 나누어 설명한 것이다.
+- 데이터가 한 컴퓨터에서 다른 컴퓨터로 어떻게 전송이 되는가?
 
 ### 1. Application layer
 
@@ -27,7 +40,7 @@
 
 대표적 프로토콜: HTTP, SMTP, Telnet, SSH, ...
 
-### 2. Presentation layer
+### 2. Presentational layer
 
 단위: Message, Data
 
