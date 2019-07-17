@@ -3,11 +3,13 @@
 - 의문
 - HTTP
 - HTTPS
-- HTTP vs HTTPS
 
 ## 의문
 
--
+- *TLS의 경우에는 Transport Layer TCP연결의 3-way-handshake가 끝나고 또 handshake를 하는 것인가?*
+  - 그렇다.
+  - 그렇다면 엄청 비효율적일 것 같은데, 왜 HTTP보다 더 빠르다는 건지?
+    - 이것은 HTTP/2가 HTTP/1.1 보다 빠른데, HTTP/2는 HTTPS를 지원하는 환경에서만 지원하기 때문(웹 브라우저 기준)
 
 ## HTTP
 
