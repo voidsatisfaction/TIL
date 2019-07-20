@@ -21,14 +21,14 @@
 - URL 파싱
 - URL 검증(URL인지, 쿼리인지)
 - 호스트이름에 있는 유니코드 글자를 변환
+- HSTS(HTTP Strict Transport Security) 리스트 확인
+  - 서버가 HTTPS로만 클라이언트(웹 브라우저)가 접근할 수 있도록 클라이언트 쪽에서 강제하도록 하는 것(최초 접속시)
+  - 강제된 사이트는 리스트에 등록됨
+  - Man in the Middle 공격 방어
 
 ### 2. 클라이언트 커널
 
 - DNS resolution
-  - HSTS(HTTP Strict Transport Security) 리스트 확인
-    - 서버가 HTTPS로만 클라이언트(웹 브라우저)가 접근할 수 있도록 클라이언트 쪽에서 강제하도록 하는 것(최초 접속시)
-    - 강제된 사이트는 리스트가 됨
-    - Man in the Middle 공격 방어
   - DNS 확인
     - 해당 도메인이 브라우저 캐시에 있는지 확인
     - 없으면 `gethostbyname()` 함수 호출
@@ -77,13 +77,38 @@ Target IP: interface.ip.goes.here
 
 - destination 컴퓨터와 통신하기
   - TCP 소켓 열기
-    - 브라우저가 destination의 IP 주소를 받으면, 포트번호와 함께 `socket`이라는 시스템 라이브러리와 함께 해당 시스템에 call 하고, TCP 소켓 스트림을 요청함 `AF_INET/AF_INET6` 그리고 `SOCK_STREAM`
+    - 브라우저가 destination의 IP 주소를 받으면, 포트번호와 `socket`이라는 시스템 라이브러리와 함께 해당 시스템에 call 하고, TCP 소켓 스트림을 요청함 - (`AF_INET/AF_INET6` 그리고 `SOCK_STREAM`)
+    - 패킷 생성
+      - 이 요청은 먼저, TCP segment가 만들어지는, Transport Layer에 넘겨짐. destination port가 헤더에 추가되고, source port가 커널의 다이나믹 포트 레인지에 의해서 선택됨
+      - 이 세그먼트는 Network Layer로 보내지며, 그곳에서 세그먼트에 추가적인 IP 헤더를 덮어줌 destination server의 IP 주소와 현재의 컴퓨터의 IP 주소가 패킷형태로 추가됨
+      - 이 패킷은 Data Link레이어로 넘겨짐. source 그래픽 카드의 MAC 주소와 로컬 라우터(게이트웨이)의 맥 주소가 추가됨 포함된 프레임 헤더가 추가됨
+        - 게이트웨이의 맥 주소를 모르면, ARP request를 broadcast해서 알아내야 함
+      - 여기 까지 끝나면 다음과 같은 네트워크에서 데이터를 전송할 수 있음
+        - Ethernet
+        - WiFi
+        - Cellular data network
+    - 패킷 전송
+      - 결국, 이 패킷은 로컬 서브넷을 관리하는 라우터로 도착
+      - 이 패킷은 destination을 포함하는 라우터까지 여행해서 결국엔 destination으로 전송됨
+        - 그 동안 각각의 라우터는 IP 헤더로부터 destination 주소를 얻고, 적절한 next hop 으로 보내준다.
+        - IP 헤더의 TTL(Time To Live) 필드는 각각의 라우터를 지나갈 때 마다 1씩 줄어둔다.
+          - TTL field가 0이되면 패킷이 드랍됨
   - TLS handshake 하기
+    - TLS 문서 참고
   - HTTP 프로토콜
+    - HTTP 문서 참고
 
 ### 3. 서버
 
 - HTTP 서버 요청 핸들링
+  - HTTPD(HTTP Daemon) 서버는 서버 사이드 requests/responses를 핸들링하는 소프트웨어임
+    - 대표적으로는 Apache / NginX / IIS 가 있음
+  - 순서
+    - HTTPD가 request를 받음
+    - 아래와 같은 파라미터로 request를 분해
+      - HTTP Request Method
+      - Domain
+      - Requested path/page
 
 ### 4. 클라이언트 웹 브라우저
 
