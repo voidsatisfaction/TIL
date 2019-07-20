@@ -1,6 +1,9 @@
 # OSI(Open Systems Interconnection)모델과 TCP모델
 
 - 의문
+  - 데이터링크 레이어에서 맥 주소는 Destination의 경우 Source에서 미리 아는것이 불가능하지 않은가?
+  - 서브넷의 private IP를 사용하는 노드의 경우 packet의 source IP가 어떻게 정해지는가?
+  - 애초에 Data link층을 통해서 데이터를 호스트가 어떻게 수신하는가? 네트워크를 관리하는 데몬 프로그램이 존재하는가?
 - 프로토콜에 관한 용어
 - 참조
 - 개관
@@ -18,7 +21,7 @@
   - Destination까지 가기 위한 경로에서 가장 근접한 장치(중간 노드)의 맥 어드레스를 포함시킴(라우터, 위성, 와이어리스)
     - 그래서 외부 네트워크에 속한 컴퓨터와 커뮤니케이션 할 때, ARP를 이용해서 기본게이트웨이의 맥어드레스를 파악하고 그것을 Data Frame에 포함시킴
     - 기본 게이트웨이 에서 다른 노드로 패킷을 보낼 때도 마찬가지로, 중간목적지의 IP 논리적 주소를 맥 물리적 주소로 바꾸어서 Data Frame에 포함시키는 것을 계속 반복(실제 원하는 주소에 도달하기 까지)
-- *서브넷의 private IP를 사용하는 노드의 경우 packet의 source IP가 어떻게 정해지는가?*
+- 서브넷의 private IP를 사용하는 노드의 경우 packet의 source IP가 어떻게 정해지는가?
   - private IP? 아니면 public IP?
   - 먼저 private IP로 두고, gateway에서 public IP로 변환 후 다시 기록해두었던 private IP로 송신?
   - **NAT(Network Address Translator - 보통은 NAPT를 말함)을 이용해서 통신 가능하게 됨**
@@ -69,6 +72,9 @@
     - 대신 구현이 힘들고, 복잡해짐
   - 참고
     - 일반 가정의 와이파이 공유기는, 포트 포워딩 / DMZ / Super DMZ 등으로 NAT 외부에서 NAT 내부로 접속가능
+- *애초에 Data link층을 통해서 데이터를 호스트가 어떻게 수신하는가? 네트워크를 관리하는 데몬 프로그램이 존재하는가?*
+  - NIC(Network Interface Card)를 이용하여 한 네트워크 안에서 컴퓨터간 신호를 주고 받음
+  - *하지만 이것을 구체적으로 어떻게 이용하고 있는가?*
 
 ## 프로토콜에 관한 용어
 
@@ -299,10 +305,6 @@ grpc와 같은 경우, RPC 위에 HTTP/2를 올린 느낌이다.
 11. Payload 조각은 애플리케이션 데이터 파일을 만들기 위해서 조합된다.
 12. 애플리케이션 데이터 파일은 앱 X로 전송된다.
 
-TCP 통신 연결 종료
-
-![](./images/OSI_TCP/4_way_handshake_tcp_end.png)
-
 ## IPv4
 
 - IP 패킷 == 데이터그램(Datagram)
@@ -467,6 +469,20 @@ MTU Wi-Fi
 ## TCP(Transmission Control Protocol)
 
 ![tcp_header](./images/tcp_header.png)
+
+### TCP 3-way handshake
+
+TCP 통신 연결 시작
+
+![](./images/OSI_TCP/3_way_handshake.png)
+
+### TCP 4-way handshake
+
+TCP 통신 연결 종료
+
+![](./images/OSI_TCP/4_way_handshake_tcp_end.jpeg)
+
+### TCP 헤더
 
 - TCP 헤더의 최소 길이는 20옥텟
 - TCP 헤더는 `flow control`의 역할을 담당하는 다양한 데이터 부분이 존재함
