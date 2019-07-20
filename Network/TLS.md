@@ -40,3 +40,40 @@
   - 앞으로의 모든 통신 내용은 세션 키를 사용해 암호화 할것임을 명시
 - 서로 `Finished`메시지를 송신
   - handshaking 종료
+
+## TLS설정
+
+- Nginx에서 직접 설정할 수 있음
+
+NginX 설정 예시
+
+```
+server {
+    listen       80;
+    server_name  example.com;
+    root         html;
+
+    location / {
+        return 301 https://example.com$request_uri;
+    }
+}
+
+
+server {
+    listen       443;
+    server_name  example.com
+    root         html;
+
+
+    ssl                  on;
+    ssl_certificate      /etc/pki/tls/certs/example.com.chained.crt;
+    ssl_certificate_key  /etc/pki/tls/private/example.com.key;
+    ssl_session_timeout  5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+    ssl_prefer_server_ciphers   on;
+    location ~ /\.ht {
+         deny  all;
+    }
+}
+```
