@@ -4,6 +4,7 @@
 - 2 Session / Cookie 방식
 - 3 JWT
   - JWT + Refresh token
+  - OAuth와 SNS로그인
 
 기본적으로 HTTP는 stateless의 성질을 갖기 때문에 각 HTTP 요청은 독립적이므로 매번 유저는 자신이 어떤 유저인지 id를 요청과 함께 보내줘야 함
 
@@ -16,6 +17,8 @@
   - 서버가 유저의 비밀번호를 알게 됨
 
 ## 2. Session / Cookie 방식
+
+![](./images/cookie_and_session.png)
 
 - 개요
   - Session 방식을 Cookie를 이용해서 구현
@@ -41,6 +44,8 @@
   - 서버에서 세션 저장소를 사용하므로 추가적인 저장공간을 필요로해지고, 부하가 커짐
 
 ## 3. JWT(Jason Web Token)
+
+![](./images/jason_web_token.png)
 
 - 개요
   - 인증에 필요한 정보들을 암호화시킨 토큰
@@ -94,3 +99,65 @@
   - Payload 정보가 제한적
     - 금방 디코드될 수 있기 때문
   - JWT 길이가 세션에 비해 훨씬 김
+
+### 3-1. JWT + Refresh token
+
+![](./images/json_web_token2.png)
+
+- 문제
+  - JWT의 토큰이 탈취되면 보안에 취약함
+- 해결
+  - 토큰 분리
+    - Access Token
+      - 실질적으로 인증에 사용되는 토큰
+      - 유효기간이 짧음(1시간)
+    - Refresh Token
+      - Access Token이 만료되었을 때, 새로 발급받기 위한 토큰
+      - 유효기간이 김(2주)
+- 장점
+  - Access Token만 있을 때 보다 안전해짐
+- 단점
+  - 프론트엔드 백엔드 둘다 구현이 복잡해짐
+  - Access Token이 만료될 때마다 새롭게 발급하는 과정에서 생기는 HTTP 요청의 횟수가 많고, 서버의 자원 오버헤드 발생
+
+### 3-2. OAuth2와 SNS로그인
+
+![](./images/oauth2_1.png)
+
+![](./images/oauth2_2.png)
+
+- 개념
+  - OAuth는 외부서비스의 인증 및 권한 부여를 관리하는 범용적인 프로토콜
+    - 권한
+      - 사용자의 권한에 따라 접근할 수 있는 데이터가 다르도록 설정 가능
+  - SNS 로그인 기능을 넣더라도 결국은 세션/쿠키 방식이나 토큰을 활용해 인증을 거쳐야 함
+- 특징
+  - 모바일 애플리케이션에서도 사용이 용이해짐
+  - 반드시 HTTPS를 사용함
+  - Access Token의 만료기간이 생김
+- 인증 방식
+  - Authorization Code Grant
+    - 가장 많이 쓰임
+    - 이 글에서 설명하는 방식
+  - Implicit Grant
+  - Resource Owner Password Credentials Grant
+  - Client Credentials Grant
+- 구성
+  - Resource Owner
+    - 일반 사용자
+  - Client
+    - 우리가 관리하는 애플리케이션 서버
+  - Authorization Server
+    - 권한을 관리하는 서버
+    - Access Token, Refresh Token 발급 / 재발급
+  - Resource Server
+    - OAuth2.0을 관리하는 서버의 자원을 관리하는 서버
+
+![](./images/sns_login.png)
+
+- 개요
+  - 우리의 애플리케이션 서버를 OAuth에 사전 등록하는 것이 필요
+  - 페이스북 인증의 경우, Resource Server를 이용하지 않고 Access Token, Refresh Token도 이용하지 않음. 따라서, Authorization server에서 받는 고유 id값을 활용해서 DB에 회원관리를 진행
+- 장점
+  - 회원가입이라는 귀찮은 절차를 없애고, 빠르게 회원가입 가능
+  - 사용자가 접근 가능한 영역을 확인하고 허락함
