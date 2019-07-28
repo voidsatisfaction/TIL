@@ -1,5 +1,47 @@
 # Linux기초
 
+- 팁
+  - lsof
+- ssh 사용법
+- sudo
+- 패키지 매니저(apt)
+- 파일 다운로드
+- 왜 CLI를 사용하는가?
+- IO Redirection
+- Shell vs Kernel
+- Shell Script
+- 리눅스 파일 시스템 구조
+- 프로세스
+- 파일 찾기
+- 백그라운드 실행
+- 항상 실행
+- 정기적 실행
+- 쉘을 시작할 때 실행
+- 다중 사용자
+
+## 0. 팁
+
+### lsof(list open files)
+
+- 개요
+  - 시스템에서 *열린 파일 목록* 을 알려주고 사용하는 프로세스, 디바이스 정보, 파일의 종류 등을 출력
+    - *열린 파일이라는것이 무엇을 뜻하는건지? 프로그램이 실행한 것도 열린 파일인가?*
+  - 리눅스와 유닉스는 추상화된 파일 시스템(VFS - Virtual File System)을 사용하므로, 일반 파일, 디렉터리, 네트워크 소켓, 라이브러리, 심볼릭 링크 등도 모두 파일로 처리(모든 것은 파일임)
+- 활용
+  - `lsof -i -P | grep -i listen`
+    - 모든 네트워크 포트를(-i) 서비스 이름이 아니라 포트이름으로 나타내고(-P) 현재 특정 포트를 사용중인(listen) 프로세스를 나타내자
+
+위의 커맨드를 시행했을 때 결과 값
+
+```
+node       980 tech-camp-064   11u  IPv4 0xb6d565e3659e0885      0t0  TCP *:20559 (LISTEN)
+figma-nod 1054 tech-camp-064   13u  IPv4 0xb6d565e3608e617d      0t0  TCP localhost:18412 (LISTEN)
+figma-nod 1054 tech-camp-064   14u  IPv4 0xb6d565e3608e7c65      0t0  TCP localhost:7335 (LISTEN)
+mysqld    1098 tech-camp-064   29u  IPv4 0xb6d565e3646b755d      0t0  TCP localhost:mysql (LISTEN)
+ssh       2519 tech-camp-064    5u  IPv6 0xb6d565e35ceb6a0d      0t0  TCP localhost:ndmp (LISTEN)
+ssh       2519 tech-camp-064    6u  IPv4 0xb6d565e368be055d      0t0  TCP localhost:ndmp (LISTEN)
+```
+
 ## 1. ssh사용법
 
 [생활코딩: SSH](https://opentutorials.org/module/432/3738)
