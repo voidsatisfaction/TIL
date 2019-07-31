@@ -15,6 +15,8 @@
 
 - *ssh에서 서버를 어떻게 authenticate하는가?*
 - 암호화를 위한 session key는 어떻게 교환하는가?
+  - 세션키의 경우, 서버가 authenticate되었으면, 서버에서 TLS때 경우 처럼 public key를 보내주고 클라이언트에서 세션키(암호화를 위한)를 서버의 public host key와 서버키로 암호화 해서 보내줌
+  - 암호화 세션 확립
 
 ## ssh(Secure Shell)란?
 
