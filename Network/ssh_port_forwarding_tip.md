@@ -11,6 +11,11 @@
 
 - [SSH: The Secure Shell: The Definitive Guide](https://docstore.mik.ua/orelly/networking_2ndEd/ssh/ch03_03.htm)
 
+## 의문
+
+- *ssh에서 서버를 어떻게 authenticate하는가?*
+- 암호화를 위한 session key는 어떻게 교환하는가?
+
 ## ssh(Secure Shell)란?
 
 - 개요
@@ -136,6 +141,16 @@ ssh의 실행이 중단되면 터널링도 없어지니 주의
   - 해당 포트로 보내는 모든 데이터는 local server에 ssh서버로 터널을 통해서 전송
   - 해당 데이터를 decryption
   - 그 후 데이터를 google.com:80에 다시 보냄
+  - 활용
+    - `ssh -R 1234:localhost:3000 -i ...`
+      - 로컬 호스트에 웹 서버가 3000포트에서 가동중일 경우 리모트에서 1234포트로 http request를 보내면 로컬의 서버가 동작하여 응답을 돌려줌
+    - `ssh -R 10001:localhost:22 -i ...`
+      - 로컬에서 위의 커맨드를 실행한 뒤, 리모트에서 `ssh -p 10001 user@localhost` 실행
+      - 리모트에서 로컬로 sshd 접속 가능
+    - `ssh -R 10001:localhost:10001 -i ...`
+      - 로컬에는 `nc -l 10001` 실행(간단한 tcp연결)
+      - 리모트에서 `nc localhost 10001` 실행
+      - 해당 인터페이스에서 아무거나 입력후엔터(메시지 전송)
 - `ssh -D 10000`
   - 로컬 포트 10000을 염
   - 웹 브라우저가 switchysharp등의 프로그램을 이용해서 SOCKS4, SOCKS5 proxy로 `localhost:10000`을 사용하게 하면, 모든 브라우저 리퀘스트가 ssh tunnel을 타게 됨
