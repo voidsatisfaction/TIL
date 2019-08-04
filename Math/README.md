@@ -1,5 +1,14 @@
 # 수학
 
+## 좋은 교재 & 사이트
+
+- 유튜브
+  - [3Blue1Brown](https://www.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw)
+  - [이상엽](https://www.youtube.com/channel/UC-7H7ZImLfGF97Y_EJ0vZzA)
+- 블로그
+  - [이슬비](https://iseulbee.com/archives/a-comment-on-learning-mathematics/)
+  - [김우섭](https://blog.naver.com/PostList.nhn?blogId=sodong212&categoryNo=24&skinType=&skinId=&from=menu&userSelectMenu=true)
+
 ## 좋은 글귀
 
 - 출처
