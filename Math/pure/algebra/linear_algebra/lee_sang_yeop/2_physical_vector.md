@@ -27,6 +27,7 @@
     - 정의 방식이 컴퓨터 공학의 Abstract Data Type과 유사
       - e.g
         - stack은 pop, front, push, size 등의 연산이 있는 데이터 타입을 말함
+- *벡터의 가위곱이 ||v x w|| = v와 w사이의 평행사변형의 넓이 가 되는 이유*
 
 ## 1. 벡터와 좌표계
 
