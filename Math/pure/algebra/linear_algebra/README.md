@@ -248,10 +248,10 @@ Unfortunately, no one can be told what the Matrix is. You have to see it for you
     - 정리
       - `det(BA) = det(B) * det(A) = det(AB)`
         - 증명
-      - `det(A-1)`
+      - `det(A^-1)` = `1/det(A)`
     - 행렬식을 쉽게 구하기위해 상삼각행렬(upper triangular matrix)을 구성한 뒤에 행렬식을 구하는 방법이 있음
       - 상삼각행렬은 대각성분 아래쪽이 모두 0인 행렬
-      - `det(상삼각행렬) = d1d2d3...dn`
+      - `det(상삼각행렬) = d1d2d3...dn(주대각 성분의 곱)`
   - 3차원
     - 단위 정육면체의 체적이 몇배로 확장 / 축소 되었는가?
 
