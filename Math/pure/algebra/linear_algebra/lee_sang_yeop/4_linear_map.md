@@ -20,6 +20,13 @@
     - ≡ 애초에 선형사상의 집합은 벡터공간인가?
   - *M1[v]_Bv = M2[v]_Bv => M1 = M2*
     - 가 어째서 성립하는지?
+- *기본행연산을 하면 하기전과 후의 row-space가 동일하다고 할 수 있는가?*
+  - 0을제외한 스칼라배 ok
+  - 행바꾸기 ok
+  - *서로다른 두 행을 스칼라배 하고 더한후 기존 행과 치환*
+    - 2차원 평면으로 생각하면 직관적으로 그렇다는것을 알 수 있음
+    - 선택한 row가 행렬내에서 중복이 없는 경우
+    - 선택한 row가 행렬내에서 중복이 있는 경우
 
 ## 기존 내용 복습 질문
 
@@ -160,7 +167,7 @@ f가 선형사상임을 증명
 
 ![](./images/ch4/fundamental_theorem_of_linear_algebra5.png)
 
-f가 동형사상임을 증명
+f가 동형사상임을 증명 >> *전사사상 증명이 이해가 안됨*
 
 ![](./images/ch4/fundamental_theorem_of_linear_algebra6.png)
 
@@ -172,7 +179,7 @@ g가 선형사상임을 증명
 
 ![](./images/ch4/fundamental_theorem_of_linear_algebra8.png)
 
-g가 동형사상임을 증명
+g가 동형사상임을 증명 >> *전사사상 증명이 이해가 안됨*
 
 ![](./images/ch4/fundamental_theorem_of_linear_algebra9.png)
 
@@ -248,23 +255,31 @@ f와 g가 서로 역사상임을 증명
 
 ### 4-2 계수정리
 
+증명은
+
 ![](./images/ch4/coefficient_theorem3.png)
+
+`col-rankM = col-rankA` (기본행 연산은 *행렬 고유의 특성(?)* 은 변화시키지 않으므로, 자명함)
+`row-rankM = row-rankM` (기본행 연산은 행렬 고유의 특성은 변화시키지 않으므로, 자명함)
 
 - 계수정리
   - 개요
     - 행렬 `M∈Μmxn(F)`에 대하여 다음이 성립한다.
-      - `col-rankM = row-rankM`
-    - 이때, 행렬 `M`의 행공간 및 열공간의 공통차원을 **M의 계수 rankM 이라 한다.**
+      - `col-rankM = row-rankM = rankM`
+    - 이때, 행렬 `M`의 행공간 및 열공간의 공통차원을 M의 계수 **rankM** 이라 한다.
   - 와닿지 않으면 사례를 들어보자
 
 ![](./images/ch4/rank_nullity_theorem1.png)
 
 - Rank-Nullity 정리
-  - 행렬 `M∈Mmxn(F)`에 대하여 다음이 성립한다.
-    - `n = rankM + nullityM`
-    - 이게 당연하다구요? ㅠ.ㅠ
+  - 개요
+    - 행렬 `M∈Mmxn(F)`에 대하여 다음이 성립한다.
+      - `n = rankM + nullityM`
+        - `n`은 변환전의 벡터공간의 차원(벡터가 ,로 n개 구분됨)
+        - `rank(A)`는 선형변환후의 벡터공간의 차원(`col-rankA = row-rankA = rankA`)
+        - `nullity(A)`는 선형변환으로 인한 커널의 차원
   - 특징
-    - 선형사상의 버전으로 대응시킬 수 있음
+    - 앞서 선형대수학의 기본정리에 의하여, 선형 사상과 행렬이 같으므로, 선형사상의 버전으로 대응시킬 수 있음
       - `dim(V) = dim(ImL) + dim(kerL)`
 
 ---
