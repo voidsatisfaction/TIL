@@ -19,6 +19,15 @@
 ## 의문
 
 - *역행렬을 구할 때, `A * adj(A) = det(A) * In`이 되는데, `det(A)`는 이해가 되나, 우변 행렬의 주대각성분이 아닌 나머지 성분들이 왜 값이 0이 되는가? 증명*
+- 기본행연산만 행했을 때와, 기본행연산과 기본열연산을 행했을 때의 특징?
+  - `E1E2..EtAP1P2...Ps = 기본행연산 & 기본열연산`
+  - rank의 변화?
+    - 기본행연산 & 기본 열연산 을 복합적으로 해도 row-rank, column-rank는 처음 행렬과 변화가 없음
+      - 기본행연산을 했을 때, row-rank가 변화가 없는 것은 이해가 되는데, column-rank는 어째서 보존이 되는가?
+  - 각 row와 column space의 span변화?
+    - 기본행연산의 경우 column space의 span에 영향 줌
+    - 기본열연산의 경우 row space의 span에 영향을 줌
+- 왜 역행렬은 squre matrix에서만 생각하는가?
 
 ## 1. 행렬
 
@@ -111,7 +120,7 @@
 - 개요
   - 다음 세 가지의 기본 행 연산을 통해 연립일차방정식의 첨가행렬을 기약 행 사다리꼴(row-reduced echelon form)로 변환하여 행을 구함
   - 기본 행 연산(elementary row operation)
-    - 한 행을 상수배한다.
+    - 한 행을 0이 아닌 상수배한다.
     - 한 행을 상수배하여 다른 행에 더한다.
     - 두 행을 맞바꾼다.
 - 원칙
@@ -139,6 +148,7 @@
     - 존재성
   - 그 row-reduced echelon form은 유일하게 결정됨
     - 유일성
+  - Invertible Row reduced echelon form은 In이다.
 
 #### 2.4 Elementary matrix
 
@@ -154,6 +164,12 @@
   - row-equivalent 관계(동치관계)
     - `A, B∈Mmxn(F), Et∈Mmxm(F)`
       - `A ~r B <=> Et...E1A = B`
+  - A가 square matrix일 때
+    - A는 가역이다.
+    - `A ~r I`
+    - A는 elementary matrix들의 곱으로 표현된다.
+    - Linear equation `AX = B` 는 해를 갖고 그 해는 유일하다.
+    - Homogeneous equation `AX = 0` 은 trivial solution만을 갖는다.
 
 ### 2.3 역행렬 이용(연립 일차방정식의 해 구하기2)
 
@@ -171,11 +187,11 @@
 ![](./images/ch1/determinant2.png)
 
 - 개요
-  - 정사각행렬 A를 하나의 소러써 대응시키는 특별한 함수, `det(A) = |A|`
+  - 정사각행렬 A를 하나의 수로 대응시키는 특별한 함수, `det(A) = |A|`
     - 이때 A가
-      - 0 x 0 => `det() = 0`
-      - 1 x 1 => `det(a) = a`
-      - 2 x 2 => `ad-bc`
+      - 0 x 0 => `det(A) = 0`
+      - 1 x 1 => `det(A) = a`
+      - 2 x 2 => `det(A) = ad-bc`
 - 역사
   - 행렬의 존재 전부터 존재하던 개념
   - 행렬식의 정확한 개념은 대칭군이라는 개념을 알아야 함
