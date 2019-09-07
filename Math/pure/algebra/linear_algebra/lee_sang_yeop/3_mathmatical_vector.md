@@ -254,7 +254,7 @@
   - 즉, 스칼라곱을 다양한 체의 원소들로 할 수 있는데, 이렇게 되면 추상화가 엄청 진행됨
   - 이러한 추상화된 벡터가 실생활에 어떻게 쓰일지는 아무도 모름
 
-### 2-2 선형생성
+### 2-2 부분벡터공간
 
 - 부분벡터공간
   - 정의
@@ -267,6 +267,19 @@
     - `W <= V`
       - W는 V의 부분집합
       - W는 V로부터 덧셈과 스칼라배를 물려받음
+    - `W1, ..., Wk ⊆ V`
+      - `sigma_i=1^k(Wi) = W1 + ... + Wk = {w1 + ... + wk | w1∈W1, ..., wk∈Wk}`
+        - `W1, ..., Wk`의 합
+- 주어진 벡터공간의 확장
+  - Product Space
+    - `V1, ..., Vn`이 벡터공간일 때, `V1, ..., Vn`의 곱집합(Cartesian(Descartes의 형용사형) product)
+      - `V1 x .... x Vn = {(v1, ..., vn) | vi∈Vi, i=1, ..., n}`
+      - `V1, ..., Vn`의 direct product space 혹은 product 라고 부름
+    - 곱집합 위에 연산정의
+      - `(v1, ..., vn) + (w1, ..., wn) = (v1+w1, ..., vn+wn)`
+      - `a(v1, ..., vn) = (av1, ..., avn)`
+
+### 2-2 선형생성
 
 ![](./images/ch3/span.png)
 
@@ -305,8 +318,55 @@
   - (1x1)행렬이므로 scalar로 볼 수 있음
   - F^1 = F 이므로, F자신도 F-vector space
   - vector space F의 상수곱은 scalar 들의 집합 F의 곱셈과 같음
-- C는 R-vector space
-- R은 R-vector space C의 R-subspace
+- C는 R-vector space or C-vector space
+  - R은 R-vector space C의 R-subspace
+  - R은 C-vector space C의 C-subsapce가 될 수 없음
+- Function Space
+  - `f: R -> R`전체의 집합을 `F(R)`로 표기하고 `a∈R, f,g∈F(R)`일 때, 아래와 같이 함수 덧셈과 스칼라 곱셈을 정의하면 F(R)이 R-vector space가 됨
+    - `(f+g)(x) = f(x) + g(x) (x∈R)`
+    - `(af)(x) = a・f(x) (x∈R)`
+- Polynomial Space
+  - `F[t]`
+    - F-위의 다항식 전체의 집합
+      - t는 indeterminate
+    - `f(t) = ant^n + ... + a1t + a0 (단, n>=0, an, ..., a1, a0∈F)`
+      - `ant^n + ... + a1t + a0`이는 하나의 심볼
+    - `ai`
+      - `f(t)`의 i-th coefficient(i = 0,1,...,n)
+    - `deg(f) = n (an ≠ 0)`
+    - `an`
+      - `f(t)`의 leading coefficient
+        - leading coefficient가 1인 다항식 = monic polynomial
+  - 동치관계
+    - 두 다항식이 같다
+      - `∀i∈{0,...,n}, ai = bi`
+  - 연산
+    - 전제
+      - `f(t) = ant^n + ... + a1t + a0 (an, ..., a1, a0 ∈ F)`
+      - `g(t) = bmt^n + ... + b1t + b0 (bm, ..., b1, b0 ∈ F)`
+    - 덧셈 연산
+      - `(f + g)(t) = f(t) + g(t)`
+    - 스칼라 곱셈 연산(`c∈F`)
+      - `(cf)(t) = cf(t)`
+    - 위 두 연산이 정의 되어있으면 `F[t]`는 F-vector space
+    - 다항식 곱셈
+      - 아래 사진 참조
+
+![](./images/ch3/polynomial_product.gif)
+
+  - `Pn(F) = {f(t)∈F[t] | deg(f) <= n}`
+    - `F[t]`의 F-subspace
+    - `Pn(F)`는 `F^n+1`과 사실상 같은 F-vector space
+  - polynomial evalutation
+    - `A는 square matrix, f(t)∈F[t]`
+      - `f(t) = ant^n + ... + a1t + a0`
+      - `f(A) = anA^n + ... + a1A + a0I`
+        - `f(A)`는 evaluation of f(t) at A라고 함
+      - 성질
+        - `(f+g)(A) = f(A)+g(A)`
+          - 다항식을 더한 후 A에서 evaluate한 것
+        - `(cf)(A) = cf(A)`
+        - `(fg)(A) = f(A)・g(A)`
 
 ### 3-1 노름공간
 
@@ -376,6 +436,28 @@
       - `fn : Vn -> R^n, fn(v) = (k1, k2, ..., kn) (v = k1v1 + k2v2 + ... knvn (v1, ..., vn∈V의 표준기저))`
         - fn은 선형사상
         - fn은 동형사상
+
+### 3-4 Isomorphism
+
+- 탐구
+  - V와 V'은 사실상 같은 벡터공간이다
+  - ⇔ V와 V'는 이름만 다를 뿐 벡터공간으로서는(즉, 덧셈과 상수곱에 관해서는) 사실상 같다
+  - ⇔ V와 V'의 원소 사이에는 **이름 바꾸기** 라는 대응관계 `v <-> v'`이 존재하고(단 v∈V, v'∈V'), 다음과 같이 대응하는 vector들의 합도 서로 대응하고, scalar a∈F와의 상수곱도 서로 대응한다
+    - 즉
+      - `v1 <-> v1' ∧ v2 <-> v2' => v1+v2 <-> v1'+v2'`
+      - `a∈F ∧ v<->v' => av <-> av'`
+    - 위와 동치
+- 정의
+  - F-vector space V와 V'이 isomorphic이다
+    - ⇔ Bijection `∃φ: V -> V' ∧`
+    - `φ(v1+v2) = φ(v1) + φ(v2) (v1,v2∈V) ∧`
+    - `φ(av) = aφ(v) (v∈V, a∈F)`
+  - isomorphism은 동형이므로, 단순히 집합사이의 일대일 대응 뿐 아니라, 집합의 구조도 같아야 함
+    - 순서동형 / 순서동형함수
+- 표기
+  - `V ~~ V'`
+- φ
+  - (F-vector space) isomorphism (from V onto V')
 
 ## 4. 기저와 차원
 
