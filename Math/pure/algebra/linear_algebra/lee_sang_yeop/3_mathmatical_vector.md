@@ -452,12 +452,16 @@
     - ⇔ Bijection `∃φ: V -> V' ∧`
     - `φ(v1+v2) = φ(v1) + φ(v2) (v1,v2∈V) ∧`
     - `φ(av) = aφ(v) (v∈V, a∈F)`
+  - φ
+    - (F-vector space) isomorphism (from V onto V')
   - isomorphism은 동형이므로, 단순히 집합사이의 일대일 대응 뿐 아니라, 집합의 구조도 같아야 함
     - 순서동형 / 순서동형함수
-- 표기
+- isomorphism 집합 사이의 관계
   - `V ~~ V'`
-- φ
-  - (F-vector space) isomorphism (from V onto V')
+    - 동치관계
+      - 반사성
+      - 대칭성
+      - 추이성
 
 ## 4. 기저와 차원
 
