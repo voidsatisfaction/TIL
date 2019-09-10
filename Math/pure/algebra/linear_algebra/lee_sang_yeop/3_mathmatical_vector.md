@@ -338,8 +338,7 @@
       - `f(t)`의 leading coefficient
         - leading coefficient가 1인 다항식 = monic polynomial
   - 동치관계
-    - 두 다항식이 같다
-      - `∀i∈{0,...,n}, ai = bi`
+    - `f(t) = g(t) <=> f와 g의 임의의 i-th coefficient가 같다`
   - 연산
     - 전제
       - `f(t) = ant^n + ... + a1t + a0 (an, ..., a1, a0 ∈ F)`
