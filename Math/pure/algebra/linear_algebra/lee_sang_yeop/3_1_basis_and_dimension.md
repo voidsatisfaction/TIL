@@ -81,3 +81,45 @@
       - `v∈V, a∈F, [av]B = a[v]B`
     - 예제
       - `{v,w}`가 V의 일차독립인 부분집합일 떄, `{v,w}`와 `{2v+5w, v+3w}`는 V의 subspace `<v,w>`의 basis가 된다.
+- Vector space의 subspace도 벡터 공간이므로 basis를 생각할 수 있음
+- `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => Bv = {w1,...,wn}`
+  - 증명
+    - 부분집합
+    - 일차독립
+    - span이 V임을 보임
+      - Bv의 원소가 `{wj}`의 일차결합으로 나타낼 수 있다는 것을 보이면 충분
+        - 그 이유는?
+  - 특수 케이스
+    - `A = (aij)∈Mnxn(F)가 가역 => {[A]^1,...,[A]^n} = BF^n(F^n의 기저)`
+      - 앞 명제의 `V = F^n`, `vi = ei`
+- 일차결합, 일차독립, 기저와 연립방정식의 관계
+  - `A∈Mmxn(F),`
+    - ① `{[A]^1,...,[A]^n}이 일차독립 <=> AX=0이 tirivial solution만을 갖음`
+    - ② `<[A]^1,...,[A]^n> = BF^m(F^m의 기저) <=> ∀B∈F^m, AX = B 가 해를 갖음`
+    - ③ `{[A]^1,...,[A]^n} = BF^m(F^m의 기저) <=> ∀B∈F^m, AX = B 가 unique solution을 갖음`
+- basis가 무한인 경우
+  - Polynomial space `F[t]`는 infinite basis `{t^i∈F[t] | i≧0}`를 갖음
+
+## 3.4 Basis의 존재
+
+- 배경
+  - 주어진 vector space V의 basis를 찾기
+- 과정
+  - `V=0`이면 V는 basis를 갖지 않음
+  - `V≠0 => ∃v1∈V, v1≠0`
+  - if `<v1> = V => Bv = {v1}`
+  - if `<v1> ≠ V => ∃v2, v2!∈<v1>`
+    - `{v1, v2}는 선형 독립`
+    - `<v1,v2> = V => {v1,v2} = Bv`
+  - if `<v1,v2> ≠ V => ∃v3, v3!∈<v1,v2>`
+    - ...
+  - 위의 과정으로 V의 기저를 완성하지 못하더라도, 일차독립인 부분집합을 계속 확장할 수 있음
+  - 무한 기저를 갖는 경우에는, 위의 과정을 유한번을 해서 기저를 찾을 수 없음
+- 정리
+  - `S⊆V`를 V의 일차독립인 부분집합이라고 하고, `v!∈S`일 때 다음조건은 동치
+    - ① `SU{v}`는 일차독립
+    - ② `v!∈<S>`
+- **모든 non-zero vector space는 basis를 갖는다**
+  - Zorn's Lemma의 결과
+  - Axiom of Choice
+    - Axiom은 true false의 문제가 아니라, 다른 axiom과 모순이 없기만 하면 된다.
