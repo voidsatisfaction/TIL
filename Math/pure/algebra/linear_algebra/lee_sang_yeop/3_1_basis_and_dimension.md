@@ -123,3 +123,37 @@
   - Zorn's Lemma의 결과
   - Axiom of Choice
     - Axiom은 true false의 문제가 아니라, 다른 axiom과 모순이 없기만 하면 된다.
+
+## 3.5 Vector Space의 Dimension
+
+- 차원 정의를 위한 준비
+  - `Vector space V`가 basis B와 C를 가지면 `|B| = |C|(집합의 cardinality)`이다
+    - `|B| < ∞`의 경우
+      - 아래의 보조정리에 의하여 자명
+    - `|B| = |C| = ∞`의 경우
+      - 초한 귀납법(transfinite induction)이라는 논리학의 기술을 사용
+  - `Vector space V`가 finite basis `B = {v1,...,vn}`를 갖는다고 하자. 이때, 만약 `C = {w1,...,wm}⊆V ∧ n<m => C는 linearly dependent`
+- 정리
+  - `A∈Mmxn(F), m<n => AX = 0이 non-trivial solution을 갖는다`
+- 차원의 정의
+  - ① 벡터공간 V가 F-basis B를 가질 때, B의 원소수(cardinality) `|B|`를 V의 차원이라 부르고, `dim_F{V} = dimV`로 표기한다.
+    - `dim0 = 0`
+  - ② `dimV`가 유한이면, 우리는 V를 유한 차원(finite dimensional) 벡터공간 이라고 부른다(무한이면 무한차원)
+  - dimension이 well-defined되어 있으려면
+    - 임의의 벡터공간은 기저를 갖고 있다
+    - `B, C`가 영벡터공간이 아닌 임의의 벡터공간 V의 기저이면, `|B| = |C|`
+- Basis Extension Theorem
+  - S가 V의 linearly independent sub-set이면 S를 포함하는 V의 basis가 존재한다.
+    - V의 subspace `<S>`의 basis S를 V전체의 basis로 확장할 수 있다는 뜻
+    - 위의 정리가 모든 non-zero vector space가 basis를 갖는다는 정리를 포함
+  - V가 f.d.v.s(finite dimensional vector space)이고, `W ≦ V`라고 하자. 만약 `{w1,...,wr}`이 W의 기저이면 이를 확장하여 V의 기저 `{w1,...,wr,v1,...,vs}`를 찾을 수 있다(단, s≧0)
+- 정리
+  - Non-zero vector space V의 subset S, `<S> = V => S에 포함되는 V의 기저가 존재`
+- 따름정리
+  - V가 f.d.v.s이고 `W≦V` 일 때,
+    - W도 f.d.v.s이고, `dimW ≦ dimV`
+    - `dimW = dimV => W = V`
+  - `S⊆V ∧ |S| = dimV < ∞`이면 다음 조건은 동치이다
+    - ① S는 V의 기저이다
+    - ② S는 일차독립이다
+    - ③ `<S> = V`
