@@ -216,3 +216,38 @@
     - 주의
       - 벡터공간 V와 W를 identify할 때는 어떤 isomorphism에 의해서 identify하고 있는지 분명히 밝혀야 함
   - **이러한 isomorphism의 철학과 identification의 철학을 자유자재로 구사할 수 있도록 훈련하라!**
+
+## 3.7 Dimension의 보기
+
+- vector space의 basis와 dimension을 구하는 요령
+  - basis를 구하기 위해서 dimension을 예측하는 것이 요령
+  - dimension은 free variable의 개수를 세는 것이 요령
+  - 예시
+    - `V ≦ F^n, V = {t(a1,...,an)∈F^n | a1 + ... + an = 0}`
+      - dimension예측
+        - free variable의 개수세기
+          - V의 벡터들은 처음 n-1개의 좌표는 자유롭게 주어지고, n번째 좌표는 앞 n-1개의 좌표가 주어지면 저절로 결정
+          - `free variable of V = n-1`
+          - `dim V = n-1`
+      - 기저 예측
+        - `{ei - en | i = 1,...,n-1}`
+        - `{ei - ei+1 | i = 1,...,n-1}`
+- 기저와 차원 찾기
+  - 다음 벡터공간들의 기저와 차원을 구하라(먼저 `Mnxn(F)`의 부분공간인 것을 보인 후에)
+  - `GnMn(F) = {A∈Mnxn(F) | A는 대칭행렬}`
+  - `tn(F) = {(aij)∈Mnxn(F) | aij = 0 if i > j}`
+    - 위삼각행렬(upper-triangular matrix)
+  - `nn(F) = {(aij)∈Mnxn(F) | aij = 0 if i >= j}`
+    - strictly upper-triangular matrix
+  - `δ(F) = {(aij)∈Mnxn(F) | aij = 0 if i ≠ j}`
+    - diagonal matrix
+  - `sln(F) = {A∈Mnxn(F) | tr(A) = 0}`
+  - `οn(R) = {A∈Mnxn(R) | A + tA = 0}`
+    - real skew symmetrix matrix
+  - *Lagrange Interpolation Formula*
+- 정리
+  - V가 f.d.v.s이고, `U,W≦V`
+    - **`dim(U + W) = dimU + dimW - dim(U∩W)`**
+  - V가 f.d.v.s이고, `U,W≦V`이면 다음 조건은 동치
+    - `dim(U + W) = dimU + dimW`
+    - `U∩W = 0`
