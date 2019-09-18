@@ -16,7 +16,21 @@
   - `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => Bv = {w1,...,wn}`
   - 일차결합 일차독립 연립방정식 과의 관계
 - Basis의 존재
+  - 배경
+  - 과정
+  - 정리
 - Vector Space의 dimension
+  - 차원 정의를 위한 준비
+  - 차원
+  - Basis Extension Theorem
+  - Basis Inclusion Theorem
+- 우리의 철학
+  - ① 같은 것은 같도다
+  - ② 같은 것은 정말 똑같다
+- Dimension의 보기
+  - vector space의 basis와 dimension을 구하는 요령
+  - 기저와 차원 찾기 연습
+  - 정리
 
 ## 의문
 
@@ -158,14 +172,14 @@
     - `dim0 = 0`
   - ② `dimV`가 유한이면, 우리는 V를 유한 차원(finite dimensional) 벡터공간 이라고 부른다(무한이면 무한차원)
   - dimension이 well-defined되어 있으려면
-    - 임의의 벡터공간은 기저를 갖고 있다
+    - 임의의 non-zero벡터공간은 기저를 갖고 있다
     - `B, C`가 영벡터공간이 아닌 임의의 벡터공간 V의 기저이면, `|B| = |C|`
 - Basis Extension Theorem
   - S가 V의 linearly independent sub-set이면 S를 포함하는 V의 basis가 존재한다.
     - V의 subspace `<S>`의 basis S를 V전체의 basis로 확장할 수 있다는 뜻
     - 위의 정리가 모든 non-zero vector space가 basis를 갖는다는 정리를 포함
   - V가 f.d.v.s(finite dimensional vector space)이고, `W ≦ V`라고 하자. 만약 `{w1,...,wr}`이 W의 기저이면 이를 확장하여 V의 기저 `{w1,...,wr,v1,...,vs}`를 찾을 수 있다(단, s≧0)
-- 정리
+- Basis Inclusion Theorem(내가 붙인 가제)
   - Non-zero vector space V의 subset S, `<S> = V => S에 포함되는 V의 기저가 존재`
 - 따름정리
   - V가 f.d.v.s이고 `W≦V` 일 때,
@@ -232,7 +246,7 @@
       - 기저 예측
         - `{ei - en | i = 1,...,n-1}`
         - `{ei - ei+1 | i = 1,...,n-1}`
-- 기저와 차원 찾기
+- 기저와 차원 찾기 연습
   - 다음 벡터공간들의 기저와 차원을 구하라(먼저 `Mnxn(F)`의 부분공간인 것을 보인 후에)
   - `GnMn(F) = {A∈Mnxn(F) | A는 대칭행렬}`
   - `tn(F) = {(aij)∈Mnxn(F) | aij = 0 if i > j}`
@@ -248,6 +262,7 @@
 - 정리
   - V가 f.d.v.s이고, `U,W≦V`
     - **`dim(U + W) = dimU + dimW - dim(U∩W)`**
+      - *애초에, U∩W ≦ U,W 인가?*
   - V가 f.d.v.s이고, `U,W≦V`이면 다음 조건은 동치
     - `dim(U + W) = dimU + dimW`
     - `U∩W = 0`
