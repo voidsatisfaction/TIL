@@ -13,8 +13,9 @@
   - 기저
   - 표준기저
   - 기저 B에 관한 v의 좌표
-  - `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => Bv = {w1,...,wn}`
-  - 일차결합 일차독립 연립방정식 과의 관계
+  - 행렬과 기저의 관계
+  - 일차결합 일차독립 연립방정식과의 관계
+  - 무한 기저의 예
 - Basis의 존재
   - 배경
   - 과정
@@ -114,20 +115,21 @@
     - 예제
       - `{v,w}`가 V의 일차독립인 부분집합일 떄, `{v,w}`와 `{2v+5w, v+3w}`는 V의 subspace `<v,w>`의 basis가 된다.
 - Vector space의 subspace도 벡터 공간이므로 basis를 생각할 수 있음
-- `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => Bv = {w1,...,wn}`
-  - 증명
-    - 부분집합
-    - 일차독립
-    - span이 V임을 보임
-      - Bv의 원소가 `{wj}`의 일차결합으로 나타낼 수 있다는 것을 보이면 충분
-        - 그 이유는?
-  - 특수 케이스
-    - `A = (aij)∈Mnxn(F)가 가역 => {[A]^1,...,[A]^n} = BF^n(F^n의 기저)`
-      - 앞 명제의 `V = F^n`, `vi = ei`
+- 행렬과 기저의 관계
+  - `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => Bv = {w1,...,wn}`
+    - 증명
+      - 부분집합
+      - 일차독립
+      - span이 V임을 보임
+        - Bv의 원소가 `{wj}`의 일차결합으로 나타낼 수 있다는 것을 보이면 충분
+          - 그 이유는?
+    - 특수 케이스
+      - `A = (aij)∈Mnxn(F)가 가역 => {[A]^1,...,[A]^n} = BF^n(F^n의 기저)`
+        - 앞 명제의 `V = F^n`, `vi = ei`
 - 일차결합, 일차독립, 기저와 연립방정식의 관계
   - `A∈Mmxn(F),`
     - ① `{[A]^1,...,[A]^n}이 일차독립 <=> AX=0이 tirivial solution만을 갖음`
-    - ② `<[A]^1,...,[A]^n> = BF^m(F^m의 기저) <=> ∀B∈F^m, AX = B 가 해를 갖음`
+    - ② `<[A]^1,...,[A]^n> = F^m <=> ∀B∈F^m, AX = B 가 해를 갖음`
     - ③ `{[A]^1,...,[A]^n} = BF^m(F^m의 기저) <=> ∀B∈F^m, AX = B 가 unique solution을 갖음`
 - basis가 무한인 경우
   - Polynomial space `F[t]`는 infinite basis `{t^i∈F[t] | i≧0}`를 갖음
