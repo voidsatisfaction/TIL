@@ -66,12 +66,33 @@
 
 ### 1-1 선형사상
 
+- 목표
+  - 가능하다면 모든 상황을 선형사상의 언어로 표현
+    - 벡터나 행렬보다 더 다루기 쉬움
 - 정의
-  - **F-벡터공간 `V, W`에 대하여 `V`의 성질을 보존하는, 다음 두 조건을 만족하는 사상 `L : V -> W`**
-    - `L(u+v) = L(u) + L(v) (u,v∈V)`
-      - additivity
-    - `L(kv) = kL(v) (k∈F, v∈V)`
-      - homogeneity
+  - `V, W`가 F-위의 벡터공간일 때, 함수 `L: V -> W`가 다음 조건을 만족하면 `L`을 linear map(선형사상, linear mapping, linear transformation) from V into W 라고 부름
+    - 조건
+      - `L(v1+v2) = L(v1)+L(v2) (v1,v2∈V)`
+      - `L(av) = aL(v) (v∈V, a∈F)`
+    - linear map중에서 bijection인 것을 isomorphism이라고 부름
+    - isomorphism을 이름바꾸기에 혼동이 없는 linear map으로 볼 수 있음
+    - linear map은 이름 바꾸기에 혼동이 있는 그 무엇인가로 해석가능
+      - e.g
+        - `L(v) = w => L^-1(w)의 벡터들(L^-1(w) = {v∈V | L(v)=w})은 모두 W에서 이름이 w가 됨`
+        - 만약 `L^-1(w)`들의 집합에도 벡터공간의 구조를 줄 수 있다면 그럴듯할텐데....
+          - quotient space
+- 특징
+  - 벡터공간의 구조를 옮겨 주는 함수
+  - `L: V -> W`가 linear map일 떄
+    - L이 injective(단사) <=> L은 monomorphism
+    - L이 surjective(전사) <=> L은 epimorphism
+      - *단사라는 조건이 없으므로, 서로다른 V의 원소가 같은 함수값을 갖는 경우, 그 두 값을 집합으로 묶어주면 bijective가 되지 않을까?(아이디어)*
+    - L이 bijective(전단사) <=> L은 isomorphism
+    - V = W => L을 endomorphism 혹은 linear operator 혹은 간단히 operator
+    - Bijective endomorphism = automorphism
+  - `L: V -> W`가 linear map일 떄, 다음은 동치
+    - L은 isomorphism
+    - `∃M is linear map: W -> V s.t. M・L = Iv ∧ L・M = Iw`
 - 관련 용어
   - `L : V -> W`가 선형사상일 때
     - 핵
@@ -80,30 +101,41 @@
         - *여기서 0은 영벡터로 집합취급?*
     - 상
       - `imL = L(V) = {L(v)∈W | v∈V}`
-    - 자기사상(endomorphism)
-      - `V = W`인 `L`
-        - ≠항등사상
-    - 단사사상(monomorphism)
-      - `L(u) = L(v) => u = v`
-    - 전사사상(epimorphism)
-      - `L(V) = W`인 `L`
-        - `∀w∈W, ∃v∈V, L(v)=w`
-    - 동형사상(isomorphism)
-      - 단사사상인 전사사상(`L : V -> W`가 선형사상일 때 라는 조건이 있음에 주의)
-      - 중요한 이유
-        - 동형사상이 두 대수구조가 **같은 구조** 라는것을 보여주는 열쇠
-        - 대수구조를 구분하는 의의는 두 대수구조가 동일한 대수구조라고 한다면, 한 대수구조에서 성립했던 정리 들이 다른 대수구조에도 동일하게 적용
-      - 예시
-        - 순서동형함수
-    - 자기동형사상(automorphism)
-      - 자기사상인 동형사상
-    - 항등사상
-      - `L(v) = v`인 `L(=Iv)`
-    - 사상의 합성
-      - 두 선형사상 `L1 : V -> U, L2 : U -> W`의 합성은 `L2・L1 : V -> W`
-    - 역사상
-      - `L2・L1 = Iv`일 때, `L2`를 `L1`의 왼쪽 역사상, `L1`를 `L2`의 오른쪽 역사상 이라 한다.
-      - 왼쪽 역사상이자 오른쪽 역사상을 양쪽 역사상 또는 역사상이라 한다.
+- 관련 정리
+  - `L: V -> W`가 linear map
+    - `ker L ≦ V`
+    - `im L ≦ W`
+  - `L: V -> W`가 linear map
+    - L이 epimorphism이기 위한 필요충분조건은 `imL = W`이다.
+    - **L이 monomorphism이면, V와 imL은 isomorphic하다**
+    - `U≦V => L(U)≦L(V)`
+- 중요한 관찰
+  - `L: V -> W`가 linear map일 떄, 다음 조건은 동치
+    - L은 monomorphism
+    - `u,v∈V, L(u)=L(v) => u=v`
+    - `v∈V ∧ L(v)=L(0)=0 => v=0`
+    - `kerL = 0`
+  - `L: V -> W`가 linear이고, `S⊆V => L<S> = <L(S)>`
+    - 쉬운증명
+    - **센스있는 증명**
+  - `L: V -> W`가 linear이고, S는 V의 subset, Bv는 V의 basis일 때
+    - S가 일차독립이고 L이 monomorphism => L(S)도 일차독립
+      - **`<S>`의 기저는 S...**
+      - 테크닉이 정말 멋지니 꼭 참조하자(우리의 철학)
+- **monomorphism과 epimorphism과 L의 관계**
+  - monomorphism
+    - L이 monomorphism <=> L(Bv)가 일차독립
+  - epimorphism
+    - L이 epimorhpism <=> L은 V의 generating set을 W의 generating set으로 옮김
+  - isomorphism
+    - 위의 두 조건을 만족시키면 됨
+    - 즉, L은 basis를 basis로 옮김
+      - 역으로, basis를 basis로 옮기는 L은 isomorphism
+- coset 탐구
+  - notation
+    - `U≦V ∧ v∈V, v+U = {v+u | u∈U}`
+  - 정리
+    - `L: V -> W`가 linear map이고 `L(v) = w ∈ imL => L^-1(w) = v + kerL ∧ ker L 과 L^-1(w)사이에 bijection이 존재함 (ker L ~~ L^-1(w) 동등)`
 
 ### 1-2 여러 선형사상
 
