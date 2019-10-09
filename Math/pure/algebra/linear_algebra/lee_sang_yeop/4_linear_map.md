@@ -22,13 +22,13 @@
   - M1[v]_Bv = M2[v]_Bv => M1 = M2
     - 가 어째서 성립하는지?
       - 선형사상이기 때문(직접 증명 가능)
-- *기본행연산을 하면 하기전과 후의 row-space가 동일하다고 할 수 있는가?*
+- 기본행연산을 하면 하기전과 후의 row-space가 동일하다고 할 수 있는가?
   - 0을제외한 스칼라배 ok
   - 행바꾸기 ok
-  - *서로다른 두 행을 스칼라배 하고 더한후 기존 행과 치환*
-    - 2차원 평면으로 생각하면 직관적으로 그렇다는것을 알 수 있음
-    - 선택한 row가 행렬내에서 중복이 없는 경우
-    - 선택한 row가 행렬내에서 중복이 있는 경우
+  - 서로다른 두 행을 스칼라배 하고 더한후 기존 행과 치환 ok
+    - 직접 증명해보자
+- 어떠한 행렬 M이 주어지면, column-space와 row-space는 같은가?
+  - *선형대수와 군 1.3.12 참조?*
 - *비둘기집의 원리에서*
   - 선형사상인 경우에는, 같은 차원이고 유한차원인 두 차원 사이라는 조건이 필요한데, 일반적인 비둘기집의 원리는 공집합이 아닌 서로 다른 유한집합 사이 라는 조건을 전제로 하는데, 선형사상인 경우에는 유한집합이 아닌데도 불구하고 성립하는가?
     - 물론 증명은 가능한데, 따름정리와 비둘기집 원리 사이의 관계가 다소 모호함
@@ -42,7 +42,7 @@
 - 벡터 공간은 왜 그 많은 대수구조 중에서도 가군에 해당하게 되는 것인가?
 - 벡터 공간의 본질을 설명할 때, 누락된 것이 존재했는데, 그 누락된 것은 무엇이고 그것은 어떻게 보완이 되는가?
 - 다른 집합들(실수 집합 등)도 대수구조상 벡터공간이 될 수 있는가?
-  - 실수도 벡터가 될 수 있는가?
+  - 실수의 집합도 벡터가 될 수 있는가?
 
 ## 1. 선형사상(linear map / morphism)
 
@@ -55,6 +55,8 @@
 - 사상
   - 대수구조들을 다루는 함수
   - 함수보다 포괄적인 개념(함수와 혼용해서 쓰는경우도 있음)
+  - 사실상 사상 = 함수
+    - 두 집합의 곱집합이라는 의미에서
 - 선형사상이 중요한 이유
   - **다루는 대수구조의 특성을 변형시키지 않고 그대로 보존시켜줌**
     - 가산성(additivity)
@@ -113,16 +115,17 @@
   - `L: V -> W`가 linear map일 떄, 다음 조건은 동치
     - L은 monomorphism
     - `u,v∈V, L(u)=L(v) => u=v`
+      - 아래 조건과 동치인것이 핵심
     - `v∈V ∧ L(v)=L(0)=0 => v=0`
-    - `kerL = 0`
+    - **`kerL = 0`**
   - `L: V -> W`가 linear이고, `S⊆V => L<S> = <L(S)>`
     - 쉬운증명
     - **센스있는 증명**
   - `L: V -> W`가 linear이고, S는 V의 subset, Bv는 V의 basis일 때
     - S가 일차독립이고 L이 monomorphism => L(S)도 일차독립
-      - **`<S>`의 기저는 S...**
+      - **S가 일차독립이므로 `<S>`의 기저는 S...**
       - 테크닉이 정말 멋지니 꼭 참조하자(우리의 철학)
-- **monomorphism과 epimorphism과 L의 관계**
+- **monomorphism과 epimorphism과 L의 관계 (L은 L: V -> W인 linear map)**
   - monomorphism
     - L이 monomorphism <=> L(Bv)가 일차독립
   - epimorphism
@@ -137,7 +140,7 @@
   - 정리
     - `L: V -> W`가 linear map이고 `L(v) = w ∈ imL => L^-1(w) = v + kerL ∧ ker L 과 L^-1(w)사이에 bijection이 존재함 (ker L ~~ L^-1(w) 동등)`
 
-### 1-2 여러 선형사상
+### 1-2 Linear Map의 보기
 
 ![](./images/ch4/various_linear_maps1.png)
 
@@ -151,6 +154,51 @@
   - `L(v) = Mv^T (단, M∈mxn인 행렬, V = F^n, W=F^m)`
     - `v^T`는 행으로 뻗어나가는 벡터를 열로 뻗어나가는 벡터로 전치 시킨 것
   - `L(v) = <v,v0> (단, v0∈V)`
+
+---
+
+- L의 U로의 restriction
+  - `U⊆V, L : V -> W`가 함수일 때, L의 U로의 restriction `L|U : U -> W`을 `L|U(u) = Lu (u∈U)`과 같이 정의
+    - `L이 linear ∧ U≦V => L|U는 linear`
+- zero map
+  - 함수 `0: V -> W`을 `0(v) = 0 (v∈V)`로 정의
+- natural embedding
+  - `U⊆V, ιU = ι: U -> V, ι(u) = u (u∈U)`
+    - `U≦V => ιU: U -> V는 monomorphism`
+      - **ι를 natural embedding이라고 부름**
+      - e.g 정수를 유리수로 natural embedding을 하여 수의 체계를 확장시킴
+        - In mathematics, an **embedding** is one instance of some mathematical structure contained within another instance.
+          - When some object X is said to be embedded in another object Y, the embedding is given by some injective and structure-preserving map f : X → Y. The precise meaning of "structure-preserving" depends on the kind of mathematical structure of which X and Y are instances. In the terminology of category theory, a structure-preserving map is called a morphism.
+- natural projection
+  - `π1: F^3 -> F, π1(t(x,y,z))=x (x,y,z∈F)`
+    - `π1`은 epimorphism
+    - `π1`은 natural projection
+      - 직선 위로 projection
+    - `π2`를 둘째 좌표로의 projection으로 생각할 수도 있을 것
+  - `P: F^4 -> F^2, P(t(x,y,z,w)) = t(x,y) (x,y,z,w∈F)`
+    - P는 x,y평면 위로 projection
+- V1,...,Vn이 f.d.v.s일 떄, product space `V = V1 x V2 x ... x Vn`을 생각하자.
+  - i-th natural projection(product space를 이용한)
+    - `πi: V -> Vi, πi(v1,...,vn) = vi (vk∈Vk for all k)`
+  - j-th natural embedding
+    - `ιj: Vj -> V, ιj(vj) = (0,...,vj,...,0) (vj∈Vj)`
+  - Bj를 Vj의 basis라고 표기할 떄(단, j=1,...,n)
+    - `ι1(B1) U ι2(B2) U ... U ιn(Bn)`은 `V1 x V2 x ... x Vn` 의 basis이다
+    - `dim(V1 x ... x Vn) = dimV1 + ... + dimVn`
+- **matrix A에 대응하는 linear map (L sub A)**
+  - 우리의 논의의 엄청난 주인공
+  - `A∈Mmxn(F), LA: F^n -> F^m, LA(X) = AX (X∈F^n)`
+    - LA는 linear map
+    - **선형 = 일차**
+      - LA의 모든 좌표함수들이 일차함수이므로 LA를 선형사상이라고 부름
+    - `LA(t(x1,x2,...,xn)) = t(a11x1 + a12x2 + ... + a1nxn, ..., am1x1 + ... + amnxn)`
+      - LA는 선형사상
+  - `A∈Mmxn(F) ∧ B∈Mnxr(F), LA・LB: F^r -> F^m`은 선형사상이다. 이때, `LA・LB = LC`인 `C∈Mmxr(F)`가 존재하는가? C는 유일한가?
+    - `ker LA`는 `AX = 0`의 solution space
+      - `AX = 0`이 non-trivial solution을 갖는다 <=> `ker LA ≠ 0`
+      - `AX = 0`이 trivial solution만을 갖는다 <=> `ker LA = 0` <=> `LA`가 monomorphism
+        - `AX = B`의 해집합은 `(LA)^-1(B)`
+        - `LA(ej) = [A]^j (j=1,...,n) (단, {e1,...,en}은 F^n의 표준기저)`이므로 `im LA = <[A]^1,...,[A]^n>`
 
 ## 2. 선형대수학의 기본정리
 
