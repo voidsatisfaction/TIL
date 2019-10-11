@@ -32,6 +32,7 @@
 - *비둘기집의 원리에서*
   - 선형사상인 경우에는, 같은 차원이고 유한차원인 두 차원 사이라는 조건이 필요한데, 일반적인 비둘기집의 원리는 공집합이 아닌 서로 다른 유한집합 사이 라는 조건을 전제로 하는데, 선형사상인 경우에는 유한집합이 아닌데도 불구하고 성립하는가?
     - 물론 증명은 가능한데, 따름정리와 비둘기집 원리 사이의 관계가 다소 모호함
+- *무한차원 벡터공간의 부분집합이 일차독립인 것을 어떻게 파악할 수 있는가?*
 
 ## 기존 내용 복습 질문
 
@@ -193,12 +194,24 @@
       - LA의 모든 좌표함수들이 일차함수이므로 LA를 선형사상이라고 부름
     - `LA(t(x1,x2,...,xn)) = t(a11x1 + a12x2 + ... + a1nxn, ..., am1x1 + ... + amnxn)`
       - LA는 선형사상
-  - `A∈Mmxn(F) ∧ B∈Mnxr(F), LA・LB: F^r -> F^m`은 선형사상이다. 이때, `LA・LB = LC`인 `C∈Mmxr(F)`가 존재하는가? C는 유일한가?
+  - `A∈Mmxn(F) ∧ B∈Mnxr(F), LA・LB: F^r -> F^m`은 선형사상이다. 이때, `LA・LB = LC`인 `C∈Mmxr(F)`가 존재하는가? *C는 유일한가?*
     - `ker LA`는 `AX = 0`의 solution space
       - `AX = 0`이 non-trivial solution을 갖는다 <=> `ker LA ≠ 0`
       - `AX = 0`이 trivial solution만을 갖는다 <=> `ker LA = 0` <=> `LA`가 monomorphism
         - `AX = B`의 해집합은 `(LA)^-1(B)`
         - `LA(ej) = [A]^j (j=1,...,n) (단, {e1,...,en}은 F^n의 표준기저)`이므로 `im LA = <[A]^1,...,[A]^n>`
+    - `X1,...,Xn∈F^n, A∈Mnxn(F)를 A = (X1,...,Xn)`으로 정의하면 다음이 성립한다
+      - `LA는 injective <=> {X1,...,Xn}은 일차독립`
+        - `{X1,...,Xn}`이 어떤 것을 의미하는지 생각해보라 `LA({e1,...,en})`
+      - `LA는 surjective <=> <X1,...,Xn> = F^n`
+      - `LA는 bijective <=> {X1,...,Xn}은 F^n의 기저`
+    - `X0∈F^n`이 연립방정식 `AX = B`의 한 solution이면, 그 연립방정식의 해집합은 `(LA)^-1(B) = X0 + kerL`임을 보여라
+      - 연립방정식 `AX = B`의 해집합을 구하는 문제가 한 개의 special solution과 `ker LA`를 구하는 문제로 바뀌게 됨
+      - 일반적으로 row-reduced echelon form을 이용하는 것이 효과적
+- `[v]Bv`
+  - `dimV = n`이고, `Bv`가 V의 기저일 때, 함수 `a: V -> F^n`을 `a(v) = [v]Bv (v∈V)`로 놓으면, a는 isomorphism이다
+- `t: Mmxn(F) -> Mnxm(F), t(A) = tA`
+- `tr: Mnxn(F) -> F`
 
 ## 2. 선형대수학의 기본정리
 
@@ -280,8 +293,8 @@ f와 g가 서로 역사상임을 증명
 
 - 차원정리
   - 개요
-    - 유한차원 벡터공간 `V`와 선형사상 `L: V -> W`에 대하여 다음이 성립한다
-    - `dim(V) = dim(kerL) + dim(imL)`
+    - f.d.v.s `V,W`와 선형사상 `L: V -> W`에 대하여 다음이 성립한다
+      - `dim(V) = dim(kerL) + dim(imL)`
   - 의의
     - 커널이 중요하다
       - 선형사상의 상을 파악하기 위해서, kernel에 해당하는 원소들을 제외시키고, 나머지 정의역 애들만 봐주면 상에 대한 파악이 된다.
@@ -293,23 +306,42 @@ f와 g가 서로 역사상임을 증명
 
 ![](./images/ch4/dimension_theorem2.png)
 
-### 3-2 비둘기집 원리
+- 차원정리의 따름정리
+  - **`V,W`가 f.d.v.s이고 `dimV = dimW`일 때, `L: V -> W`가 linear map이면 다음 세 조건은 동치이다(big event)**
+    - 동치인 조건들
+      - L은 isomorphism
+      - L은 monomorphism
+      - L은 epimorphism
+    - 참고
+      - 위 정리와 본질적으로 같은 정리
+        - 전제
+          - `A∈Mnxn(F) ∧ L = LA: F^n -> F^n ∧ V = F^n`일 떄
+        - `S⊆V, |S| = dimV < ∞`이면 다음은 동치이다
+          - S는 V의 기저
+          - S는 일차독립
+          - `<S> = V`
+    - 기본적으로 f.d.v.s를 주로 다루는 이유는, 위의 따름정리와 아래의 본질적으로 같은 정리가 f.d.v.s에서만 정립하기 때문이다
+  - V,W가 f.d.v.s 이고, `L: V -> W`가 linear map일 떄
+    - `L이 monomorphism => dimV ≦ dimW`
+    - `L이 epimorphism => dimV ≧ dimW`
+    - **주의**
+      - `L이 isomorphism => dimV = dimW`는 어리석은 생각. 왜냐하면 우리의 철학인 같은것은 진짜 같을 뿐임
+- 정리
+  - `V,W`가 f.d.v.s, natural projection `π: V x W -> V`를 생각하자
+    - `dim(VxW) = dim(V) + dim(W)`
+      - `ker π ~~ W`
+    - `Vi`가 f.d.v.s 일 떄, `dim(V1 x V2 x ... x Vn) = dim(V1) + ... + dim(Vn)`
 
-- 따름정리
-  - 개요
-    - 차원이 같은 두 유한 차원 벡터공간 `V, W`사이에 선형사상 `L`이 정의되어 있으면 다음이 성립한다
-      - `L은 전사 <=> L은 단사 <=> L은 전단사`
-  - 증명
-    - L이 전사 => 단사
-    - L이 단사 => 전사
+### 3.2 Pigeon Hole Principle
 
-![](./images/ch4/pigeonhole_principle1.png)
-
-![](./images/ch4/pigeonhole_principle2.png)
-
-- 비둘기집 원리
-  - 공집합이 아닌 두 유한집합 `A, B`의 크기가 서로 같을 때, 함수 `f: A -> B`는 다음을 만족한다.
-    - `f는 전사 <=> f는 단사 <=> f는 전단사`
+- 개요
+  - `X, Y`가 non-empty finite set이고 `|X| = |Y|`일 떄, `f: X -> Y`가 함수이면 다음을 만족
+    - f는 bijection
+    - f는 injection
+    - f는 surjection
+- 특징
+  - 차원정리의 따름정리는 f.d.v.s.의 비둘기집 원리 라고 생각할 수 있음
+    - *본질적으로 다른 것 같은데 왜?*
 
 ## 4. 계수정리
 
