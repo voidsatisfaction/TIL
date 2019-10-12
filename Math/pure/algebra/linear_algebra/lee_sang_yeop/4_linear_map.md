@@ -19,9 +19,11 @@
   - `L(V,W)`의 덧셈과 스칼라배를 구조상 애초에 `(L1+L2)(v) = L1(v)+L2(v)`로 정의할 수 있는가?
     - ≡ 애초에 선형사상의 집합은 벡터공간인가?
     - 선형사상의 집합의 덧셈을 위와 같이 정의할 수 있음은 자명. 왜냐하면, `L1(v)+L2(v)`는 이미 우리가 아는 값이고 새로 정의하는 것은 `(L1+L2)(v)`라는 선형사상끼리의 덧셈이기 때문
+      - **연산은 정의하는 것이지, 천부인권처럼 주어진 것이 아님을 명심하자**
   - M1[v]_Bv = M2[v]_Bv => M1 = M2
     - 가 어째서 성립하는지?
       - 선형사상이기 때문(직접 증명 가능)
+      - *v가 0벡터라면?*
 - 기본행연산을 하면 하기전과 후의 row-space가 동일하다고 할 수 있는가?
   - 0을제외한 스칼라배 ok
   - 행바꾸기 ok
@@ -187,14 +189,16 @@
     - `ι1(B1) U ι2(B2) U ... U ιn(Bn)`은 `V1 x V2 x ... x Vn` 의 basis이다
     - `dim(V1 x ... x Vn) = dimV1 + ... + dimVn`
 - **matrix A에 대응하는 linear map (L sub A)**
-  - 우리의 논의의 엄청난 주인공
-  - `A∈Mmxn(F), LA: F^n -> F^m, LA(X) = AX (X∈F^n)`
-    - LA는 linear map
-    - **선형 = 일차**
-      - LA의 모든 좌표함수들이 일차함수이므로 LA를 선형사상이라고 부름
-    - `LA(t(x1,x2,...,xn)) = t(a11x1 + a12x2 + ... + a1nxn, ..., am1x1 + ... + amnxn)`
-      - LA는 선형사상
-  - `A∈Mmxn(F) ∧ B∈Mnxr(F), LA・LB: F^r -> F^m`은 선형사상이다. 이때, `LA・LB = LC`인 `C∈Mmxr(F)`가 존재하는가? *C는 유일한가?*
+  - 개요
+    - 우리의 논의의 엄청난 주인공
+    - `A∈Mmxn(F), LA: F^n -> F^m, LA(X) = AX (X∈F^n)`
+      - LA는 linear map
+      - **선형 = 일차**
+        - LA의 모든 좌표함수들이 일차함수이므로 LA를 선형사상이라고 부름
+      - `LA(t(x1,x2,...,xn)) = t(a11x1 + a12x2 + ... + a1nxn, ..., am1x1 + ... + amnxn)`
+        - LA는 선형사상
+  - 특징
+    - `A∈Mmxn(F) ∧ B∈Mnxr(F), LA・LB: F^r -> F^m`은 선형사상이다. 이때, `LA・LB = LC`인 `C∈Mmxr(F)`가 존재하는가? C는 유일한가?(C와 D가 위의 조건을 만족하고, 둘을 이항하면 `(C-D)X = 0`이 되는데 `C ≠ D`이면 `(C-D)X`가 0이 아닌 X가 존재하므로 가정에 모순)
     - `ker LA`는 `AX = 0`의 solution space
       - `AX = 0`이 non-trivial solution을 갖는다 <=> `ker LA ≠ 0`
       - `AX = 0`이 trivial solution만을 갖는다 <=> `ker LA = 0` <=> `LA`가 monomorphism
@@ -208,7 +212,7 @@
     - `X0∈F^n`이 연립방정식 `AX = B`의 한 solution이면, 그 연립방정식의 해집합은 `(LA)^-1(B) = X0 + kerL`임을 보여라
       - 연립방정식 `AX = B`의 해집합을 구하는 문제가 한 개의 special solution과 `ker LA`를 구하는 문제로 바뀌게 됨
       - 일반적으로 row-reduced echelon form을 이용하는 것이 효과적
-- `[v]Bv`
+- `a: V -> F^n, a(v) = [v]Bv`
   - `dimV = n`이고, `Bv`가 V의 기저일 때, 함수 `a: V -> F^n`을 `a(v) = [v]Bv (v∈V)`로 놓으면, a는 isomorphism이다
 - `t: Mmxn(F) -> Mnxm(F), t(A) = tA`
 - `tr: Mnxn(F) -> F`
@@ -335,7 +339,7 @@ f와 g가 서로 역사상임을 증명
 ### 3.2 Pigeon Hole Principle
 
 - 개요
-  - `X, Y`가 non-empty finite set이고 `|X| = |Y|`일 떄, `f: X -> Y`가 함수이면 다음을 만족
+  - `X, Y`가 non-empty finite set이고 `|X| = |Y|`일 떄, `f: X -> Y`가 함수이면 다음은 동치
     - f는 bijection
     - f는 injection
     - f는 surjection
