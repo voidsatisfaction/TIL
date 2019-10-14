@@ -10,6 +10,7 @@
   - 차원정리
   - 비둘기집
 - 계수정리
+- Linear Extension Theorem
 
 ## 의문
 
@@ -35,6 +36,9 @@
   - 선형사상인 경우에는, 같은 차원이고 유한차원인 두 차원 사이라는 조건이 필요한데, 일반적인 비둘기집의 원리는 공집합이 아닌 서로 다른 유한집합 사이 라는 조건을 전제로 하는데, 선형사상인 경우에는 유한집합이 아닌데도 불구하고 성립하는가?
     - 물론 증명은 가능한데, 따름정리와 비둘기집 원리 사이의 관계가 다소 모호함
 - *무한차원 벡터공간의 부분집합이 일차독립인 것을 어떻게 파악할 수 있는가?*
+- Rank theorem
+  - *증명 과정에서 A의 column space와 im LA는 왜 동일한가*
+  - *A와 A의 row reduced echelon form(R)이 row space가 동일하다 => AX = 0의 solution space 는 RX = 0의 solution space와 같다는 명제는 어떻게 성립하는가?*
 
 ## 기존 내용 복습 질문
 
@@ -347,7 +351,7 @@ f와 g가 서로 역사상임을 증명
   - 차원정리의 따름정리는 f.d.v.s.의 비둘기집 원리 라고 생각할 수 있음
     - *본질적으로 다른 것 같은데 왜?*
 
-## 4. 계수정리
+## 4. 계수정리(Rank Theorem)
 
 차원정리의 행렬버전
 
@@ -358,24 +362,25 @@ f와 g가 서로 역사상임을 증명
 ![](./images/ch4/coefficient_theorem2.png)
 
 - 관련 용어
-  - 행렬 `M∈Μ(F)`에 대하여
-    - 열공간
-      - `M`의 열벡터들로 생성(span)된 공간
-    - 열계수
-      - 열공간의 차원. `col-rankM`
-    - 행공간
-      - `M`의 행벡터들로 생성된 공간
-    - 행계수
-      - 행공간의 차원. `row-rankM`
+  - `A∈Mmxn(F)`
+    - row
+      - row space
+        - `M1xn(F)`의 부분공간 `<[A]_1, ..., [A]_m>`
+      - row rank
+        - row space의 dimension
+    - column
+      - column space
+        - `F^m`의 부분공간 `<[A]^1, ..., [A]^n>`
+      - column rank
+        - column space의 dimension
+  - 행렬 `A∈Μ(F)`에 대하여
     - 영공간
-      - 연립방정식 `MX = 0(영행렬)`의 해공간
-    - nullityM(무효차수)
-      - `M`의 영공간의 차원
+      - 연립방정식 `AX = 0(영행렬)`의 해공간
+    - nullityA(무효차수)
+      - `A`의 영공간의 차원
         - c.f) rank-nullity 정리
-      - *자유변수(매개변수)의 개수*
-        - 어쨰서?
 
-### 4-2 계수정리
+### 4-2 Rank Theorem
 
 증명은
 
@@ -384,25 +389,51 @@ f와 g가 서로 역사상임을 증명
 `col-rankM = col-rankA` (기본행 연산은 *행렬 고유의 특성(?)* 은 변화시키지 않으므로, 자명함)
 `row-rankM = row-rankM` (기본행 연산은 행렬 고유의 특성은 변화시키지 않으므로, 자명함)
 
-- 계수정리
+- Rank Theorem
   - 개요
-    - 행렬 `M∈Μmxn(F)`에 대하여 다음이 성립한다.
-      - `col-rankM = row-rankM = rankM`
-    - 이때, 행렬 `M`의 행공간 및 열공간의 공통차원을 M의 계수 **rankM** 이라 한다.
-  - 와닿지 않으면 사례를 들어보자
+    - `A∈Μmxn(F)`에 대하여 다음이 성립한다.
+      - `col-rankA = row-rankA = rankA`
+      - 이때, 행렬 `A`의 행공간 및 열공간의 공통차원을 M의 계수 **rankA** 이라 한다.
+        - `rk(A)`로 표기
+    - full rank
+      - `A∈Mmxn(F)`의 rank가 `min(m,n)`인 경우
+- 따름정리
+  - 행렬 A에 elementary row operation을 수행해도 (A의 column space는 변화하지만) A의 column rank는 변화하지 않는다
 
 ![](./images/ch4/rank_nullity_theorem1.png)
 
 - Rank-Nullity 정리
   - 개요
-    - 행렬 `M∈Mmxn(F)`에 대하여 다음이 성립한다.
-      - `n = rankM + nullityM`
+    - 행렬 `A∈Mmxn(F)`에 대하여 다음이 성립한다.
+      - `n = rankA + nullityA`
         - `n`은 변환전의 벡터공간의 차원(벡터가 ,로 n개 구분됨)
         - `rank(A)`는 선형변환후의 벡터공간의 차원(`col-rankA = row-rankA = rankA`)
         - `nullity(A)`는 선형변환으로 인한 커널의 차원
   - 특징
     - 앞서 선형대수학의 기본정리에 의하여, 선형 사상과 행렬이 같으므로, 선형사상의 버전으로 대응시킬 수 있음
       - `dim(V) = dim(ImL) + dim(kerL)`
+  - 문제
+    - `A∈Mmxn(F)`일 때 다음을 증명
+      - `Q∈Mmxm(F)가 가역 => rank(QA)=rank(A)`
+      - *`P∈Mnxn(F)가 가역 => rank(AP)=rank(A)`*
+        - 도대체 어떻게 증명하지?
+
+## Linear Extension Theorem
+
+- linear map을 만드는 방법을 공부
+  - isomorphism도 만들 수 있음
+  - 벡터공간 분류 가능
+- `Bv = {v1,...,vn}`이 V의 basis이고, `L,M: V -> W`가 linear 일 때, `L(vi) = M(vi) (i∈{1,...,n}) => L = M`
+  - 선형사상은 기저에서의 값(선형사상값)이 결정한다
+
+### Linear Extension Theorem
+
+- Bv가 V의 basis이고, `f: Bv -> W`가 함수라면, `L|Bv = f`인 linear map `L: V -> W`가 유일하게 존재한다
+  - 의의
+    - **선형사상을 하나 정의하고 싶다면, basis vector에서의 함수값만 원하는 대로 정해주면 된다**
+      - 이 때, basis vector에서의 함숫값을 정해주는 데에는 아무런 제약도 없다
+      - 그래서 F-vector space를 free F-module이라 부름
+      - **3blue1brown 강의에서 선형변환을 했을 떄, 표준기저들이 어떻게 변화하는지만 주목하는 것과 같은 맥락**
 
 ---
 
