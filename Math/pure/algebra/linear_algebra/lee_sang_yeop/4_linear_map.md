@@ -145,6 +145,7 @@
     - `U≦V ∧ v∈V, v+U = {v+u | u∈U}`
   - 정리
     - `L: V -> W`가 linear map이고 `L(v) = w ∈ imL => L^-1(w) = v + kerL ∧ ker L 과 L^-1(w)사이에 bijection이 존재함 (ker L ~~ L^-1(w) 동등)`
+      - 후에 '`X0∈F^n`이 연립방정식 `AX = B`의 한 solution이면, 그 연립방정식의 해집합은 `(LA)^-1(B) = X0 + kerL`임을 보여라' 와 동치
 
 ## 2. Linear Map의 보기
 
