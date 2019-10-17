@@ -9,13 +9,31 @@
 
 선형 사상을 벡터로 갖는 벡터공간을 탐구
 
-- 선형 사상의 벡터공간
+### 1.2 선형사상의 벡터공간
+
+- 선형사상의 벡터공간
   - 정의
     - `V,W`가 F-vector space일 떄,
       - `L(V,W) = {L: V -> W | L은 linear map}`
       - 연산
         - `(L+M)(v) = L(v) + M(v)`
         - `(aL)(v) = aL(v) (v∈V)`
+- 새로운 벡터공간을 조우했을 때 팁
+  - Classificiation Theorem을 생각하여, 그것의 dimension에 대해서 파악하자
+
+### 1.1 dual space(쌍대공간)
+
+- 개요
+  - `V* = L(V,F)`
+    - V*의 원소를 linear functional(linear form)이라고 부름
+  - dual의 dual(double dual)
+    - `(V*)* = V** = L(V*, F)`
+  - Bv의 dual basis
+    - `Bv* = {v1*, ..., vn*}`
+- 예시
+  - `tr ∈ Mnxn(F)*`
+- 정리
+  - V가 f.d.v.s이면, `dim V* = dim V`이다
 
 ## 2. 선형대수학의 기본정리
 
