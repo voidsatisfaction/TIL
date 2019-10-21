@@ -2,14 +2,21 @@
 
 - 의문
 - ① Vector Space of Linear Maps
+  - 선형사상의 벡터공간
+  - dual space
+- ② 선형대수학의 기본정리; 표준기저의 경우
+- ③ 선형대수학의 기본정리; 일반적인 경우
+- ④ 기본정리의 결과와 우리의 철학
 
 ## 의문
+
+- *선형대수학의 기본정리에서, 일반적인 경우에서 표준적인 경우를 어떻게 유도하는가? 특히 `φ`함수는?*
 
 ## 1. Vector Space of Linear Maps
 
 선형 사상을 벡터로 갖는 벡터공간을 탐구
 
-### 1.2 선형사상의 벡터공간
+### 1.1 선형사상의 벡터공간
 
 - 선형사상의 벡터공간
   - 정의
@@ -21,7 +28,9 @@
 - 새로운 벡터공간을 조우했을 때 팁
   - Classificiation Theorem을 생각하여, 그것의 dimension에 대해서 파악하자
 
-### 1.1 dual space(쌍대공간)
+### 1.2 dual space(쌍대공간)
+
+*dual space가 이해가 잘 안되니 다시 복습이 필수!*
 
 - 개요
   - `V* = L(V,F)`
@@ -34,8 +43,69 @@
   - `tr ∈ Mnxn(F)*`
 - 정리
   - V가 f.d.v.s이면, `dim V* = dim V`이다
+  - V,W가 f.d.v.s이면, `dim L(V,W) = (dimV)・(dimW)`
 
-## 2. 선형대수학의 기본정리
+## 2. 선형대수학의 기본정리; 표준기저의 경우
+
+기저가 표준기저로 주어진 경우를 다룸
+
+- 개요
+  - 행렬과 선형사상은 같은 것
+- 표기법
+  - `V = F^n; dimV = n, [F^n의 표준기저] = ε = {e1,...,en}`
+  - `W = F^m; dimW = m, [F^m의 표준기저] = F = {f1,...,fm}`
+  - `U = F^r; dimU = r, [F^r의 표준기저] = ζ = {g1,...,gr}`
+    - 위의 표준기저들은 모두 ordered basis로 생각
+- 정의
+  - `L∈L(F^n,F^m), L(e1)=t(a11,...,am1), ..., L(en)=t(a1n,...,amn) (aij∈F)`
+    - `≡ L(ej) = sigma_i=1^m(aij x fi) (j=1,...,n)`
+  - 표준기저 ε과 F에 관한 L의 행렬(행렬표현)
+    - 개요
+      - `[L]_F^ε = [L] = (L(e1), ..., L(en)) (aij) ∈ Mmxn(F)`
+    - 표기
+      - 표준기저 ε과 F에 관한 L의 행렬(행렬표현)이라고 부름(matrix of (associated with) L with respect to ε and F)
+      - `[L]`은 그의 j-번쨰 column이 `L(ej)`인 (mxn)행렬이다
+    - 특징
+      - `[L]`은 행렬 `[L]_F^ε`에 의해 유일하게 결정 됨
+- 선형대수학의 기본정리
+  - `φ_F^ε = φ: Mmxn(F) -> L(F^n, F^m), φ(A) = LA (A∈Mmxn(F))`
+  - `ψ_F^ε = ψ: L(F^n,F^m) -> Mmxn(F), ψ(L) = [L]_F^ε = [L], (L∈L(F^n,F^m))`
+  - 와 같이 정의하면 다음이 성립함
+    - φ는 isomorphism이고, ψ가 그의 inverse map
+    - `B∈Mrxm(F) ∧ A∈Mmxn(F) => φ_g^F(B)・φ_F^ε = φ_g^ε(BA) 즉 LB・LA = LBA`
+    - `L∈L(F^n,F^m) ∧ M∈L(F^m,F^r) => ψ_g^F(M)・ψ_F^ε(L) = ψ_g^ε(M・L) 즉 [M]_g^F・[L]_F^ε = [M・L]_g^ε`
+- 따름정리
+  - 모든 linear map `L: F^n -> F^m`은 LA의 꼴이고, 이때, `A∈Mmxn(F)`는 유일하게 결정된다
+    - 결국 `∃LA∈L(F^n, F^m), L = LA (∵ L에 대응하는 A가 존재하고, A는 LA를 유일하게 결정시킴)`
+  - `A∈Mmxn(F) => [LA]_F^ε = A`
+  - `L∈L(F^n,F^m) => L_[L] = L <=> L(X) = [L]・X (X∈F^n)`
+
+## 3. 선형대수학의 기본정리; 일반적인 경우
+
+기저가 임의로 주어진 경우를 다룸
+
+- 표기법
+  - `V; dimV = n, [V의 기저] = Bv = {v1,...,vn}`
+  - `W; dimW = m, [W의 기저] = Bw = {w1,...,wm}`
+  - `U; dimU = r, [U의 기저] = Bu = {u1,...,ur}`
+    - 기저들은 ordered이고, fixed이다
+- 정의
+  - `L∈L(V,W), L(vj) = sigma_i=1^m(aij x wi), (j=1,...,n)`
+    - `[L]_Bw^Bv = (aij) = ([L(v1)]_Bw, ..., L(vn)_Bw)`
+      - 기저 Bv와 Bw에 관한 L의 행렬(행렬표현)
+      - L은 `[L]_Bw^Bv`에 의해 completely and uniquely determined됨
+- 선형대수학의 기본정리
+  - `φ_Bw^Bv: Mmxn(F) -> L(V,W), [(φ_Bw^Bv(A))(v)]_Bw = A・[v]_Bv (A∈Mmxn(F), v∈V)`
+  - `ψ_Bw^Bv: L(V,W) -> Mmxn(F), ψ_Bw^Bv(L) = [L]_Bw^Bv (L∈L(V,W))`
+  - 다음이 성립
+    - `φ_Bw^Bv`는 isomorphism이고, `ψ_Bw^Bv`가 그의 inverse map
+    - `B∈Mrxm(F) ∧ A∈Mmxn(F) => φ_Bu^Bw(B)・φ_Bw^Bv(A) = φ_Bu^Bv(BA)`
+    - `L∈L(V,W) ∧ M∈L(W,U) => ψ_Bu^Bw(M)・ψ_Bw^Bv(L) = ψ_Bu^Bv(M・L), 즉 [M]_Bu^Bw・[L]_Bw^Bv = [M・L]_Bu^Bv`
+- 따름정리
+  - `L∈L(V,W) ∧ v∈V => [L(v)]_Bw = [L]_Bw^Bv・[v]_Bv`
+
+
+## 8. 선형대수학의 기본정리(이상엽샘)
 
 선형사상의 특성을 파악! 즉, 선형사상 그 자체를 대수구조화 시켜서 특성을 알아보겠다.
 
