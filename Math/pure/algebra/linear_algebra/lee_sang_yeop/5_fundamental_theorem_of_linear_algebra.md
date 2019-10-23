@@ -11,6 +11,8 @@
 ## 의문
 
 - *선형대수학의 기본정리에서, 일반적인 경우에서 표준적인 경우를 어떻게 유도하는가? 특히 `φ`함수는?*
+- *`A∈Mnxn(F)`에 대응하는 선형사상은 반드시 `L(V,V)`의 원소인가?(endomorphism)*
+- *`Eij: V -> W, Eij(vk) = δjk x wi (1≦j,k≦n, 1≦i≦m)`이 함수의 정체는?*
 
 ## 1. Vector Space of Linear Maps
 
@@ -44,6 +46,7 @@
 - 정리
   - V가 f.d.v.s이면, `dim V* = dim V`이다
   - V,W가 f.d.v.s이면, `dim L(V,W) = (dimV)・(dimW)`
+    - *`Eij: V -> W, Eij(vk) = δjk x wi (1≦j,k≦n, 1≦i≦m)`이 함수의 정체는?*
 
 ## 2. 선형대수학의 기본정리; 표준기저의 경우
 
@@ -98,11 +101,53 @@
   - `φ_Bw^Bv: Mmxn(F) -> L(V,W), [(φ_Bw^Bv(A))(v)]_Bw = A・[v]_Bv (A∈Mmxn(F), v∈V)`
   - `ψ_Bw^Bv: L(V,W) -> Mmxn(F), ψ_Bw^Bv(L) = [L]_Bw^Bv (L∈L(V,W))`
   - 다음이 성립
-    - `φ_Bw^Bv`는 isomorphism이고, `ψ_Bw^Bv`가 그의 inverse map
-    - `B∈Mrxm(F) ∧ A∈Mmxn(F) => φ_Bu^Bw(B)・φ_Bw^Bv(A) = φ_Bu^Bv(BA)`
-    - `L∈L(V,W) ∧ M∈L(W,U) => ψ_Bu^Bw(M)・ψ_Bw^Bv(L) = ψ_Bu^Bv(M・L), 즉 [M]_Bu^Bw・[L]_Bw^Bv = [M・L]_Bu^Bv`
+    - 결과 ①
+      - `φ_Bw^Bv`는 isomorphism이고, `ψ_Bw^Bv`가 그의 inverse map
+    - 결과 ②
+      - `B∈Mrxm(F) ∧ A∈Mmxn(F) => φ_Bu^Bw(B)・φ_Bw^Bv(A) = φ_Bu^Bv(BA)`
+      - `L∈L(V,W) ∧ M∈L(W,U) => ψ_Bu^Bw(M)・ψ_Bw^Bv(L) = ψ_Bu^Bv(M・L), 즉 [M]_Bu^Bw・[L]_Bw^Bv = [M・L]_Bu^Bv`
 - 따름정리
   - `L∈L(V,W) ∧ v∈V => [L(v)]_Bw = [L]_Bw^Bv・[v]_Bv`
+
+## 4. 기본정리의 결과와 우리의 철학
+
+- 선형대수학의 기본정리의 교훈
+  - 결과 ①의 의미
+    - `Mmxn(F), L(V,W)`는 벡터공간으로서는 이름만 다를 뿐 사실상 같음(isomorphic)
+      - `Mmxn(F)`의 벡터들은 행렬이라고 불리우고 `L(V,W)`의 벡터들은 선형사상이라고 불리운다는 차이만 있을 뿐, 그들의 덧셈과 상수곱의 구조는 같음
+      - **행렬과 선형사상은 같은 것**
+      - 예시
+        - ① `Mmxn(F)`와 `L(V,W)`
+          - `Mmxn(F)`와 `L(V,W)`가 isomorphic이므로 `dimL(V,W) = mn = (dimV)・(dimW)`
+          - `φ_Bw^Bv(eij) = Eij, [Eij]_Bw^Bv = eij`
+            - 증명해보자(직접 계산)
+            - `{Eij}`가 어떻게 `L(V,W)`의 기저가 되었는지 예측했는지 분명함
+              - `{eij}에 isomorphic한 것이 {Eij}`
+        - ② `LE: F^n -> F^n, (E는 elementary matrix)`
+          - 모든 elementary matrix는 가역이고, 그 역행렬도 elementary matrix이다 는 자명
+    - 주의
+      - `φ_Bw^Bv`와 그의 inverse `ψ_Bw^Bv`는 **ordered basis Bv,Bw의 선택에 의존**
+        - 행렬과 선형사상을 identify할 때에는 어떤 기저를 선택했는지 분명히 밝혀야 함(그래서 증명단계에서 Bv, Bw, Bu를 명시했던 것임. 명시하지 않으면 표준기저를 뜻하는 것으로 약속)
+  - 결과 ②의 의미
+    - **곱셈 구조의 동일성**
+      - **`Mmxn(F)`와 `L(V,W)`는 단순히 vector space로서만 같은 것이 아니고, 그 곱셈 구조도 같다**
+      - 선형사상의 곱셈은 함수의 합성을 의미
+  - 우리의 철학3
+    - **행렬과 선형사상은 같은 것이다(단, 곱셈 = 합성)**
+      - **행렬의 곱셈의 정의가 부자연스러운 이유는, 행렬의 곱셈을 선형사상의 합성에 대응되도록 정의한 것이기 때문**
+        - `LB・LA = LC`인 유일한 C를 BA라고 정의
+        - `(CB)A = C(BA)`는 함수의 합성의 결합법칙에 대응 `(LC・LB)・LA = LC・(LB・LA)`
+      - 전략
+        - 행렬과 선형사상은 같은 것이니, 행렬이 다루기 쉬울 떄는 행렬을 다루고, 선형사상을 생각하는 것이 더 쉬울 떄는 성형사상을 생각하는 것이 우리의 작전
+  - 기본정리에서 `V = W = U`이고, `Bv = Bw = Bu`인 경우
+    - `Mnxn(F)`와 `L(V,V)`자신이 곱셈(합성)이라는 연산을 갖고 있음
+      - `φ_Bv^Bv`와 `ψ_Bv^Bv`는 `Mnxn(F)`와 `L(V,V)`의 덧셈, 상수곱, 그리고 곱셈의 구조를 그대로 옮겨줌
+        - e.g `φ_Bv^Bv(In) = Iv ∧ ψ_Bv^Bv(Iv) = In`
+      - *Mmxn(F)과 L(V,W) 역시도 자기자신이 연산을 갖고 있는거 아닌가? 무슨차이를 말하는 것인지?*
+    - `A∈Mnxn(F)`일 떄 다음은 동치
+      - A는 invertible matrix
+      - `LA: F^n -> F^n`은 isomorphism
+      - 이떄, `(LA)^-1 = LA^-1` 이다
 
 
 ## 8. 선형대수학의 기본정리(이상엽샘)
