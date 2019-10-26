@@ -11,8 +11,10 @@
 ## 의문
 
 - *선형대수학의 기본정리에서, 일반적인 경우에서 표준적인 경우를 어떻게 유도하는가? 특히 `φ`함수는?*
-- *`A∈Mnxn(F)`에 대응하는 선형사상은 반드시 `L(V,V)`의 원소인가?(endomorphism)*
+- `A∈Mnxn(F)`에 isomorphic한 선형사상은 반드시 `L(V,V)`의 원소인가?(endomorphism)
+  - `dimV = n`인 경우 그렇다
 - *`Eij: V -> W, Eij(vk) = δjk x wi (1≦j,k≦n, 1≦i≦m)`이 함수의 정체는?*
+- *선형대수학의 기본정리가 특수한 경우에 성립하는데, `dimV = n, dimW = m`이면 V ~~ F^n, W ~~ F^m 이므로, 일반적인 경우에도 당연히 성립하는것 아닌가?*
 
 ## 1. Vector Space of Linear Maps
 
@@ -125,6 +127,7 @@
               - `{eij}에 isomorphic한 것이 {Eij}`
         - ② `LE: F^n -> F^n, (E는 elementary matrix)`
           - 모든 elementary matrix는 가역이고, 그 역행렬도 elementary matrix이다 는 자명
+            - `LE`만 `LE1, LE2, LE3`3가지 종류의 elementary linear map 이라고 생각하고서 각각의 linear map 에 역행렬을 찾아주면 됨
     - 주의
       - `φ_Bw^Bv`와 그의 inverse `ψ_Bw^Bv`는 **ordered basis Bv,Bw의 선택에 의존**
         - 행렬과 선형사상을 identify할 때에는 어떤 기저를 선택했는지 분명히 밝혀야 함(그래서 증명단계에서 Bv, Bw, Bu를 명시했던 것임. 명시하지 않으면 표준기저를 뜻하는 것으로 약속)
@@ -139,15 +142,36 @@
         - `(CB)A = C(BA)`는 함수의 합성의 결합법칙에 대응 `(LC・LB)・LA = LC・(LB・LA)`
       - 전략
         - 행렬과 선형사상은 같은 것이니, 행렬이 다루기 쉬울 떄는 행렬을 다루고, 선형사상을 생각하는 것이 더 쉬울 떄는 성형사상을 생각하는 것이 우리의 작전
-  - 기본정리에서 `V = W = U`이고, `Bv = Bw = Bu`인 경우
-    - `Mnxn(F)`와 `L(V,V)`자신이 곱셈(합성)이라는 연산을 갖고 있음
-      - `φ_Bv^Bv`와 `ψ_Bv^Bv`는 `Mnxn(F)`와 `L(V,V)`의 덧셈, 상수곱, 그리고 곱셈의 구조를 그대로 옮겨줌
-        - e.g `φ_Bv^Bv(In) = Iv ∧ ψ_Bv^Bv(Iv) = In`
-      - *Mmxn(F)과 L(V,W) 역시도 자기자신이 연산을 갖고 있는거 아닌가? 무슨차이를 말하는 것인지?*
-    - `A∈Mnxn(F)`일 떄 다음은 동치
-      - A는 invertible matrix
-      - `LA: F^n -> F^n`은 isomorphism
-      - 이떄, `(LA)^-1 = LA^-1` 이다
+- 기본정리에서 `V = W = U`이고, `Bv = Bw = Bu`인 경우
+  - `Mnxn(F)`와 `L(V,V)`자신이 곱셈(합성)이라는 연산을 갖고 있음
+    - `φ_Bv^Bv`와 `ψ_Bv^Bv`는 `Mnxn(F)`와 `L(V,V)`의 덧셈, 상수곱, 그리고 곱셈의 구조를 그대로 옮겨줌
+      - e.g `φ_Bv^Bv(In) = Iv ∧ ψ_Bv^Bv(Iv) = In`
+    - *Mmxn(F)과 L(V,W) 역시도 자기자신이 연산을 갖고 있는거 아닌가? 무슨차이를 말하는 것인지?*
+  - `A∈Mnxn(F)`일 떄 다음은 동치
+    - A는 invertible matrix
+    - `LA: F^n -> F^n`은 isomorphism
+    - 이떄, `(LA)^-1 = LA^-1` 이다
+  - `A=(aij)∈Mnxn(F)`가 가역이고, `{v1,...,vn}`이 V의 기저일 때, `wj = sigma_i=1^n(aij x vj) (j = 1,...,n)`이라고 정의하면, `w1,...,wn`도 V의 기저이다
+    - `L(vj) = wj`로 두면 `[L] = A`
+  - `BA = I <=> AB = I`의 증명
+- `A∈Mnxn(F)`일 떄, 다음은 동치
+  - 1 A는 invertible matrix
+  - 2 A는 left inverse를 갖는다. 즉, `BA=I`인, `B∈Mnxn(F)`가 존재
+  - 3 A는 right inverse를 갖는다. 즉, `AB=I`인, `B∈Mnxn(F)`가 존재
+  - 4 `LA: F^n -> F^n`은 isomorphism
+  - 5 `LA: F^n -> F^n`은 monomorphism
+  - 6 `LA: F^n -> F^n`은 epimorphism
+  - 7 `{[A]^1, ..., [A]^n}`은 F^n의 basis
+  - 8 `{[A]^1, ..., [A]^n}`은 일차독립
+  - 9 `<[A]^1, ..., [A]^n> = F^n`
+  - 10 `rank(A) = n`
+  - 11 `(**)AX = B는 unique solution을 갖는다`
+    - `AX = B`
+  - 12 `(*)AX = 0은 trivial solution만을 갖는다`
+  - 13-24 위 A대신 `tA`를 대입, 7-9 는 A의 row들 `{[A]1, ..., [A]n}`에 관한 statement로 바뀐다
+    - 19 `{[A]1, ..., [A]n}`은 `M1xn(F)`의 basis
+    - 20 `{[A]1, ..., [A]n}`은 일차독립
+    - 21 `<[A]1, ..., [A]n> = M1xn(F)`
 
 
 ## 8. 선형대수학의 기본정리(이상엽샘)
