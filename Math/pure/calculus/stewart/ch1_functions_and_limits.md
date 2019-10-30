@@ -14,6 +14,8 @@
   - 포물선
 - piecewise defined functions
   - 다수의 sub functions으로 구성되어 있으며, 각 sub function들은 main function의 특정 정의역(sub domain)구간에 정의가 되어있다
+- amplitude
+  - 진폭
 
 ## 1.1 Four Ways to Represent a Function
 
@@ -219,3 +221,77 @@ case3 `a = -1`
 - 정의
   - `f(x) = log_b^x (b>0)`
     - exponential function의 역함수
+
+## 1.3 New Functions from Old Functions
+
+1.2 에서 알아본 기본적인 함수들을, 평행이동(shifting)하거나, 늘리거나(stretching), 대칭해서(reflecting) 새 함수를 얻음
+
+평행이동과 늘리기, 대칭이동의 예시
+
+![](./images/ch1/old_function_to_new_function1.png)
+
+- Transformations of Functions
+  - 평행이동(`c>0`)
+    - `y = f(x)+c`
+      - `y = f(x)`그래프를 c만큼 위로 옮김
+    - `y = f(x)-c`
+    - `y = f(x-c)`
+      - `y = f(x)`그래프를 c만큼 오른쪽으로 옮김
+        - `g(x) = f(x-c)`라고 두면, x에 특정한 값 a를 대응시키면, `g(a) = f(a-c)`가 되므로, g의 그래프는 f의 그래프를 오른쪽으로 c만큼 평행이동 시킨 것으로 생각할 수 있다(그래야지 `f(a-c)`와 대응되니까) -> 그래프를 그려보면 쉽게 이해할 수 있음
+    - `y = f(x+c)`
+  - 늘리기, 대칭이동(`c>1`)
+    - `y = cf(x)`
+      - `y = f(x)`그래프를 수직으로 c만큼 늘림
+    - `y = (1/c)f(x)`
+      - `y = f(x)`그래프를 수직으로 c만큼 수축함
+    - `y = f(cx)`
+      - `y = f(x)`그래프를 평행으로 c만큼 수축함
+    - `y = f(x/c)`
+      - `y = f(x)`그래프를 평행으로 c만큼 늘림
+    - `y = -f(x)`
+      - `y = f(x)`그래프를 x축에 대하여 대칭이동
+    - `y = f(-x)`
+      - `y = f(x)`그래프를 y축에 대하여 대칭이동
+  - 절댓값
+    - `y = |f(x)|`
+      - `f(x) >= 0`일 떄
+      - `f(x) < 0`일 때
+    - `y = f(|x|)`
+      - `x >= 0`일 떄
+      - `x < 0`일 떄
+- Combinations of Functions
+  - 함수 공간(funciton space)
+    - 참고
+      - **함수의 개념을 다룰 때 중요한것은, `f: X -> Y, y = f(x)`와 같이, 함수의 정의역과 공역을 명시하고, 함수식이 존재하는 것이다**
+        - 함수식이 같아도 정의역과 공역이 다르면 다른 함수!
+          - 순서쌍으로 생각해보면 당연한 것
+        - 함수는 사실 관계의 종류이며, 결국은 일정한 규칙이 있는 순서쌍일 뿐
+    - 선형 대수학에서
+      - `(f+g)(x) = f(x)+g(x)`
+        - 정의역: `dom f ∩ dom g`
+      - `(cf)(x) = c(f(x))`
+        - 정의역: `dom f`
+    - 그외
+      - `(fg)(x) = f(x)g(x)`
+        - 정의역: `dom f ∩ dom g`
+      - `(f/g)(x) = f(x)/g(x)`
+        - - 정의역: `{x∈dom f ∩ dom g | g(x)≠0}`
+  - 함수 합성(composition)
+    - 개요
+      - `(g・f)(x) = g(f(x))`
+        - `f: X -> Y, g: Y -> Z, g・f 가 존재 <=> ∀x∈X, g(x)∈Y ∧ g(f(x))∈Z`
+    - 예시
+      - `f(x) = root2(x), g(x) = root2(2-x)`일 떄, 다음 함수를 정의하라
+        - `f・g`
+        - `g・f`
+        - `f・f`
+        - `g・g`
+          - `g・g: [-2, 2] -> R, (g・g)(x) = root2(2-root2(2-x))`
+  - 함수 분해(decomposition)
+    - 개요
+      - 합성이 된 복잡한 함수에서 간단한 함수의 합성으로 다시 재구성하는 것
+    - 예시
+      - `F(x) = cos^2(c+9) = h・g・f`
+        - `f: R -> R, f(x) = x+9`
+        - `g: R -> [-1,1], g(x) = cos(x)`
+        - `h: R -> [0,∞), h(x) = x^2`
