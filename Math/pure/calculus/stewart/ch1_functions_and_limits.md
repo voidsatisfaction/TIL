@@ -16,6 +16,8 @@
   - 다수의 sub functions으로 구성되어 있으며, 각 sub function들은 main function의 특정 정의역(sub domain)구간에 정의가 되어있다
 - amplitude
   - 진폭
+- asymptote
+  - 점근선
 
 ## 1.1 Four Ways to Represent a Function
 
@@ -295,3 +297,88 @@ case3 `a = -1`
         - `f: R -> R, f(x) = x+9`
         - `g: R -> [-1,1], g(x) = cos(x)`
         - `h: R -> [0,∞), h(x) = x^2`
+
+## 1.4 The Tangent and Velocity Problems
+
+극한을 이용한 접선을 구하는 방법
+
+![](./images/ch1/tangent1.png)
+
+속도와 접선
+
+![](./images/ch2/tangent2.png)
+
+- The Tangent Problem
+  - 개요
+    - 극한을 사용한 접선 구하기
+    - **과학에서 발견되는 많은 함수들은 명확한 식으로 관찰되지 않고, 실험적인 데이터로 발견되는 경우가 많다.**
+      - 그럴때는, 다른 아는 데이터의 평균 변화율로 구하거나, 직접 그래프와 접선을 그려서 격자상의 근사값으로 구함
+
+## 1.5 The Limit of a Function
+
+### 1.5.1 함수의 극한
+
+함수의 극한의 예시
+
+![](function_limit1.png)
+
+함수의 극한을 구할 떄 주의해야 하는 경우1
+
+![](function_limit2.png)
+
+함수의 극한을 구할 떄 주의해야 하는 경우2
+
+![](function_limit3.png)
+
+- intuitive definition
+  - 정의
+    - 함수 `f(x)`가 어떠한 정수 a의 주변에서 정의 되었을 때, `lim_(x->a)(f(x)) = L`은 "x가 a로 접근할 떄(`x≠a`)의 함수 f(x)의 극한값은 L과 같다" 라고 함
+    - 다른 표기
+      - `f(x) -> L (x -> a일 때)`
+  - 주의
+    - `f(x)`는 `x=a`에서 정의 되지 않아도, a의 주변에서 정의되어있다면 극한값을 구할 수 있음
+    - **직접 특정 값 a에 가까운 값을 넣어가면서 값을 추정하는것이 기본이다.** 식을 변형 시켜서 극한값을 구하는 것 역시 올바르긴 하지만, 모든 식을 변형할 수 있다는 보장이 없으며, 기본 아이디어는 위의 굵은 글씨와 같다.
+      - table of value를 사용하자
+    - **함수의 극한을 구할 떄 주의해야 할 것**
+      - ① digit이 너무 커지면 컴퓨터가 제대로 값을 계산하지 못함
+      - ② 특정한 규칙을 갖는 값만 대입하고 극한값을 도출해내면 오류가 생길 수 있음 e.g) x = 0.1, 0.01, 0.001, ...
+      - ③ 특정 정수에 가까운 값을 충분히 많이 가까워지게 대입한 후 생각해야 함(e.g 위의 극한을 구할 때 주의해야 하는 경우2)
+
+### 1.5.2 한쪽 극한
+
+한쪽 극한의 예
+
+![](./images/ch1/one_sided_limit1.png)
+
+- 정의
+  - `lim_(x->a-)(f(x)) = L`
+    - x가 a로 접근할 때(`x<a`)의 좌극한이 L과 같다
+  - `lim_(x->a+)(f(x)) = L`
+    - x가 a로 접근할 때(`x>a`)의 우극한이 L과 같다
+- 함수의 극한과의 관계
+  - `lim_(x->a)(f(x)) = L <=> lim_(x->a-)(f(x)) = L ∧ lim_(x->a+)(f(x)) = L`
+
+### 1.5.3 무한 극한
+
+infinite limit 양의 방향, 음의 방향
+
+![](./images/ch1/infinite_limit1.png)
+
+좌우극한과 무한 극한
+
+![](./images/ch1/infinite_limit2.png)
+
+- Intuitive difinition of an infinite limit
+  - infinite limit
+    - 함수 f가 a의 양쪽에서 정의되어있을 떄, `lim_(x->a)(f(x)) = ∞`는 `f(x)`가 x를 a가 아닌 a에 충분히 가까운 값으로 잡을 때, 임의로 크게 된다는 것을 의미
+      - 극한이 존재하지 않음을 보이는 특별한 방법
+      - ∞는 숫자가 아님
+    - 표기방법
+      - `lim_(x->a)(f(x)) = ∞` or
+      - `f(x) -> ∞ (x -> a)일 떄`
+  - vertical asymptote(수직 점근선)
+    - `y = f(x)`가 다음의 조건을 하나라도 만족하는 경우 `x=a`를 수직 점근선이라 부름
+      - `lim_(x->a+)(f(x)) = ∞`
+      - `lim_(x->a-)(f(x)) = ∞`
+      - `lim_(x->a+)(f(x)) = -∞`
+      - `lim_(x->a-)(f(x)) = -∞`
