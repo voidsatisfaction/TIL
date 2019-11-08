@@ -306,7 +306,7 @@ case3 `a = -1`
 
 속도와 접선
 
-![](./images/ch2/tangent2.png)
+![](./images/ch1/tangent2.png)
 
 - The Tangent Problem
   - 개요
@@ -320,15 +320,15 @@ case3 `a = -1`
 
 함수의 극한의 예시
 
-![](function_limit1.png)
+![](./images/ch1/function_limit1.png)
 
 함수의 극한을 구할 떄 주의해야 하는 경우1
 
-![](function_limit2.png)
+![](./images/ch1/function_limit2.png)
 
 함수의 극한을 구할 떄 주의해야 하는 경우2
 
-![](function_limit3.png)
+![](./images/ch1/function_limit3.png)
 
 - intuitive definition
   - 정의
