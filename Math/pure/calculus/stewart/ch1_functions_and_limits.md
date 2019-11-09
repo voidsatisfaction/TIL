@@ -3,6 +3,10 @@
 - 의문
 - 용어
 - 1.1 Four Ways to Represent a Function
+- 1.2 Mathematical Models: A Catalog of Essential Functions
+- 1.3 New Functions from Old Functions
+- 1.4 The Tangent and Velocity Problems
+- 1.5 The Limit of a Function
 
 ## 의문
 
@@ -60,9 +64,9 @@
         - `f(-x) = -f(x)`
   - Increasing and Decreasing Functions
     - 구간 I에서 increasing function(`I = [a,b]`)
-      - `f가 [a,b]에서 증가 <=> ∀x1,x2∈[a,b] s.t. x1 < x2, f(x1) < f(x2)`
+      - `f가 [a,b]에서 증가 <=> ∀x1,x2∈[a,b], x1 < x2 => f(x1) < f(x2)`
     - 구간 I에서 decreasing function(`I = [a,b]`)
-      - `f가 [a,b]에서 감소 <=> ∀x1,x2∈[a,b] s.t. x1 < x2, f(x2) < f(x1)`
+      - `f가 [a,b]에서 감소 <=> ∀x1,x2∈[a,b], x1 < x2 => f(x2) < f(x1)`
 
 ## 1.2 Mathematical Models: A Catalog of Essential Functions
 
@@ -197,8 +201,8 @@ case3 `a = -1`
 - 특징
   - `sin(x+2π) = sin(x), cos(x+2π) = cos(x)`
     - 함수의 주기성으로 인하여, 반복적인 현상(물결, 음파) 등을 모델링하기에 적합
-- *`f(x) = tan(x)`는 trigonometric function으로 취급하지 않는 것인가?*
-  - 하긴 그냥 비율일 뿐이므로..
+- `f(x) = tan(x)`는 trigonometric function으로 취급하지 않는 것인가?
+  - 취급한다
 
 ### 1.2.7 Exponential Functions
 
@@ -226,7 +230,7 @@ case3 `a = -1`
 
 ## 1.3 New Functions from Old Functions
 
-1.2 에서 알아본 기본적인 함수들을, 평행이동(shifting)하거나, 늘리거나(stretching), 대칭해서(reflecting) 새 함수를 얻음
+1.2 에서 알아본 기본적인 함수들을, 평행이동(shifting)하거나, 늘리거나(stretching), 대칭해서(reflecting) + 함수 공간 생성 + 함수 합성(역으로 분해도 가능) 등으로 새 함수를 만듬
 
 평행이동과 늘리기, 대칭이동의 예시
 
@@ -281,12 +285,15 @@ case3 `a = -1`
   - 함수 합성(composition)
     - 개요
       - `(g・f)(x) = g(f(x))`
-        - `f: X -> Y, g: Y -> Z, g・f 가 존재 <=> ∀x∈X, g(x)∈Y ∧ g(f(x))∈Z`
+        - `f: X -> Y, g: Y -> Z, g・f 가 존재 <=> ∀x∈X, f(x)∈Y ∧ g(f(x))∈Z`
     - 예시
-      - `f(x) = root2(x), g(x) = root2(2-x)`일 떄, 다음 함수를 정의하라
+      - `f(x) = root2(x), g(x) = root2(2-x)`일 때, 다음 함수를 정의하고, 정의역을 구하시오
         - `f・g`
+          - `dom = (-∞, 2]`
         - `g・f`
+          - `dom = [0, 4]`
         - `f・f`
+          - `dom = [0, ∞)`
         - `g・g`
           - `g・g: [-2, 2] -> R, (g・g)(x) = root2(2-root2(2-x))`
   - 함수 분해(decomposition)
@@ -297,10 +304,13 @@ case3 `a = -1`
         - `f: R -> R, f(x) = x+9`
         - `g: R -> [-1,1], g(x) = cos(x)`
         - `h: R -> [0,∞), h(x) = x^2`
+  - **함수의 합성이나 분해를 할 때는 각 함수의 정의역과 치역을 잘 살펴보자.**
+    - 그냥 항상 정의역과 공역을 생각하는 습관을 들이자.
+    - `함수 = 정의역, 공역, 함수식` or `순서쌍`
 
 ## 1.4 The Tangent and Velocity Problems
 
-극한을 이용한 접선을 구하는 방법
+극한을 이용해서 접선을 구하는 방법
 
 ![](./images/ch1/tangent1.png)
 
