@@ -11,7 +11,7 @@
 ## 참고
 
 - 한국어 채널
-  - 클라임투어티비, 애프리TV
+  - 클라임투어티비
 - 영어 채널
   - mani the monkey, epic tv climbing daily, geek climber, magnus midtbo, Eric karlsson bouldering, adam ondra
 
