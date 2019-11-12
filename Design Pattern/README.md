@@ -162,39 +162,6 @@ class Caramel(val beverage: Beverage) extends AddOnDecorator {
 
 ```
 
-**함수형 프로그래밍에서의 유사 Decorator Pattern**
-
-```js
-// aws lambda를 hexagonal architecture형태로 구현하기
-// 오브젝트를 꾸며주는 것이 아니므로, decorator pattern이라고 할 수는 없으나, 함수를 래핑해준다는 점에서 참고할만함
-
-// 일반적으로, application은 다음과 같은 모양을 띔(DI를 적용한 경우)
-const app = (input, { dependency1, dependency2 }) => {
-  // business logics
-  // ...
-  return output
-}
-
-// 하지만 최종적으로 lambda핸들러는 (event, context, callback) => ... 형태를 띄어야 함
-const handler = (adapter) => (event, context, callback) => {
-  // business 로직을 실행하기 위한 dependency들
-  const createDependencies = () => ({
-    dependency1: createDependency1(),
-    dependency2: createDependency2()
-  })
-  // ....
-  adapter(event, createDependencies())
-}
-
-// handler와 app의 서로 다른 인터페이스를 이어주기 위해서 adapter를 생성
-const adapter = (app) => (event, { dependency1, dependency2 }) => {
-  return response(app(convertToInput(event), { dependency1, dependency2 }));
-}
-
-// app의 비즈니스 로직을 handler와 adapter로 래핑
-exports.handler = handler(adapter(app))
-```
-
 - 정의
   - 런타임에 특정 오브젝트를 변경시키지 않고, 어떠한 오브젝트의 속성이나 메서드의 행위를 변경 / 혹은 추가 시키는 방법
     - 동적으로(런타임에서) 특정 오브젝트의 역할을 늘려줌
@@ -287,6 +254,40 @@ class Adaptee() {
 - 활용 시나리오
   - 코드 리팩토링
     - 기존의 코드를 변경하지 않고, 새로운 라이브러리나 코드의 적용을 어댑터를 사용해서 적용 가능
+
+
+**함수형 프로그래밍에서의 유사 Adapter Pattern**
+
+```js
+// aws lambda를 hexagonal architecture형태로 구현하기
+// UML diagram으로는 adapter pattern과 완전히 동일
+
+// 일반적으로, application은 다음과 같은 모양을 띔(DI를 적용한 경우)
+const app = (input, { dependency1, dependency2 }) => {
+  // business logics
+  // ...
+  return output
+}
+
+// 하지만 최종적으로 lambda핸들러는 (event, context, callback) => ... 형태를 띄어야 함
+const handler = (adapter) => (event, context, callback) => {
+  // business 로직을 실행하기 위한 dependency들
+  const createDependencies = () => ({
+    dependency1: createDependency1(),
+    dependency2: createDependency2()
+  })
+  // ....
+  adapter(event, createDependencies())
+}
+
+// handler와 app의 서로 다른 인터페이스를 이어주기 위해서 adapter를 생성
+const adapter = (app) => (event, { dependency1, dependency2 }) => {
+  return response(app(convertToInput(event), { dependency1, dependency2 }));
+}
+
+// app의 비즈니스 로직을 handler와 adapter로 래핑
+exports.handler = handler(adapter(app))
+```
 
 #### 3. Facade Pattern
 
@@ -608,20 +609,21 @@ class Receiver {
   - 앞으로 Template method의 컨트롤 내용이 많이 변하지 않는다는 것을 전제할 때에 사용해야 함(결국 코드의 변화가 생기면 서브 클래스의 메서드를 전부 변화시켜야 할 가능성도 존재)
   - 그냥 Strategy패턴을 사용하는 것이 좋을 수도 있음
 - 활용 시나리오
-  - 암호화폐 자동거래 시스템에서 각 거래소의 거래 마다 장부 기록 방법이 차이가 생길 수 있음(거래소 API의 차이로) 그러므로,
+  - 암호화폐 자동거래 시스템에서 각 거래소의 거래 마다 장부 기록 방법이 차이가 생길 수 있음(거래소 API의 차이로)
+    - 그러므로, parent 거래소 class에서 거래하기 메서드(template method)를 정의해두고 sub class인 각각의 거래소 class에서 장부기록 방법 operation을 따로 정의하는 방식으로 동작을 제어할 수 있음
 
 ### 5. Composite Pattern
 
 ![](./images/uml_composite_pattern.png)
 
 - 정의
-  - 오브젝트를 트리 형태로 합성하여, 계층을 나타내도록 함. 해당 합성은 클라이언트가 각각의 오브젝트의 합성물과 하나의 오브젝트를 일정하게 다룰 수 있도록 도와줌
+  - 오브젝트를 트리 형태로 합성하여, 계층을 나타내도록 함. 해당 합성은 클라이언트가 각각의 합성 오브젝트와 단순 오브젝트를 일정하게 다룰 수 있도록 도와줌
 - 용도
-  - 오브젝트의 합성물과 그냥 단순 오브젝트를 일정하게 다루기 위함
+  - 합성 오브젝트와 단순 오브젝트를 일정하게 다루기 위함
   - 코드를 사용하는 클라이언트 입장에서는 오브젝트들의 합성이던 그냥 단순 오브젝트던 신경쓰지 않고 사용하고 싶어함
   - 결국에는 오브젝트들의 합성과 단순 오브젝트를 같은 인터페이스를 사용하도록 하면 됨
   - 조건문을 다형성으로 치환
-    - 오브젝트와 합성과 단순 오브젝트를, 공통 인터페이스를 구현하도록 함
+    - 합성 오브젝트와 단순 오브젝트를, 공통 인터페이스를 구현하도록 함
 - 장점
   - 오브젝트의 합성물과 단순 오브젝트를 일정하게 다룰 수 있음
 - 단점
