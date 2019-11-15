@@ -28,6 +28,7 @@
 
 - Behavioral Pattern관련
   - *Command Pattern은 구체적으로 어떤 메리트가 있고, 어디에서 주로 사용되는가? 유스케이스?*
+- *객체 관계에서 집합관계와 인지 관계의 차이가 무엇인가? - 구체적으로*
 
 `a.함수(정의역): 공역`
 
@@ -180,7 +181,7 @@ gang of four
     - 연산의 이름, 매개변수로 받아들이는 객체들, 연산의 반환값
   - 인터페이스
     - 개요
-      - 객체가 받아서 처리할 수 있는 연산의 집합
+      - **객체가 메시지를 받아서 처리할 수 있는(public) 연산의 집합**
         - 일부 언어에서는 연산 뿐 아니라, 데이터도 나타내주기도 함(ts)
       - 객체 인터페이스에 정의된 시그니처와 일치하는 어떤 요청이 객체에 전달되면, 객체는 연산을 수행하여 그 요청을 처리
     - 특징
@@ -248,11 +249,11 @@ gang of four
   - 객체의 클래스 vs 객체의 타입
     - **클래스와 타입 사이의 차이는 꼭 이해해 두어야 함**
     - 객체의 클래스
-      - 그 객체가 어떻게 구현되느냐를 정의
+      - **그 객체가 어떻게 구현되느냐를 정의**
         - 내부상태
         - 객체의 구체적인 구현 방법 정의
     - 객체의 타입
-      - 그 객체의 인터페이스
+      - **그 객체가 어떻게 상호작용되느냐를 정의(즉, 그 객체의 인터페이스)**
         - 그 객체가 응답할 수 있는 요청의 집합을 정의
         - 객체가 어떻게 구현되었는가 보다는 객체가 어떻게 쓰일것이며, 상호작용 할 것인가가 중요
     - 주의
@@ -338,6 +339,123 @@ gang of four
   - 매개변수화된 타입
     - 개요
       - **상속, 합성에 이어서 기능의 재사용에 이용할 수 있는 다른 방법**
+      - **타입을 정의할 때, 타입이 사용하는 다른 모든 타입ㅇ르 다 지정하지 않은 채 정의**
+        - 미리 정의하지 않은 타입은 **매개변수**로 제공
+          - e.g) `List`타입에 integer 타입을 매개변수로 넘겨주면, 정수형 리스트, `List`타입에 string 타입을 매개변수로 넘겨주면, 문자열 리스트
+    - c.f) 객체지향 시스템에서 복합적인 행동을 가능하게 하는 방법
+      - ① 클래스 상속(컴파일 타임)
+      - ② 객체 합성(런타임)
+      - ③ 매개변수화된 타입(제네릭 or template)(컴파일 타임)
+
+Sort를 class 상속과 generic을 이용해서 구현해보자 or 인터페이스를 이용해서 구현해보자
+
+```scala
+package prac
+
+object Prac {
+  def main(args: Array[String]): Unit = {
+    val intArray1 = new IntArray(Array(5, 3, 2, 2, 6, 23, 52, 21))
+    intArray1.quickSort()
+    println(intArray1.array.mkString("\n")) // print sorted results
+  }
+}
+
+// ① Using generic and class inheritance
+abstract class Sortable[T] {
+  protected val array: Array[T]
+
+  def quickSort(): Unit = {
+    val i = 0
+    val gt = len()-1
+
+    quickSortRec(i, gt)
+  }
+
+  private def quickSortRec(from: Int, to: Int): Unit = {
+    if (from >= to) return
+
+    var i = from
+    var gt = to
+    var lt = from
+
+    while (i <= gt) {
+      if (less(i, lt) && less(lt, i)) {
+        i += 1
+      } else if (less(i, lt)) {
+        swap(i, lt)
+        i += 1
+        lt += 1
+      } else {
+        swap(i, gt)
+        gt -= 1
+      }
+    }
+
+    quickSortRec(from, lt-1)
+    quickSortRec(i, to)
+  }
+
+  protected def swap(i: Int, j: Int): Unit
+
+  protected def less(i: Int, j: Int): Boolean
+
+  protected def len(): Int
+}
+
+class IntArray(val array: Array[Int]) extends Sortable[Int] {
+  def swap(i: Int, j: Int): Unit = {
+    val temp: Int = array(i)
+    array(i) = array(j)
+    array(j) = temp
+  }
+
+  def less(i: Int, j: Int): Boolean = if (array(i) <= array(j)) true else false
+
+  def len(): Int = array.size
+}
+```
+
+- 런타임 및 컴파일 타임의 구조를 관계짓기
+  - 개요
+    - 객체지향 프로그램의 실행 구조는 종종 **코드 구조** (컴파일 시에 확정)와 일치하지 않음
+    - 프로그램의 **런타임 구조** 는 교류하는 객체들에 따라서 달라질 수 있음
+  - *객체 관계 (잘 이해가 안감)*
+    - 집합(aggregation) 관계
+      - 한 객체가 다른 객체를 소유하거나 그것에 책임을 지는 것
+      - 한 객체가 다른 객체를 포함(having) 하거나, 다른 객체의 부분(part of)라고 말함
+      - 통합된 객체 및 그 객체를 소유한 객체의 생존주기가 똑같음
+    - 인지(acquaintance) 관계
+      - 한 객체가 다른 객체에 대해 알고 있음(knows of)
+        - 연관 관계 또는 사용 관계 (association, using)
+      - 인지를 받는 객체는 서로의 연산을 요청할 수도 있지만 서로에 대해 책임은 지지 않음
+      - 통합관계보다 관련성이 약해서 객체들 사이의 결합도가 약함
+  - 코드 자체가 시스템의 동작 방법을 모두 보여줄 수 없다
+    - 시스템의 런타임 구조는 언어가 아닌 설계자가 만듬
+      - 따라서 객체와 타입 사이의 관계는 대단히 세심하게 설계해야 함(좋은 런타임 구조를 만들기 위해)
+- 변화에 대비한 설계
+  - 개요
+    - 앞으로 일어날 변화를 어떻게 수용할 것인가를 미리 고려해야 함
+      - 변화 수용을 못함 -> 재설계 필요
+    - 디자인 패턴은 어떤 구체적인 원인으로 앞으로 시스템을 변경해야 한다는 것을 미리 예측 가능하게 함
+  - 디자인 패턴을 써서 재설계를 할 수 밖에 없게 하는 흔한 이유들
+    - 특정 클래스에서 객체 생성
+      - abstract factory, factory method, prototype
+    - 특정 연산에 대한 의존성
+      - responsibility chain, command
+    - 하드웨어와 소프트웨어 플랫폼에 대한 의존성
+      - abstract factory, bridge
+    - 객체의 표현이나 구현에 대한 의존성
+      - abstract factory, bridge, memento, proxy
+    - 알고리즘 의존성
+      - builder, iterator, strategy, template method, visitor
+    - 높은 (클래스)결합도
+      - abstract factory, bridge, responsibility chain, command, facade, mediator, observer
+    - 서브클래싱을 통한 기능 확장
+      - 서브클래스를 정의하려면, 최상위 클래스부터 자신의 직속 부모 클래스까지 모든 것을 이해하고 있어야 함
+      - bridge, responsibility chain, decorator, observer, strategy
+    - 클래스 변경이 편하지 못할 때
+      - 코드를 변경하면 기존 코드를 ripple effect처럼 다수 변화시켜야 할 때
+      - adapter, decorator, visitor
 
 ## UML 표기 소개
 
