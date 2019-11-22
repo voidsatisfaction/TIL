@@ -43,8 +43,9 @@
     - 그러하다
   - 순서쌍과의 차이는
     - 순서쌍의 일반화
-- *대수구조에 정의된 연산들은 왜 공리라고 표현하는가?*
-  - 정의 아닌가?
+- 대수구조에 정의된 연산들은 왜 공리라고 표현하는가?
+  - 연산의 성질은 공리라고 표현함
+  - 연산의 정의는 집합론기반의 구현이 필요함
 - *Isomorphism / Homomorphism / Polymorphism*
   - 참고: http://www.ktword.co.kr/m/abbr_view.php?m_temp1=4776
   - isomorphism(동형사상)
@@ -56,13 +57,14 @@
       - 함수가 아닌 관계
   - 각각의 차이?
 - *데이터베이스의 이론적 근간이 되는 관계대수는 어떤 대수구조로 분류되는가?*
-- *벡터를 고전벡터라는 구체적인 대상에서 추상화 할 떄, 단순히 실수만이 아니라 왜 허수까지도 스칼라배의 대상으로 취급하게 되었는가?*
+- 벡터를 고전벡터라는 구체적인 대상에서 추상화 할 떄, 단순히 실수만이 아니라 왜 허수까지도 스칼라배의 대상으로 취급하게 되었는가?
+  - 벡터공간의 수학적 정의가 체 F에 대한 가군이므로
 - 벡터 공간은 체 F에 대한 가군으로 정의되는데, 사실 스칼라는 체이므로 이미 가환군인데 왜 가군인가?
   - 체 F가 가군이라는 게 아니고, "벡터 공간"이 가군이라는 것임
   - 가군의 정의를 제대로 익히자
   - `k・v ≠ v・k`
   - `x ・ u = 1`인 x가 존재하지 않음
-  - 결국 F의 가군이라는 것은, `(V,+,・)` 자체가 가군이라는 것이므로, 벡터와 스칼라 사이의 결합법칙, 항등원, 분배법칙이 성립한다는 것이다.
+  - 결국 F의 가군이라는 것은, `(V,+,・)` 자체가 가군이라는 것이므로, 벡터의 덧셈은 아벨군, 스칼라곱은 모노이드이고 분배법칙이 성립한다는 것이다.
 - *왜 어떤 대수구조는 "공간"이라는 말을 쓰는가?*
 - 유클리드 공간에서는 벡터공간의 성질(공리)를 만족하는데, 애초에 튜플의 스칼라곱이나 튜플의 덧셈이 유클리드 공간에서 정의되어있는가???
   - 정의가 되어있는 연산들임 것임(수학자들의 합의)
@@ -88,7 +90,7 @@
         - 순서구조는 집합에다가 순서관계를 부여
         - 벡터구조는 집합에다가 `B - A = D - C` 의 동치관계 부여
     - 간단히: 일련의 연산들이 주어진 집합
-      - **집합 + 구조(연산, 공리)**
+      - **집합 + 구조(연산, 공리, 관계)**
   - 수학은 수만을 연구하는 학문이 아님. 당장 수 역시 그저 정의한 기호들에 불과
     - 대수구조의 기본 형태는 **집합**
     - 이 집합에 구조를 부여하여 대수구조를 정의
@@ -456,13 +458,13 @@
   - isomorphism은 동형이므로, 단순히 집합사이의 일대일 대응 뿐 아니라, 집합의 구조도 같아야 함
     - 순서동형 / 순서동형함수
 - isomorphism 집합 사이의 관계
-  - `V ~~ V'`
+  - `V ~~ V' <=> ∃φ: V -> V', φ는 isomorphism`
     - 동치관계
       - 반사성
       - 대칭성
       - 추이성
 - 특징
-  - The interest of isomorphisms lies in the fact that two isomorphic objects cannot be distinguished by using only the properties used to define morphisms;
+  - The interest of isomorphisms lies in the fact that **two isomorphic objects cannot be distinguished by using only the properties used to define morphisms;**
   - thus isomorphic objects may be considered the same as long as one considers only these properties and their consequences.
 
 ## 4. 기저와 차원
