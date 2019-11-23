@@ -1,5 +1,70 @@
 from typing import List, Dict
 
+# simpler solution
+
+class Node:
+  def __init__(self, key: int, value: int):
+    self.key = key
+    self.value = value
+    self.prev = None
+    self.next = None
+
+  def setPrev(self, prevNode) -> None:
+    self.prev = prevNode
+
+  def setNext(self, nextNode) -> None:
+    self.next = nextNode
+
+class LRUCache:
+  def __init__(self, capacity: int):
+    self._capacity = capacity
+    self.head = Node(-1, -1)
+    self.tail = Node(-1, -1)
+    self.head.setNext(self.tail)
+    self.tail.setPrev(self.head)
+    self.hashedLinkedList = {}
+
+  def get(self, key: int) -> int:
+    if key in self.hashedLinkedList:
+      node = self.hashedLinkedList[key]
+      self._removeLink(node)
+      self._addLinkOnFront(node)
+      return node.value
+    return -1
+
+  def put(self, key: int, value: int) -> None:
+    newNode = Node(key, value)
+    if key in self.hashedLinkedList:
+      existedNode = self.hashedLinkedList[key]
+      self._removeLink(existedNode)
+
+    self._addLinkOnFront(newNode)
+    self.hashedLinkedList[key] = newNode
+
+    if len(self.hashedLinkedList) > self._capacity:
+      n = self.tail.prev
+      self._removeLink(n)
+      del self.hashedLinkedList[n.key]
+
+
+  def _removeLink(self, node: Node) -> None:
+    prevNode = node.prev
+    nextNode = node.next
+
+    prevNode.setNext(nextNode)
+    nextNode.setPrev(prevNode)
+
+  def _addLinkOnFront(self, node: Node) -> None:
+    headNode = self.head
+    beforeHeadNextNode = self.head.next
+
+    headNode.setNext(node)
+    beforeHeadNextNode.setPrev(node)
+    node.setPrev(headNode)
+    node.setNext(beforeHeadNextNode)
+
+# my first solution
+
 class KeyValueStorage:
   def __init__(self):
     self.keyValueStorage = {}
