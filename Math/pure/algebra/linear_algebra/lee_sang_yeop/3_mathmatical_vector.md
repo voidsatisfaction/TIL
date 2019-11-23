@@ -44,8 +44,10 @@
   - 순서쌍과의 차이는
     - 순서쌍의 일반화
 - 대수구조에 정의된 연산들은 왜 공리라고 표현하는가?
-  - 연산의 성질은 공리라고 표현함
-  - 연산의 정의는 집합론기반의 구현이 필요함
+  - **연산의 성질** 은 공리라고 표현함
+    - 인터페이스
+  - **연산의 정의** 는 집합론기반의 구현이 필요함
+    - 구현
 - *Isomorphism / Homomorphism / Polymorphism*
   - 참고: http://www.ktword.co.kr/m/abbr_view.php?m_temp1=4776
   - isomorphism(동형사상)
