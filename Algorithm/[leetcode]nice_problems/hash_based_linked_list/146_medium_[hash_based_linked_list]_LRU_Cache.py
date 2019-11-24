@@ -39,12 +39,10 @@ class LRUCache:
       self._removeLink(existedNode)
 
     self._addLinkOnFront(newNode)
-    self.hashedLinkedList[key] = newNode
 
     if len(self.hashedLinkedList) > self._capacity:
       n = self.tail.prev
       self._removeLink(n)
-      del self.hashedLinkedList[n.key]
 
 
   def _removeLink(self, node: Node) -> None:
@@ -54,6 +52,8 @@ class LRUCache:
     prevNode.setNext(nextNode)
     nextNode.setPrev(prevNode)
 
+    del self.hashedLinkedList[node.key]
+
   def _addLinkOnFront(self, node: Node) -> None:
     headNode = self.head
     beforeHeadNextNode = self.head.next
@@ -62,6 +62,8 @@ class LRUCache:
     beforeHeadNextNode.setPrev(node)
     node.setPrev(headNode)
     node.setNext(beforeHeadNextNode)
+
+    self.hashedLinkedList[node.key] = node
 
 # my first solution
 
