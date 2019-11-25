@@ -63,7 +63,7 @@
     - `<S>`의 존재성 / 유일성 증명
     - W의 집합족의 첨수집합 I≠φ
     - `S≠T`이어도, `<S> = <T>` 인 경우가 존재
-  - `S⊆V, <S> = span(S)`
+  - `S⊆V, <S> = span(S) (span(S)는 S의 모든 일차결합의 집합)`
     - `<S> ⊆ span(S)`
     - `span(S) ⊆ <S>`
   - Span에 관한 정리를 증명할 떄에는, span의 성질을 다시 한 번 생각하자.
@@ -76,16 +76,19 @@
 **어떠한 정의를 분석할 때, 항상 well-defined인지 확인해야 함**
 
 - 일차독립(F-linearly independent)
-  - ① 유한집합 `{v1,...,vn}⊆V`가 다음 조건(`단, ai∈F`)을 만족하면 `{v1,...,vn}`을 일차독립인 부분집합이라고 부른다
-    - `a1v1+a2v2+...+anvn = 0 => a1 = a2 = ... = an = 0`
-  - ② `φ ≠ S ⊆ V`, S가 일차독립이면 S의 모든 (non-empty) finite subset이 일차독립.
-    - well-defined이려면, 유한집합 S가 일차독립이면, S의 모든 non-empty subset이 일차독립임을 보여야 함
-  - ③ `φ ≠ S ⊆ V`, S가 일차독립이 아니면 일차종속(F-linearly dependent)이라고 말함
+  - 정의
+    - 유한집합 `{v1,...,vn}⊆V`가 다음 조건(`단, ai∈F`)을 만족하면 `{v1,...,vn}`을 일차독립인 부분집합이라고 부른다
+      - `a1v1+a2v2+...+anvn = 0 => a1 = a2 = ... = an = 0`
+  - 성질
+    - `φ ≠ S ⊆ V`, S가 일차독립이면 S의 모든 (non-empty) finite subset이 일차독립.
+      - well-defined이려면, 유한집합 S가 일차독립이면, S의 모든 non-empty subset이 일차독립임을 보여야 함
+- 일차종속
+  - `φ ≠ S ⊆ V`, S가 일차독립이 아니면 일차종속(F-linearly dependent)이라고 말함
 - 정리
   - `{v1,...,vn}⊆V` 일 떄, 다음 세 조건은 동치
     - `{v1,...,vn}` 일차독립
     - `{v1,...,vn}` 의 일차결합으로 zero vector 0을 표현하는 방법은 하나 - `0v1 + ... + 0vn = 0` 뿐
-    - `∃v∈V ∧ v가{v1,...,vn}의 일차결합으로 표현 => 그 표현법은 하나뿐`
+    - **`∃v∈V ∧ v가{v1,...,vn}의 일차결합으로 표현 => 그 표현법은 유일`**
 
 ## 3.3 Vector Space의 Basis
 
@@ -97,7 +100,7 @@
   - 정리
     - 다음 조건은 동치
       - B는 V의 basis이다
-      - V의 모든 vector는 B의 linear combination으로 표현할 수 있고, 그 표현법은 하나뿐이다.
+      - V의 모든 vector는 B의 linear combination으로 표현할 수 있고, 그 표현법은 유일하다.
 - 표준기저
   - 정의
     - i번쨰 좌표만 1이고 나머지는 0인 표준단위벡터 `ei∈F^n, ε = {e1,...,en}`는 F^n의 기저, 특히 표준기저임
@@ -109,9 +112,9 @@
     - `t(a1,...,an)∈F^n`를 기저 B에 관한 v의 좌표 라고 부르고
     - `[v]B = t(a1,...,an)`으로 표기함
   - 주의
-    - `B = {v1, ..., vn}`는 순서가 고정된 기저(ordered basis)
+    - **`B = {v1, ..., vn}`는 순서가 고정된 기저(ordered basis)**
       - 일반적으로 기저라는 용어는, 순서가 고정된 기저를 의미
-  - 보기
+  - 성질
     - `X∈F^n => [X]ε = X`
     - `B = {v1,...,vn}`이 V의 basis라고 할 때 다음이 성립
       - `v,w∈V, [v+w]B = [v]B + [w]B`
@@ -119,8 +122,11 @@
     - 예제
       - `{v,w}`가 V의 일차독립인 부분집합일 떄, `{v,w}`와 `{2v+5w, v+3w}`는 V의 subspace `<v,w>`의 basis가 된다.
 - Vector space의 subspace도 벡터 공간이므로 basis를 생각할 수 있음
-- 행렬과 기저의 관계
-  - `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => Bv = {w1,...,wn}`
+
+---
+
+- **행렬과 기저의 관계**
+  - `A = (aij)∈Mnxn(F)가 가역 ∧ {v1,...,vn} = Bv(V의 기저) ∧ wj = sigma_i=1^n{aijxvi} (j=1,...,n) => {w1,...,wn}는 V의 기저`
     - 증명
       - 부분집합
       - 일차독립
@@ -171,27 +177,29 @@
     - `|B| = |C| = ∞`의 경우
       - 초한 귀납법(transfinite induction)이라는 논리학의 기술을 사용
   - `Vector space V`가 finite basis `B = {v1,...,vn}`를 갖는다고 하자. 이때, 만약 `C = {w1,...,wm}⊆V ∧ n<m => C는 linearly dependent`
-- 정리
-  - `A∈Mmxn(F), m<n => AX = 0이 non-trivial solution을 갖는다`
+    - 따름 정리
+      - **`A∈Mmxn(F), m<n => AX = 0이 non-trivial solution을 갖는다`**
 - 차원의 정의
-  - ① 벡터공간 V가 F-basis B를 가질 때, B의 원소수(cardinality) `|B|`를 V의 차원이라 부르고, `dim_F{V} = dimV`로 표기한다.
+  - 벡터공간 V가 F-basis B를 가질 때, B의 원소수(cardinality) `|B|`를 V의 차원이라 부르고, `dim_F{V} = dimV`로 표기한다.
     - `dim0 = 0`
-  - ② `dimV`가 유한이면, 우리는 V를 유한 차원(finite dimensional) 벡터공간 이라고 부른다(무한이면 무한차원)
-  - dimension이 well-defined되어 있으려면
-    - 임의의 non-zero벡터공간은 기저를 갖고 있다
-    - `B, C`가 영벡터공간이 아닌 임의의 벡터공간 V의 기저이면, `|B| = |C|`
+    - `dimV`가 유한이면, 우리는 V를 유한 차원(finite dimensional) 벡터공간 이라고 부른다(무한이면 무한차원)
+    - dimension이 well-defined되어 있으려면
+      - 임의의 non-zero벡터공간은 기저를 갖고 있다
+      - `B, C`가 영벡터공간이 아닌 임의의 벡터공간 V의 기저이면, `|B| = |C|`
 - Basis Extension Theorem
   - S가 V의 linearly independent sub-set이면 S를 포함하는 V의 basis가 존재한다.
     - V의 subspace `<S>`의 basis S를 V전체의 basis로 확장할 수 있다는 뜻
     - 위의 정리가 모든 non-zero vector space가 basis를 갖는다는 정리를 포함
-  - V가 f.d.v.s(finite dimensional vector space)이고, `W ≦ V`라고 하자. 만약 `{w1,...,wr}`이 W의 기저이면 이를 확장하여 V의 기저 `{w1,...,wr,v1,...,vs}`를 찾을 수 있다(단, s≧0)
+  - 따름정리
+    - V가 f.d.v.s(finite dimensional vector space)이고, `W ≦ V`라고 하자. 만약 `{w1,...,wr}`이 W의 기저이면 이를 확장하여 V의 기저 `{w1,...,wr,v1,...,vs}`를 찾을 수 있다(단, s≧0)
 - Basis Inclusion Theorem(내가 붙인 가제)
   - Non-zero vector space V의 subset S, `<S> = V => S에 포함되는 V의 기저가 존재`
 - 따름정리
   - V가 f.d.v.s이고 `W≦V` 일 때,
     - W도 f.d.v.s이고, `dimW ≦ dimV`
     - `dimW = dimV => W = V`
-  - `S⊆V ∧ |S| = dimV < ∞`이면 다음 조건은 동치이다
+- 아주 중요한 따름정리
+  - **`S⊆V ∧ |S| = dimV < ∞`이면 다음 조건은 동치이다**
     - ① S는 V의 기저이다
     - ② S는 일차독립이다
     - ③ `<S> = V`
@@ -209,7 +217,7 @@
   - `φ: V -> W`가 isomorphism일 떄, B가 V의 기저이면, `φ(B)`는 W의 기저이고, 따라서 `dimV = dimW`이다.
 - 우리의 철학
   - ① 같은 것은 같다(isomorphism의 철학)
-    - 이름만 다르고 사실상 같은 벡터공간은 그 '성질'이 같다
+    - 이름만 다르고 사실상 같은 벡터공간은 벡터공간의 공리로부터 나온 그 '성질'이 같다
     - 성질
       - 덧셈과 상수곱에 의해 묘사되는 성질
       - `φ: V -> W`가 isomorphism이고 `S,T⊆V, V1,V2≦V`
@@ -240,8 +248,7 @@
 ## 3.7 Dimension의 보기
 
 - vector space의 basis와 dimension을 구하는 요령
-  - basis를 구하기 위해서 dimension을 예측하는 것이 요령
-  - dimension은 free variable의 개수를 세는 것이 요령
+  - basis를 구하기 -> dimension을 예측하는 것이 요령 -> free variable의 개수를 세는 것이 요령
   - 예시
     - `V ≦ F^n, V = {t(a1,...,an)∈F^n | a1 + ... + an = 0}`
       - dimension예측
@@ -252,6 +259,8 @@
       - 기저 예측
         - `{ei - en | i = 1,...,n-1}`
         - `{ei - ei+1 | i = 1,...,n-1}`
+          - *선형 독립임을 어떻게 증명할까?*
+            - 물론, `|{ei - ei+1 | i = 1,...,n-1}| = n-1`이므로 이 집합의 생성이 V집합과 같음을 보여주기만 하면 되지만...
 - 기저와 차원 찾기 연습
   - 다음 벡터공간들의 기저와 차원을 구하라(먼저 `Mnxn(F)`의 부분공간인 것을 보인 후에)
   - `GnMn(F) = {A∈Mnxn(F) | A는 대칭행렬}`
