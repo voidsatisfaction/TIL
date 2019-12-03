@@ -252,6 +252,7 @@
     - `dim(VxW) = dim(V) + dim(W)`
       - `ker π ~~ W`
     - `Vi`가 f.d.v.s 일 떄, `dim(V1 x V2 x ... x Vn) = dim(V1) + ... + dim(Vn)`
+      - `V1 x V2 x ... x Vn ~~ (V1 x V2 x ... x Vn-1) x Vn`
 
 ### 3.2 Pigeon Hole Principle
 
@@ -351,7 +352,18 @@
         - **3blue1brown 강의에서 선형변환을 했을 떄, 표준기저들이 어떻게 변화하는지만 주목하는 것과 같은 맥락**
     - commutative diagram
       - homological algebra
-- i-th coordinate function
+    - 보기
+      - 회전변환
+        - `Rθ: R^2 -> R^2, Rθ(t(x,y)) = (t(cosθ, sinθ), t(-sinθ, cosθ))`
+          - Rθ는 표준기저 e1과 e2를 어디로 보내는지에 의해 결정
+          - `(Rθ)^-1 = R(-θ)`
+      - 대칭변환
+        - x축 대칭
+          - `S: R^2 -> R^2, S(t(a,b)) = (a,-b)`
+
+![](./images/ch4/commutative_diagram1.jpeg)
+
+- (기저 Bv에 관한 V의) i-th coordinate function
   - 개요
     - `Bv = {v1,...,vn}`이 F-vector space V의 basis일 떄, linear map `vi*: V -> F, vi*(vj) = ςij (1≦i,j≦n)`
       - `vi*(v) = vi*(a1v1+...+anvn) = ai = [a1v1,...,anvn]Bv의 i번 쨰 좌표 (v=a1v1+a2v2+...+anvn)`
@@ -359,6 +371,7 @@
     - i-th projection(ei* = πi)
       - `B = ε, ei*: F^n -> F, ei*(t(x1,...,xn))=xi (i=1,...,n)`
 - `Bv = {v1,...,vn}`이 V의 기저이고, `Bw = {w1,...,wm}`이 W의 기저일 때, linear map `Eij: V -> W`를 `Eij(vk) = δjk*wi (1≦j,k≦n, 1≦i≦m)`으로 정의
+  - linear map `Eij`들이 유일하게 잘 정의됨
 
 ### 5.2 Classification of Vector Spaces
 
