@@ -26,11 +26,18 @@
   - 정의
     - `V,W`가 F-vector space일 떄,
       - `L(V,W) = {L: V -> W | L은 linear map}`
-      - 연산
+      - 연산정의
         - `(L+M)(v) = L(v) + M(v)`
         - `(aL)(v) = aL(v) (v∈V)`
+      - `L(V,W)`는 vector space이다.
+- evaluation of f(t) at L
+  - `f(t) = ant^n + ... + a1t + a0 (an, ..., a0 ∈ F)`가 `F[t]`의 polynomial일 떄
+  - `f(L) = anL^n + ... + a1L + a0I`
+    - `(f+g)(L) = f(L)+g(L)`
+    - `(cf)(L) = cf(L)`
+    - `(fg)(L) = f(L)◦g(L)`
 - 새로운 벡터공간을 조우했을 때 팁
-  - Classificiation Theorem을 생각하여, 그것의 dimension에 대해서 파악하자
+  - **Classificiation Theorem을 생각하여, 그것의 dimension에 대해서 파악하자**
 
 ### 1.2 dual space(쌍대공간)
 
@@ -43,12 +50,13 @@
     - `(V*)* = V** = L(V*, F)`
   - Bv의 dual basis
     - `Bv* = {v1*, ..., vn*}`
+      - `vi*(vj) = δij (1≦i,j≦n)`
 - 예시
   - `tr ∈ Mnxn(F)*`
 - 정리
   - V가 f.d.v.s이면, `dim V* = dim V`이다
   - V,W가 f.d.v.s이면, `dim L(V,W) = (dimV)・(dimW)`
-    - *`Eij: V -> W, Eij(vk) = δjk x wi (1≦j,k≦n, 1≦i≦m)`이 함수의 정체는?*
+    - 기저: `Eij: V -> W, Eij(vk) = δjk x wi (1≦j,k≦n, 1≦i≦m)`
 
 ## 2. 선형대수학의 기본정리; 표준기저의 경우
 
@@ -80,10 +88,10 @@
     - `B∈Mrxm(F) ∧ A∈Mmxn(F) => φ_g^F(B)・φ_F^ε = φ_g^ε(BA) 즉 LB・LA = LBA`
     - `L∈L(F^n,F^m) ∧ M∈L(F^m,F^r) => ψ_g^F(M)・ψ_F^ε(L) = ψ_g^ε(M・L) 즉 [M]_g^F・[L]_F^ε = [M・L]_g^ε`
 - 따름정리
-  - 모든 linear map `L: F^n -> F^m`은 LA의 꼴이고, 이때, `A∈Mmxn(F)`는 유일하게 결정된다
+  - ① **모든 linear map `L: F^n -> F^m`은 LA의 꼴이고, 이때, `A∈Mmxn(F)`는 유일하게 결정된다**
     - 결국 `∃LA∈L(F^n, F^m), L = LA (∵ L에 대응하는 A가 존재하고, A는 LA를 유일하게 결정시킴)`
-  - `A∈Mmxn(F) => [LA]_F^ε = A`
-  - `L∈L(F^n,F^m) => L_[L] = L <=> L(X) = [L]・X (X∈F^n)`
+  - ② `A∈Mmxn(F) => [LA]_F^ε = A`
+  - ③ `L∈L(F^n,F^m) => L_[L] = L <=> L(X) = [L]・X (X∈F^n)`
 
 ## 3. 선형대수학의 기본정리; 일반적인 경우
 
@@ -114,34 +122,32 @@
 ## 4. 기본정리의 결과와 우리의 철학
 
 - 선형대수학의 기본정리의 교훈
-  - 결과 ①의 의미
-    - `Mmxn(F), L(V,W)`는 벡터공간으로서는 이름만 다를 뿐 사실상 같음(isomorphic)
-      - `Mmxn(F)`의 벡터들은 행렬이라고 불리우고 `L(V,W)`의 벡터들은 선형사상이라고 불리운다는 차이만 있을 뿐, 그들의 덧셈과 상수곱의 구조는 같음
-      - **행렬과 선형사상은 같은 것**
-      - 예시
-        - ① `Mmxn(F)`와 `L(V,W)`
-          - `Mmxn(F)`와 `L(V,W)`가 isomorphic이므로 `dimL(V,W) = mn = (dimV)・(dimW)`
-          - `φ_Bw^Bv(eij) = Eij, [Eij]_Bw^Bv = eij`
-            - 증명해보자(직접 계산)
-            - `{Eij}`가 어떻게 `L(V,W)`의 기저가 되었는지 예측했는지 분명함
-              - `{eij}에 isomorphic한 것이 {Eij}`
-        - ② `LE: F^n -> F^n, (E는 elementary matrix)`
-          - 모든 elementary matrix는 가역이고, 그 역행렬도 elementary matrix이다 는 자명
-            - `LE`만 `LE1, LE2, LE3`3가지 종류의 elementary linear map 이라고 생각하고서 각각의 linear map 에 역행렬을 찾아주면 됨
+  - **① `Mmxn(F), L(V,W)`는 벡터공간으로서는 이름만 다를 뿐 사실상 같음(isomorphic)**
+    - `Mmxn(F)`의 벡터들은 행렬이라고 불리우고 `L(V,W)`의 벡터들은 선형사상이라고 불리운다는 차이만 있을 뿐, 그들의 덧셈과 상수곱의 구조는 같음
+    - **행렬과 선형사상은 같은 것**
+    - 예시
+      - ① `Mmxn(F)`와 `L(V,W)`
+        - `Mmxn(F)`와 `L(V,W)`가 isomorphic이므로 `dimL(V,W) = mn = (dimV)・(dimW)`
+        - `φ_Bw^Bv(eij) = Eij, [Eij]_Bw^Bv = eij`
+          - 증명해보자(직접 계산)
+          - `{Eij}`가 어떻게 `L(V,W)`의 기저가 되었는지 예측했는지 분명함
+            - `{eij}에 isomorphic한 것이 {Eij}`
+      - ② `LE: F^n -> F^n, (E는 elementary matrix)`
+        - 모든 elementary matrix는 가역이고, 그 역행렬도 elementary matrix이다 는 자명
+          - `LE`만 `LE1, LE2, LE3`3가지 종류의 elementary linear map 이라고 생각하고서 각각의 linear map 에 역행렬을 찾아주면 됨
     - 주의
-      - `φ_Bw^Bv`와 그의 inverse `ψ_Bw^Bv`는 **ordered basis Bv,Bw의 선택에 의존**
-        - 행렬과 선형사상을 identify할 때에는 어떤 기저를 선택했는지 분명히 밝혀야 함(그래서 증명단계에서 Bv, Bw, Bu를 명시했던 것임. 명시하지 않으면 표준기저를 뜻하는 것으로 약속)
-  - 결과 ②의 의미
-    - **곱셈 구조의 동일성**
-      - **`Mmxn(F)`와 `L(V,W)`는 단순히 vector space로서만 같은 것이 아니고, 그 곱셈 구조도 같다**
-      - 선형사상의 곱셈은 함수의 합성을 의미
-  - 우리의 철학3
-    - **행렬과 선형사상은 같은 것이다(단, 곱셈 = 합성)**
-      - **행렬의 곱셈의 정의가 부자연스러운 이유는, 행렬의 곱셈을 선형사상의 합성에 대응되도록 정의한 것이기 때문**
-        - `LB・LA = LC`인 유일한 C를 BA라고 정의
-        - `(CB)A = C(BA)`는 함수의 합성의 결합법칙에 대응 `(LC・LB)・LA = LC・(LB・LA)`
-      - 전략
-        - 행렬과 선형사상은 같은 것이니, 행렬이 다루기 쉬울 떄는 행렬을 다루고, 선형사상을 생각하는 것이 더 쉬울 떄는 성형사상을 생각하는 것이 우리의 작전
+      - **`φ_Bw^Bv`와 그의 inverse `ψ_Bw^Bv`는 ordered basis Bv,Bw의 선택에 의존**
+        - 행렬과 선형사상을 identify할 때에는 어떤 기저를 선택했는지 분명히 밝혀야 함
+          - 그래서 증명단계에서 Bv, Bw, Bu를 명시했던 것임. 명시하지 않으면 표준기저를 뜻하는 것으로 약속
+  - **② 곱셈 구조의 동일성**
+    - **`Mmxn(F)`와 `L(V,W)`는 단순히 vector space로서만 같은 것이 아니고, 그 곱셈 구조도 같다**
+    - 선형사상의 곱셈은 함수의 합성을 의미
+  - **③ 행렬과 선형사상은 같은 것이다(단, 곱셈 = 합성)**
+    - **행렬의 곱셈의 정의가 그렇게 부자연스러운 이유는, 행렬의 곱셈을 선형사상의 합성에 대응되도록 정의한 것이기 때문**
+      - `LB・LA = LC`인 유일한 C를 BA라고 정의
+      - `(CB)A = C(BA)`는 함수의 합성의 결합법칙에 대응 `(LC・LB)・LA = LC・(LB・LA)`
+    - 전략
+      - **행렬과 선형사상은 같은 것이니, 행렬이 다루기 쉬울 떄는 행렬을 다루고, 선형사상을 생각하는 것이 더 쉬울 떄는 선형사상을 생각하는 것이 우리의 작전**
 - 기본정리에서 `V = W = U`이고, `Bv = Bw = Bu`인 경우
   - `Mnxn(F)`와 `L(V,V)`자신이 곱셈(합성)이라는 연산을 갖고 있음
     - `φ_Bv^Bv`와 `ψ_Bv^Bv`는 `Mnxn(F)`와 `L(V,V)`의 덧셈, 상수곱, 그리고 곱셈의 구조를 그대로 옮겨줌
@@ -152,8 +158,13 @@
     - `LA: F^n -> F^n`은 isomorphism
     - 이떄, `(LA)^-1 = LA^-1` 이다
   - `A=(aij)∈Mnxn(F)`가 가역이고, `{v1,...,vn}`이 V의 기저일 때, `wj = sigma_i=1^n(aij x vj) (j = 1,...,n)`이라고 정의하면, `w1,...,wn`도 V의 기저이다
-    - `L(vj) = wj`로 두면 `[L] = A`
+    - `[L]_Bv^Bv = A`로 정의하면, L은 A가 invertible이므로 L도 isomorphism => `L(vj) = wj`
+  - `imLa`의 기저 찾기
+    - `EA=R`
+    - 최초1이 있는 columns 에 주목
+    - ...
   - `BA = I <=> AB = I`의 증명
+    - `A <-> La`
 - `A∈Mnxn(F)`일 떄, 다음은 동치
   - 1 A는 invertible matrix
   - 2 A는 left inverse를 갖는다. 즉, `BA=I`인, `B∈Mnxn(F)`가 존재
