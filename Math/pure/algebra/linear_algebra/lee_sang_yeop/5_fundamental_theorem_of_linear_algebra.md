@@ -158,12 +158,14 @@
     - `φ_Bv^Bv`와 `ψ_Bv^Bv`는 `Mnxn(F)`와 `L(V,V)`의 덧셈, 상수곱, 그리고 곱셈의 구조를 그대로 옮겨줌
       - e.g `φ_Bv^Bv(In) = Iv ∧ ψ_Bv^Bv(Iv) = In`
     - *Mmxn(F)과 L(V,W) 역시도 자기자신이 연산을 갖고 있는거 아닌가? 무슨차이를 말하는 것인지?*
+      - 행렬의 곱에서는 `Mrxm(F)`의 원소와 `Mmxn(F)`의 원소를 차례대로 곱하면 `Mrxn(F)`의 원소가 생성된다. 그런데, 기본정리에서와 같이 `V=W=U, Bv=Bw=Bu`인 경우에서는, `Mnxn(F)`만 생각하면 되므로 `Mnxn(F)`의 원소와 `Mnxn(F)`의 원소를 곱하면 `Mnxn(F)`의 원소가 생성되고, 마찬가지로 linear map도 `L(V,V)`의 원소에 `L(V,V)`의 원소를 합성하면 `L(V,V)`의 원소가 나오므로, 곱셈과 사상 합성이라는 연ㅅ나이 `Mnxn(F)`와 `L(V,V)`의 집합의 연산구조내에서 완결되게 됨을 뜻함(다른 집합 구조로 파생되지 않음 - 닫혀있음)
   - `A∈Mnxn(F)`일 떄 다음은 동치
     - A는 invertible matrix
     - `LA: F^n -> F^n`은 isomorphism
     - 이떄, `(LA)^-1 = LA^-1` 이다
   - `A=(aij)∈Mnxn(F)`가 가역이고, `{v1,...,vn}`이 V의 기저일 때, `wj = sigma_i=1^n(aij x vi) (j = 1,...,n)`이라고 정의하면, `w1,...,wn`도 V의 기저이다
-    - `[L]_Bv^Bv = A`로 정의하면, L은 A가 invertible이므로 L도 isomorphism => `L(vj) = wj`
+    - `[L]_Bv^Bv = A`로 정의하면, L은 A가 invertible이므로 L도 isomorphism
+    - `L: V->V`는 isomorphism이며, 기저를 기저를 옮김을 생각했을 떄 `L(vj) = wj`이므로 `wj`는 V의 기저
 - `imLa`의 기저 찾기
   - `EA=R`
   - `R`에서 최초1이 있는 columns 에 주목
