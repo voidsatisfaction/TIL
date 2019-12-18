@@ -15,6 +15,11 @@
   - `dimV = n`인 경우 그렇다
 - *`Eij: V -> W, Eij(vk) = δjk x wi (1≦j,k≦n, 1≦i≦m)`이 함수의 정체는?*
 - *선형대수학의 기본정리가 특수한 경우에 성립하는데, `dimV = n, dimW = m`이면 V ~~ F^n, W ~~ F^m 이므로, 일반적인 경우에도 당연히 성립하는것 아닌가?*
+- *어떤 벡터의 집합이 linearly independent인지 계산적으로 확인하는 방법 -> 논리적인 모순이 존재하는가?*
+  - `{v1, ..., vn}`를 isomorphic한 `{t(a,b,c), t(d,e,f), t(g,h,i)}`와 같은 `F^r`형식으로 변환
+  - 각 원소(e.g `t(a,b,c), t(d,e,f), t(g,h,i)`)를 각각의 행으로 하는 행렬 생성
+  - 해당 행렬의 Row-reduced echelon form을 생성
+  - zero-row가 존재하면 일차종속, zero-row가 존재하지 않으면 일차독립(∵ 기본행연산은 벡터덧셈과 스칼라곱으로 조합되어있고 이는, linear combination과 같기 때문)
 
 ## 1. Vector Space of Linear Maps
 
@@ -30,7 +35,7 @@
         - `(L+M)(v) = L(v) + M(v)`
         - `(aL)(v) = aL(v) (v∈V)`
       - `L(V,W)`는 vector space이다.
-- evaluation of f(t) at L
+- *evaluation of f(t) at L*
   - `f(t) = ant^n + ... + a1t + a0 (an, ..., a0 ∈ F)`가 `F[t]`의 polynomial일 떄
   - `f(L) = anL^n + ... + a1L + a0I`
     - `(f+g)(L) = f(L)+g(L)`
@@ -91,7 +96,7 @@
   - ① **모든 linear map `L: F^n -> F^m`은 LA의 꼴이고, 이때, `A∈Mmxn(F)`는 유일하게 결정된다**
     - 결국 `∃LA∈L(F^n, F^m), L = LA (∵ L에 대응하는 A가 존재하고, A는 LA를 유일하게 결정시킴)`
   - ② `A∈Mmxn(F) => [LA]_F^ε = A`
-  - ③ `L∈L(F^n,F^m) => L_[L] = L <=> L(X) = [L]・X (X∈F^n)`
+  - ③ `L∈L(F^n,F^m), L_[L] = L <=> L(X) = [L]・X (X∈F^n)`
 
 ## 3. 선형대수학의 기본정리; 일반적인 경우
 
@@ -157,14 +162,14 @@
     - A는 invertible matrix
     - `LA: F^n -> F^n`은 isomorphism
     - 이떄, `(LA)^-1 = LA^-1` 이다
-  - `A=(aij)∈Mnxn(F)`가 가역이고, `{v1,...,vn}`이 V의 기저일 때, `wj = sigma_i=1^n(aij x vj) (j = 1,...,n)`이라고 정의하면, `w1,...,wn`도 V의 기저이다
+  - `A=(aij)∈Mnxn(F)`가 가역이고, `{v1,...,vn}`이 V의 기저일 때, `wj = sigma_i=1^n(aij x vi) (j = 1,...,n)`이라고 정의하면, `w1,...,wn`도 V의 기저이다
     - `[L]_Bv^Bv = A`로 정의하면, L은 A가 invertible이므로 L도 isomorphism => `L(vj) = wj`
-  - `imLa`의 기저 찾기
-    - `EA=R`
-    - 최초1이 있는 columns 에 주목
-    - ...
-  - `BA = I <=> AB = I`의 증명
-    - `A <-> La`
+- `imLa`의 기저 찾기
+  - `EA=R`
+  - `R`에서 최초1이 있는 columns 에 주목
+  - ...
+- `BA = I <=> AB = I`의 증명
+  - `A <-> La`
 - `A∈Mnxn(F)`일 떄, 다음은 동치
   - 1 A는 invertible matrix
   - 2 A는 left inverse를 갖는다. 즉, `BA=I`인, `B∈Mnxn(F)`가 존재
@@ -183,7 +188,10 @@
     - 19 `{[A]1, ..., [A]n}`은 `M1xn(F)`의 basis
     - 20 `{[A]1, ..., [A]n}`은 일차독립
     - 21 `<[A]1, ..., [A]n> = M1xn(F)`
+  - **추상적인 단어들로 이루어진 새로운 언어의 힘**
+    - 우리가 배운 새로운 언어가 매우 강력한 도구가 되었다
 
+---
 
 ## 8. 선형대수학의 기본정리(이상엽샘)
 
