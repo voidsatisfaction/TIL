@@ -11,6 +11,7 @@
 ## 의문
 
 - *자유도랑 기저의 관계?*
+- *수열은 x: N -> F를 정의로 갖고 있는데, 함수는 보통 정의역을 실수로 갖는 경우도 많다. 그러므로 수열에서의 수렴은 함수에서의 수렴에 적용할 수 없을텐데(왜냐면 실함수의 정의역은 실수로 자연수보다 크기 때문) 두 "수렴"의 차이는 무엇이며 어떻게 정의되는 것일까?*
 
 ## 용어
 
@@ -392,3 +393,68 @@ infinite limit 양의 방향, 음의 방향
       - `lim_(x->a-)(f(x)) = ∞`
       - `lim_(x->a+)(f(x)) = -∞`
       - `lim_(x->a-)(f(x)) = -∞`
+
+## 1.6 Calculating Limits Using the Limit Laws
+
+### 1.6.1 Limit Laws
+
+![](./images/ch1/law_of_limits1.png)
+
+![](./images/ch1/law_of_limits2.png)
+
+### 1.6.2 Direct Substitution Property
+
+- 정의
+  - f가 다항함수 혹은 분수함수(**함수가 a에서 연속**) 일 때, `a∈Dom f` => `lim_(x->a)(f(x)) = f(a)`
+    - x에 a를 대입하면 풀림
+    - *근데, 일부 무리함수는(약분해야 하는애들) 그냥 대입하면 0/0, ∞/∞ 로 나와서 안되지 않는가?*
+      - *lim_(x->1)(x^2-1/x-1) 같은 경우는 바로 x대신 1을 대입할 수 없는데, 그럼 어떻게 해야하는가?*
+
+### 1.6.3 주의
+
+- `lim_(x->1)(x^2-1/x-1)`인 경우
+  - we were able to compute the limit by replacing the given function fsxd − sx2 2 1dysx 2 1d by a simpler function, tsxd − x 1 1, with the same limit. This is valid because f sxd − tsxd except when x − 1, and in computing a limit as x approaches 1 we don’t consider what happens when x is actually equal to 1. In general, we have the following useful fact.
+- `f(x) = g(x) (x != a) => lim_(x->a)(f(x)) = lim_(x->a)(g(x)) (단, 극한값이 존재할 경우)`
+  - 왜나하면, `x->a`에 대한 극한값이 `x=a`일 떄의 함숫값에 의존하지 않으므로
+    - *구체적으로 왜?(아마 극한의 정의와 큰 관련이 있을 듯 싶다)*
+
+### 1.6.4 좌극한 우극한을 이용해서 극한을 찾는 경우 및 극한에 관한 기본 정리
+
+- 기반 정리
+  - ① `lim_(x->a)(f(x)) = L <=> lim_(x->a-)(f(x)) = L = lim_(x->a+)(f(x))`
+    - 예시
+      - `lim_(x->0)(|x|) = 0`임을 보여라
+      - `lim_(x->0)(|x|/x)`가 존재하지 않음을 보여라
+  - ② `(f(x) ≦ g(x) (단, x는 a근처에서) 그리고 f,g가 x의 a에 대한 극한값이 존재) => lim_(x->a)(f(x)) <= lim_(x->a)(g(x))`
+  - ③ (샌드위치 정리) `f(x) ≦ g(x) ≦ h(x) (단, x는 a의 근처에서) ∧ lim_(x->a)(f(x)) = lim_(x->a)(h(x))=L => lim_(x->a)(g(x))=L`
+    - *사실, 샌드위치 정리는 ②의 정리의 따름정리다?*
+    - 예시
+      - `lim_(x->0)(x^2sin(1/x))`
+
+## 1.7 The Precise Definition of a Limit
+
+### 극한의 엄밀한 정의
+
+입실론 델타 논법의 기하학적 표현1
+
+![](./images/ch1/epsilon_delta1.png)
+
+입실론 델타 논법의 기하학적 표현2
+
+![](./images/ch1/epsilon_delta2.png)
+
+- 배경
+  - 함수 f(x)가 5와 0.1미만의 차이를 보이기 위해서, x는 3에 얼마나 가까워야 하는가?(δ가 얼마나 가까워야 하는지 기준)
+    - `|f(x)-5| < 0.1` if `|x-3| < δ`
+- 극한의 정의
+  - 함수 `f`가 실수 a를 포함하는 열린구간에서 정의되어 있을 떄(a자체는 정의되지 않아도 됨), **x가 a로 접근할 때의 극한값은 L** 를 다음과 같이 표현한다. 즉,
+    - `lim_(x->a)(f(x))=L <=> ∀ε>0, ∃δ>0 s.t. 0<|x-a|<δ => |f(x)-L|<ε`
+      - *c.f) 수열의 수렴과 유사함*
+      - `0<|x-a|<δ`임에 주의 `|x-a|<δ`가 아님
+  - 의미
+    - `f(x)`와 `L`사이의 거리는 임의 거리보다 작게 될 수 있다. x와 a사이의 거리를 충분히 작게 한다면(단, 0이 아니어야 함)
+    - 임의의 `ε>0`에 대하여, `δ>0`을 찾을 수 있는데, 어떤 δ냐면, `개구간 (a-δ, a+δ) ∧ x != a => f(x)가 개구간 (L-ε, L+ε)`
+  - 예시
+    - `lim_(x->3)(4x-5) = 7`임을 증명하라
+- 좌극한의 정의
+- 우극한의 정의
