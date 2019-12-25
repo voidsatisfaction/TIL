@@ -200,6 +200,91 @@
     - 21 `<[A]1, ..., [A]n> = M1xn(F)`
   - **추상적인 단어들로 이루어진 새로운 언어의 힘**
     - 우리가 배운 새로운 언어가 매우 강력한 도구가 되었다
+- *우리의 철학4(이 부분부터 아직 완벽히 이해가 안됨, 왜 isomorphic한가? - L과 LA사이의 isomorphism이 존재함을 보여야 하는거 아닌가?)*
+  - **선형사상 `L: V -> W`는 `LA: F^n -> F^m`과 같은 함수이다**
+    - 선형사상 `L: V -> W`은 `LA: F^n -> F^m`과 identify할 수 있음 (`n=dimV, m=dimW`)
+      - `A = [L]_Bw^Bv`
+        - *`L ~ A ~ LA`?*
+      - 설명
+        - `a_ε^Bv(vi) = ei, a_F^Bw(wi) = fi`
+          - **a라는 함수는 어떤 벡터의 기저표현에서 기저만 다른 기저로 치환하는 함수**
+  - 전략
+    - 구체적인 `LA: F^n -> F^m`이 더 다루기 편하면 `LA`를 다루고, 추상적인 `L: V -> W`가 다루기 편하면 L을 생각하면 됨
+
+## 5. Change of Bases
+
+*이 부분이 잘 이해가 안됨*
+
+선형대수학의 기본정리에서 기저를 바꾸면 어떻게 되는지
+
+- 표기법
+  - `V의 기저; Bv' = {v1', ..., vn'}`
+  - `W의 기저; Bw' = {w1', ..., wm'}`
+- 선형대수학의 기본정리에서 기저를 바꾸면 어떻게 되는가?
+  - = `L∈L(V,W)`일 떄, `[L]_Bw^Bv`와 `[L]_Bw'^Bv'`의 관계식은 무엇일까
+  - 정리
+    - `[L]_Bw'^Bv' = [L]_Bw'^Bw・[L]_Bw^Bv・[L]_Bv^Bv'`
+    - 따름정리
+      - `[L]_Bw^Bv' = [L]_Bw^Bv・[I]_Bv^Bv'`
+      - `[L]_Bw'^Bv = [I]`
+- transition matrix
+  - 정의
+    - V의 기저 `Bv, Bv'`에 대해, `[I]_Bv^Bv'` 혹은 `[I]_Bv'^Bv`를 transition matrix(추이 행렬) 이라고 부르고, 이 행렬은 기저 변환의 정보를 갖고 있다
+      - `[I]_Bv^Bv'`는 V의 기저인 `Bv'`들을 Bv의 일차결합의 계수로 표현한 행렬
+  - 성질
+    - `[I]_Bv^Bv'・[I]_Bv'^Bv = I`즉, transition matrix는 가역이고 `([I]_Bv'^Bv)^-1 = [I]_Bv^Bv'`
+    - **역으로 가역행렬은 항상 transition matrix로 인식할 수 있음**
+  - 관찰
+    - `U∈Mnxn(F)`가 가역행렬이고 `Bv`가 `V`의 기저라면, 다음이 성립(`dimV = n`)
+      - `U = [I]_Bv^Bv'`인 V의 기저 `Bv'`가 존재
+      - 따라서, `U=[I]_Bv''^Bv`인 V의 기저 `Bv''`가 존재한다
+- transition matrix의 특수한 경우
+  - 정의
+    - `Bv, Bw가 각각 F^n, F^m의 basis이고, A∈Mmxn(F), V = F^n, W = F^m, L = LA`인 경우
+      - `[LA]_Bw^Bv = [I]_Bw^F・A・[I]_ε^Bv ([LA]_F^ε = A)`
+  - 우리의 철학4의 관점에서의 해석
+    - *`A,B∈Mmxn(F)`일 때, 다음은 동치*
+      - ① `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재
+        - 그런데 그 행렬Q,P는 `Q = [I]_Bw^F`를 만족하고, `P = [I]_ε^Bv`를 만족한다
+      - ② `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
+        - 위의 정의에서 자명(대수적으로 행렬 B로 치환한것일 뿐임)
+      - *③ ...*
+        - *특히 이 3번은 무슨 관계가 있는 것인가?*
+  - 응용
+    - *`A∈Mmxn(F), Q∈Mmxm(F)`가 가역 => `LQA, LA`는 본질적으로 같은 함수이다(이해가 안됨)* 그러므로 `rank(QA) = rank(A)`
+- 각종 관찰
+  - `L∈L(V,V)` Bv, Bw가 V의 basis
+    - `[L]_Bw^Bw = [I]_Bw^Bv・[L]_Bv^Bv・[I]_Bv^Bw`
+  - `A∈Mnxn(F)`, Bv가 F^n의 basis
+    - `[LA]_Bv^Bv = [I]_Bv^ε・A・[I]_ε^Bv`
+- `A` is similar to `B`
+  - `A ~ B <=> A,B∈Mnxn(F), ∃U∈Mnxn(F)∧U는 invertible s.t. U^-1AU = B`
+    - U는 Unit matrix이고, 곱셈에 관한 invertible element를 의미
+  - 관련 중요 정리
+    - `A,B∈Mnxn(F)`일 때, 다음은 동치이다
+      - ① `A ~ B`
+      - ② `[LA]_Bv^Bv = B`인 F^n의 basis Bv가 존재
+      - ③ ...
+  - `A ~ B`의 의미
+    - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬이 A에서 B로 바뀜
+    - 이 때, LA와 LB는 본질적으로 같은 함수
+  - 성질
+    - `A ~ B ∈ Mnxn(F)`이면 다음이 성립(같은 것은 같을 뿐)
+      - ① `dim kerLA = dim kerLB`
+      - ② `dim imLA = dim imLB`
+      - ③ `rank(A) = rank(B)`
+    - `A,B∈Mnxn(F)`이고 `dimV = n`일 때, 다음은 동치
+      - ① `A ~ B`
+      - ② `A,B`는 어떤 한 개의 선형사상의 두 가지 행렬포현이다
+        - `[L]_Bv^Bv = A ∧ [L]_Bw^Bw = B`인 `L∈L(V,V)`와 V의 basis Bv, Bw가 존재한다
+      - 우리의 strategy
+        - 기저를 바꾸어서 다루기 쉬운 similar matrix로 만들자
+        - 특히 대각 행렬이 다루기 쉬우므로, 대각행렬로 similar matrix를 만들자
+  - 주의
+    - 어떤 basis를, 어떤 가역행렬 U를 선택했는지 혼동하면 안됨
+    - 또한, `A ~ B∈Mnxn(F)`라고 해서, `LA, LB`가 본질적으로 같고, A와 B가 본질적으로 같으므로 `det(A) = det(B)`이고 `tr(A) = tr(B)`라고 하는것은 non-sense이다.
+      - determinant와 trace는 행렬의 좌표를 사용하여 정의하기 때문(하지만 실제로는 `A ~ B => det(A)=det(B) ∧ tr(A)=tr(B)`이긴 하나, 우리의 철학과는 무관한 것)
+- **우리의 철학을 자유자재, 적재적소에 사용할 수 있는 능력이 mathematical maturity이다.**
 
 ---
 
