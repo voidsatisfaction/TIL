@@ -200,9 +200,25 @@
     - 21 `<[A]1, ..., [A]n> = M1xn(F)`
   - **추상적인 단어들로 이루어진 새로운 언어의 힘**
     - 우리가 배운 새로운 언어가 매우 강력한 도구가 되었다
+
+우리의 철학4 commutative diagram 1
+
+![](./images/ch5/our_philosophy1.jpeg)
+
+우리의 철학4 commutative diagram 2
+
+![](./images/ch5/our_philosophy2.jpeg)
+
+우리의 철학4 commutative diagram 3
+
+![](./images/ch5/our_philosophy3.jpeg)
+
 - *우리의 철학4(이 부분부터 아직 완벽히 이해가 안됨, 왜 isomorphic한가? - L과 LA사이의 isomorphism이 존재함을 보여야 하는거 아닌가?)*
   - **선형사상 `L: V -> W`는 `LA: F^n -> F^m`과 같은 함수이다**
     - 선형사상 `L: V -> W`은 `LA: F^n -> F^m`과 identify할 수 있음 (`n=dimV, m=dimW`)
+      - 왜냐하면, 우리의 철학3에서 행렬과 선형사상은 같은 것이라고 했는데, 어떠한 선형사상 `L: V -> W`에 isomorphic한 `A행렬`이 있으면, 결국 `L`은 `LA`와도 같은 역할을 하기 때문
+        - *L의 정의가 완전 LA와 같은 것은 아니나, L의 역할이 LA와 근본적으로 같으므로, `L(v)`를 구할 때에는, `a_ε^Bv(v)` 같은 isomorphism으로 기저 change이후 `LA`의 연산을 적용하고 다시 `a_Bw^F(v)`를 적용하면 `L(v)`와 같다*
+        - `L(v) = (a_Bv^ε◦LA◦a_ε^Bv)(v)`
       - `A = [L]_Bw^Bv`
         - *`L ~ A ~ LA`?*
       - 설명
@@ -223,14 +239,15 @@
 - 선형대수학의 기본정리에서 기저를 바꾸면 어떻게 되는가?
   - = `L∈L(V,W)`일 떄, `[L]_Bw^Bv`와 `[L]_Bw'^Bv'`의 관계식은 무엇일까
   - 정리
-    - `[L]_Bw'^Bv' = [L]_Bw'^Bw・[L]_Bw^Bv・[L]_Bv^Bv'`
+    - `[L]_Bw'^Bv' = [I]_Bw'^Bw・[L]_Bw^Bv・[I]_Bv^Bv'`
     - 따름정리
       - `[L]_Bw^Bv' = [L]_Bw^Bv・[I]_Bv^Bv'`
-      - `[L]_Bw'^Bv = [I]`
+      - `[L]_Bw'^Bv = [I]_Bw'^Bw・[L]_Bw^Bv`
 - transition matrix
   - 정의
     - V의 기저 `Bv, Bv'`에 대해, `[I]_Bv^Bv'` 혹은 `[I]_Bv'^Bv`를 transition matrix(추이 행렬) 이라고 부르고, 이 행렬은 기저 변환의 정보를 갖고 있다
       - `[I]_Bv^Bv'`는 V의 기저인 `Bv'`들을 Bv의 일차결합의 계수로 표현한 행렬
+        - `(Bv)'`의 세계에서 나타내던 좌표(기저의 일차결합 표현)를 `Bv`의 세계의 좌표로 변경하기 위함
   - 성질
     - `[I]_Bv^Bv'・[I]_Bv'^Bv = I`즉, transition matrix는 가역이고 `([I]_Bv'^Bv)^-1 = [I]_Bv^Bv'`
     - **역으로 가역행렬은 항상 transition matrix로 인식할 수 있음**
@@ -242,10 +259,11 @@
   - 정의
     - `Bv, Bw가 각각 F^n, F^m의 basis이고, A∈Mmxn(F), V = F^n, W = F^m, L = LA`인 경우
       - `[LA]_Bw^Bv = [I]_Bw^F・A・[I]_ε^Bv ([LA]_F^ε = A)`
-  - 우리의 철학4의 관점에서의 해석
+  - *우리의 철학4의 관점에서의 해석(왜 이게 우리의 철학 4와 관계가 있는 것인가?)*
     - *`A,B∈Mmxn(F)`일 때, 다음은 동치*
       - ① `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재
         - 그런데 그 행렬Q,P는 `Q = [I]_Bw^F`를 만족하고, `P = [I]_ε^Bv`를 만족한다
+        - *이 명제는 항상 만족하는 것이 아니다?*
       - ② `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
         - 위의 정의에서 자명(대수적으로 행렬 B로 치환한것일 뿐임)
       - *③ ...*
@@ -255,6 +273,7 @@
 - 각종 관찰
   - `L∈L(V,V)` Bv, Bw가 V의 basis
     - `[L]_Bw^Bw = [I]_Bw^Bv・[L]_Bv^Bv・[I]_Bv^Bw`
+      - Bw로 표현된 일차결합의 계수표현을 Bv의 계수표현으로 바꾼 다음에 "본질적으로 같은 선형변환"을 시행한 뒤에 다시 Bw로 표현된 일차결합의 계수표현으로 변환
   - `A∈Mnxn(F)`, Bv가 F^n의 basis
     - `[LA]_Bv^Bv = [I]_Bv^ε・A・[I]_ε^Bv`
 - `A` is similar to `B`
@@ -268,6 +287,7 @@
   - `A ~ B`의 의미
     - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬이 A에서 B로 바뀜
     - 이 때, LA와 LB는 본질적으로 같은 함수
+      - e.g) Bv의 벡터공간에서 90도 회전 선형변환은, standard basis 벡터공간에서 90도 회전 선형변환과 근본적으로 같음(대신 기저변환에 따른 벡터값의 변화도 추적해야 함)
   - 성질
     - `A ~ B ∈ Mnxn(F)`이면 다음이 성립(같은 것은 같을 뿐)
       - ① `dim kerLA = dim kerLB`
@@ -275,11 +295,11 @@
       - ③ `rank(A) = rank(B)`
     - `A,B∈Mnxn(F)`이고 `dimV = n`일 때, 다음은 동치
       - ① `A ~ B`
-      - ② `A,B`는 어떤 한 개의 선형사상의 두 가지 행렬포현이다
+      - ② `A,B`는 어떤 한 개의 선형사상의 두 가지 행렬표현이다
         - `[L]_Bv^Bv = A ∧ [L]_Bw^Bw = B`인 `L∈L(V,V)`와 V의 basis Bv, Bw가 존재한다
-      - 우리의 strategy
-        - 기저를 바꾸어서 다루기 쉬운 similar matrix로 만들자
-        - 특히 대각 행렬이 다루기 쉬우므로, 대각행렬로 similar matrix를 만들자
+  - 우리의 strategy
+    - 기저를 바꾸어서 다루기 쉬운 similar matrix로 만들자
+    - **특히 대각 행렬이 다루기 쉬우므로, 대각행렬로 similar matrix를 만들자**
   - 주의
     - 어떤 basis를, 어떤 가역행렬 U를 선택했는지 혼동하면 안됨
     - 또한, `A ~ B∈Mnxn(F)`라고 해서, `LA, LB`가 본질적으로 같고, A와 B가 본질적으로 같으므로 `det(A) = det(B)`이고 `tr(A) = tr(B)`라고 하는것은 non-sense이다.
