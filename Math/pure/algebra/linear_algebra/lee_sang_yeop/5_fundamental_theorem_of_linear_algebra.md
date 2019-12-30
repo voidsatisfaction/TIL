@@ -255,37 +255,43 @@
     - `U∈Mnxn(F)`가 가역행렬이고 `Bv`가 `V`의 기저라면, 다음이 성립(`dimV = n`)
       - `U = [I]_Bv^Bv'`인 V의 기저 `Bv'`가 존재
       - 따라서, `U=[I]_Bv''^Bv`인 V의 기저 `Bv''`가 존재한다
+
+![](./images/ch5/transition_matrix1.jpeg)
+
 - transition matrix의 특수한 경우
   - 정의
     - `Bv, Bw가 각각 F^n, F^m의 basis이고, A∈Mmxn(F), V = F^n, W = F^m, L = LA`인 경우
       - `[LA]_Bw^Bv = [I]_Bw^F・A・[I]_ε^Bv ([LA]_F^ε = A)`
-  - *우리의 철학4의 관점에서의 해석(왜 이게 우리의 철학 4와 관계가 있는 것인가?)*
-    - *`A,B∈Mmxn(F)`일 때, 다음은 동치*
+  - 우리의 철학4의 관점에서의 해석(왜 이게 우리의 철학 4와 관계가 있는 것인가? -> 3번 명제)
+    - `A,B∈Mmxn(F)`일 때, 다음은 동치
       - ① `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재
         - 그런데 그 행렬Q,P는 `Q = [I]_Bw^F`를 만족하고, `P = [I]_ε^Bv`를 만족한다
-        - *이 명제는 항상 만족하는 것이 아니다?*
+        - *이 명제는 항상 만족되는 것이 아니다?*
       - ② `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
         - 위의 정의에서 자명(대수적으로 행렬 B로 치환한것일 뿐임)
-      - *③ ...*
-        - *특히 이 3번은 무슨 관계가 있는 것인가?*
-  - 응용
-    - *`A∈Mmxn(F), Q∈Mmxm(F)`가 가역 => `LQA, LA`는 본질적으로 같은 함수이다(이해가 안됨)* 그러므로 `rank(QA) = rank(A)`
+      - ③ ...
+    - 응용
+      - `A∈Mmxn(F), Q∈Mmxm(F)`가 가역 => `LQA, LA`는 본질적으로 같은 함수이다. 그러므로 `rank(QA) = rank(A)`
+        - **(이해가 안됨) -> `QA = B`라고 두고, ③의 commutative diagram을 그려보면 `LA`와 `LB=LQA`가 겹쳐보인다**
 - 각종 관찰
-  - `L∈L(V,V)` Bv, Bw가 V의 basis
+  - ① `L∈L(V,V)` Bv, Bw가 V의 basis
     - `[L]_Bw^Bw = [I]_Bw^Bv・[L]_Bv^Bv・[I]_Bv^Bw`
       - Bw로 표현된 일차결합의 계수표현을 Bv의 계수표현으로 바꾼 다음에 "본질적으로 같은 선형변환"을 시행한 뒤에 다시 Bw로 표현된 일차결합의 계수표현으로 변환
-  - `A∈Mnxn(F)`, Bv가 F^n의 basis
+  - ② `A∈Mnxn(F)`, Bv가 F^n의 basis
     - `[LA]_Bv^Bv = [I]_Bv^ε・A・[I]_ε^Bv`
-- `A` is similar to `B`
+
+![](./images/ch5/transition_matrix2.jepg)
+
+- **`A` is similar to `B`**
   - `A ~ B <=> A,B∈Mnxn(F), ∃U∈Mnxn(F)∧U는 invertible s.t. U^-1AU = B`
     - U는 Unit matrix이고, 곱셈에 관한 invertible element를 의미
-  - 관련 중요 정리
+  - 관련 중요 정리(이 정리는 위의 각종 관찰의 두번째와 관련이 있음)
     - `A,B∈Mnxn(F)`일 때, 다음은 동치이다
       - ① `A ~ B`
       - ② `[LA]_Bv^Bv = B`인 F^n의 basis Bv가 존재
       - ③ ...
   - `A ~ B`의 의미
-    - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬이 A에서 B로 바뀜
+    - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬표현이(`[LA]_ε^ε -> [LA]_Bv^Bv`) A에서 B로 바뀜
     - 이 때, LA와 LB는 본질적으로 같은 함수
       - e.g) Bv의 벡터공간에서 90도 회전 선형변환은, standard basis 벡터공간에서 90도 회전 선형변환과 근본적으로 같음(대신 기저변환에 따른 벡터값의 변화도 추적해야 함)
   - 성질
@@ -295,6 +301,10 @@
       - ③ `rank(A) = rank(B)`
     - `A,B∈Mnxn(F)`이고 `dimV = n`일 때, 다음은 동치
       - ① `A ~ B`
+        - ① => ②
+          - L을 linear extension theorem 으로 `[L]_Bv^Bv = A`로 정의가능
+          - U를 `[I]_Bv^Bw`로 정의할 수 있는 `Bw`가 존재
+          - B는 그럼 자연스럽게 `[L]_Bw^Bw`로 정의
       - ② `A,B`는 어떤 한 개의 선형사상의 두 가지 행렬표현이다
         - `[L]_Bv^Bv = A ∧ [L]_Bw^Bw = B`인 `L∈L(V,V)`와 V의 basis Bv, Bw가 존재한다
   - 우리의 strategy
