@@ -316,6 +316,43 @@
       - determinant와 trace는 행렬의 좌표를 사용하여 정의하기 때문(하지만 실제로는 `A ~ B => det(A)=det(B) ∧ tr(A)=tr(B)`이긴 하나, 우리의 철학과는 무관한 것)
 - **우리의 철학을 자유자재, 적재적소에 사용할 수 있는 능력이 mathematical maturity이다.**
 
+## 6. Row-reduced Echelon Form
+
+- row-reduced echelon form
+  - `A∈Mmxn(F)`에 elementary row operation을 시행하는 것은 그에 대응하는 elementary matrix를 A의 왼쪽에 곱하는 것과 같음
+  - elementary row operation을 시행 => 그에 대응하는 elementary matrix를 A의 왼쪽에 곱하는 것과 같음
+  - A의 왼쪽에 가역행렬 U를 곱하는 것과 같음
+    - `U = [I]_Bw^F`
+  - `UA = [I]_Bw^F・[LA]_F^ε = [LA]_Bw^ε`
+- 이야기의 중요한 전환점
+  - 만약, elementary matrix를 `A∈Mmxn(F)`의 왼쪽에 곱하는 것뿐만 아니라, A의 오른쪽에 곱하는 것도 허용하면 다음과 같이 됨
+    - `[LA]_Bw^Bv = (t(I, 0), t(0, 0))` 인 F^n의 기저 Bv와 F^m의 기저 Bw가 존재한다
+    - *이 경우에는 모든 선형사상의 행렬포현을 너무나 가장 이쁜 형태로 바꿀 수 있으므로, 더 이상 공부할 것이 없음(중요하긴함)*
+  - 이 책의 후반부에서는 square matrix와 linear operator를 다루게 되고, `L∈L(V,V)`의 matrix는 주로 `[L]_Bv^Bv`의 꼴을 생각하게 되고, similarity relation이 가장 재미 있다는 것을 뜻함
+- 정리 1.2.3의 재해석과 증명
+  - 재해석
+    - `A∈Mmxn(F) => [LA]_Bw^ε이 row-reduced echelon form인 F^m의 기저 Bw가 존재한다. 이때, A의 row-reduced echelon form은 유일하게 결정된다`
+      - `F^m의 기저Bw`가 유일한것이 아님에 주의
+  - 증명(존재성)
+    - `dim imLA = r ∧ Vk = <e1, ..., ek> (k=1, ..., n)`
+    - `dim LA(Vk) = dim LA(Vk-1)+1 <=> LA(ek)!∈LA(Vk-1) <=> dimension jump`
+    - dimension jump가 일어나는 횟수는 정확히 r번이고, 그러한 경우는 `LA(eki) !∈ LA(Vki-1), (i = 1, ..., r), (k1 < k2 < ... < kr)`
+    - `LA(eki) = Yi ∈ F^m (i=1, ..., r)`이라고 표기
+    - `Yi !∈ LA(Vki-1) = <Y1, ..., Yi-1>, (i=1, ..., r)`
+    - `{Y1, ..., Yr}`은 F^m의 일차독립인 부분집합
+    - `{Y1, ..., Yr}`을 basis extension theorem으로 F^m의 기저 `Bw = {Y1, ..., Ym}`으로 확장
+    - `[LA]_Bw^ε`이 row-reduced echelon form인 것을 확인 가능
+  - 증명(유일성)
+    - A가 주어짐
+    - => dimension jump가 일어나는 위치 `k1, ..., kr`이 유일하게 결정
+    - => `{Y1, ..., Yr}`이 유일하게 결정
+    - => F^m의 기저 `Bw = {Y1, ..., Ym}`로 확장하는 방법은 유일하지 않지만, 이 기저의 `{Yr+1, ..., Ym}`부분은 row-reduced echelon form에 아무런 영향을 주지 못함
+      - `RRE(A) = [LA]_Bw^ε`인데,
+      - `LA(e1), ..., LA(en) ∈ imLA`이고
+      - `{Y1, ..., Yr}`이 imLA의 기저이므로 아랫쪽 (n-r)개의 행은 zero
+        - 그게 아니라면 Bw가 일차독립임에 모순
+    - => 결국 RRE(A)의 유일성 증명끝
+
 ---
 
 ## 8. 선형대수학의 기본정리(이상엽샘)
