@@ -280,7 +280,7 @@
   - ② `A∈Mnxn(F)`, Bv가 F^n의 basis
     - `[LA]_Bv^Bv = [I]_Bv^ε・A・[I]_ε^Bv`
 
-![](./images/ch5/transition_matrix2.jepg)
+![](./images/ch5/transition_matrix2.jpeg)
 
 - **`A` is similar to `B`**
   - `A ~ B <=> A,B∈Mnxn(F), ∃U∈Mnxn(F)∧U는 invertible s.t. U^-1AU = B`
@@ -291,7 +291,7 @@
       - ② `[LA]_Bv^Bv = B`인 F^n의 basis Bv가 존재
       - ③ ...
   - `A ~ B`의 의미
-    - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬표현이(`[LA]_ε^ε -> [LA]_Bv^Bv`) A에서 B로 바뀜
+    - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬표현이(`[LA]_ε^ε = A -> [LA]_Bv^Bv = B`) A에서 B로 바뀜
     - 이 때, LA와 LB는 본질적으로 같은 함수
       - e.g) Bv의 벡터공간에서 90도 회전 선형변환은, standard basis 벡터공간에서 90도 회전 선형변환과 근본적으로 같음(대신 기저변환에 따른 벡터값의 변화도 추적해야 함)
   - 성질
