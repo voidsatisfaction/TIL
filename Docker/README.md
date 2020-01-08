@@ -107,7 +107,7 @@
 
 ### 도커 실습
 
-- `dockefr run ubuntu:16.04`
+- `docker run ubuntu:16.04`
   - 도커 이미지를 다운받고 컨테이너 실행
   - 컨테이너는 실행했으나, 명령어가 없으므로 컨테이너가 생성되자마자 종료
   - 컨테이너 = 프로세스
@@ -158,7 +158,7 @@ virsion: '2'
 services:
   db:
     image: mysql:5.7
-    volumns:
+    volumes:
       - db_data:/var/lib/mysql
     restart: always
     environment:
@@ -171,7 +171,7 @@ services:
     depends_on:
       - db
     image: wordpress:latest
-    volumns:
+    volumes:
       - wp_data:/var/www/html
     ports:
       - "8000:80"
