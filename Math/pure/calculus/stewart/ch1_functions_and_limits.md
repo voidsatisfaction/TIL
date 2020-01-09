@@ -527,3 +527,13 @@ a에서 연속 & 불연속한 점
   - 단, 정의역의 범위에서만
 - 루트함수
 - 삼각함수
+
+### 1.8.4 관련 정리
+
+![](./images/ch1/continuity_theorem1.png)
+
+![](./images/ch1/continuity_theorem2.png)
+
+![](./images/ch1/continuity_theorem4.png)
+
+![](./images/ch1/continuity_theorem3.png)
