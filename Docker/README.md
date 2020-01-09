@@ -67,9 +67,9 @@
 - 이미지 경로
   - url방식으로 관리
 
-### 핫한 이유
-
 ![](./assets/docker_image_url.png)
+
+### 핫한 이유
 
 - 레이어 저장방식
   - 컨테이너 실행하기 위한 모든 정보는 수백메가에 이르나, "레이어" 개념을 도입하여, 여러개의 레이어를 하나의 파일 시스템으로 이용할 수 있게 해줌
@@ -103,7 +103,7 @@
   - 클라이언트
     - `docker command`를 docker-daemon으로 보냄
   - 서버
-    - 받은 도커 커맨드를 실행하고 다시 client쪽으로 보냄
+    - 받은 도커 커맨드를 실행하고 그 결과를 다시 client쪽으로 보냄
 
 ### 도커 실습
 
@@ -179,7 +179,7 @@ services:
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_PASSWORD: wordpress
-volumns:
+volumes:
   db_data:
   wp_data:
 ```
@@ -231,7 +231,7 @@ CMD bundle exec ruby app.rb -o 0.0.0.0
     - RUN / CMD / ADD / COPY 등이 이루어질 기본 디렉토리를 설정
   - EXPOSE
     - 도커 컨테이너가 실행되었을 떄 Listen하고 있는 포트를 지정
-  - VOLUMN
+  - VOLUME
     - 컨테이너 외부에 파일시스템을 마운트 할 때 사용
   - ENV
     - 컨테이너에서 사용할 환경 변수를 지정
