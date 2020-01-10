@@ -12,6 +12,8 @@
 - Modifying Data
 - Transactions
 - Managing Databases
+- Managing Tables
+- Managing Schemas
 
 ## 의문
 
@@ -367,7 +369,7 @@ FROM
     - `UPDATE product SET net_price = price - price * discount FROM product_segment WHERE product.segment_id = product_segment.id;`
 - delete
   - 행을 지울 수 있음
-  - `USING`키워드를 사용해서 다른 테이블의 칼럼들을 참조하면서 조건을 삭제 조건을 부여할 수 있음
+  - `USING`키워드를 사용해서 다른 테이블의 칼럼들을 참조하면서 삭제 조건을 부여할 수 있음
   - `DELETE FROM table USING another_table WHERE table.id = another_table.id AND ...` == `DELETE FROM table WHERE table.id = (SELECT id FROM another_table)`
   - `RETURNING`키워드를 사용해서 삭제 후, 결과 반응으로 받을 output을 정할 수 있다
     - `DELETE FROM link_tmp RETURNING *;`
@@ -376,12 +378,12 @@ FROM
 
 - Transaction
   - 하나, 혹은 그 이상의 동작으로 구성된 single unit of work
-  - 필요 성질
+  - 필요 성질(ACID)
     - atomic
       - 부분적으로 실행되다가 중단되지 않는 것을 보장
-      - 0 or 1
+        - 더 이상 쪼갤 수 없다!(원자)
     - consistent
-      - 트랜잭션이 실행을 성공적으로 완료하면 언제나 일관성 있는 데이터베이스 상태로 유지하는 것을 의미
+      - *트랜잭션이 실행을 성공적으로 완료하면 언제나 일관성 있는 데이터베이스 상태로 유지하는 것을 의미(???)*
     - isolated
       - 트랜잭션 수행 시 다른 트랜잭션의 연산 작업이 끼어들지 못하도록 보장(중간 데이터를 볼 수 없음)
       - 가장 유연성 있는 제약 조건(성능 이슈)
@@ -439,3 +441,264 @@ CREATE DATABASE db_name
     - `select pg_size_pretty(pg_relation_size('actor'));`
   - 테이블 스페이스 사이즈
     - `select pg_size_pretty(pg_tablespace_size('pg_default'))`
+
+## Managing Tables
+
+### Data types
+
+- Boolean
+  - 정의
+    - true, false, null
+  - 칼럼 값 자동변환
+    - `1, yes, y, t, true` -> `true`
+    - `0, no, n, false, f` -> `false`
+- Character
+  - `CHAR(n)`
+    - 스페이스 패딩 된 고정 길이 문자
+      - 칼럼에서 지정한 길이보다 짧게 값을 넣으면, 뒤를 스페이스로 채움
+  - `VARCHAR(n)`
+    - 가변길이의 문자열
+    - n개의 문자까지 저장할 수 있음
+    - 스페이스 패딩 없음
+  - `TEXT`
+    - 가변 길이의 문자열
+    - 길이의 제한이 없음
+- Numeric
+  - Integer
+    - `SMALLINT`
+      - 2바이트, -32,768 ~ 32,767
+    - `INT`
+      - 4바이트, -2,147,483,648 ~ 2,147,483,647
+    - `Serial`
+      - INT와 같으나, 자동적으로 `SERIAL`칼럼에 값들을 생성하고 옮김(AUTO_INCREMENT와 유사)
+  - Floating-point number
+    - `float(n)`
+      - 부동 소수점 숫자이며, 정확도가 적어도 n, 최대로 8바이트 이다.
+    - `real, float8`
+      - 4바이트 부동 소수점
+    - `numeric, numeric(p,s)`
+      - p digits with s number after the decimal point
+- Temporal
+  - DATE
+    - dates
+  - TIME
+    - time of day
+  - TIMESTAMP
+    - date & time
+  - TIMESTAMPTZ
+    - timestamp & timezone
+  - INTERVAL
+    - 시간의 기간
+- UUID
+  - UUID 데이터 타입
+  - SERIAL보다 보안상 안전
+- Array
+  - 문자열의 배열, 숫자의 배열등을 저장
+  - e.g
+    - days of the week
+    - months of the year
+- JSON
+  - `JSON`
+  - `JSONB`
+    - JSON데이터를 바이너리 형식으로 저장
+      - 가공이 빠름
+      - 삽입이 느림
+      - 인덱싱 지원
+- hstore
+  - key-value
+- 특별 타입
+  - box
+    - 직사각형 박스
+  - line
+    - 점의 집합
+  - point
+    - 숫자의 기하학적 페어
+  - lseg
+    - *line segment?*
+  - polygon
+    - 닫힌 geometric
+  - inet
+    - IP4 주소
+  - macaddr
+    - MAC 주소
+
+### Create table
+
+```sql
+CREATE TABLE account_role
+(
+  user_id integer NOT NULL,
+  role_id integer NOT NULL,
+  grant_date timestamp without time zone,
+  PRIMARY KEY (user_id, role_id),
+  CONSTRAINT account_role_role_id_fkey FOREIGN KEY (role_id)
+      REFERENCES role (role_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT account_role_user_id_fkey FOREIGN KEY (user_id)
+      REFERENCES account (user_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+```
+
+- 칼럼 제약
+  - `NOT NULL`
+  - `UNIQUE`
+    - NULL은 자체가 UNIQUE하므로 다수의 NULL값을 갖을 수 있음에 주의
+      - SQL표준에서는 한개만 허용
+  - `PRIMARY KEY`
+    - NOT NULL & UNIQUE 제약
+  - `CHECK`
+    - 데이터를 삽입하거나 업데이트 할 때
+      - e.g) 양수제약
+  - `REFERENCE`
+    - 다른 타이블에 있는 칼럼에 존재하는 칼럼의 값을 포함
+- 테이블 제약
+  - `UNIQUE (column_list)`
+    - 지정한 칼럼의 값을 유니크하게 하는 제약
+  - `PRIMARY KEY (column_list)`
+    - 다수의 칼럼으로 구성되는 primary key를 정의
+  - `CHECK (condition)`
+    - inserting, updating 데이터를 할 때, 조건을 체크
+  - `REFERENCES`
+    - 다른 테이블 칼럼에 값이 반드시 들어있도록 칼럼을 제약
+- `SELECT INTO`
+  - `SELECT * INTO TABLE actor4 FROM actor WHERE first_name LIKE 'N%';`
+    - actor 테이블에 있는 first_name이 N으로 시작하는 행들을 actor4 테이블을 새로 생성해서 복사
+- `CREATE TABLE ~ AS`
+  - `CREATE TABLE action_film AS SELECT * FROM film INNER JOIN film_category USING (film_id) WHERE category_id = 1;`
+    - action film을 뒤의 select query의 데이터를 이용하여 제작
+  - SELECT INTO 말고 이쪽이 더 바람직한 쿼리
+
+### Auto-increment column with SERIAL
+
+```sql
+CREATE TABLE table_name(
+  id SERIAL
+);
+
+-- 위와 아래는 동일함
+
+CREATE SEQUENCE table_name_id_seq;
+
+CREATE TABLE table_name (
+  id integer NOT NULL DEFAULT nextval('table_name_id_seq')
+);
+
+ALTER SEQUENCE table_name_id_seq
+OWNED BY table_name.id;
+```
+
+- sequence
+  - sequence of integer를 생성하는 특별한 데이터베이스 오브젝트
+  - 종류
+    - `SMALLSERIAL`
+      - 2바이트
+    - `SERIAL`
+      - 4바이트
+    - `BIGSERIAL`
+      - 8바이트
+  - 주의
+    - 칼럼에 대한 인덱스를 만들지는 않음(primary key 제약은 만듬)
+
+```sql
+CREATE TABLE fruits(
+  id SERIAL PRIMARY KEY,
+  name VARCHAR NOT NULL
+);
+```
+
+### PostgreSQL Sequences
+
+- sequence
+  - ordered list of integers
+  - 특정 스펙에 기반해서 정수의 수열을 생성하는 user-defined schema-bound object
+
+```sql
+CREATE TABLE order_details(
+    order_id SERIAL,
+    item_id INT NOT NULL,
+    product_id INT NOT NULL,
+    price DEC(10,2) NOT NULL,
+    PRIMARY KEY(order_id, item_id)
+);
+
+CREATE SEQUENCE order_item_id
+START 10 -- 10부터
+INCREMENT 10 -- 10씩 증가
+MINVALUE 10 -- 10이 최솟값
+OWNED BY order_details.item_id; -- ordered_details의 item_id 칼럼이 삭제되면 이 sequence도 삭제
+```
+
+## Managing Schemas
+
+### Schema
+
+sales schema 속의 staff 테이블
+
+![](./images/schema_example1.png)
+
+- Schema
+  - 개요
+    - 데이터베이스 오브젝트들(테이블, 뷰, 인덱스, 데이터 타입, 함수, 연산자)을 포함하는 네임스페이스
+    - 스키마의 오브젝트에 접근
+      - `schema_name.object_name` or
+      - search path를 설정
+    - 하나의 데이터베이스는 여러개의 스키마를 갖을 수 있으나 하나의 스키마는 한개의 데이터베이스에만 속함
+      - 서로 다른 스키마는 같은 이름의 다른 오브젝트를 갖을 수 있음
+  - 용도
+    - 데이터베이스 오브젝트를 조직화하는데에 사용
+      - 테이블을 논리적인 그룹으로 나누어 관리하기 쉽게 함
+    - 여러 유저가 서로를 방해하지 않고 하나의 데이터베이스를 사용할 수 있게 함
+- `public` schema
+  - 개요
+    - 새 데이터베이스를 만들 때 마다 `public`스키마를 만듬
+    - 어떠한 스키마 이름없이 오브젝트를 생성하더라도, PostgreSQL은 자동적으로 `public` 스키마로 자동적으로 넣어줌
+      - `CREATE TABLE table_name(...); <=> CREATE TABLE public.table_name(...);`
+  - schema search path
+    - schema name 없이 테이블을 참조하는 경우, schema search path안에 있는 처음으로 매칭하는 테이블을 접근
+    - search path에 있는 첫번째 스키마는 current schema
+      - `SELECT current_schema()`
+        - 보통은 public
+      - `SHOW search_path;`
+        - search path확인
+        - `"$user", public`
+          - `$user`는 첫번쨰 스키마로, 현재 유저와 같은 이름을 갖는 스키마를 말함
+- Schemas and privileges
+  - 개요
+    - 유저들은 각 유저가 갖고 있는 스키마의 오브젝트에만 접근 가능
+    - 권한을 주기 위해서는 유저에게 schema의 `USAGE` privilege를 주어야 함
+      - `GTANT USAGE ON SCHEMA schema_name TO user_name;`
+    - 유저에게 유저가 갖고 있지 않은 스키마에 오브젝트를 생성할 수 있게 하기 위하여 `CREATE`권한을 주어야 함
+      - `GRANT CREATE ON SCHEMA schema_name TO user_name;`
+
+### Create Schema
+
+- create schema
+  - currnet database에 새 schema를 생성
+  - `CREATE SCHEMA [IF NOT EXISTS] schema_name;`
+
+```sql
+CREATE SCHEMA scm
+    CREATE TABLE deliveries(
+        id SERIAL NOT NULL,
+        customer_id INT NOT NULL,
+        ship_date DATE NOT NULL
+    )
+    CREATE VIEW delivery_due_list AS
+        SELECT ID, ship_date
+        FROM deliveries
+        WHERE ship_date <= CURRENT_DATE;
+```
+
+### Alter Schema
+
+- alter schema
+  - `ALTER SCHEMA schema_name RENAME TO new_name;`
+    - OWNER & CREATE privilege가 필요
+  - `ALTER SCHEMA schema_name OWNER TO { new_owner | CURRENT_USER | SESSION_USER };`
+
+### Drop Schema
+
+- drop schema
+  - 스키마와 스키마에 배속된 모든 오브젝트를 제거
+  - `DROP SCHEMA [IF EXISTS] schema_name [ CASCADE | RESTRICT ]`
