@@ -8,6 +8,9 @@
 
 ## 의문
 
+- 어떨 때, DataSet으로 지정하고 어떨 때 DataElement로 지정해서 프로그래밍 해야하는가?
+  - 처음 DICOM object에는 여러 attribute들이 존재하므로, 그것은 DataSet으로 정의. 그 뒤로 attribute중에서 단순히 Tag에 Value만 갖는 것 말고, attribute속이 또 attribute로 구성되어 있으면 그것은 DataSet으로 정의해서 attribute를 관리
+
 ## 개요
 
 - DICOM 파일들(의학적 이미지, 레포트, 방사선치료 오브젝트)을 다루기 위한 파이썬 패키지
