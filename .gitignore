@@ -14,3 +14,9 @@ target/
 
 #??
 .DS_Store
+
+# pycache
+__pycache__
+
+# pkl file
+*.pkl
