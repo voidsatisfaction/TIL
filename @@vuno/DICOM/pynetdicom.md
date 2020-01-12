@@ -33,6 +33,7 @@
         - single class of 현실 오브젝트들을 나타냄
         - e.g) Print Job IOD
   - SOP Classes
+    - *구체적인 예시가 궁금함*
     - Service-Object Pair 클래스는 IOD와 DIMSE(DICOM Message Service Element) 서비스 그룹의 연합으로 정의 됨
     - 종류
       - Composite SOP Classes

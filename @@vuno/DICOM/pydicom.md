@@ -8,6 +8,9 @@
 
 ## 의문
 
+- 어떨 때, DataSet으로 지정하고 어떨 때 DataElement로 지정해서 프로그래밍 해야하는가?
+  - 처음 DICOM object에는 여러 attribute들이 존재하므로, 그것은 DataSet으로 정의. 그 뒤로 attribute중에서 단순히 Tag에 Value만 갖는 것 말고, attribute속이 또 attribute로 구성되어 있으면 그것은 DataSet으로 정의해서 attribute를 관리
+
 ## 개요
 
 - DICOM 파일들(의학적 이미지, 레포트, 방사선치료 오브젝트)을 다루기 위한 파이썬 패키지
@@ -46,7 +49,8 @@
   - 유저 코드에서 직접적으로 사용되지 않음
     - DICOM 키워드를 사용하여 할당하거나 dataelement를 읽을 때 자동적으로 생성되기 때문
   - python int의 확장판
-    - 1 DICOM tag가 4바이트가 되도록 강제함(group, element)
+    - 1 DICOM tag가 4바이트가 되도록 강제함
+      - `(group, element)` 의 형태
     - 2 DICOM keywod나 (group, element)와 같은 형식의 tuple로 생성가능
     - 3 group, element로 이루어짐
     - 4 `is_private` 속성은 해당 태그가 private인지 체크(그룹 번호가 홀수)
@@ -66,7 +70,7 @@ ds = pydicom.dcmread(filename)
 ds
 '''
 #으로 시작되는 내용은 나의 주석
-# DICOM 태그 숫자 / DICOM 키워드                     / ?? / 값
+# DICOM 태그 숫자 / DICOM 키워드          / Value Representation(VR) / 값
 
 # (0008) => 메타데이터
 (0008, 0012) Instance Creation Date              DA: '20030903'
