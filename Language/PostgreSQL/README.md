@@ -629,6 +629,92 @@ MINVALUE 10 -- 10이 최솟값
 OWNED BY order_details.item_id; -- ordered_details의 item_id 칼럼이 삭제되면 이 sequence도 삭제
 ```
 
+### Identity Column
+
+- identity column
+  - 개요
+    - 한 칼럼에 unique 값을 자동적으로 할당하도록 허락하는 constraint
+    - 내부적으로 `SEQUENCE` 오브젝트 사용
+
+```sql
+CREATE TABLE color (
+  color_id INT GENERATED ALWAYS AS IDENTITY,
+  color_name VARCHAR NOT NULL
+);
+
+INSERT INTO color (color_name)
+VALUES
+  ('Red');
+-- color_id는 언제나 자동적으로 unique하게 값이 생성됨(삽입할 때, 값을 지정하면 에러)
+```
+
+### Alter Table
+
+- alter table
+  - 개요
+    - 기존에 존재하는 테이블의 구조를 변경
+    - 구조 변경 내용
+      - 칼럼 더 만들기, 칼럼 삭제, 칼럼 이름 바꾸기, 칼럼 데이터 타입 바꾸기
+      - 칼럼에 초기값 만들기
+      - 칼럼에 check 제약 걸기
+      - 테이블 이름 바꾸기
+  - 예시
+    - `ALTER TABLE links ADD COLUMN active boolean;`
+    - `ALTER TABLE links ADD COLUMN target SET DEFAULT '_blank';`
+    - `ALTER TABLE table_name DROP COLUMN column_name;`
+      - `ALTER TABLE table_name DROP COLUMN column_name CASCADE;`
+        - 해당 칼럼과 그것과 연계되는 모든 오브젝트를 삭제
+    - `ALTER TABLE table_name ALTER COLUMN column_name [SET DATA] TYPE new_data_type;`
+    - `ALTER TABLE table_name RENAME COLUMN column_name TO new_column_name;`
+      - rename과 동시에, 다른 데이터베이스 칼럼의 reference들을 갱신해줌
+
+### Rename Table
+
+- rename table
+  - `ALTER TABLE IF EXISTS table_name RENAME TO new_table_name`
+
+### Drop Table
+
+- drop table
+  - 테이블을 데이터베이스로부터 제거
+  - `DROP TABLE [IF EXISTS] table_name [CASCADE | RESTRICT]`
+    - `CASCADE`는 테이블이 다른 오브젝트로부터 사용이 되어도 다른 오브젝트를 포함한 테이블까지 다 삭제시켜버림
+
+### Truncate Table
+
+- truncate table
+  - 데이터를 테이블에서 제거할 때, 규모가 큰 테이블이라면 `DELETE`보다 더 효율적
+    - Scanning 없이 데이터를 지우기 때문
+    - `VACUMN` 연산 없이도, storage를 바로 되찾아줌
+  - `ON DELETE` 트리거를 발동시키지 않음
+  - 예시
+    - `TRUNCATE TABLE invoices, customers;`
+
+### Temporary Table
+
+- temporary table
+  - 하나의 데이터베이스 세션 동안에만 존재하는 테이블
+    - PostgreSQL에서는 세션이 끝나면 자동적으로 drop됨
+    - 생성한 session에서만 볼 수 있음
+  - 생성 자체가 특별한 schema에서 되니, 생성시에 schema를 특정하지 말아야 함
+  - 예시
+    - `CREATE TEMP TABLE customers(customer_id INT)`
+
+### Copy Table
+
+- copy table
+  - 개요
+    - 테이블 구조와 데이터를 완벽하게 복사
+  - 예시
+    - 데이터와 구조 완벽하게 복사
+      - `CREATE TABLE new_table AS TABLE existing_table;`
+    - 구조만 복사
+      - `CREATE TABLE new_table AS TABLE existing_table WITH NO DATA;`
+    - 데이터(일부)만 복사
+      - `CREATE TABLE new_table AS SELECT * FROM existing_table WHERE condition;`
+    - 위의 예시들은 데이터나 구조를 복사하지만, 인덱스나 제약조건은 복사하지 않음에 주의
+      - 제약조건이나 인덱스를 추가하려면 `ALTER TABLE ... ADD UNIQUE ...`등으로
+
 ## Managing Schemas
 
 ### Schema
@@ -702,3 +788,7 @@ CREATE SCHEMA scm
 - drop schema
   - 스키마와 스키마에 배속된 모든 오브젝트를 제거
   - `DROP SCHEMA [IF EXISTS] schema_name [ CASCADE | RESTRICT ]`
+    - CASCADE
+      - 스키마와 그것에 속하는 모든 오브젝트, 그리고 그것에 의존하는 오브젝트들을 삭제
+    - RESTRICT
+      - 스키마가 비어있을 때만 삭제 가능
