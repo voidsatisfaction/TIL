@@ -5,10 +5,11 @@
   - UIDs
   - DICOM Information Model
   - Network with DICOM
+- 실전 예제
 
 ## 의문
 
-## 중요한 개념
+## 1. 중요한 개념
 
 - *여기서 나오는 중요한 컨셉은, DICOM 전체에서 통용되는 개념인지? 아니면, Pynetdicom에서 임의로 정의한 것인지?*
   - DICOM 전체에서 통용되는 개념
@@ -118,3 +119,111 @@
       - SOP Class Common Extended Negotiation
       - User Identity Negotiation
     - 위와 같은 items은 요청된 서비스 클래스에 따라 조건부로 필요함. 위와같은 추가적인 items이 포함된 Association negotiation은 extended negotiation이라고 함
+
+## 2. 실전 예제
+
+### Query retrieve service examples
+
+#### SCP
+
+```py
+import os
+
+from pydicom import dcmread
+from pydicom.dataset import Dataset
+
+from pynetdicom import AE, evt
+from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind
+
+instances = []
+
+def handle_find(event):
+    # event의 identifier가 dataset
+    ds = event.identifier
+
+    fdir = '/Users/yeongyumin/Desktop/public/DICOM-prac/lib/python3.7/site-packages/pydicom/data/test_files'
+
+    # instance가 존재하지 않으면 memory에 캐싱
+    if len(instances) == 0:
+        print("worked")
+        for fpath in os.listdir(fdir):
+            full_filename = os.path.join(fdir, fpath)
+
+            ext = os.path.splitext(full_filename)[-1]
+            # dcm파일 중에 읽을 수 있는 애들만 instances로 mount
+            if ext == '.dcm':
+                try:
+                    instances.append(dcmread(full_filename))
+                except:
+                    print('exception: ' + full_filename)
+
+    # QueryRetrieveLevel이 지정되어 있지 않으면(쿼리에 어디까지 정보를 제공할 것인지 결정) Failed 반환
+    if 'QueryRetrieveLevel' not in ds:
+        # Failure
+        print('Failed T-T')
+        # yield??
+        yield 0xC000, None
+        return
+
+    if ds.QueryRetrieveLevel == 'PATIENT':
+        if 'PatientName' in ds:
+            matching = [
+                # 애초에 DICOM Dataset에 PatientName이라는 필드가 없을 수도 있음
+                inst for inst in instances if 'PatientName' in inst and inst.PatientName == ds.PatientName
+            ]
+
+    for instance in matching:
+        if event.is_cancelled:
+            yield (0xFE00, None)
+            return
+
+        identifier = Dataset()
+        identifier.PatientName = instance.PatientName
+        identifier.QueryRetrieveLevel = ds.QueryRetrieveLevel
+
+        yield (0xFF00, identifier)
+
+handlers = [(evt.EVT_C_FIND, handle_find)]
+
+ae = AE()
+
+# 서포트 가능한 컨텍스트만 등록
+ae.add_supported_context(PatientRootQueryRetrieveInformationModelFind)
+
+# request가 왔을 때 핸들링할 핸들러 지정
+ae.start_server(('', 11112), evt_handlers=handlers)
+```
+
+#### SCU
+
+```py
+from pydicom.dataset import Dataset
+
+from pynetdicom import AE
+from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind
+
+ae = AE()
+
+ae.add_requested_context(PatientRootQueryRetrieveInformationModelFind)
+
+ds = Dataset()
+ds.PatientName = 'Lestrade^G'
+ds.QueryRetrieveLevel = 'PATIENT'
+
+assoc = ae.associate('127.0.0.1', 11112)
+
+if assoc.is_established:
+    responses = assoc.send_c_find(ds, PatientRootQueryRetrieveInformationModelFind)
+
+    for (status, identifier) in responses:
+        if status:
+            print('C-FIND query status: 0x{0:04x}'.format(status.Status))
+
+            if status.Status in (0xFF00, 0xFF01):
+                print(identifier)
+        else:
+            print('Connection timed out, was aborted or received invalid response')
+
+else:
+    print('Association rejected, aborted or never connected')
+```
