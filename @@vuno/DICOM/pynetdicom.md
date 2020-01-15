@@ -68,7 +68,7 @@ IOD / Services / SOP / SCS(Service Class Specification)의 관계
       - 종류
         - `C-STORE, C-GET, C-MOVE, C-FIND, C-ECHO`
       - 예시
-        - CT Image Storage SOP Class(CT Image IOD + DIMSE C-STORE service *(서비스가 결합되었다는건 무슨의미?) - FIND, GET, ECHO, STORE 등등...?*)
+        - CT Image Storage SOP Class(CT Image IOD + DIMSE C-STORE service(service는 데이터에 대한 오퍼레이션))
           - 하나의 CT Image Storage instance는 한명의 환자 CT스캔의 한조각의 정보를 저장
           - 완전한 스캔(하나의 시리즈)는 하나 또는 그 이상의 CT Image Storage SOP Class 인스턴스들로 구성(Study Instance UID와 Series Instance UID값은 동일하나, SOP Instance UID 값들은 다르다)
     - Normalised SOP Classes
@@ -80,8 +80,9 @@ IOD / Services / SOP / SCS(Service Class Specification)의 관계
         - 프린트 job의 추상(하나나 그 이상의 필름이 프린트 되기위한)
   - 모든 DICOM SOP 클래스는 각자의 UID를 갖고 있음
 - Service Classes
-  - 하나의 DICOM Service 클래스는 하나나 그 이상의 AE(Application Entity)들이 커뮤니케이션하는 서비스와 관련있는 SOP 클래스들의 그룹을 정의
-  - 서비스는 SOP 클래스 인스턴스들의 storage(Storage Service Class), DICOM connectivity의 verification(Verification Service Class), querying and SOP 인스턴스들의 retrieval(Query/Retrieve Service Class), 이미지의 printing(Print Management Service Class)과 다른것들을 포함
+  - 결론: IOD와 함께 SOP를 구성하기 위한, operation의 집합
+    - 하나의 DICOM Service 클래스는 하나나 그 이상의 AE(Application Entity)들이 커뮤니케이션하는 서비스와 관련있는 SOP 클래스들의 그룹을 정의
+  - 서비스는 SOP 클래스 인스턴스들의 storage(Storage Service Class), DICOM connectivity의 verification(Verification Service Class), querying and SOP 인스턴스들의 retrieval(Query/Retrieve Service Class), 이미지의 printing(Print Management Service Class)등 다른 operation들을 포함
   - Service Class User / Service Class Provider 는 AE 서비스 클래스 안에 있는 서비스들을 사용하거나 제공하는 것으로 구별됨
 
 ### Network with DICOM
@@ -100,6 +101,7 @@ IOD / Services / SOP / SCS(Service Class Specification)의 관계
       - Transfer Syntaxes
       - *ID value*
         - *이건 뭐지?*
+        - DICOM데이터 셋인듯
   - 특징
     - association requestor는 하나의 association당 여러개의 presentation contexts를 제안할 수 있음(최대 128)
     - presentation context구성
@@ -139,10 +141,11 @@ IOD / Services / SOP / SCS(Service Class Specification)의 관계
         - 컨텍스트가 지원되지 않거나, Requestor가 자신을 identify하지 않아서 리젝 될 수 있음
       - abort
         - no association
+        - *rejection / abort의 차이?*
 - Association Negotiation and Extended Negotiation
   - 개요
     - 표준 association negotiation은 일반적으로 presentation contexts에 의해서 제공된 매커니즘을 통한, abstract syntax/transfer syntax 컴비네이션들에 peer AE들이 동의하는 것을 포함
-    - 그러나 다른 경우, 그들이 선택적으로 필요로 하거나 서포트하는 서비스들과 긴으들에 대한 보다 자세한 정보를 AE들 사이에서 교환할 필요가 있을 수 있음
+    - 그러나 다른 경우, 그들이 선택적으로 필요로 하거나 서포트하는 서비스들과 기능들에 대한, 보다 자세한 정보를 AE들 사이에서 교환할 필요가 있을 수 있음
     - 그럴 경우에 additional user information items을 association request동안에 보냄으로써 니즈를 달성할 수 있음
       - Asynchronous Operations Window Negotiation
       - SCP/SCU Role Selection Negotiation
