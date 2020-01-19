@@ -5,8 +5,11 @@
 - 1 퍼셉트론
 - 2 신경망
 - 3 신경망 학습
+- 4 오차역전파법
 
 ## 의문
+
+- *numpy 사용법 익히기*
 
 ## 큰 그림
 
@@ -561,3 +564,271 @@ if __name__ == '__main__':
     - e.g)
       - 가중치 감소
       - 드롭아웃
+
+## 4. 오차역전파법
+
+### 4.1 계산 그래프
+
+- 개요
+  - 계산 과정을 그래프로 나타낸 것
+- 구성
+  - 노드
+    - 연산자
+  - 에지
+    - 값
+- 단어 설명
+  - 순전파(forward propagation)
+    - 계산을 왼쪽에서 오른쪽으로 진행하는 단계
+  - 역전파(backward propagation)
+    - 계산을 오른쪽에서 왼쪽으로 진행하는 단계
+- 국소적 계산
+  - 정의
+    - *자신* 과 직접 관계된 작은 범위의 계산
+- 장점
+  - ① 전체 계산이 아무리 복잡해도 각 노드에서는 단순한 계산에 집중하여 문제를 단순화 할 수 있음
+  - ② 중간 계산 결과를 모두 보관할 수 있음
+  - ③ 역전파를 통해 미분을 쉽게 계산가능
+    - **국소적 미분을 오른쪽에서 왼쪽으로 전달**
+
+### 4.2 연쇄법칙
+
+- 개요
+  - 국소적 미분을 전달하는 원리
+- 연쇄법칙
+  - 합성함수
+    - 정의
+      - 여러 함수로 구성된 함수
+    - 합성함수의 미분
+      - 합성 함수의 미분은 합성 함수를 구성하는 각 함수의 미분의 곱으로 나타낼 수 있다
+  - `역전파 == 연쇄법칙`
+
+### 4.3 역전파
+
+- 덧셈 노드
+  - `z = x + y`
+    - `dz/dx = 1`
+    - `dz/dy = 1`
+  - 특징
+    - 상류에서 전해진 미분에 1을 곱하여 하류로 흘림
+- 곱셈 노드
+  - `z = xy`
+    - `dz/dx = y`
+    - `dz/dy = x`
+  - 특징
+    - 상류의 값에 순전파 때의 입력 신호들을 서로 바꾼 값을 곱해서 하류로 보냄
+      - 국소적 미분 계산을 위해 순방향 입력 신호의 값이 필요하여 저장해둠
+
+### 4.4 단순한 계층 구현하기
+
+```py
+class MulLayer:
+  def __init__(self):
+    self.x = None
+    self.y = None
+
+  def forward(self, x, y):
+    self.x = x
+    self.y = y
+    out = x * y
+
+    return out
+
+  def backward(self, dout):
+    dx = dout * self.y
+    dy = dout * self.x
+
+    return dx, dy
+
+class AddLayer:
+  def __init__(self):
+    pass
+
+  def forward(self, x, y):
+    out = x + y
+    return out
+
+  def backward(self, dout):
+    dx = dout * 1
+    dy = dout * 1
+
+    return dx, dy
+```
+
+### 4.5 활성화 함수 계층 구현하기
+
+- 활성화 함수 계층
+  - ReLU
+  - Sigmoid
+    - 합성함수로 쪼개기
+      - `y = 1/(1+e^-x) = 1/x ◦ x+1 ◦ e^x ◦ -x`
+    - sigmoid 계층의 역전파
+      - `dL/dy * y^2 * e^-x = dL/dy * y * (1-y)`
+        - 순전파의 출력 만으로도 역전파를 계산할 수 있음
+
+```py
+class Relu:
+  def __init__(self):
+    self.mask = None
+
+  def forward(self, x):
+    self.mask = (x <= 0)
+    out = x.copy()
+    out[self.mask] = 0
+
+    return out
+
+  def backward(self, dout):
+    dout[self.mask] = 0
+    dx = douts
+
+    return dx
+
+class Sigmoid:
+  def __init__(self):
+    self.out = None
+
+  def forward(self, x):
+    out = 1 / (1 + np.exp(-x))
+    self.out = out
+
+    return out
+
+  def backward(self, dout):
+    dx = dout * (1.0 - self.out) * self.out
+
+    return dx
+```
+
+### 4.6 Affine/Softmax 계층 구현하기
+
+*체 위의 아핀공간이 무엇인가?*
+
+*Affine계층의 역전파의 경우 왜 행렬이 transpose되는가?*
+
+- Affine(아핀) 계층
+  - 개요
+    - 신경망의 순전파 때 수행하는 행렬의 곱은 기하학에서는 어파인 변환(affine transformation)이라고 함. 이 책에서 Affine 변환을 수행하는 처리를 'Affine 계층' 이라는 이름으로 구현
+  - `Y = X・W + B`
+    - `dL/dX = dL/dY・tW(전치 행렬)`
+      - `(N,2) = (N,3)・(3,2)`
+    - `dL/dW = tX・dL/dY`
+      - `(2,3) = (2,N)・(N,3)`
+
+```py
+class Affine:
+  def __init__(self, W, b):
+    self.W = W
+    self.b = b
+    self.x = None
+    self.dW = None
+    self.db = None
+
+  def forward(self, x):
+    self.x = x
+    out = np.dot(x, self.W) + self.b
+
+    return out
+
+  def backward(self, dout):
+    dx = np.dot(dout, self.W.T)
+    self.dW = np.dot(self.x.T, dout)
+    self.db = np.sum(dout, axis=0) # why np.sum(...)?
+
+    return dx
+```
+
+- Softmax-with-Loss 계층
+  - 개요
+    - 출력층에서 사용하는 소프트맥스 함수와 손실 함수인 교차 엔트로피 오차도 포함한 계층
+  - 참고
+    - 신경망에서 수행하는 작업
+      - 학습
+        - Softmax-with-loss 계층을 사용
+      - 추론
+        - Softmax-with-loss 계층을 사용하지 않음
+          - 가장 높은 점수만 알면 되므로
+  - 결과(3-class 분류의 경우)
+    - `(y1-t1, y2-t2, y3-t3)`
+      - 교차 엔트로피 오차라는 함수가 이렇게 설계되었음
+      - 이는 회귀의 출력층에서 사용하는 항등 함수의 손실 함수로 평균 제곱 오차를 이용 하는 이유도 같음. 그 경우도 `(y1-t1, y2-t2, y3-t3)`으로 말끔하게 떨어짐
+  - 구체적 예시
+    - 예1
+      - 정답 레이블 `(0, 1, 0)`, softmax계층의 출력 `(0.3, 0.2, 0.5)` 인경우
+      - 신경망이 제대로 인식하지 못하고 있음
+      - 역전파 = `(0.3, -0.8, 0.5)`
+      - softmax 계층의 앞 계층들은 그 큰 오차로부터 큰 깨달음을 얻게 됨
+    - 예2
+      - 정답 레이블 `(0, 1, 0)`, softmax계층의 출력 `(0.01, 0.99, 0)` 인경우
+      - 신경망이 제대로 인식하고 있음
+      - 역전파 = `(0.01, -0.01, 0)`
+      - 오차가 작으므로 학습하는 정도도 작아짐
+
+Softmax-with-Loss 계층의 구현
+
+```py
+class SoftmaxWithLoss:
+  def __init__(self):
+    self.loss = None
+    self.y = None
+    self.t = None
+
+  def forward(self, x, t):
+    self.t = t
+    self.y = softmax(x)
+    self.loss = cross_entropy_error(self.y, self.t)
+    return self.loss
+
+  def backward(self, dout=1):
+    batch_size = self.t.shape[0]
+    dx = (self.y - self.t) / batch_size
+
+    return dx
+```
+
+### 4.7 오차 역전파법 구현하기
+
+- 신경망 학습의 전체 그림
+  - 1단계 - 미니배치
+  - 2단계 - 기울기 산출
+    - 수치미분 대신 오차 역전파법 이용
+  - 3단계 - 매개변수 갱신(학습)
+  - 4단계 - 반복
+
+```py
+
+```
+
+- 위 코드 해설
+  - 신경망의 구성 요소를 계층으로 추상화한(모듈화) 덕분에, 깊은 신경망을 만들고 싶으면, 단순히 필요한 만큼 계층을 추가해 주면 됨
+- 오차역전파법으로 구한 기울기 검증하기
+  - 기울기 확인(gradient check)
+    - 수치 미분의 결과와 오차역전파법의 결과를 비교하여 오차역전파법을 제대로 구현했는지 검증
+
+```py
+(x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
+
+network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
+
+x_batch = x_train[:3]
+t_batch = t_train[:3]
+
+grad_numerical = network.numerical_gradient(x_batch, t_batch)
+grad_backprop = network.gradient(x_batch, t_batch)
+
+for key in grad_numerical.keys():
+  diff = np.average(np.abs(grad_backprop[key] - grad_numerical[key]))
+  print(key + ":" + str(diff))
+  # b1: 9.7e-13
+  # w2: 8.4e-13
+  # b2: 1.1e-10
+  # w1: 2.2e-13
+```
+
+- 이번 장에서 배운 내용
+  - ① 계산 그래프를 이용하면 계산 과정을 시각적으로 파악할 수 있다.
+  - ② 계산 그래프의 노드는 국소적 계산으로 구성된다. 국소적 계산을 조합해 전체 계산을 구성한다.
+  - ③ 계산 그래프의 순전파는 통상의 계산을 수행한다. 한편, 계산 그래프의 역전파로는 각 노드의 미분을 구할 수 있다.
+    - 합성함수의 chain rule
+  - ④ 신경망의 구성 요소를 계층으로 구현하여 기울기를 효율적으로 계산할 수 있다(오차역전파법)
+    - 모든 계층에서 forward / backward 메서드 구현
+  - ⑤ 수치 미분과 오차역전파법의 결과를 비교하면 오차역전파법의 구현에 잘못이 없는지 확인할 수 있다(기울기 확인)
