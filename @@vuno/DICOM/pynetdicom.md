@@ -9,9 +9,12 @@
 
 ## 의문
 
+- *애초에 normalized, composite IOD를 나눈 이유가 무엇인가?*
+  - 둘의 차이가 구체적으로 무엇이지?
+
 ## 1. 중요한 개념
 
-- *여기서 나오는 중요한 컨셉은, DICOM 전체에서 통용되는 개념인지? 아니면, Pynetdicom에서 임의로 정의한 것인지?*
+- 여기서 나오는 중요한 컨셉은, DICOM 전체에서 통용되는 개념인지? 아니면, Pynetdicom에서 임의로 정의한 것인지?
   - DICOM 전체에서 통용되는 개념
 
 *Study와 Series의 차이는?*
@@ -27,41 +30,64 @@
 
 ### DICOM Information Model
 
+IOD / Services / SOP / SCS(Service Class Specification)의 관계
+
+![](./images/network_with_dicom2.svg)
+
+의료 이미지들의 커뮤니케이션에 관계된 정보의 구조와 조직을 정의
+
 - Information Object Definition(IOD)
-  - 객체 지향 추상 데이터 모델
-    - e.g) Patient, Study, imaging Series, imaging Equipment
-  - 오브젝트 사이의 관계를 정의하기 위해서 사용
-    - Patient -> Studies(has a)
-    - Study -> Series(has a)
+  - 개요
+    - 객체 지향 추상 데이터 모델
+      - e.g) Patient, Study, imaging Series, imaging Equipment
+    - 오브젝트 사이의 관계를 정의하기 위해서 사용
+      - Patient -> Studies(has a)
+      - Study -> Series(has a)
+    - 실제 IOD 인스턴스들의 커뮤니케이션은 SOP 인스턴스들을 통해서 이루어짐
   - 종류
     - composite
       - 관련 현실 오브젝트"들"의 정보를 포함
         - e.g) CT Image IOD는 Patient, Study, Series, Equipment 등의 오브젝트들을 포함
     - normalised
-      - single class of 현실 오브젝트들을 나타냄
+      - single class of 현실 오브젝트들을 나타냄. 하나의 엔티티를 나타냄
       - e.g) Print Job IOD
-- SOP Classes
-  - *구체적인 예시가 궁금함*
-  - Service-Object Pair 클래스는 IOD와 DIMSE(DICOM Message Service Element) 서비스 그룹의 연합으로 정의 됨
+    - 위의 둘을 나눈 것은 어느정도 이해가 되는데, 왜 SOP에서도 Composite SOP Classes랑 normalized SOP Classes를 나누었는가?
+- SOP(Service-Object-Pair) Classes
+  - 구체적인 예시가 궁금함
+    - pynetdicom에서는
+      - `from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind \ ae.add_supported_context(PatientRootQueryRetrieveInformationModelFind)`
+        - 와 같이 SCP나 SCU에서 SOP class를 직접 presentation context의 abstract syntax로 지정
+        - ae객체에 presentational context지정
+  - 개요
+    - Service-Object Pair 클래스는 IOD와 DIMSE(DICOM Message Service Element) 서비스 그룹의 연합으로 정의 됨
+      - DIMSE Service Group
+        - 하나나 그 이상의 IOD에 적용가능한 operations / notifications을 나타냄(`STORE, GET, ...`)
   - 종류
     - Composite SOP Classes
       - Composite IOD들과 DIMSE-C 서비스 그룹의 결합
+      - 종류
+        - `C-STORE, C-GET, C-MOVE, C-FIND, C-ECHO`
       - 예시
-        - CT Image Storage SOP Class(CT Image IOD + DIMSE C-STORE service *(서비스가 결합되었다는건 무슨의미?)*)
+        - CT Image Storage SOP Class(CT Image IOD + DIMSE C-STORE service(service는 데이터에 대한 오퍼레이션))
           - 하나의 CT Image Storage instance는 한명의 환자 CT스캔의 한조각의 정보를 저장
           - 완전한 스캔(하나의 시리즈)는 하나 또는 그 이상의 CT Image Storage SOP Class 인스턴스들로 구성(Study Instance UID와 Series Instance UID값은 동일하나, SOP Instance UID 값들은 다르다)
     - Normalised SOP Classes
       - Normalised IOD들과 DIMSE-N 서비스 그룹의 결합
+      - 종류
+        - `N-EVENT-REPORT, N-GET, N-SET, N-ACTION, N-CREATE, N-DELETE`
       - 예시
         - Print Job SOP Class(Print Job IOD + DIMSE N-EVENT-REPORT + N-GET 서비스들)
         - 프린트 job의 추상(하나나 그 이상의 필름이 프린트 되기위한)
   - 모든 DICOM SOP 클래스는 각자의 UID를 갖고 있음
 - Service Classes
-  - 하나의 DICOM Service 클래스는 하나나 그 이상의 AE(Application Entity)들이 커뮤니케이션하는 서비스와 관련있는 SOP 클래스들의 그룹을 정의
-  - 서비스는 SOP 클래스 인스턴스들의 storage(Storage Service Class), DICOM connectivity의 verification(Verification Service Class), querying and SOP 인스턴스들의 retrieval(Query/Retrieve Service Class), 이미지의 printing(Print Management Service Class)과 다른것들을 포함
+  - 결론: IOD와 함께 SOP를 구성하기 위한, operation의 집합
+    - 하나의 DICOM Service 클래스는 하나나 그 이상의 AE(Application Entity)들이 커뮤니케이션하는 서비스와 관련있는 SOP 클래스들의 그룹을 정의
+  - 서비스는 SOP 클래스 인스턴스들의 storage(Storage Service Class), DICOM connectivity의 verification(Verification Service Class), querying and SOP 인스턴스들의 retrieval(Query/Retrieve Service Class), 이미지의 printing(Print Management Service Class)등 다른 operation들을 포함
   - Service Class User / Service Class Provider 는 AE 서비스 클래스 안에 있는 서비스들을 사용하거나 제공하는 것으로 구별됨
 
 ### Network with DICOM
+
+![](./images/network_with_dicom1.png)
 
 - Application Entities(AE)
   - DICOM AE는 DICOM 표준, IODs, service classes, dataset encoding/decoding을 지원하는 애플리케이션
@@ -73,25 +99,32 @@
     - 각 Presentation Context는 다음으로 구성
       - Abstract Syntax
       - Transfer Syntaxes
-      - ID value
+      - *ID value*
+        - *이건 뭐지?*
+        - DICOM데이터 셋인듯
   - 특징
     - association requestor는 하나의 association당 여러개의 presentation contexts를 제안할 수 있음(최대 128)
     - presentation context구성
       - 1개의 Abstract Syntax
+        - 적어도 어떤 데이터로 커뮤니케이션할지는 정해야 하는것은 trivially
       - 1개 이상의 Transfer Syntaxes
     - requestor는 여러개의 contexts를 같은 Abstract Syntax로 제안할 수 있음
     - association acceptor는 각 presentation context에 대해서 동의하거나 거절할 수 있음. 하지만 오직 하나의 Transfer Syntax가 presentation context마다 받아들여질 수 있음
     - acceptor는 받아들인 presentation context에 대해서 하나의 suitable Transfer Syntax를 선택한다
 - Abstract Syntax
   - 정의
-    - 결론: 이 데이터 무슨 데이터냐?
+    - 결론: 어떤 데이터에 대해서 communication할까? (Presentation Contexts - required)
       - e.g) `1.2.840.10008.5.1.4.1.1` - CT Image Storage
     - 데이터 요소들의 집합의 명세이자 그것들의 associated semantics이다.
     - 각각의 Abstract Syntax는 UID형식의 Abstract Syntax Name에 의해서 구별됨
-    - 일반적으로 DICOM과 함꼐 사용된 Abstract syntax names는 공적으로 지정된 SOP 클래스 UIDs(따라서, Abstract Syntax는 SOP 클래스 그 자체)이나, private abstract syntaxes역시도 사용을 허가함
+  - 데이터 지정
+    - 일반적으로 DICOM과 함께 사용된 Abstract syntax names는 공적으로 지정된 SOP 클래스 UIDs(따라서, Abstract Syntax는 SOP 클래스 그 자체)이나, private abstract syntaxes역시도 사용을 허가함
+      - 그래서 pynetdicom에서는...
+        - `from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind \ ae.add_supported_context(PatientRootQueryRetrieveInformationModelFind)`
+        - 위와 같이 SOP를 abstract context로 지정
 - Transfer Syntax
   - 정의
-    - 결론: 이 데이터 어떻게 인코딩 되어있냐?
+    - 결론: 어떻게 인코딩 된 데이터에 대해서 communication할까? (Presentation Contexts - optional)
       - e.g) `1.2.840.10008.1.2.4.50` - JPEG Baseline
     - 하나나 그 이상의 Abstract Syntaxes에 의해 정의된 데이터 엘리먼트를 나타내는 인코딩 룰의 집합을 정의
     - transfer syntaxes의 negotiation은 서포트할 수 있는 encoding 기술을 AE가 커뮤니케이션 할 수 있도록 허락함(byte ordering / compression등)
@@ -108,10 +141,11 @@
         - 컨텍스트가 지원되지 않거나, Requestor가 자신을 identify하지 않아서 리젝 될 수 있음
       - abort
         - no association
+        - *rejection / abort의 차이?*
 - Association Negotiation and Extended Negotiation
   - 개요
     - 표준 association negotiation은 일반적으로 presentation contexts에 의해서 제공된 매커니즘을 통한, abstract syntax/transfer syntax 컴비네이션들에 peer AE들이 동의하는 것을 포함
-    - 그러나 다른 경우, 그들이 선택적으로 필요로 하거나 서포트하는 서비스들과 긴으들에 대한 보다 자세한 정보를 AE들 사이에서 교환할 필요가 있을 수 있음
+    - 그러나 다른 경우, 그들이 선택적으로 필요로 하거나 서포트하는 서비스들과 기능들에 대한, 보다 자세한 정보를 AE들 사이에서 교환할 필요가 있을 수 있음
     - 그럴 경우에 additional user information items을 association request동안에 보냄으로써 니즈를 달성할 수 있음
       - Asynchronous Operations Window Negotiation
       - SCP/SCU Role Selection Negotiation
@@ -134,6 +168,9 @@ from pydicom.dataset import Dataset
 
 from pynetdicom import AE, evt
 from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind
+
+# IOD: PatientRootQueryRetrieveInformationModel
+# Service: Find(DIMSE Services)
 
 instances = []
 
@@ -204,6 +241,7 @@ from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind
 
 ae = AE()
 
+# association을 위한 presentaion context에 abstract syntax / transfer syntax 추가
 ae.add_requested_context(PatientRootQueryRetrieveInformationModelFind)
 
 ds = Dataset()
@@ -212,6 +250,7 @@ ds.QueryRetrieveLevel = 'PATIENT'
 
 assoc = ae.associate('127.0.0.1', 11112)
 
+# connection이 확립되고 나서 메시지를 주고 받을 수 있음
 if assoc.is_established:
     responses = assoc.send_c_find(ds, PatientRootQueryRetrieveInformationModelFind)
 

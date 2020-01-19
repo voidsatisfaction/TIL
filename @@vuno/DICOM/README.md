@@ -144,9 +144,10 @@ File Meta elements
 
 ### DICOM Services
 
-- **Services(*정확히 무엇을 의미하는건지?*)**
+- **Services**
   - 정의
-    - 대개는 네트워크를 통해 데이터를 전송하기 위한 서비스로 구성됨
+    - 결론: DICOM Network에서 presentation context를 지정할 떄, IOD와 결합하여, AEs사이에서, IOD에 어떤 동작을 가할 것인지를 명시(`GET, STORE, FIND, MOVE ....`)
+      - 대개는 네트워크를 통해 데이터를 전송하기 위한 서비스로 구성됨
     - file format for offline media도 나중에 추가됨
   - 종류
     - Store (service)
@@ -159,7 +160,7 @@ File Meta elements
     - Modality worklist
     - Modality performed procedure step
     - Print
-    - **Off-line media (files)**
+    - Off-line media (files)
       - DICOM media의 일부분에 속하는 경우
         - 의미없는 8문자
       - DICOM media의 일부분에 속하지 않는 경우
