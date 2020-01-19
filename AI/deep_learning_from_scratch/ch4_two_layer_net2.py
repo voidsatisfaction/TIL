@@ -1,18 +1,19 @@
 import numpy as np
-# from functions import sigmoid, softmax, cross_entropy_error, numerical_gradient
+
 from common.functions import *
 from common.gradient import numerical_gradient
 
 class TwoLayerNet:
-    def __init__(self, input_size, hidden_size, output_size, weight_init_std=0.01):
+    def __init__(self, input_size, hidden_size, output_size):
         self.params = {}
-        self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
+        # normally distributed number
+        self.params['W1'] = np.random.randn(input_size, hidden_size)
         self.params['b1'] = np.zeros(hidden_size)
 
-        self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
+        self.params['W2'] = np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
 
-    def predict(self, x):
+    def _predict(self, x):
         W1, W2 = self.params['W1'], self.params['W2']
         b1, b2 = self.params['b1'], self.params['b2']
 
@@ -23,18 +24,19 @@ class TwoLayerNet:
 
         return y
 
-    def loss(self, x, t):
-        y = self.predict(x)
-
-        return cross_entropy_error(y, t)
-
     def accuracy(self, x, t):
-        y = self.predict(x)
+        y = self._predict(x)
         y = np.argmax(y, axis=1)
         t = np.argmax(t, axis=1)
 
         accuracy = np.sum(y == t) / float(x.shape[0])
+
         return accuracy
+
+    def loss(self, x, t):
+        y = self._predict(x)
+
+        return cross_entropy_error(y, t)
 
     def numerical_gradient(self, x, t):
         loss_W = lambda W: self.loss(x, t)
@@ -79,8 +81,8 @@ if __name__ == '__main__':
 
     network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
 
-    # hyper-parameter
-    iters_num = 10000
+    # hyper-Parameters
+    iter_num = 100000
     train_size = x_train.shape[0]
     batch_size = 100
     learning_rate = 0.1
@@ -91,34 +93,39 @@ if __name__ == '__main__':
 
     iter_per_epoch = max(train_size / batch_size, 1)
 
-    for i in range(iters_num):
-        print(i)
+    for i in range(iter_num):
         # get mini-batch
         batch_mask = np.random.choice(train_size, batch_size)
         x_batch = x_train[batch_mask]
         t_batch = t_train[batch_mask]
 
-        # get gradient
         grad = network.gradient(x_batch, t_batch)
 
-        # update parameters
-        # (gradient decent)
         for key in ('W1', 'b1', 'W2', 'b2'):
             network.params[key] -= learning_rate * grad[key]
 
-        # the registration of the learning process
         loss = network.loss(x_batch, t_batch)
         train_loss_list.append(loss)
 
         if i % iter_per_epoch == 0:
+            print(i)
             train_acc = network.accuracy(x_train, t_train)
             test_acc = network.accuracy(x_test, t_test)
             train_acc_list.append(train_acc)
             test_acc_list.append(test_acc)
             print("train acc, test acc : " + str(train_acc) + ", " + str(test_acc))
 
-    import matplotlib.pylab as plt
-    x_axis = range(iters_num)
-    y_axis = train_loss_list
-    plt.plot(x_axis, y_axis)
-    plt.show()
+    # import matplotlib.pylab as plt
+    x_value = range(iter_num)
+    y_value = train_loss_list
+
+    print(test_acc_list[-1])
+
+    # plt.plot(x_value, y_value)
+    # plt.show()
+
+    # plt.plot(range(len(train_acc_list)), train_acc_list)
+    # plt.show()
+
+    # plt.plot(range(len(test_acc_list)), test_acc_list)
+    # plt.show()

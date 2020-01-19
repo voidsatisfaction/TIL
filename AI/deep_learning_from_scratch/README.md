@@ -531,7 +531,7 @@ if __name__ == '__main__':
         # update parameters
         # (gradient decent)
         for key in ('W1', 'b1', 'W2', 'b2'):
-            network.params[key] -= grad[key]
+            network.params[key] -= learning_rate * grad[key]
 
         # the registration of the learning process
         loss = network.loss(x_batch, t_batch)
