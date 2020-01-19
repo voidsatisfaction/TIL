@@ -6,6 +6,7 @@
 - 2 신경망
 - 3 신경망 학습
 - 4 오차역전파법
+- 5 학습 관련 기술들
 
 ## 의문
 
@@ -904,3 +905,145 @@ for key in grad_numerical.keys():
   - ④ 신경망의 구성 요소를 계층으로 구현하여 기울기를 효율적으로 계산할 수 있다(오차역전파법)
     - 모든 계층에서 forward / backward 메서드 구현
   - ⑤ 수치 미분과 오차역전파법의 결과를 비교하면 오차역전파법의 구현에 잘못이 없는지 확인할 수 있다(기울기 확인)
+
+## 5. 학습 관련 기술들
+
+- 가중치 매개변수의 최적값 탐색하는 최적화 방법
+- 가중치 매개변수 초깃값
+- 하이퍼파라미터 설정 방법
+- 오버피팅 대응
+  - 가중치 감소
+  - 드롭아웃
+- 배치 정규화
+
+### 5.1 매개변수 갱신
+
+- 최적화
+  - 정의
+    - 신경망 학습의 목적은 손실 함수의 값을 가능한 한 낮추는 매개변수를 찾는것인데, 이는 곧 매개변수의 최적값을 찾는 문제이며 이를 최적화라 함
+    - 매개변수의 공간은 매우 넓고 복잡해서 최적의 솔루션은 쉽게 못 찾아 정말 어려움
+  - SGD(확률적 경사 하강법)
+    - 매개변수의 기울기를 구해, 기울어진 방향으로 매개변수의 값을 갱신하는 일을 몇 번이고 반복해서 최적의 값에 다가감
+- 종류
+  - SGD
+  - Momentum
+  - AdaGrad
+  - Adam
+
+#### 1. SGD
+
+- 수식
+  - `W <- W - η*dL/dW`
+
+```py
+class SGD:
+  def __init__(self, lr=0.01):
+    self.lr = lr
+
+  def update(self, params, grads):
+    for key in params.keys():
+      params[key] -= self.lr * grads[key]
+
+# ... 코드의 사용
+
+network = TwoLayerNet(...)
+optimizer = SGD()
+
+for i in range(10000):
+  ...
+  x_batch, t_batch = get_mini_batch(...)
+  grads = network.gradient(x_batch, t_batch)
+  params = network.params
+  # 최적화를 담당할 클래스를 분리해서 구현하여 기능을 모듈화
+  optimizer.update(params, grads)
+  ...
+```
+
+- 단점
+  - 예시
+    - `f(x,y) = 1/20*x^2 + y^2`함수의 최솟값 찾기
+    - SGD에 의한 최적화 경로
+      - 심하게 굽이진 움직임으로 상당히 비효율적 움직임을 보여줌
+
+#### 2. Momentum
+
+- 개요
+  - 운동량을 뜻하는 단어로 물리와 관계가 있음
+- 수식
+  - `v <- av - η*dL/dW`
+  - `W <- W + v`
+  - 해석
+    - *`v`는 물리의 속도에 해당. 기울기 방향으로 힘을 ㅂ다아 물체가 가속된다는 물리 법칙을 나타냄*
+      - *어째서 그런 해석이 가능한거지?*
+    - 공간 바닥을 구르는 듯한 움직임을 보여줌
+    - `av`는 물체가 아무런 힘을 받지 않을 때 서서히 하강시키는 역할을 함(`a = 0.9`등의 값으로 설정)
+      - 물리에서의 지면 마찰이나 공기 저항에 해당
+
+```py
+class Momentum:
+  def __init__(self, lr=0.01, momentum=0.9):
+    self.lr = lr
+    self.momentum = momentum
+    self.v = None
+
+  def update(self, params, grads):
+    if self.v is None:
+      self.v = {}
+      for key, val in params.items():
+        self.v[key] = np.zeros_like(val)
+
+    for key in params.key():
+      self.v[key] = self.momentum*self.v[key] - self.lr * grads[key]
+      params[key] += self.v[key]
+```
+
+#### 3. AdaGrad
+
+- 개요
+  - 신경망 학습에서는 학습률(`η`)값이 매우 중요함
+    - 값이 너무 작으면 학습 시간이 너무 길어지고, 너무 크면 발산하여 학습이 제대로 이루어지지 않음
+  - AdaGrad는 각각의 매개변수의 맞춤형 학습률 값을 만들어줌
+    - 학습률 감소(learning rate decay) 기술을 활용
+- 수식
+  - `h <- h + dL/dW ◉ dL/dW`
+  - `W <- W - η・1/root(h)・dL/dW`
+  - 해석
+    - `h`는 기존 기울기 값을 제곱하여 계속 더해줌
+    - 매개변수 갱신에서`1/root(h)`를 곱해 학습률을 조정. 매개변수 중에서 많이 움직인(크게 갱신된) 원소는 학습률이 낮아진다는 뜻
+    - 즉, 학습률 감소가 매개변수의 원소마다 다르게 적용 됨
+    - 학습을 계속 진행할 수록 갱신 강도가 약해지므로 무한히 계속하면 어느 순간 갱신량이 0이 되어서 전혀 갱신하지 않게 됨
+      - RMSProp 라는 방법은 과거의 기울기는 서서히 잊고 새로운 기울기 정보를 크게 반영하는 방식. **지수이동평균(EMA)** 으로 과거 기울기의 반영 규모를 기하급수적으로 감소시킴
+
+```py
+class AdaGrad:
+  def __init__(self, lr=0.01):
+    self.lr = lr
+    self.h = None
+
+  def update(self, params, grads):
+    if self.h is None:
+      self.h = {}
+      for key, val in params.items():
+        self.h[key] = np.zeros_like(val)
+
+    for key in params.keys():
+      self.h[key] += grads[key] * grads[key]
+      # self.h[key]에 0이 들어있어도 나누는 사태를 막아줌
+      # 대부분 딥 러닝 프레임워크 에서는 이 값도 인수로 설정 가능
+      params[key] -= lr * grads[key] / (np.sqrt(self.h[key]) + 1e-7)
+```
+
+#### 4. Adam
+
+- 개요
+  - Momentum + AdaGrad
+    - 직관적으로 두 기법의 융합(정확한 설명은 아님)
+  - *하이퍼파라미터의 편향 보정이 진행됨*
+    - *편향 보정?*
+
+#### 어느 갱신 방법을 사용할 것인가
+
+- 풀어야 할 문제가 어느것이냐에 따라 다름
+- 하이퍼파리미터(학습률 등)의 설정에 따라서도 바뀜
+- 지금도 많은 연구에서 SGD를 사용하고, 모멘텀과 AdaGrad도 시도할 만한 가치가 있음
+  - 요즈음에는 Adam에 만족하는 사람들도 많음
