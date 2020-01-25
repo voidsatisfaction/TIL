@@ -157,7 +157,8 @@ File Meta elements
       - Service Class User(SCU - 클라이언트와 유사)가 Service Class Provider(SCP - 서버와 유사)에 이미지 파일을 로컬에서 지워도 되는지 확인하기 위함
     - Query / retrieve
       - 워크스테이션이 이미지의 리스트와 같은 것들을 찾을 때, 그리고 사진 archiving 시스템으로 부터 가져오는 것을 가능하게 함
-    - Modality worklist
+    - *Modality worklist*
+      - 이거 뭐지?
     - Modality performed procedure step
     - Print
     - Off-line media (files)
