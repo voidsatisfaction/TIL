@@ -135,6 +135,8 @@ patchStoreToAddCrashReporting(store);
 
 ```js
 function logger(store) {
+  // **여기서 next는 store를 갱신할 때 마다 새로 바뀌는가? 아니면 클로저 환경에서 고정되는가?**
+  // ****클로저 환경에서 고정됨(함수는 값?? 왜지?)****
   let next = store.dispatch;
 
   // 앞에서:
@@ -214,12 +216,17 @@ const applyMiddleware = (store, middlewares) {
     // dispatch를 덮어쓰면서 동작
     dispatch = middleware(store)(dispatch)
   );
+  store.dispatch = dispatch
 }
 
+// 미들웨어 적용은 위에서 아래 순서대로
+// 즉, logger나 thunk에서 에러가 나는경우, crashReporter를 가장 위로 배치해야지 Reporter가 에러를 catch할 수 있음
+
+// dispatch이후 lifecycle: crashReporter -> logger -> thunk
 let createStoreWithMiddleware = applyMiddleware(
-  thunk,
+  crashReporter,
   logger,
-  crashReporter
+  thunk,
 )(createStore);
 let todoApp = combineReducers(reducers);
 let store = createStoreWithMiddleware(todoApp);
