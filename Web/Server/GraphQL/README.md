@@ -6,10 +6,14 @@
   - GraphQL을 활용 할 수 있게 도와주는 다양한 라이브러리들
 - 쿼리와 변형
 - 스키마와 타입
+- Validation
+- Execution
 
 ## 의문
 
 - 쿼리에 필요한 함수는 서버사이드에 코드로 존재하는 것이겠지?
+  - 리졸버는 서버사이드에 코드로 존재
+- *클라이언트 사이드에서 데이터의 일부 필드만 질의하고, 서버사이드에서 데이터를 해당 질의의 구조에 맞춰서 데이터를 가져오는 것은, 설령 서버사이드에서 리졸버 안에서 모든 property를 반환한다고 하더라도, graphQL serverside engine이 알아서 질의한 필드만 json으로 반환해주는 원리인가?*
 
 ## 개요
 
@@ -54,16 +58,16 @@ REST API와 비교
     - 데이터의 source에 의존하지 않고 데이터를 가져오기만 하면 됨
   - 각각의 필드마다 구현해야 함
     - *리졸버 호출은 DFS로 되어있다?*
-  - 인자
-    - parent
+  - parameter
+    - `parent`
       - 연쇄 리졸버 호출에서 부모 리졸버가 리턴한 객체
-    - args
+    - `args`
       - 쿼리에서 입력으로 넣은 인자
-    - context
+    - `context`
       - 모든 리졸버에게 전달
       - 미들웨어를 통해 입력된 값들이 들어 있음
         - 로그인 정보 혹은 권한과 같은 정보들이 들어있음
-    - info
+    - `info`
       - 스키마 정보와 더불어 현재 쿼리의 특정 필드 정보를 가지고 있음
 - 인트로스펙션(introspection)
   - 서버 자체에서 현재 서버에 정의된 스키마의 실시간 정보를 공유할 수 있게 함
@@ -75,15 +79,16 @@ gql 자체는 쿼리 언어일 뿐. 그것을 구체적으로 활용 할 수 있
 
 - frontend with react
   - Relay
-- schema constructor
-  - graphql-js
-    - Nexus
-- ORM + utils with graphQL
-  - prisma
 - graphql Server
   - Graphql-yoga
 - full-stack
   - Apollo
+- utils
+  - schema constructor
+    - graphql-js
+      - Nexus
+  - ORM + utils with graphQL
+    - prisma
 
 ## 쿼리와 변형(Quries and Mutations)
 
@@ -100,7 +105,7 @@ gql 자체는 쿼리 언어일 뿐. 그것을 구체적으로 활용 할 수 있
   }
 }
 
-// resolver function
+// resolver function example
 Query: {
   paymentsByUser: async (parent, { userId }, context, info) => {
       const limit = await Limit.findOne({ where: { UserId: userId } })
@@ -470,7 +475,7 @@ type Query {
 }
 ```
 
-### Scalar types
+### Types
 
 - default
   - Int
@@ -485,6 +490,119 @@ type Query {
     - unique identifier
     - serialized in the same way as a String
       - not intended to be human readable
+  - Enumeration
+    - 허가된 값들의 특정 집합에서 하나만 선택할 수 있게 함
+  - Lists and Non-Null
+    - Non-Null
+      - !(argument 지정에서도 쓰임)
 - custom
+  - 데이터를 어떻게 serialize하고 deserialize하고 validate하는 것을 정해줘야 함
   - e.g
     - `scalar Date`
+
+### Interfaces
+
+- interface를 implement한 타입은 반드시 인터페이스에 정의된 구현을 포함해야 함
+- 서로 다른 타입의 오브젝트나 오브젝트의 집합을 반환하고 싶을 때 유용
+
+```
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+}
+
+type Human implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  appearsIn: [Episode]!
+  starships: [Starship]
+  totalCredits: Int
+}
+```
+
+### Union types
+
+- `union SearchResult = Human | Droid | Starship`
+  - `SearchResult`타입을 반환할 때, `Human`, `Droid`, `Starship`을 반환받을 수 있음
+
+### Input types
+
+- This is particularly valuable in the case of mutations, where you might want to pass in a whole object to be created
+
+```
+input ReviewInput {
+  stars: Int!
+  commentary: String
+}
+
+{
+  "ep": "JEDI",
+  "review": {
+    "stars": 5,
+    "commentary": "This is a great movie!"
+  }
+}
+
+mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
+  createReview(episode: $ep, review: $review) {
+    stars
+    commentary
+  }
+}
+
+{
+  "data": {
+    "createReview": {
+      "stars": 5,
+      "commentary": "This is a great movie!"
+    }
+  }
+}
+```
+
+## Validation
+
+- 타입 시스템을 이용하여, GraphQL 쿼리가 valid인지 아닌지 확인 가능
+
+## Execution
+
+- 그래프 큐엘의 쿼리의 각각의 필드를 함수나 메서드라고 생각할 수 있음
+  - resolver
+- scalar value를 반환할 때 까지 계속 재귀적으로 반복함
+
+### Root fields & resolvers
+
+```js
+Query: {
+  human(obj, args, context, info) {
+    // obj: 이전 resolver 오브젝트
+    // args: GraphQL 쿼리에 제공된 인자
+    // context: 모든 resolver가 공유하는 데이터, 로그인 된 유저 정보, 데이터베이스 접속 등
+    // info: field-specific 정보(스키마에 관한)
+    return context.db.loadHumanByID(args.id).then(
+      userData => new Human(userData)
+    )
+  }
+}
+
+Human: {
+  name(obj, args, context, info) {
+    return obj.name
+  }
+
+  // n+1문제?
+  // domain로직에서 데이터 스트럭쳐를 전부 구현해두고, 단순 프로퍼티만 반환하기?
+  starships(obj, args, context, info) {
+    return obj.starshipIDs.map(
+      id => context.db.loadStarshipByID(id).then(
+        shipData => new Starship(shipData)
+      )
+    )
+  }
+}
+```
+
+- Root type(Query type)
