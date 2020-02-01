@@ -15,9 +15,12 @@
 
 ## 의문
 
-- 함수의 경우 스택 세그먼트를 사용하면 되는데, 실행 흐름은 어떻게 관리되는가?
-- Go언어의 Slice의 경우에는 어떤 세그먼트의 메모리를 사용하는가?
+- *함수의 경우 스택 세그먼트를 사용하면 되는데, 실행 흐름은 어떻게 관리되는가?*
+- *Go언어의 Slice의 경우에는 어떤 세그먼트의 메모리를 사용하는가?*
   - array를 확장 시켜나가니, 그냥 stack인지?
+  - 내장 구현이 struct로 되어있으니 heap?
+    - 근데 struct라고 해도 모든 필드의 타입이 선언되어있으므로, stack?
+- 클로저의 변수는 stack에 저장되는가? heap에 저장되는가? 클로저의 변수가 object일 때에는 어떻게 되는가?
 
 ## 용어 참고
 
@@ -251,7 +254,7 @@ int main(int argc, char* argv[])
 - 전역 변수
   - Data Segment 이미지 안에 매핑
   - 프로그램이 종료되지 않는 이상 항상 같은 메모리 공간에 맵핑 & 그 주소로 접근 가능
-- 지역 변수
+- 지역 변수(스택에 저장된 데이터)
   - Stack Segment 동적 할당
     - 지역 변수의 할당은 동적이나, 스택 세그먼트의 크기는 컴파일 타임에 정해짐
   - ebp라는 레지스터를 매개로 지정
@@ -260,6 +263,9 @@ int main(int argc, char* argv[])
       - 함수 내의 변수들은 순서가 정해져 있으므로, 해당 변수가 맵핑된 시작 주소를 알면 상대적인 순서로 위치 알 수 있음
       - 시작 주소는 SP가 현재 가리키고 있는 주소
     - 스택 포인터에서부터 상대적인 거리를 이용해 변수를 접근
+- stack segment
+  - 멀티 스레딩 애플리케이션은 각 thread마다 stack을 갖고 있음
+  - stack segment의 변수는 이미 정해져있고, finite하고 static(컴파일 타임에 이미 데이터의 크기가 정해짐)
 
 ## 힙 세그먼트
 
@@ -286,25 +292,29 @@ C와 같은 고등언어의 경우에는 세그먼테이션을 컴파일러가 �
           - 텍스트의 중간 글자를 삭제하면 그 뒤의 글자들을 다 1칸씩 배열의 뒤로 옮겨줘야 함
     - 방법 2
       - 배열이 아닌 링크드 리스트 활용(이때, `malloc`을 사용)
+      - 힙 segment의 등장
 
 ![](./images/memory_division/heap_segment4.png)
 
-### 힙 세그먼트 detail
+### 힙 세그먼트
 
 - 힙
-  - 프로그램이 실행되면서 필요할 때마다 동적으로 메모리를 할당할 수 있는 공간
+  - 프로그램이 실행되면서 필요할 때마다 **동적으로 메모리를 할당** 할 수 있는 공간
   - 필요 예제
     - 얼마만큼의 데이터를 입력 받을 지 모르는 경우
     - 중간중간 데이터가 갱신되며 한정된 메모리 안에서 새로운 데이터를 사라진 데이터가 차지한 공간에 맵핑 시키는 작업
+  - 하나의 프로세스안에서 여러 스레드가 힙을 공유
+  - dynamic한 성질 때문에 다루기가 힘들고, 메모리 관리 문제가 발생하는 원인이 되는 경우가 많음. 그래서 **언어 자체에서 자동 메모리 관리 솔루션을 도입하는 경우가 많음**
+  - 일반적으로 힙 세그먼트에 저장되는 데이터
+    - global variables, reference types(objects, strings, maps, 다른 복잡한 데이터 타입)
+  - 할당된 heap 영역보다 프로그램이 더 데이터를 많이 사용하면 `out of memory errors`가 발생
+  - **보통 메모리 관리라고 하면, heap memory를 관리하는 것에 대한 것을 다룸**
 - 힙 vs 스택
   - 스택은 엄밀한 의미에서 동적 할당이라고 할 수 없음
     - 실행하는 함수의 입장에서 생각
     - 프로그램을 작성하고 컴파일 하기 전에 이미 결정나는 정적 변수의 하나
   - 함수의 내부에서는 여전히 변수를 동적으로 할당할 수 없음
     - 키보드 입력을 받아서 그 때마다 새로운 글자를 위한 변수를 할당하려 해도 방법이 없음
-
-![](./images/memory_division/heap_segment1.png)
-
 - 힙의 동적 할당 방식(OS나 컴파일러에 따라 다름)
   - 프로그램 실행
   - 힙 공간 확보
@@ -328,3 +338,82 @@ C와 같은 고등언어의 경우에는 세그먼테이션을 컴파일러가 �
 ![](./images/memory_division/heap_segment3.png)
 
 **C에는 다양한 동적 메모리 할당 함수가 존재. >> 책 내용 참조**
+
+### Memory management
+
+Mark & Sweep GC
+
+![](./images/memory_division/gc1.gif)
+
+- Memory management
+  - Manual
+    - 메모리를 할당하는 것과 free하는 것이 프로그래머의 손에 달려있음
+      - `malloc, realloc, calloc, free`
+  - Automatic
+    - 현대 언어에서는 메모리 할당과 관련해서 자동적으로 관리해주는 경우가 많음
+    - Garbage collection(GC)
+      - 사용되지 않는 메모리 할당을 freeing하므로써 heap memory를 관리
+      - 단점
+        - GC 프로세스가 특정 간격으로 실행되고, 그래서 pause times라는 작은 오버헤드가 발생
+
+#### GC(Garbage Collector)
+
+![](./images/memory_division/heap_segment1.png)
+
+- Mark & Sweep GC(Tracing GC)
+  - 개요
+    - 두개의 페이즈로 이루어진 가비지 컬렉션 알고리즘
+      - ① 현재 사용되고 있는(alive) 오브젝트를 마킹
+      - ② 사용되지 않는 오브젝트를 free함
+  - 채택하고 있는 언어
+    - JVM(다른 GC알고리즘 선택 가능), C#, Ruby, JavaScript(V8은 Reference counting GC도 도입), Golang
+    - C & C++에서도 외부 라이브러리를 도입하면 사용가능
+- Reference counting GC
+  - 개요
+    - 모든 오브젝트가 변경 될 때 reference count라는 것을 갖고, reference count는 변경을 하기 위해서 참조될 때 늘어나거나 줄어든다. 그리고 count가 0이 되면 가비지 컬렉션이 진행
+    - *cyclic references* 를 다룰 수 없기 때문에 매우 바람직하다고는 할 수 없음
+  - 채택하고 있는 언어
+    - PHP, Perl, Python
+    - 보통은 다른 GC도 함께 사용
+- Resource Acquisition is Initialization(RAII)
+  - 개요
+    - *하나의 오브젝트의 메모리 할당은 오브젝트의 lifetime(생성부터 제거까지)에 묶여있음*
+      - 정확한 의미?
+  - 채택하고 있는 언어
+    - C++, Ada, Rust
+- Automatic Reference Counting(ARC)
+  - 개요
+    - Reference Counting GC와 비슷하나, 런타임 프로세스중에 특정 간격으로 실행하는 것이 아니라, `retain`, `release`라는 명령어가 컴파일 타임에 코드에 삽입됨
+    - 프로그램 자체가 멈추는 것이 아닌, 프로그램 실행중에 retain / release 명령어를 만나면 자연스럽게 실행하면서 count가 0인 오브젝트를 free
+    - cyclic references를 다룰 수 없어서, 개발자가 특정 키워드를 이용해서 다뤄줘야 함
+  - 채택하고 있는 언어
+    - Clang compiler, Objective C, Swift
+- *Ownership*
+  - 개요
+    - RAII와 ownership model의 결합
+    - any value must have a variable as its owner(and only one owner at a time) when the owner goes out of scope the value will be dropped freeing the memory regardless of it being in stack or heap memory.
+  - 채택하고 있는 언어
+    - Rust
+
+### V8의 메모리 관리
+
+하나의 Resident Set의 구조
+
+![](./images/memory_division/v81.png)
+
+V8 엔진의 메모리 사용(stack & heap)
+
+![](./images/memory_division/v82.png)
+
+- V8엔진
+  - 개요
+    - JavaScript가 single-threaded 이므로, V8은 single process per JS Context
+      - Service Worker를 사용하면, 새 V8 process를 worker마다 생성할 것임
+    - 동작하는 프로그램은 언제나 V8 프로세스 안에서 할당된 메모리에 의해서 표현됨(**Resident Set**)
+  - Heap Memory
+    - V8이 오브젝트나 동적 데이터를 저장하는 장소
+    - GC가 동작하는 구역
+      - GC는 Young and Old space에서만 메모리 관리
+  - Stack
+    - V8 프로세스 당 하나의 stack이 존재
+    - static data가 저장됨
