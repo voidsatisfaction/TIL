@@ -18,9 +18,10 @@
   - 성질
     - `mu: V x ... x V -> F`가 k-linear form 일 때, `∀v,w∈V, mu(..., v, ..., w, ...) = -mu(..., w, ..., v, ...)`
 - 정리
-  - `det(In) = det(e1, ..., en) = 1`을 만족하는 alternating n-linear form `det: F^n x ... x F^n -> F`는 존재하고 유일하다. `det(A) = |A|`의 표기법도 사용한다
+  - **`det(In) = det(e1, ..., en) = 1`을 만족하는 alternating n-linear form `det: F^n x ... x F^n -> F`는 존재하고 유일하다. `det(A) = |A|`의 표기법도 사용한다**
     - `n=2`인 경우
     - `n=3`인 경우
+- **결국 det가 존재하고 유일하다는 것** 을 보이는 것이 이번 장의 목표이며, 이를 보이기 위해서는 `det(e1, ..., en)` 과 같은 값을 분석할 수 있어야 한다. 여기서 det는 alternating n-linear form이므로, `det(e1, ..., ej, ..., ei, ..., en) = det(e1, ..., ei, ..., ej, ..., en) = |In| = 1 (by det의 정의)` 인 것을 효율적으로 보여줄 수 있어야 하며, 이를 가능하게 하는 것이 **symmetric group** 이다.
 
 ## 6.2 Symmetric Group
 
@@ -67,6 +68,7 @@ cycle notation / transposition
         - `(t(0,0,1) t(1,0,0) t(0,1,0))`
     - 성질
       - `σ=(i,j) => I_σ = I_[i]<->[j]`
+        - i열과 j열 자리 바꾸기
     - 관찰(`σ,τ∈Sn`)
       - ① I_σ의 j-th column은 `e_σ(j)`즉, `I_σ = (e_σ(1), ..., e_σ(n))`
       - ② `A∈Mnxn(F) => A・I_σ = ([A]^σ(1), ..., [A]^σ(n))`
@@ -76,3 +78,48 @@ cycle notation / transposition
       - ③, ④, ⑤ 는 **symmetric group Sn과 Mnxn(F)의 subset `{I_σ ∈ Mnxn(F) | σ∈Sn}`이 곱셈에 관하여 같은 구조** 를 갖고 있음을 말하고 있음
         - *곱셈에 대한 같은 구조라는게, 곱셈에 대하여 bijection인 isomorphism이 존재한다는 것인가?*
         - 행렬과 선형사상이 같은 것이라면, permutation에 대응하는 선형사상도 있어야 할 것
+  - permutation operator
+    - 정의
+      - `Bv = {v1, ..., vn}`이 V의 고정된 ordered basis이고, `σ∈Sn`일 때
+      - Linear Extension Theorem을 이용하여, 선형사상 `P_σ: V -> V`를 `P_σ(vi) = v_σ(i) (i=1, ..., n)`인 `P_σ`
+    - 주의
+      - `P_σ`는 ordered basis `Bv`의 선택에 dependent함
+    - 관찰(`σ,τ∈Sn`)
+      - ① `[P_σ]_Bv^Bv = I_σ`
+      - ② `P_σ◦P_τ = P_(σ◦τ)`
+      - ③ `(P_σ)^-1 = P_(σ^-1)`
+      - ④ `P_σ = P_τ => σ = τ`
+  - 결론
+    - *symmetric group `Sn`과 permutation matrix, permutation operator 는 모두 곱셈에 관하여 같은 구조를 갖고 있음을 알 수 있다*
+      - 같은 구조가 뭔데?
+- `L∈L(V,V)`일 때, `[L]_Bv^Bv`와 `[L]_Bvσ^Bvσ`를 비교해 보자 (`Bv = {v1, ..., vn}`이 V의 ordered basis이고, `σ∈Sn`)
+  - ① `[L]_Bvσ^Bvσ = [I]_Bvσ^Bv・[L]_Bv^Bv・[L]_Bv^Bvσ = (I_σ)^-1・[L]_Bv^Bv・I_σ`
+  - ② `σ = (1,2)∈S3, [L]_Bv^Bv = (aij) (aij∈F), [L]_Bvσ^Bvσ = [L]_Bv^Bv를 첫번째 열과 두번째 열을 바꾸고, 첫번쨰 행과 두번쨰 행을 바꾼 것과 같음 (행과 열의 변환은 순서 상관 없음 - 결합법칙)`
+  - ③ `[L]_Bv^Bv = diag(λ1, λ2, λ3) (λi∈F) => [L]_Bvσ^Bvσ = diag(λ2, λ1, λ3) = diag(λσ(1), λσ(2), λσ(3))`
+    - `λi∈F, (i,i)-성분이 λi인 (nxn)-대각행렬을` `diag(λ1, ..., λn)`으로 표기한다
+    - `ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`임을 증명
+
+## 6.3 Determinant의 정의 1
+
+*매우 어려운 구간*
+
+**`det(In) = det(e1, ..., en) = 1`을 만족하는 alternating n-linear form `det: F^n x ... x F^n -> F`는 존재하고 유일하다.** 의 증명을 해보자!!
+
+- 구체적 예시
+  - `A = M3x3(F), det(A) = det(a11e1+a21e2+a31e3, a12e1+a22e2+a32e3, a13e1+a23e2+a33e3) = a11det(e1, ...) + a21det(e2, ...) + a31det(e3, ...) (∵ det is n-linear form)`
+  - `(e3, e2, e4, e1) -> (e3, e2, e1, e4) -> (e1, e2, e3, e4)`
+    - determinant의 논의 에서나온 위의 분석
+    - `σ = (1, 3, 4), (1,3)◦((1,4)◦σ) = id` or `σ = (1,4)^-1◦(1,3)^-1 = (1,4)◦(1,3)` 이고
+    - 따라서 `det(e3, e2, e4, e1) = (-1)^2・det(I) = sgn(σ)・det(I) = 1`
+      - *여기에서 `det(e3, e2, e4, e1)`이 도출된 배경은?*
+- 관찰
+  - ① `D: Mnxn(F) -> F`가 위의 정리의 조건을 만족한다면, `A∈Mnxn(F)`이고 `σ∈Sn`일 때, 다음이 성립
+    - *`D([A]^σ(1), ..., [A]^σ(n)) = sgn(σ)・D([A]^1, ..., [A]^n) = sgn(σ)・D(A)`*
+    - *이거 왜죠?*
+  - ② `D(e_σ(a), ..., e_σ(n)) = sgn(σ)`
+- 정리
+  - `det: Mnxn(F) -> F`는 다음과 같이 주어진다
+    - `det(A) = |A| = det(aij) = sigma_{σ∈Sn}{sgn(σ)・a_σ(1),1・a_σ(2),2 ... a_σ(n),n}`
+      - 애초에 이건 어떻게 증명? - 일단 3x3 matrix까지는 손으로 해봤으나...
+        - 그 증명이 바로 옆 페이지에 나옴(꿀잼)
+        - 그러니까 귀납적(혹은 직관적 혹은 천재적?!)으로 미리 `det`의 식을 예측하고 이 식이 `det`의 조건을 만족함을 보인 후에, uniqueness를 보이는 식으로 전개
