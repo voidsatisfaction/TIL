@@ -21,6 +21,10 @@
   - 내장 구현이 struct로 되어있으니 heap?
     - 근데 struct라고 해도 모든 필드의 타입이 선언되어있으므로, stack?
 - 클로저의 변수는 stack에 저장되는가? heap에 저장되는가? 클로저의 변수가 object일 때에는 어떻게 되는가?
+  - stack에 저장되나, 모던 언어에서의 stack은 단순히 memory의 array형태가 아니라 리스트도 결합된 형태라서 그러한 형태로 저장
+    - 그래도 더 자세한 이해?
+      - [참고1](https://stackoverflow.com/questions/29225834/where-are-variables-in-a-closure-stored-stack-or-heap)
+      - [참고2](https://stackoverflow.com/questions/26061856/javascript-cant-access-private-properties/26063201#26063201)
 
 ## 용어 참고
 
@@ -265,6 +269,12 @@ int main(int argc, char* argv[])
     - 스택 포인터에서부터 상대적인 거리를 이용해 변수를 접근
 - stack segment
   - 멀티 스레딩 애플리케이션은 각 thread마다 stack을 갖고 있음
+    - 당연한 것이, thread마다 local execution context가 존재하므로, 스레드마다 stack이 존재해서 local variable을 컨트롤 할 수 있어야 함
+    - c.f) heap의 경우에는 일반적으로, 두개의 스레드가 동시에 힙에 접근하려하면, 하나를 허용하고 나머지 하나를 blocking하여 사용(thread-safe)
+      - 일반적으로는 ok이나, 다양한 스레드가 힙을 자주 사용하는 경우가 발생하면 애플리케이션의 성능이 저하됨
+      - 스레드마다 heap을 배정하여 locking을 방지하는 경우도 있음
+      - TLS(Thread Local Storage)라는 개념도 있음
+        - [참고](https://en.wikipedia.org/wiki/Thread-local_storage)
   - stack segment의 변수는 이미 정해져있고, finite하고 static(컴파일 타임에 이미 데이터의 크기가 정해짐)
 
 ## 힙 세그먼트
