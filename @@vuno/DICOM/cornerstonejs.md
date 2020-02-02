@@ -6,7 +6,9 @@
 ## 개요
 
 - 웹 기반 medical imaging platform
-  - 웹 뷰어 역할을 한다고 생각하면 됨
+  - DICOM 파일의 웹 뷰어 역할
+    - 히트맵 표현
+    - viewport 조작 등이 가능
 
 ## 컨셉
 
