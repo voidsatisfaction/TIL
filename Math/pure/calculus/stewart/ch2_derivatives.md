@@ -50,3 +50,12 @@ higher derivatives
     - f'''' 역시 정의 가능
 
 ## 2.3 미분 공식
+
+- `d(c)/dx = 0`
+- `d(x^n)/dx = nx^(n-1) (n∈R)`
+- New Derivatives from Old
+  - `d(cf(x))/dx = c・df/dx (단, c는 상수이고, f는 미분가능)`
+  - `d(f(x)+g(x))/dx = df/dx + dg/dx (단, f,g는 미분가능)`
+  - `d(f(x)・g(x))/dx = f(x)g'(x) + f'(x)g(x) (단, f,g는 미분가능)`
+  - `d(f(x)/g(x))/dx = (g(x)・df/dx - f(x)・dg/dx) / g(x)^2 (단, f,g는 미분가능)`
+  - **어떠한 polynomial도 R에서 미분가능 ∧ 어떠한 유비함수도 해당 정의역에서 미분가능**
