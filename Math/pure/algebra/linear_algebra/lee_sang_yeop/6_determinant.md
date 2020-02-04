@@ -21,7 +21,7 @@
   - **`det(In) = det(e1, ..., en) = 1`을 만족하는 alternating n-linear form `det: F^n x ... x F^n -> F`는 존재하고 유일하다. `det(A) = |A|`의 표기법도 사용한다**
     - `n=2`인 경우
     - `n=3`인 경우
-- **결국 det가 존재하고 유일하다는 것** 을 보이는 것이 이번 장의 목표이며, 이를 보이기 위해서는 `det(e1, ..., en)` 과 같은 값을 분석할 수 있어야 한다. 여기서 det는 alternating n-linear form이므로, `det(e1, ..., ej, ..., ei, ..., en) = det(e1, ..., ei, ..., ej, ..., en) = |In| = 1 (by det의 정의)` 인 것을 효율적으로 보여줄 수 있어야 하며, 이를 가능하게 하는 것이 **symmetric group** 이다.
+- **결국 det가 존재하고 유일하다는 것** 을 보이는 것이 이번 장의 목표이며, 이를 보이기 위해서는 `det(e1, ..., en)` 과 같은 값을 분석할 수 있어야 한다. 여기서 det는 alternating n-linear form이므로, `det(e1, ..., ej, ..., ei, ..., en) = -det(e1, ..., ei, ..., ej, ..., en) = -|In| = -1 (by det의 정의)` 인 것을 효율적으로 보여줄 수 있어야 하며, 이를 가능하게 하는 것이 **symmetric group** 이다.
 
 ## 6.2 Symmetric Group
 
@@ -57,8 +57,8 @@ cycle notation / transposition
     - `σ∈Sn, sgn(σ)=1 => σ는 even permutation ∧ sgn(σ)=0 => σ는 odd permutation`
   - alternating group
     - `An = {σ∈Sn | sgn(σ)=1}`
-- symmetric group의 다른 관점
-  - permutation matrix
+- **symmetric group** 의 다른 관점
+  - **permutation matrix**
     - 정의
       - `I_σ = [I]_Bv^Bv_σ`
         - `Bv = {v1, ..., vn}`이 V의 ordered basis ∧ `σ∈Sn`, 새로운 ordered basis `Bv_σ = {v_σ(1), ..., v_σ(n)}`을 생각하자.
@@ -78,7 +78,7 @@ cycle notation / transposition
       - ③, ④, ⑤ 는 **symmetric group Sn과 Mnxn(F)의 subset `{I_σ ∈ Mnxn(F) | σ∈Sn}`이 곱셈에 관하여 같은 구조** 를 갖고 있음을 말하고 있음
         - *곱셈에 대한 같은 구조라는게, 곱셈에 대하여 bijection인 isomorphism이 존재한다는 것인가?*
         - 행렬과 선형사상이 같은 것이라면, permutation에 대응하는 선형사상도 있어야 할 것
-  - permutation operator
+  - **permutation operator**
     - 정의
       - `Bv = {v1, ..., vn}`이 V의 고정된 ordered basis이고, `σ∈Sn`일 때
       - Linear Extension Theorem을 이용하여, 선형사상 `P_σ: V -> V`를 `P_σ(vi) = v_σ(i) (i=1, ..., n)`인 `P_σ`
@@ -94,10 +94,11 @@ cycle notation / transposition
       - 같은 구조가 뭔데?
 - `L∈L(V,V)`일 때, `[L]_Bv^Bv`와 `[L]_Bvσ^Bvσ`를 비교해 보자 (`Bv = {v1, ..., vn}`이 V의 ordered basis이고, `σ∈Sn`)
   - ① `[L]_Bvσ^Bvσ = [I]_Bvσ^Bv・[L]_Bv^Bv・[L]_Bv^Bvσ = (I_σ)^-1・[L]_Bv^Bv・I_σ`
-  - ② `σ = (1,2)∈S3, [L]_Bv^Bv = (aij) (aij∈F), [L]_Bvσ^Bvσ = [L]_Bv^Bv를 첫번째 열과 두번째 열을 바꾸고, 첫번쨰 행과 두번쨰 행을 바꾼 것과 같음 (행과 열의 변환은 순서 상관 없음 - 결합법칙)`
+  - ② `σ = (1,2)∈S3, [L]_Bv^Bv = (aij) (aij∈F), [L]_Bvσ^Bvσ = [L]_Bv^Bv`를 첫번째 열과 두번째 열을 바꾸고, *첫번쨰 행과 두번쨰 행을 바꾼 것과 같음* (행과 열의 변환은 순서 상관 없음 - 결합법칙)
   - ③ `[L]_Bv^Bv = diag(λ1, λ2, λ3) (λi∈F) => [L]_Bvσ^Bvσ = diag(λ2, λ1, λ3) = diag(λσ(1), λσ(2), λσ(3))`
     - `λi∈F, (i,i)-성분이 λi인 (nxn)-대각행렬을` `diag(λ1, ..., λn)`으로 표기한다
-    - `ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`임을 증명
+    - *`ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`임을 증명*
+      - 여기에서 `~`기호는 무엇을 뜻하는가?
 
 ## 6.3 Determinant의 정의 1
 
