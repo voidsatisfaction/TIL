@@ -51,6 +51,8 @@ higher derivatives
 
 ## 2.3 미분 공식
 
+![](./images/ch2/differentiation_formulas1.png)
+
 - `d(c)/dx = 0`
 - `d(x^n)/dx = nx^(n-1) (n∈R)`
 - New Derivatives from Old
