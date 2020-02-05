@@ -61,3 +61,31 @@ higher derivatives
   - `d(f(x)・g(x))/dx = f(x)g'(x) + f'(x)g(x) (단, f,g는 미분가능)`
   - `d(f(x)/g(x))/dx = (g(x)・df/dx - f(x)・dg/dx) / g(x)^2 (단, f,g는 미분가능)`
   - **어떠한 polynomial도 R에서 미분가능 ∧ 어떠한 유비함수도 해당 정의역에서 미분가능**
+
+## 2.4 Derivatives of Trigonometric Functions
+
+- term
+  - `1 radian`
+    - `Θ` = l/r = 1 인 각
+    - 1 라디안은 원 위에 반지름과 원호가 같은 길이를 갖을 때의 각 Θ를 말함
+  - `csc(Θ)`
+    - `1/sin(Θ)`
+  - `sec(Θ)`
+    - `1/cos(Θ)`
+  - `cot(Θ)`
+    - `1/tan(Θ)`
+    - *이러한 친구들이 이름을 별도로 갖고 있는 이유가 존재하는가?*
+
+`lim_{Θ->0}{sin(Θ)/Θ} = 1`임의 증명
+
+![](./images/ch2/proof1.png)
+
+![](./images/ch2/proof2.png)
+
+- 삼각함수의 미분
+  - `d(sin(x))/dx = cos(x)`
+  - `d(cos(x))/dx = -sin(x)`
+  - `d(tan(x))/dx = sec^2(x)`
+  - `d(csc(x))/dx = -csc(x)・cot(x)`
+  - `d(sec(x))/dx = sec(x)・tan(x)`
+  - `d(cot(x))/dx = -csc^2(x)`
