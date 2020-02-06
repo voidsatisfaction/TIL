@@ -88,4 +88,13 @@ higher derivatives
   - `d(tan(x))/dx = sec^2(x)`
   - `d(csc(x))/dx = -csc(x)・cot(x)`
   - `d(sec(x))/dx = sec(x)・tan(x)`
-  - `d(cot(x))/dx = -csc^2(x)`
+  - `d(cot(x))/dx = -csc^2()`
+
+## 2.5 The Chain Rule
+
+*완전한 증명?*
+
+- The Chain Rule
+  - g가 x에서 미분가능 ∧ f가 g(x)에서 미분가능 => 합성함수 `y = F = f◦g`가 x에서 미분가능 ∧ F'이 다음과 같이 주어짐 `F'(x) = f'(g(x))・g'(x)`
+    - `<=> dy/dx = dy/du・du/dx`
+      - `dy/dx`와 같은 표기는 분수 표기가 아님에 주의!
