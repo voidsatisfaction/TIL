@@ -59,8 +59,41 @@
             - 1에 가까울 수록 낮은 false positives, 낮은 false negative
           - uneven class distribution을 갖을 때, accuracy보다 유용
           - Recall과 Precision의 조화평균
-    - 질병의 특징에 따라서 민감도를 높일 것인지 특이도를 높일 것인지를 고려하기도 함
-      - 매우 심각한 질병 => 민감도를 높임 대신 재검사를 실시해서 FP를 줄임
+      - Youden's J statistic
+        - 양자 진단 테스트의 성능을 나타내는 통계량
+        - `J = sensitivity + specificity - 1 = TP/(TP+FN) + TN/(TN+FP) - 1`
+          - 0은 진단 테스트가 실제 질병을 갖고 있거나 갖고 있지 않은 그룹에 같은 비율로 양성으로 판단하는 경우
+          - 1은 false positive, false negative가 없다는 소리
+    - 해석 예시
+      - 질병의 특징에 따라서 민감도를 높일 것인지 특이도를 높일 것인지를 고려하기도 함
+        - 매우 심각한 질병 => 민감도를 높임 대신 재검사를 실시해서 FP를 줄임
+      - **Sensitivity가 올라가는데 Specificity가 낮아지는 경우, 모델의 민감도가 증가해서 그 trade-off로 FN이 증가해버려서 Specificity가 낮아지는 경우가 발생할 수 있음**
+      - 치과의 경우, 치과 진료는 기본적으로 비가역적이기 때문에 Specificity가 매우 중요하다고 할 수 있을 것이다.
+
+ROC curve
+
+![](./images/roc_curve.png)
+
+*아직 이 커브에 대해서 이해가 완전히 다 되지 않은 듯 하다*
+
+- ROC curve(Receiver Operating Charateristic curve)
+  - 개요
+    - x축은 False Positive rate
+    - y축은 True Positive rate
+    - Precision과 관련있는 그래프
+  - 특징
+    - 밑면적(AUROC)가 1에 가까워 질 수록 좋은 성능을 의미함(0.5에 가까울 수록 랜덤에 가까운 성능)
+  - 장점
+    - 커브의 면적을 재어 **다양한 기준(CAD에서는 모델)** 에서의 TPR, FPR을 복합적으로 평가 가능
+      - `TPR = TP/(TP+FN) = Sensitivity`
+      - `FPR = FP/(FP+TN)`
+    - 실제로 진단의 기준을 어디로 잡을지 결정하는 데에 도움이 됨
+  - AUC(Area Under the Curve)
+    - 개요
+      - 임의의 curve에 대하여 그 아래의 면적을 계산한 것
+  - ROC AUC or AUROC
+    - 개요
+      - ROC 커브의 밑면적
 
 ### Medical term
 
@@ -77,22 +110,6 @@
 - ECG(Electrocardiogram)
   - 개요
     - 심전도. 심장의 전기적 활동을 해석한 것
-
-X-ray PA vs AP
-
-![](./images/x-ray-pa-ap.jpg)
-
-- X-Ray
-  - Chest PA(Posterior Anterior) vs Chest AP(Anterior Posterior)
-    - Chest PA
-      - 흉부 X-ray를 뒤에서 앞으로 찍음
-      - 먼 거리에서 촬영하기 때문에 상이 작고 선명하게 촬영
-      - 반듯이 서 있을 수 있는 경환자 or 일반인에게 시행
-    - Chest AP
-      - 흉부 X-ray를 앞에서 뒤로 찍음
-      - 가까운 거리에서 촬영하기 때문에 상이 크고 흐릿하게 촬영
-        - portable X-ray 기기 사용하기 때문에 먼 거리 촬영 어려움
-      - 반듯이 설 수 없고 검사실까지 거동할 수 없는 중환자 or 소아 환자에게 시행 -> 누운자세 or 반좌위 자세로 촬영
 
 ### Domain
 
@@ -112,6 +129,36 @@ AM에서의 deep learning 등장
 
 #### ASR(Automatic Speech Recognition)
 
+How does Siri work?
+
+![](./images/how_does_siri_work1.png)
+
+How does Nugu work1?
+
+![](./images/how_does_nugu_work1.png)
+
+How does Nugu work2?
+
+![](./images/how_does_nugu_work2.png)
+
+How does Nugu work3?(음성 인식 기술 구성)
+
+![](./images/how_does_nugu_work3.png)
+
+- NLP(Natural Language Processing) vs SR(Speech Recognition)
+  - SR
+    - 사람의 말을 **인식** 하는 소프트웨어의 능력
+    - Sound -> text
+  - NLP
+    - 컴퓨터 시스템이 사람의 언어를 **이해** 하는 능력
+    - 종류
+      - NLU(Natural Language Understanding)
+        - 서울 날씨 알려줘 -> `Domain: Weather, Intent: ask.weather, Entity: date.tomorrow, location.Seoul`
+      - NLG(Natural Language Generatation)
+        - `Domain: Weather, Intent: ask.weather, Entity: date.tomorrow, location.Seoul` -> 내일 서울은 쌀쌀하고 구름이 다소 낄 예정입니다. 최저 기운은 영하1도, 최고 기온은 ...
+  - TTS(Text-To-Speech)
+    - 텍스트를 말로 변환
+    - 내일 서울은 쌀쌀하고 구름이 다소 낄 예정입니다. 최저 기운은 영하1도, 최고 기온은 ... -> 음성
 - AM(Acoustic Model)
   - 개요
     - Acoustic Model로서, 음성 신호와 음소 또는 음성을 구성하는 다른 언어 단위간의 관계를 나타내기 위해 음성 인식에 사용됨
@@ -133,9 +180,9 @@ AM에서의 deep learning 등장
   - AM과 LM을 둘다 활용하여 음성의 통계적 특성을 나타냄
   - AM과 LM이 결합되어, input으로 주어진 오디오 세그먼트에 해당되는 top-ranked 단어 시퀀스를 얻는 역할을 함
     - *무슨 뜻?*
-- 목적
-  - **입력 waveform sequences를 해당 단어 또는 character sequences에 매핑**
-    - *채널 디코딩* 또는 패턴 분류 문제로 간주 될 수 있음
+  - 목적
+    - **입력 waveform sequences를 해당 단어 또는 character sequences에 매핑**
+      - *채널 디코딩* 또는 패턴 분류 문제로 간주 될 수 있음
 
 #### Signal
 
@@ -175,3 +222,21 @@ AM에서의 deep learning 등장
       - 기초의학과 임상의학의 중간자
       - 임상의사에 의해 채취된 인체의 표본으로 병리검사를 시행하여 정확한 진단에 이르게 하여 환자의 치료방향을 결정하는데 근거를 제공
     - 법의학도 병리학에 기반을 두고 있음
+
+#### Chest X-ray
+
+X-ray PA vs AP
+
+![](./images/x-ray-pa-ap.jpg)
+
+- X-Ray
+  - Chest PA(Posterior Anterior) vs Chest AP(Anterior Posterior)
+    - Chest PA
+      - 흉부 X-ray를 뒤에서 앞으로 찍음
+      - 먼 거리에서 촬영하기 때문에 상이 작고 선명하게 촬영
+      - 반듯이 서 있을 수 있는 경환자 or 일반인에게 시행
+    - Chest AP
+      - 흉부 X-ray를 앞에서 뒤로 찍음
+      - 가까운 거리에서 촬영하기 때문에 상이 크고 흐릿하게 촬영
+        - portable X-ray 기기 사용하기 때문에 먼 거리 촬영 어려움
+      - 반듯이 설 수 없고 검사실까지 거동할 수 없는 중환자 or 소아 환자에게 시행 -> 누운자세 or 반좌위 자세로 촬영
