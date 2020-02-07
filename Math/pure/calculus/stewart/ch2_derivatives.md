@@ -94,7 +94,17 @@ higher derivatives
 
 *완전한 증명?*
 
+Chain Rule의 증명
+
+![](./images/ch2/chain_rule1.png)
+
+![](./images/ch2/chain_rule2.png)
+
 - The Chain Rule
   - g가 x에서 미분가능 ∧ f가 g(x)에서 미분가능 => 합성함수 `y = F = f◦g`가 x에서 미분가능 ∧ F'이 다음과 같이 주어짐 `F'(x) = f'(g(x))・g'(x)`
     - `<=> dy/dx = dy/du・du/dx`
       - `dy/dx`와 같은 표기는 분수 표기가 아님에 주의!
+- 응용
+  - Deep Learning의 Neural Network에서, back-propagation을 사용할 때, 하나의 레이어가 하나의 함수의 역할을 하므로, 각 레이어의 구성요소에 관한 미분 e.g) `dL/dW`를 구할 때, 직접 계산하지 말고, 역전파법으로 뒤에서부터 차례차례 chain rule을 이용한 미분 계산을 행함 `dL/dW = dL/dZ・dZ/dW`
+
+## 2.6 Implicit Differentiation
