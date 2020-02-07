@@ -4,9 +4,9 @@
 - 알아두면 좋은 용어들
   - Research
   - Medical term
-  - Domain
-    - ASR
-    - Signal
+- Domain지식
+  - ASR
+  - Signal
 
 ## 의문
 
@@ -67,7 +67,7 @@
     - 해석 예시
       - 질병의 특징에 따라서 민감도를 높일 것인지 특이도를 높일 것인지를 고려하기도 함
         - 매우 심각한 질병 => 민감도를 높임 대신 재검사를 실시해서 FP를 줄임
-      - **Sensitivity가 올라가는데 Specificity가 낮아지는 경우, 모델의 민감도가 증가해서 그 trade-off로 FN이 증가해버려서 Specificity가 낮아지는 경우가 발생할 수 있음**
+      - **Sensitivity가 올라가는데 Specificity가 낮아지는 경우, 모델의 민감도가 증가해서 그 trade-off로 FP이 증가해버려서 Specificity가 낮아지는 경우가 발생할 수 있음**
       - 치과의 경우, 치과 진료는 기본적으로 비가역적이기 때문에 Specificity가 매우 중요하다고 할 수 있을 것이다.
 
 ROC curve
@@ -111,7 +111,7 @@ ROC curve
   - 개요
     - 심전도. 심장의 전기적 활동을 해석한 것
 
-### Domain
+## Domain지식
 
 ASR시스템의 통계적 모델링
 
@@ -127,7 +127,7 @@ AM에서의 deep learning 등장
 
 ![](./images/asr_gmm-hmm-to-dnn-hmm.png)
 
-#### ASR(Automatic Speech Recognition)
+### ASR(Automatic Speech Recognition)
 
 How does Siri work?
 
@@ -179,12 +179,12 @@ How does Nugu work3?(음성 인식 기술 구성)
 - 최신 음성 인식 시스템
   - AM과 LM을 둘다 활용하여 음성의 통계적 특성을 나타냄
   - AM과 LM이 결합되어, input으로 주어진 오디오 세그먼트에 해당되는 top-ranked 단어 시퀀스를 얻는 역할을 함
-    - *무슨 뜻?*
+    - 아마도 `P(W|O)`가 최대가 되도록하는 W를 AM(`P(O|W)`)・LM(`P(W)`) 값을 선택한다는 것 같음
   - 목적
     - **입력 waveform sequences를 해당 단어 또는 character sequences에 매핑**
       - *채널 디코딩* 또는 패턴 분류 문제로 간주 될 수 있음
 
-#### Signal
+### Signal
 
 - EWS(Early Warning Score)
   - 개요
@@ -209,9 +209,9 @@ How does Nugu work3?(음성 인식 기술 구성)
   - 개요
     - MEWS에 비해서 DEWS가 더 효과적일까?(Sensitivity, Specificity)
 
-#### BoneAge
+### BoneAge
 
-#### Pathology
+### Pathology
 
 - 병리학
   - 개요
@@ -223,7 +223,7 @@ How does Nugu work3?(음성 인식 기술 구성)
       - 임상의사에 의해 채취된 인체의 표본으로 병리검사를 시행하여 정확한 진단에 이르게 하여 환자의 치료방향을 결정하는데 근거를 제공
     - 법의학도 병리학에 기반을 두고 있음
 
-#### Chest X-ray
+### Chest X-ray
 
 X-ray PA vs AP
 
