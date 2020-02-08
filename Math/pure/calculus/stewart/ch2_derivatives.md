@@ -108,3 +108,14 @@ Chain Rule의 증명
   - Deep Learning의 Neural Network에서, back-propagation을 사용할 때, 하나의 레이어가 하나의 함수의 역할을 하므로, 각 레이어의 구성요소에 관한 미분 e.g) `dL/dW`를 구할 때, 직접 계산하지 말고, 역전파법으로 뒤에서부터 차례차례 chain rule을 이용한 미분 계산을 행함 `dL/dW = dL/dZ・dZ/dW`
 
 ## 2.6 Implicit Differentiation
+
+*implicit differentiation을 할 수 있는 것에 대한 증명은?*
+
+- 배경
+  - `x^3 + y^3 = 6xy` 과 같은 식은 어떻게 미분하는가?
+    - `y`가 x에 대한 함수임에 주의
+- implicit differentiation
+  - 개요
+    - y가 x에 대해서 미분가능할 경우, 식의 양변을 x에 대해서 미분하는 것(chain rule, product rule등을 사용)
+  - 문제
+    - `x^4 + y^4 = 16`의 `y''`을 구하시오
