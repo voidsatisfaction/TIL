@@ -125,3 +125,54 @@ cycle notation / transposition
       - 애초에 이건 어떻게 증명? - 일단 3x3 matrix까지는 손으로 해봤으나...
         - 그 증명이 바로 옆 페이지에 나옴(꿀잼)
         - 그러니까 귀납적(혹은 직관적 혹은 천재적?!)으로 미리 `det`의 식을 예측하고 이 식이 `det`의 조건을 만족함을 보인 후에, uniqueness를 보이는 식으로 전개
+
+## 6.4 Determinant의 성질
+
+- `A,B∈Mnxn(F) => det(AB) = det(A)・det(B)`
+  - 증명이 재미있음
+  - 따름정리
+    - `det(A^-1) = 1/det(A) = det(A)^-1`
+    - `A∈Mnxn(F), det(tA) = det(A)`
+      - *어떻게 증명하지?*
+    - `A∈Mnxn(F), {[A]^1, ..., [A]^n}이 linearly dependent => det(A)=0`
+- **다음은 동치이다**
+  - ① `A`는 invertible
+  - ② `det(A)!=0`
+    - ② => ①
+      - A의 RREA가 I임을 보임
+      - `A∈Mnxn(F), {[A]^1, ..., [A]^n}가 linearly independent`임을 알고 있으므로 `LA`가 isomorphism임을 보임
+- Determinant의 기하학적 의미
+  - **volume**
+    - `R^n`의 n-개의 vector `{[A]^1, ..., [A]^n}`이 결정하는 n-dimensional parallelogram의 부피는 `Voln([A]^1, ..., [A]^n) = |det(A)|` 이다.
+      - 이를 증명하기 위해서는 부호를 무시한 부피 `voln: Mnxn(F) -> R`이 `alternating n-linear map ∧ voln(In) = 1`을 만족하는 것을 보여야 할 것이다.
+      - 그러면 alternating n-linear form인 것을 그림으로 보여야 할 것인데... 애초에 부피란 무엇인가?
+      - S. Lang의 ch7 pp 202-211을 꼭 참조하세요
+- `A∈Mnxn(F)`일 때, A의 rank를 계산하는 가장 효과적인 방법은 A의 row-reduced echelon form - 즉, Gaussian Elimination - 을 이용하는 것
+  - Determinant와 sub-determinant를 이용하는 계산법도 S.Lang의 7장을 확인하세요.
+- Gaussian Elimination과 Determinant 행렬식은 다음 성질을 갖는다
+  - 어떤 한 column에 다른 column의 상수배를 더해 주어도, 행렬식은 변하지 않는다. 즉 `i!=j ∧ c∈F, i-th column에 j-th column의 c배 를 더해주면 det(...,[A]^i + c[A]^j, ..., [A]^j, ...) = det(A)`이다.
+  - 위의 내용에서 column을 row로 바꾸어도 좋다
+
+## 6.5 Determinant의 정의 2
+
+- 배경
+  - Determinant의 두번째 construction은 **inductive method** 라고 불리움, `((n-1)x(n-1))-matrix`의 determinant를 이용하여 `(nxn)-matrix`의 determinant를 construct함
+- 표기법
+  - `A=(aij)∈Mnxn(F)`일 때, `Mij`를 A에서 i-th row와 j-th column을 제거한 `((n-1)x(n-1))-행렬`이라고 하고, `^Aij(원래는 ^기호가 A의 위에 존재) = det(Mij)`로 표기한다. `^Aij`를 A의 (i,j)-minor라고 부름
+    - `(-1)^(i+j) ^Aij`는 (i,j)-cofactor라고 부름
+- 정의
+  - j-th column에 관한 전개 `D^j: Mnxn(F) -> F`를 `D^j(A) = sigma_{i=1}^{n}{(-1)^(i+j)・aij・^Aij} (j=1, ..., n)`
+  - i-th row에 관한 전개 `D_i: Mnxn(F) -> F`를 `D_i(A) = sigma_{j=1}^{n}{(-1)^(i+j)・aij・^Aij} (i=1, ..., n)` 로 정의한다
+  - 위의 2n개의 함수가 모두 `alternating n-linear form ∧ det와 같은 함수` 라는 것을 증명해야 함
+    - 예시
+      - `D^1(A) = a11^A11 - a21^A21 + a31^A31 - ... + (-1)^(n+1)an1^An1`
+  - 실제로 예를 들어서 det를 구해보자
+  - 여기에 Gaussian Elimination을 적용하면 det값의 변화 없이 행이나 열에 0이 많이 배치되므로, 계산하기 편해짐
+  - 그리고 행렬의 크기가 `nxn -> (n-1)x(n-1) -> ...` 와같은 식으로 점차 작은 det를 계산해나가면 되므로 계산이 편리함
+- **행렬식을 계산하는 strategy**
+  - ① 어떤 열에 다른 열의 상수배를 더하거나, 어떤 행에 다른 행의 상수배를 더하는 작업을 반복하여 0이 많이 나타나도록 한다
+  - ② 0이 가장 많은 행이나 열에 관해 전개한다
+- 앞서 정의한 `D^j, D_i: Mnxn(F) -> F`함수는 모두 laternating n-linear form ∧ D^j(In) = 1 = D_i(In) 이며 따라서, 2n개의 함수가 모두 `det: Mnxn(F) -> F`와 같은 함수이다.
+  - *증명이 아직 이해가 안간다!*
+- Cartan Matrix
+- Vandermonde Determinant
