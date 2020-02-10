@@ -175,4 +175,24 @@ cycle notation / transposition
 - 앞서 정의한 `D^j, D_i: Mnxn(F) -> F`함수는 모두 laternating n-linear form ∧ D^j(In) = 1 = D_i(In) 이며 따라서, 2n개의 함수가 모두 `det: Mnxn(F) -> F`와 같은 함수이다.
   - *증명이 아직 이해가 안간다!*
 - Cartan Matrix
-- Vandermonde Determinant
+  - `An-1 = (aij) 단, aij = { 2 (if i=j), -1 (if |i-j|=1), 0 (otherwise) }`
+
+자주 이용되는 행렬의 성질1
+
+![](./images/ch6/frequently_used1.jpeg)
+
+자주 이용되는 행렬의 성질2
+
+![](./images/ch6/frequently_used2.jpeg)
+
+- 자주 이용되는 행렬의 성질
+  - `B,B'∈Mmxm(F) ∧ C,C'∈Mnxn(F), A = (B)`
+  - Vandermonde Determinant
+
+*Lagrange Interpolation의 재해석*
+
+## 6.6 Cramer's Rule
+
+- Cramer's Rule
+  - `A∈Mnxn(F), X = t(x1, ..., xn)∈F^n`이 연립방정식 `AX = B`의 solution => `xi・det(A) = det([A]^1, ..., B, ..., [A]^n) (i=1, ..., n)` 이어야 한다
+    - *이렇게 되어야 한다는 것이지, 원래의 `AX = B`의 방정식에 대입해서 실제로 solution인지 확인할 수 있다는 뜻이 아니다*
