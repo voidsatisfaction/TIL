@@ -113,6 +113,8 @@ ROC curve
 
 ## Domain지식
 
+### ASR(Automatic Speech Recognition)
+
 ASR시스템의 통계적 모델링
 
 ![](./images/asr_statistical_modeling1.png)
@@ -126,8 +128,6 @@ Backend processing의 Decoding 프로세스는 주로 train된 AM / LM을 사용
 AM에서의 deep learning 등장
 
 ![](./images/asr_gmm-hmm-to-dnn-hmm.png)
-
-### ASR(Automatic Speech Recognition)
 
 How does Siri work?
 
@@ -166,16 +166,18 @@ How does Nugu work3?(음성 인식 기술 구성)
     - 소리의 통계적 표현을 생성하여 각 단어를 구성
       - *통계적 표현이 무엇일까*
     - `p(O|W)`를 계산 하는 것
-      - 모드에 대한 음성 파형을 생성할 확률을 계산
+      - *모드* 에 대한 음성 파형을 생성할 확률을 계산
       - 오버 헤드의 상당 부분을 차지하며, 시스템 성능을 결정함
         - (GMM-HMM (Gaussian Mixture Model - Hidden Markov Model))기반 AM이 전통적인 음성 인식 시스템에서 널리 사용
         - DNN-HMM(Deep Neural Network - Hidden Markov Model)
             - GMM-HMM 과 비쇼하여 TIMIT dataset에서 우수한 성능을 보임
             - Convolutional Neural Network / Recurrent Neural Network 의 사용으로 AM modeling을 크게 향상
             - LSTM 활용
+    - *보다 자세히 알아보자*
 - LM(Language Model)
   - 개요
-    - 언어의 단어단어 시쿼스 모델링
+    - 언어의 단어단어 시퀀스 모델링
+    - *보다 자세히 알아보자*
 - 최신 음성 인식 시스템
   - AM과 LM을 둘다 활용하여 음성의 통계적 특성을 나타냄
   - AM과 LM이 결합되어, input으로 주어진 오디오 세그먼트에 해당되는 top-ranked 단어 시퀀스를 얻는 역할을 함
@@ -215,16 +217,16 @@ How does Nugu work3?(음성 인식 기술 구성)
 
 - 병리학
   - 개요
-    - 질병이나 상처의 원인과 결과를 연구하는 의학 분야
+    - **질병이나 상처의 원인과 결과를 연구하는 의학 분야**
       - 세포, 조직, 장기의 표본을 육안이나 현미경 등을 이용하여 검사해, 그것들이 질병에 침범되었을 때에 어떤 변화를 나타내는지에 대해서 연구하는 학문
-    - 해부학 및 조직학과 밀접한 관련이 있음
+      - 해부학 및 조직학과 밀접한 관련이 있음
     - 병원에서 병리의사는 병리학적 지식을 바탕으로 임상의사들에게 병을 알려주는 역할을 함
-      - 기초의학과 임상의학의 중간자
+      - 기초의학(병리학은 기초의학이 아니라는 소리?)과 임상의학의 중간자
       - 임상의사에 의해 채취된 인체의 표본으로 병리검사를 시행하여 정확한 진단에 이르게 하여 환자의 치료방향을 결정하는데 근거를 제공
     - 법의학도 병리학에 기반을 두고 있음
 - 병리과
   - 개요
-    - 환자의 질환에 대해 정확하고 신속한 진단을 제시 -> 치료방침 결정 -> 예후 판정 -> 치료 적정성 판단하는 근거 제공
+    - **환자의 질환에 대해 정확하고 신속한 진단을 제시 -> 치료방침 결정 -> 예후 판정 -> 치료 적정성 판단하는 근거 제공**
     - 병리보고서 기록은 질병분류 및 등록, 통계의 근간이 되며, 질병연구의 토대 및 기초가 됨
   - 종류(서울대병원 기준)
     - 조직병리(외과병리)
