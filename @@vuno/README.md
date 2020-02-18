@@ -7,6 +7,9 @@
 - Domain지식
   - ASR
   - Signal
+  - BoneAge
+  - Pathology
+  - Chest X-ray
 
 ## 의문
 
