@@ -1,5 +1,22 @@
 # 파이썬 스레딩
 
+- 의문
+- 개요
+  - thread
+  - Daemon thread
+- Working with many threads
+  - ThreadPoolExecutor
+  - Race Conditions
+  - Basic Synchronization Using Lock
+  - Deadlock
+- Producer-Consumer Threading
+  - 1 Producer-Consumer Using Lock
+  - 2 Producer-Consumer Using Queue
+- Threading Objects
+  - Semaphore
+  - Timer
+  - Barrier
+
 ## 의문
 
 ## 개요
@@ -16,6 +33,11 @@
   - 외부 이벤트를 기다리는데에 많은 시간을 소비하는 tasks은 스레딩을 도입 하기에 좋은 대상이다
     - 반대로, CPU 사용이 많고 외부 이벤트를 기달리는 시간이 매우 작은 경우에는 더 빨라지지 않는 경우도 존재
   - 프로그램의 디자인이 간결해짐
+- c.f) 코루틴
+  - 스레드
+    - 하나의 프로세스에서 자원을 얼마나 효율적으로 사용할 것인가(특히 IO)
+  - 코루틴
+    - 하나의 스레드에서 자원을 얼마나 효율적으로 사용할 것인가(특히 IO)
 
 기본적인 스레딩 예시 코드
 
@@ -223,3 +245,223 @@ if __name__ == '__main__':
 ```
 
 ### Deadlock
+
+Deadlock의 예시
+
+```py
+import threading
+
+l = threading.Lock()
+print('before first acquire')
+l.acquire()
+print('before second acquire')
+# wait for the lock to be released
+l.acquire()
+print('acquired lock twice')
+```
+
+- 위와 같은 실수를 범하지 않기 위해 context manager를 사용하는 것이 바람직
+- `RLock`
+  - 스레드가 `.acquire()`를 `.release()`전에 여러번 호출 할 수 있도록 함. 대신 나중에 `.release()`를 acquire한 횟수만큼 불러줘야 함
+
+## Producer-Consumer Threading
+
+- 배경
+  - 네트워크로 부터 메시지를 읽고, 디스크에 메시지를 작성하는 프로그램
+    - producer component
+      - 메시지는 자신이 request를 보내는 것이 아닌, push를 받음(엄청나게 많은 수가 한번에 오는 경우가 존재). 그 push를 받는 부분
+    - consumer component
+      - 메시지를 받으면, 데이터베이스에 작성함. 데이터 베이스 접근은 느리긴 하나, 평균 메시지의 페이스를 커버할 정도는 되는데, 한꺼번에 밀려오는 메시지의 페이스를 커버할 수는 없음. 이러한 역할을 하는 부분
+    - Pipeline
+      - producer - consumer 를 이어주는 부분
+
+### 1. Producer-Consumer Using Lock
+
+Lock 을 이용한 Producer-Consumer 예시(좋지 못한 솔루션)
+
+```py
+import random
+import logging
+
+# 보초
+SENTINEL = object()
+
+class Pipeline:
+  """
+  Class to allow a single element pipeline between producer and consumer.
+  """
+  def __init__(self):
+    self.message = 0
+    self.producer_lock = threading.Lock()
+    self.consumer_lock = threading.Lock()
+    # consumer should wait until a message is present
+    self.consumer_lock.acquire()
+
+  def get_message(self, name):
+    self.consumer_lock.acquire()
+    message = self.message
+    self.producer_lock.release()
+    return message
+
+  def set_message(self, message, name):
+    self.producer_lock.acquire()
+    self.message = message
+    self.consumer_lock.release()
+
+def producer(pipeline):
+  # Pretend we're getting a message from the network
+  for index in range(10):
+    message = random.randint(1, 101)
+    logging.info("Producer got message: %s", message)
+    # 메시지를 consumer가 receive 하기 전까지는 locked됨(즉, get_message의 호출이 있어야 함)
+    pipeline.set_message(message, "Producer")
+
+  # Send a sentiel message to tell consumer we're done
+  pipeline.set_message(SENTINEL, "Producer")
+
+def consumer(pipeline):
+  message = 0
+  while message is not SENTINEL:
+    # 메시지가 새로 갱신되기 전까지는 locked됨(즉, set_message의 호출 있어야 함)
+    message = pipeline.get_message("Consumer")
+    if message is not SENTINEL:
+      logging.info("Consumer storing message: %s", message)
+
+if __name__ == '__main__':
+  format = "%(asctime)s: %(message)s"
+  logging.basicConfig(format=format, level=logging.INFO, datefmt="%H:%M:%S")
+  # logging.getLogger().setLevel(logging.DEBUG)
+
+  pipeline = Pipeline()
+  with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    executor.submit(producer, pipeline)
+    executor.submit(consumer, pipeline)
+
+"""result
+Producer got data 43
+Producer got data 45
+Consumer storing data: 43
+Producer got data 86
+Consumer storing data: 45
+Producer got data 40
+Consumer storing data: 86
+Producer got data 62
+Consumer storing data: 40
+Producer got data 15
+Consumer storing data: 62
+Producer got data 16
+Consumer storing data: 15
+Producer got data 61
+Consumer storing data: 16
+Producer got data 73
+Consumer storing data: 61
+Producer got data 22
+Consumer storing data: 73
+Consumer storing data: 22
+"""
+```
+
+- 의문
+  - 위의 코드는 coroutine, 혹은 generator로 작성 가능하지 않는가?
+- **thread가 블록되면, os는 항상 swap하여 다른 실행가능한 스레드를 찾음**
+  - 위의 경우에서는 producer가 블록되면 consumer를 실행
+- 위의 예시에서는 값을 하나만 다룰 수 있었음
+
+### 2. Producer-Consumer Using Queue
+
+- `threading.Event`
+  - 한 스레드가 이벤트를 발생시켜, 다른 스레드들이 해당 event가 일어나는 것을 기다리게 함
+
+```py
+import time
+import logging
+import threading
+import concurrent.futures
+import queue
+import random
+# Queue is thread-safe
+class Pipeline(queue.Queue):
+    def __init__(self):
+        # if maxsize is not set, then it grows until computer's memory size limit
+        # if maxsize is given, it will limit the queue and block until there are fewer than maxsize elements
+        super().__init__(maxsize=10)
+
+    def get_message(self, name):
+        value = self.get()
+        return value
+
+    def set_message(self, value, name):
+        self.put(value)
+
+def producer(pipeline, event):
+    # SENTINEL 대신 event를 사용
+    while not event.is_set():
+        message = random.randint(1, 101)
+        logging.info("Producer got message: %s", message)
+        pipeline.set_message(message, "Producer")
+
+    logging.info("Producer received EXIT event. Exiting")
+
+def consumer(pipeline, event):
+    while not event.is_set() or not pipeline.empty():
+        message = pipeline.get_message("Consumer")
+        logging.info(
+            "Consumer storing message: %s  (queue size=%s)",
+            message,
+            pipeline.qsize(),
+        )
+
+    logging.info("Consumer received EXIT event. Exiting")
+
+if __name__ == "__main__":
+    format = "%(asctime)s: %(message)s"
+    logging.basicConfig(format=format, level=logging.INFO,
+                        datefmt="%H:%M:%S")
+    logging.getLogger().setLevel(logging.DEBUG)
+
+    pipeline = Pipeline()
+    event = threading.Event()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        executor.submit(producer, pipeline, event)
+        executor.submit(consumer, pipeline, event)
+
+        time.sleep(0.1)
+        logging.info("Main: about to set event")
+        event.set()
+```
+
+- 의문
+  - 위의 코드에서 consumer가 다수라면?
+    - 충분히 잘 동작한다(queue는 thread-safe)
+
+## Threading Objects
+
+- `threading`모듈에서 쓸 모 있는 primitives
+
+### Semaphore
+
+- 특별한 속성을 지닌 counter(atomic)
+  - os는 counter를 incrementing / decrementing 할 때 swap out하지 않는 것을 보장
+  - 카운터는 `.release()`할 때 증가하고 `.acquire()`할 때 감소함
+  - 한 스레드가 카운터 값이 0일 때 `.acquire()`하면 스레드는 다른 하나의 스레드가 `.release()`해서 카운터 값이 1이 될 때 까지 블로킹함
+- **제한된 capacity를 갖는 리소스를 보호하기 위해서 사용**
+  - 예시
+    - connection pool과 pool의 사이즈를 특정 숫자로 고정할 때 사용(DB의 커넥션 풀이라던지)
+
+### Timer
+
+- 특정 시간이 지난뒤에 스케쥴된 함수를 호출하는 방식
+  - `t = threading.Timer(30.0, my_function)`
+    - my_function을 30초 마다 실행
+    - 하지만 자신이 원하는 타이밍에 정확히 실행한다는 보장은 없음
+
+### Barrier
+
+- 고정된 숫자의 스레드를 싱크하는 것을 유지하는데에 사용
+  - Barrier를 생성할 때, 얼마나 많은 수의 스레드 들을 이것에 싱크로나이징 할 것인지 설정해야 함
+  - 각각의 스레드는 Barrier에서 `.wait()`하고 있음
+  - 각각의 스레드는 Barrier에서 정해진 숫자의 스레드가 기다리고 있을 때 까지 blocked 되고, 동시에 released 됨
+  - 다 같이 released된다고 해도, os에 의해서 스케쥴링 되므로, 한 시점에 하나의 스레드만 실행될 것임
+- 사용 예시
+  - allow a pool of threads to initialize themselves
+    - 모든 스레드의 initialization을 끝내고 난 뒤에 본격적인 각 thread들이 행동을 시작할 수 있도록 함
