@@ -65,6 +65,10 @@ CPU-bound problem
 
 ### threading version
 
+스레딩을 이용한 문제 해결
+
+![](./images/concurrency/threading1.png)
+
 스레딩을 이용하여 파일 다운로드
 
 ```py
@@ -121,6 +125,10 @@ if __name__ == '__main__':
 
 ### asyncio Version
 
+asyncio를 이용한 문제 해결(하나의 스레드)
+
+![](./images/concurrency/async_io1.png)
+
 - *asyncio의 기본(다시 해석하기)*
   - 개요
     - 일종의 python object인 event loop가 어떻게 / 언제 각각의 태스크를 실행하는가에 대한 것
@@ -143,3 +151,44 @@ if __name__ == '__main__':
   - `async`
     - async에 해당하는 함수는 `await`을 사용하여 정의된다는 신호
       - 완벽한 정의는 아님
+
+asyncio 코드 예시
+
+```py
+import asyncio
+import time
+import aiohttp
+
+async def download_site(session, url):
+    async with session.get(url) as response:
+        print("Read {0} from {1}".format(response.content_length, url))
+
+async def download_all_sites(sites):
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for url in sites:
+            task = asyncio.ensure_future(download_site(session, url))
+            tasks.append(task)
+        # asyncio.gather이 모든 tasks가 끝날 때 까지 session context를 alive하게 유지하게 함
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+if __name__ == '__main__':
+    sites = [
+        "https://www.jython.org",
+        "http://olympus.realpython.org/dice"
+    ] * 80
+    start_time = time.time()
+    # start up the event loop
+    # tell which tasks to run
+    # for python 3.7, asyncio.get_event_loop().run_until_complete() == asyncio.run()
+    asyncio.get_event_loop().run_until_complete(download_all_sites(sites))
+    duration = time.time() - start_time
+    print(f"Downloaded {len(sites)} sites in {duration} seconds")
+```
+
+- I/O requests가 같은 스레드에서 동작함
+- 문제점
+  - `async`, `await`을 올바른 장소에 배치하는 것이 복잡함
+  - asyncio를 잘 사용하기 위해서는 async 버전을 제공하는 라이브러리를 사용해야만 함
+  - task들이 서로 cooperative하게 만들어야지만 성능 향상을 기대할 수 있음
+    - event loop가 task가 컨트롤을 넘겨주게 강제할 수 없음(자발적으로 컨트롤을 넘겨주기 전까지)
