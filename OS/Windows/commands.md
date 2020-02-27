@@ -1,6 +1,6 @@
 # 윈도우에서 자주 사용하는 커맨드
 
-위는 Window커맨드 아래는 그에 대응하는 linux 커맨드
+위는 Windows cmd커맨드 아래는 그에 대응하는 linux 커맨드
 
 - `dir`
   - `ls`
@@ -14,3 +14,5 @@
   - `rm -rf (directory name)`
 - `START /B program`
   - `program &`
+- `TASKKILL /pid (process id)`
+  - `kill -9 (pid)`
