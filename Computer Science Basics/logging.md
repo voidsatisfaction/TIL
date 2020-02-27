@@ -1,5 +1,12 @@
 # Logging (in python)
 
+- 의문
+- 개요
+- The Logging Module
+- Root Logger Configurations
+- Formatting the Output
+- Custom logger
+
 ## 의문
 
 ## 개요
@@ -23,10 +30,10 @@
   - `ERROR`
   - `CRITICAL`
 
-## Basic Configurations
+## Root Logger Configurations
 
 - 개요
-  - `basicConfig(**kwargs)` 메서드를 이용해서 설정 가능
+  - `basicConfig(**kwargs)` 메서드를 이용해서 root logger의 설정 가능
   - [주요 사용 파라미터](https://docs.python.org/3/library/logging.html#logging.basicConfig)
     - `level`
       - root logger를 특정 severity level로 설정
@@ -39,7 +46,7 @@
     - `format`
       - log message의 포맷
 - 주의
-  - `basicConfig()`를 이용한 root logger의 configuration은 과거에 root logger가 configured되지 않았을 때에만 가능
+  - **`basicConfig()`를 이용한 root logger의 configuration은 과거에 root logger가 configured되지 않았을 때에만 가능**
     - 즉, 이 함수는 오직 한 번만 호출 가능
     - `debug()`, `info()`, `warning()`, `error()`, `critical()` 역시 `basicConfig()`를 자동적으로 호출함(과거에 실행하지 않았다면)
       - 결국, 이 함수를 실행하기 전에 `basicConfig`를 해줘야지 root logger에 설정이 반영됨
@@ -98,12 +105,22 @@ ZeroDivisionError: division by zero
 
 - `logging.exception()`
   - level을 `ERROR`로 설정한 뒤, stack trace를 기록
+- c.f)
+  - `sys.exc_info()`
+    - 현재 다뤄지고 있는(현재 스레드 / 현재의 stack frame) exception의 세가지 값들을 반환
+      - `(type, value, traceback)`
+      - `type`
+        - `BaseException`의 서브클래스인 예외의 type
+      - `value`
+        - exception instance(`type`의 인스턴스 그 자체)
+      - `traceback`
+        - exception이 어디에서 일어났는지를 알려주는 call stack을 캡슐화한 `traceback object`
 
 ## Custom logger
 
 - logging 모듈에서 자주 쓰이는 클래스들
   - `Logger`
-    - 이 클래스의 instance가 application code에서 직접 메소드를 호출함
+    - 이 클래스의 instance가 우리가 실제로 다루는 application code에서 직접 logging관련 메서드를 호출함
   - `LogRecord`
     - Logger가 자동적으로 생성하는 오브젝트
       - log되는 이벤트에 관련있는 정보를 갖고 있음(logger 이름, 함수, line number, message 등)
