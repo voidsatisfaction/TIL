@@ -5,6 +5,57 @@
 
 ## 의문
 
+## 예시
+
+```yaml
+name: Abc project tests
+
+on: [push]
+
+# project absolute path
+# /home/runner/work/Abc_project/Abc_project
+jobs:
+  unit-test:
+    env:
+        Abc_project_APP_DEBUG: 1
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - name: Set up Python 3.6.10
+          uses: actions/setup-python@v1
+          with:
+            python-version: 3.6.10
+        - name: Check python version
+          run: python3 --version
+        - name: Install dependencies
+          run: |
+            pip3 install -r ./Abc_project/requirements.txt
+        - name: migrate db
+          run: |
+            cd ./Abc_project
+            ./Abc_project.sh
+        - name: Run Unit test
+          run: ./script/run_unit_test.sh
+  build-test:
+    runs-on: windows-latest
+    steps:
+        - uses: actions/checkout@v2
+        - name: Set up Python 3.6.8
+          uses: actions/setup-python@v1
+          with:
+            python-version: 3.6.8
+        - name: Check python version
+          run: python --version
+        - name: Install dependencies
+          run: pip3 install -r Abc_project\requirements.txt
+        - name: Build binary with pyinstaller
+          run : pyinstaller --onefile --paths=Abc_project\license Abc_project\app.py
+        - name: Start Binary Server On Background Mode
+          run: Start-Process -FilePath .\dist\app.exe
+        - name: Server Ping Test
+          run: 'curl -H "api_key: Abc_project" http://localhost:5000'
+```
+
 ## Core concept
 
 Workflow > Job > Action(portable) > Step
@@ -25,6 +76,7 @@ Workflow > Job > Action(portable) > Step
   - parallel하게 혹은 순차적으로 실행할 수 있음(이전 job의 상태에 따라서)
     - 예를들어, 한 workflow가 build, test job을 가지고, test job은 build job의 status에 의존한다고 하면, 만일, build job이 실패했을 경우, test job은 실행되지 않음
     - 각 job은 가상환경의 fresh instance에서 실행됨
+      - job기반으로는 독립적으로 실행된다는 것
 
 ### Action
 
@@ -46,7 +98,7 @@ Workflow > Job > Action(portable) > Step
 ### Artifact
 
 - 개요
-  - 빌드 하거나 코드를 테스할 때 생성된 파일들
+  - 빌드 하거나 코드를 테스트할 때 생성된 파일들
     - 바이너리 / 패키지 파일들, 테스트 결과, 스크린샷, 로그 파일들 등
 - 특징
   - 다른 job에 사용되거나, deploy 될 수 있음
