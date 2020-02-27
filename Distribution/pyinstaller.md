@@ -2,6 +2,11 @@
 
 - 의문
 - 개요
+  - Pyinstaller가 dependency를 찾는 과정
+  - Building to One Folder
+  - Building to One File
+  - Using a Console Window
+  - Source Code 숨기기
 
 ## 의문
 
@@ -9,18 +14,19 @@
 
 - 실행 파일 생성 과정
   - 사용자에 의해 작성된 파이썬 스크립트를 읽음
-  - 코드를 분석 & 파이썬 슴크립트를 실행하기 위한 다른 모든 모듈과 라이브러리를 발견
+  - 코드를 분석 & 파이썬 스크립트를 실행하기 위한 다른 모든 모듈과 라이브러리를 발견
+    - *`import` 키워드만 발견해주는 것인가? 어떻게 하고 있는것일까?*
   - 사용중인 python interpreter를 포함한 해당 파일들을 다 복사
-  - 하나의 실행파일 / 폴더로 빌드
-- 배포했을 때, 그 파일을 받은 사용자는 python 환경이 구축되지 않아도 실행 가능
+  - 하나의 실행파일 or 폴더로 빌드
+- 배포했을 때, 그 파일을 받은 사용자는 python 환경이 구축되지 않아도 실행 가능(어차피 인터프리터도 같이 bundling하니까)
 - 명령어
-  - `pyinstaller --onefile myscript.py`
+  - `pyinstaller (--onefile 등의 옵션) myscript.py`
 
 ### Pyinstaller가 dependency를 찾는 과정
 
 - dependency찾기
   - pyinstaller는 모든 `import` 문을 recursive하게 찾으면서 해당 타겟 프로그램이 사용하는 완전한 모듈의 리스트를 구성
-    - *`egg` distribution* 역시 pyinstaller는 감지해서 set함
+    - *`egg` distribution* 역시 pyinstaller는 감지해서 자동적으로 세팅함
 - **dependency를 못찾는 경우**
   - 원인
     - 변수와 `__import__()`함수를 사용하는 경우
@@ -28,10 +34,11 @@
     - **`sys.path`를 이용해서 런타임에 패스를 조작하는 경우**
   - 해결책
     - pyinstaller command line으로 additional file을 추가해줌
-    - additional import path들을 command line으로 추가해줌
-    - pyinstaller가 처음으로 작성하는 `myscript.spec`파일을 편집할 수 있음
+    - pyinstaller command line으로 additional import path를 추가해줌
+    - pyinstaller가 처음으로 작성하는 `myscript.spec`파일을 편집
       - `spec`파일에서는 Pyinstaller에게 코드 모듈을 알려줄 수 있음
     - hook파일을 작성해서 Pyinstaller에게 hidden imports를 알려줄 수 있음
+      - *hook파일이 뭐지? spec파일과 무엇이 다르지?*
   - 특정 데이터 파일에 의존하는 경우에도 pyinstaller가 spec file을 보고 그것들을 포함하도록 할 수 있음
   - 런타임에 파일을 include하기 위해서는, bundle에서 실행하는 것과 관계없이 절대적으로 path를 나타낼 수 있도록 하는것이 중요함
   - pyinstaller는 어느 OS에나 마찬가지로 존재할 것으로 예상되는 라이브러리를 include하지 않음
@@ -76,7 +83,9 @@
     - 시간이 one-folder 버전보다 더 오래 걸리는 이유
     - 현재 pyinstaller는 file attributes를 보존하지 않음
   - temporary folder를 생성한 뒤로는, bootloader는 one-folder bundle과 완전히 같은 방식으로 진행함
-  - bundled colde가 삭제될 때, bootloader는 temporary folder도 같이 삭제
+    - 임시 python environment 생성 하고, 파이썬 인터프리터를 실행함
+  - *bundled code가 삭제될 때, bootloader는 temporary folder도 같이 삭제*
+    - *이게 무슨 소리?*
   - 참고
     - `/tmp` 폴더는 반드시 execution 옵션으로 mount해야 함
     - `_MEIxxxx`폴더는 프로그램이 크래시 나거나 killed될 때, 같이 삭제되지 않음
