@@ -6,6 +6,7 @@
 - Root Logger Configurations
 - Formatting the Output
 - Custom logger
+- Other Configuration Methods
 
 ## 의문
 
@@ -118,6 +119,30 @@ ZeroDivisionError: division by zero
 
 ## Custom logger
 
+custom logger작성의 예시
+
+```py
+import logging
+
+logger = logging.getLogger(__name__)
+
+c_handler = logging.StreamHandler()
+f_handler = logging.FileHandler('file.log')
+c_handler.setLevel(logging.WARNING)
+f_handler.setLevel(logging.ERROR)
+
+c_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+c_handler.setFormatter(c_format)
+f_handler.setFormatter(f_format)
+
+logger.addHandler(c_handler)
+logger.addHandler(f_handler)
+
+logger.warning('This is a warning')
+logger.error('This is an error')
+```
+
 - logging 모듈에서 자주 쓰이는 클래스들
   - `Logger`
     - 이 클래스의 instance가 우리가 실제로 다루는 application code에서 직접 logging관련 메서드를 호출함
@@ -138,6 +163,87 @@ ZeroDivisionError: division by zero
   - `basicConfig()`메서드로 설정할 수 없고, `Handlers`와 `Formatters`로 설정해야 함
 - Handler 사용하기
   - 개요
-    - 자신의 custom logger를 만들어서, 로그를 다양한 장소로 생성될 때 마다 보내주고 싶을 때 사용됨
-    - 다양한 destination으로 전송
+    - 로그가 생성될때 마다 다양한 장소로 보내주고 싶을 때 사용
       - `stdout`, `file`, `HTTP`, `SMTP(email)`
+    - 로거 하나에 한개 이상의 핸들러를 만들 수 있음
+    - severity level을 설정해서, 각 handler마다 다른 severity level로 logging할 수 있도록 함
+
+## Other Configuration Methods
+
+file configuration을 이용한 logger 작성의 예시: Config 파일1
+
+```
+[loggers]
+keys=root,sampleLogger
+
+[handlers]
+keys=consoleHandler
+
+[formatters]
+keys=sampleFormatter
+
+[logger_root]
+level=DEBUG
+handlers=consoleHandler
+
+[logger_sampleLogger]
+level=DEBUG
+handlers=consoleHandler
+qualname=sampleLogger
+propagate=0
+
+[handler_consoleHandler]
+class=StreamHandler
+level=DEBUG
+formatter=sampleFormatter
+args=(sys.stdout,)
+
+[formatter_sampleFormatter]
+format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
+```
+
+file configuration을 이용한 logger 작성의 예시: Config 파일1
+
+```yaml
+version: 1
+formatters:
+  simple:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+loggers:
+  sampleLogger:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
+root:
+  level: DEBUG
+  handlers: [console]
+```
+
+file configuration을 이용한 logger 작성의 예시: python 코드
+
+```py
+import logging
+import logging.config
+
+# conf 파일의 경우
+logging.config.fileConfig(fname='file.conf', disable_existing_loggers=False)
+
+import logging
+import logging.config
+import yaml
+
+# yaml 파일의 경우
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f.read())
+    logging.config.dictConfig(config)
+
+logger = logging.getLogger(__name__)
+
+logger.debug('This is a debug message')
+```
