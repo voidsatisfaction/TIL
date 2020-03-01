@@ -1,12 +1,127 @@
 # Concurrency(python)
 
 - 의문
+- 순서대로 출력하기 문제
 - What Is Concurrency?
 - What Is Parallelism?
 - When Is Concurrency Useful?
 - How to Speed Up an I/O-Bound Program
 
 ## 의문
+
+## 순서대로 출력하기 문제
+
+- 문제
+  - `printSecond`함수는 무조건 `printFirst`함수가 호출되고 나서 호출되어야 하고, 그 다음에 `printThird`함수가 호출되도록 코드를 작성하는 문제(각 `first`, `second`, `third`함수는 각각 서로다른 스레드에서 임의의 순서로 실행된다)
+- 방법
+  - Barrier
+  - Semaphore
+  - Condition
+  - Lock
+  - Event
+
+```py
+from threading import Barrier, Lock, Event, Semaphore, Condition
+
+class Foo:
+    def __init__(self):
+        self.first_barrier = Barrier(2)
+        self.second_barrier = Barrier(2)
+
+    def first(self, printFirst):
+        printFirst()
+        self.first_barrier.wait()
+
+    def second(self, printSecond):
+        self.first_barrier.wait()
+        printSecond()
+        self.second_barrier.wait()
+
+    def third(self, printThird):
+        self.second_barrier.wait()
+        printThird()
+
+class Foo:
+    def __init__(self):
+        self.gates = (Semaphore(0),Semaphore(0))
+
+    def first(self, printFirst):
+        printFirst()
+        self.gates[0].release()
+
+    def second(self, printSecond):
+        with self.gates[0]:
+            printSecond()
+            self.gates[1].release()
+
+    def third(self, printThird):
+        with self.gates[1]:
+            printThird()
+
+class Foo:
+    def __init__(self):
+        self.exec_condition = Condition()
+        self.order = 0
+        self.first_finish = lambda: self.order == 1
+        self.second_finish = lambda: self.order == 2
+
+    def first(self, printFirst):
+        with self.exec_condition:
+            printFirst()
+            self.order = 1
+            self.exec_condition.notify(2)
+
+    def second(self, printSecond):
+        with self.exec_condition:
+            self.exec_condition.wait_for(self.first_finish)
+            printSecond()
+            self.order = 2
+            self.exec_condition.notify()
+
+    def third(self, printThird):
+        with self.exec_condition:
+            self.exec_condition.wait_for(self.second_finish)
+            printThird()
+
+class Foo:
+    def __init__(self):
+        self.locks = (Lock(),Lock())
+        self.locks[0].acquire()
+        self.locks[1].acquire()
+
+    def first(self, printFirst):
+        printFirst()
+        self.locks[0].release()
+
+    def second(self, printSecond):
+        with self.locks[0]:
+            printSecond()
+            self.locks[1].release()
+
+
+    def third(self, printThird):
+        with self.locks[1]:
+            printThird()
+
+class Foo:
+    def __init__(self):
+        self.done = (Event(),Event())
+
+    def first(self, printFirst):
+        printFirst()
+        self.done[0].set()
+
+    def second(self, printSecond):
+        self.done[0].wait()
+        printSecond()
+        self.done[1].set()
+
+    def third(self, printThird):
+        self.done[1].wait()
+        printThird()
+
+```
+
 
 ## What Is Concurrency?
 
@@ -192,3 +307,9 @@ if __name__ == '__main__':
   - asyncio를 잘 사용하기 위해서는 async 버전을 제공하는 라이브러리를 사용해야만 함
   - task들이 서로 cooperative하게 만들어야지만 성능 향상을 기대할 수 있음
     - event loop가 task가 컨트롤을 넘겨주게 강제할 수 없음(자발적으로 컨트롤을 넘겨주기 전까지)
+
+### Multiprocessing Version
+
+```py
+
+```
