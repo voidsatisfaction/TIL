@@ -1,4 +1,4 @@
-# 윈도우에서 자주 사용하는 커맨드
+# 윈도우 CMD환경에서 자주 사용하는 커맨드
 
 위는 Windows cmd커맨드 아래는 그에 대응하는 linux 커맨드
 
@@ -16,3 +16,5 @@
   - `program &`
 - `TASKKILL /pid (process id)`
   - `kill -9 (pid)`
+- `DEL /f (filename)`
+  - `rm (filename)`
