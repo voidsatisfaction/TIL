@@ -18,3 +18,7 @@
   - `kill -9 (pid)`
 - `DEL /f (filename)`
   - `rm (filename)`
+- `COPY (source file) (destination)`
+  - `cp (source file) (destination)`
+- `XCOPY /e /h /k (source folder) (destination\source folder name)`
+  - `cp -r (source folder) (destination)`
