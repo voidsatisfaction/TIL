@@ -147,4 +147,5 @@ if __name__ == '__main__':
 ### 주의 사항
 
 1. Process communication을 할 때, thread를 인스턴스 변수로 갖는 class의 instance는 pickle화 되지 못함(그러한 인스턴스는 `multiprocessing.queue`에 원소로 put될 수 없음)
-2. multi-processing을 실행시킬 때(`p.start()`), wrapper된 함수들은 pickle화 시킬 수 없다
+2. multi-processing을 실행시킬 때(`p.start()`), decorator등으로 wrapper된 함수들은 pickle화 시킬 수 없다
+3. 해당 job queue를 gunicorn이나 waitress에서 사용하는 경우, input queue가 thread-safe으로 구현되어있으므로, 혹시 gunicorn의 worker로서 processes를 사용하는 경우, queue의 사용에 문제가 생길 수 있다.
