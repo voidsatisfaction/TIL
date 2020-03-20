@@ -1,21 +1,31 @@
 # 데이터베이스의 원리
 
+- 의문
+- How a SQL database works
+  - Relation
+  - Row
+  - Heap
+  - Index
+  - Table
+
 ## 의문
 
 - Heap이 row를 저장하는 공간이라면, table의 개념은 물리적으로 어떻게 나누는 것인가?
   - 1개의 heap, 다수의 indexes
 - *복합 키 index의 경우에는 어떤식으로 B-tree가 구성되는가?*
+  - 각 깊이 level이 하나의 복합키 중 순서대로의 index에 대응하는가?
 
 ## How a SQL database works
 
 ### The relation
 
 - 개요
-  - Array와 Associative array타입의 일반화
   - tuple의 집합
     - 하나의 item에 대한 자세한 정보를 갖음(row)
     - relation속의 tuple form은 각 tuple마다 완전히 같음
   - 각 필드(column)들은 relation level에서 접근 가능
+- 구현
+  - Array(heap : 데이터 저장고)와 Associative array(b-tree : index)타입의 일반화
 - 특징
   - 필드 기반으로 여러가지 연산이 가능
   - index의 존재
@@ -71,7 +81,8 @@ heap은 무한정 크기가 증가할 수 있음
   - 개요
     - (insert)관련 페이지가 필요하면 disk로부터 memory로 읽혀지고, 수정되고 나서 다시 disk로 작성
   - page사용의 장점(vs 모든 행을 다 읽고 쓰는것 보다)
-    - ① IO buffering에 매우 적합하여 퍼포먼스 이득이 존재, 캐싱 가능
+    - *① IO buffering에 매우 적합하여 퍼포먼스 이득이 존재, 캐싱 가능*
+      - *정확히 어떤 메커니즘?*
     - ② page접근이 빠름(page size * page number + 1)
     - ③ fragmentation을 page단위로 수행 가능
       - row가 삭제되면 듬성듬성 gap이 생김. *이를 페이지 내에서 빈 공간을 맨 뒤로 보내주는 연산(전체가 아니므로 빠르게 수행 가능?)*
