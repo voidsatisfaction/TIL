@@ -14,6 +14,7 @@
   - 1개의 heap, 다수의 indexes
 - *복합 키 index의 경우에는 어떤식으로 B-tree가 구성되는가?*
   - 각 깊이 level이 하나의 복합키 중 순서대로의 index에 대응하는가?
+- *애초에 index를 구현할 때, b-tree의 노드와 데이터베이스의 하나의 row가 어떤 방식으로 대응되는가?*
 
 ## How a SQL database works
 
