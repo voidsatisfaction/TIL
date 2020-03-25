@@ -1,12 +1,70 @@
 # multiprocessing - process-based parallelism
 
 - 의문
+- 현실 문제
 - Introduction
 - Contexts and start methods
 - Sharing state between processes
 - Using a pool of workers
+- Programming guidelines
+  - All start methods
+  - The spawn and forkserver start methods
 
 ## 의문
+
+## 현실 예시
+
+### multiprocessing 자원 inherit에 관하여
+
+```py
+import multiprocessing, as mp
+
+# these global objects will be imported(inherited) by spawned process
+# not serialized(pickled)
+x = 0
+class A:
+  y = 0
+
+def f():
+    print(x) # 0
+    print(A.y) # 0
+
+def g(x, A):
+    print(x) # 1
+    print(A.y) # 0; really, not even args are inherited?
+
+def main():
+    global x
+    x = 1
+    A.y = 1
+    p = mp.Process(target = f)
+    p.start()
+    # args will be serialized(pickled)
+    q = mp.Process(target = g, args = (x, A))
+    q.start()
+
+
+if __name__=="__main__":
+    mp.set_start_method('spawn')
+    main()
+```
+
+- 위와 같은 결과가 나오는 이유
+  - `mp.Process(target = f)`
+    - main 프로세스가 내용을 실행하다가, `main()`함수 실행
+    - `p = mp.Process(target = f)`에서 f를 spawn해서 새 프로세스 실행
+    - f가 있는 파일 다시 새로 initialize한 뒤에, `f`실행
+    - x는 0, A.y는 0이 옳음
+  - `mp.Process(target = g, args(x, A))`
+    - `q = mp.Process(target = g, args(x, A))`에서 g를 spawn해서 새 프로세스 실행
+    - g가 있는 파일 다시 새로 initialize한 뒤에, `g`실행
+    - x는 pickled된 `args`가 넘겨져와서 1
+    - `A`는 unpickled 되는데, 클래스의 경우 클래스 자체의 state(클래스변수)는 pickled되지 않으므로, 사실상 shared resource인 `class A`가 대신 참조되어서 `A.y`는 0
+- 참고
+  - serialize
+    - 한 오브젝트를 다른 형태로 변환시키는 것
+    - e.g
+      - pickle은 serialization protocol의 한 가지 가능한 형태임
 
 ## Introduction
 
