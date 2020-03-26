@@ -9,6 +9,10 @@
 
 ## 의문
 
+- 예를들어, 웹 서버가 thread 기반으로 concurrent하게 요청을 처리한다고 가정하면, 이 웹 서버 프로세스 안에서 딥러닝 모델을(CPU & GPU bound) 다른 스레드에서 동작시킨다고 했을 때, 이 웹 서버의 요청들은 GIL에 의해서 blocking되는 것인지?
+  - GIL에 의해서 blocking되는 것이 아니라, GIL에 의하여 특정 시점에 하나의 thread 연산만 실행
+  - 즉 concurrency는 여전히 유지
+
 ## 개요
 
 - 개요
