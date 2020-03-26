@@ -12,6 +12,8 @@
 
 ## 의문
 
+- *start_method에서 fork-server는 왜 존재하는가?*
+
 ## 현실 예시
 
 ### multiprocessing 자원 inherit에 관하여
@@ -256,9 +258,15 @@ if __name__ == '__main__':
 ```
 
 - Explicitly pass resources to child processes
-  - Unix에서 `fork` start method를 사용하는 경우, 자식 프로세스는 global resource를 사용하는 *부모 프로세스에서 만들어진 shared resource*를 사용할 수 있음
+  - Unix에서 `fork` start method를 사용하는 경우, 자식 프로세스는 global resource를 사용하는 부모 프로세스에서 만들어진 shared resource(같은 메모리의 object)를 사용할 수 있음
     - *구체적으로 예시는?*
-    - *windows에서도 사용 가능했는데..? 왜지?*
+    - windows에서도 사용 가능했는데..? 왜지?
+      - windows에서는 default로 `spawn` start method를 적용하는데, 정확히 이야기하면 shared resource를 사용하는 것이 아니고, 새로 initialize된 부모 resource랑은 격리된 또 다른 자식 resource를 사용하는 것
+      - 그러므로 오브젝트의 메모리 주소가 서로 다름
+  - 참고
+    - **코드에 따라서 `multiprocessing`은 `start_method`를 암묵적으로 정해줌**
+      - **모듈의 global에 변수가 존재하고 그것을 child process에서 사용하는 경우 `fork`로 변경**
+      - **모듈의 global에 함수만 존재하고 그것을 child process에서 사용하는 경우 암묵적 `start_method` 변경이 일어나지 않음**
   - 하지만, 그러한 object를 argument로 넘겨주는 것이 더 좋음
   - child process가 살아있는 동안, 해당 오브젝트는 부모 프로세스에서 garbage collected 되지 않음
 
@@ -271,6 +279,8 @@ def f():
     ... do something using "lock" ...
 
 if __name__ == '__main__':
+    # fork의 경우에는 lock resource가 공유됨(메모리 주소가 같음)
+    # 만일 start_method가 spawn이라면, 애초에 f 속에서 lock을 접근할 수 없을것
     lock = Lock()
     for i in range(10):
         Process(target=f).start()
@@ -287,6 +297,8 @@ def f(l):
 if __name__ == '__main__':
     lock = Lock()
     for i in range(10):
+        # 명시적으로 lock을 args를 통해서 넣어주는게 바람직
+        # work with both spawn and fork start_method
         Process(target=f, args=(lock,)).start()
 ```
 
@@ -306,6 +318,9 @@ def main():
     p.join()
 
 if __name__ == '__main__':
+    # on MacOS
+    # start_method is automatically set to 'fork'
+    # since, global shared resource is defined (q = Queue())
     main()
 ```
 
@@ -316,8 +331,10 @@ if __name__ == '__main__':
 - `spawn`의 경우
   - 새 process가 spawn되고, 위의 example script가 자식 프로세스에서 처음부터 다시 실행됨
     - *아마도, target으로 들어간 `f`가 위의 example script에 직접들어가 있으므로?*
+      - f를 실행시키기 위한 환경을 고려(global scope라던지...)
     - *만일, `f`가 다른 파일에 들어가있었으면, 그 파일의 환경(global variable 등)을 새로 생성했겠지?*
   - 결국 자식 프로세스는 새 Queue object를 생성하고, 부모 프로세스의 Queue와는 전혀 접점이 없게 됨
+  - *애초에 윈도우 환경에서 위의 코드를 실행하면 어떤 일이 벌어지나? error? or 부모 프로세스와 독립된 queue의 생성?*
 
 ### The spawn and forkserver start methods
 
