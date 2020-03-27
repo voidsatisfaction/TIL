@@ -1,7 +1,6 @@
 # multiprocessing - process-based parallelism
 
 - 의문
-- 현실 문제
 - Introduction
 - Contexts and start methods
 - Sharing state between processes
@@ -9,81 +8,32 @@
 - Programming guidelines
   - All start methods
   - The spawn and forkserver start methods
+- 현실 문제
 
 ## 의문
 
 - *start_method에서 fork-server는 왜 존재하는가?*
 
-## 현실 예시
-
-### multiprocessing 자원 inherit에 관하여
-
-```py
-import multiprocessing, as mp
-
-# these global objects will be imported(inherited) by spawned process
-# not serialized(pickled)
-x = 0
-class A:
-  y = 0
-
-def f():
-    print(x) # 0
-    print(A.y) # 0
-
-def g(x, A):
-    print(x) # 1
-    print(A.y) # 0; really, not even args are inherited?
-
-def main():
-    global x
-    x = 1
-    A.y = 1
-    p = mp.Process(target = f)
-    p.start()
-    # args will be serialized(pickled)
-    q = mp.Process(target = g, args = (x, A))
-    q.start()
-
-
-if __name__=="__main__":
-    mp.set_start_method('spawn')
-    main()
-```
-
-- 위와 같은 결과가 나오는 이유
-  - `mp.Process(target = f)`
-    - main 프로세스가 내용을 실행하다가, `main()`함수 실행
-    - `p = mp.Process(target = f)`에서 f를 spawn해서 새 프로세스 실행
-    - f가 있는 파일 다시 새로 initialize한 뒤에, `f`실행
-    - x는 0, A.y는 0이 옳음
-  - `mp.Process(target = g, args(x, A))`
-    - `q = mp.Process(target = g, args(x, A))`에서 g를 spawn해서 새 프로세스 실행
-    - g가 있는 파일 다시 새로 initialize한 뒤에, `g`실행
-    - x는 pickled된 `args`가 넘겨져와서 1
-    - `A`는 unpickled 되는데, 클래스의 경우 클래스 자체의 state(클래스변수)는 pickled되지 않으므로, 사실상 shared resource인 `class A`가 대신 참조되어서 `A.y`는 0
-- 참고
-  - serialize
-    - 한 오브젝트를 다른 형태로 변환시키는 것
-    - e.g
-      - pickle은 serialization protocol의 한 가지 가능한 형태임
-
 ## Introduction
 
 - multiprocessing module
   - 개요
-    - `threading`모듈과 비슷한 API를 사용하여 process를 spawning하는 것을 도와주는 패키지
+    - **`threading`모듈과 비슷한 API를 사용하여 process를 spawning하는 것을 도와주는 패키지**
     - GIL을 subprocess를 이용하여 효과적으로 피해감
       - multiple processor를 최대한 활용할 수 있도록 도와줌
     - `pool`을 이용하여 효과적으로 data parallelism을 실현 가능
 
 ## Contexts and start methods
 
+- spawn
+- fork
+- fork-server
+
 ### platform(OS)에 따라서, 세가지 process start 방법을 제공
 
 - spawn
   - 부모 프로세스는 완전히 새로운 python interpreter process를 시작함
-  - 자식 프로세스는 프로세스 오브젝트의 `run()` 메서드를 실행하는 데에 필요한 자원들을 상속받기만 함
+  - 자식 프로세스는 프로세스 오브젝트의 `run()` 메서드를 실행하는 데에 필요한 자원들을 상속받기만 함(환경)
     - 특히 필요없는 file descriptor, handles은 상속받지 않음
   - fork, forkserver보다는 다소 느림
   - 지원OS
@@ -91,7 +41,7 @@ if __name__=="__main__":
 - fork
   - 부모 프로세스는 `os.fork()`를 사용하여 python interpreter를 포크함
   - 자식 프로세스는 시작할 때, parant process와 동일함
-  - 모든 부모 프로세스의 자원을 상속받음
+    - **모든 부모 프로세스의 자원을 상속받음(shared resource)**
   - 안전하게 multithreaded process를 forking하는 것은 문제가 많음
   - 지원OS
     - Unix(default)
@@ -265,10 +215,10 @@ if __name__ == '__main__':
       - 그러므로 오브젝트의 메모리 주소가 서로 다름
   - 참고
     - **코드에 따라서 `multiprocessing`은 `start_method`를 암묵적으로 정해줌**
-      - **모듈의 global에 변수가 존재하고 그것을 child process에서 사용하는 경우 `fork`로 변경**
-      - **모듈의 global에 함수만 존재하고 그것을 child process에서 사용하는 경우 암묵적 `start_method` 변경이 일어나지 않음**
+      - **모듈의 global에 변수가 존재하는 경우 `fork`로 변경**
+      - **모듈의 global에 함수만 존재하고 그것을 child process에서 사용하는 경우라도 암묵적 `start_method` 변경은 일어나지 않음**
   - 하지만, 그러한 object를 argument로 넘겨주는 것이 더 좋음
-  - child process가 살아있는 동안, 해당 오브젝트는 부모 프로세스에서 garbage collected 되지 않음
+    - 왜냐면 shared resource는 child process가 살아있는 동안, 해당 오브젝트는 부모 프로세스에서 garbage collected 되지 않음
 
 위의 안좋은 예시
 
@@ -281,6 +231,8 @@ def f():
 if __name__ == '__main__':
     # fork의 경우에는 lock resource가 공유됨(메모리 주소가 같음)
     # 만일 start_method가 spawn이라면, 애초에 f 속에서 lock을 접근할 수 없을것
+
+    # Q) 애초에 이 lock은 어떻게 f에서 사용가능한거지? python3의 scope?
     lock = Lock()
     for i in range(10):
         Process(target=f).start()
@@ -320,13 +272,14 @@ def main():
 if __name__ == '__main__':
     # on MacOS
     # start_method is automatically set to 'fork'
-    # since, global shared resource is defined (q = Queue())
+    # since, global shared resource has been defined (q = Queue())
     main()
 ```
 
 - `fork`의 경우
   - `q = Queue()` 부분이 parent process에 의해서 fork가 실행되기 전에 한 번 호출이 됨
   - 자식 프로세스는 부모 프로세스가 `fork`를 실행한 그 시점부터 실행을 계속함
+    - 왜냐면, `fork` start method의 경우에는 부모 프로세스에서 분화가 되기 때문
   - 결국 같은 `multiprocessing.Queue`를 scope에 두게 됨
 - `spawn`의 경우
   - 새 process가 spawn되고, 위의 example script가 자식 프로세스에서 처음부터 다시 실행됨
@@ -346,3 +299,57 @@ if __name__ == '__main__':
   - However, global variables which are just module level constants cause no problems.
 - **Safe importing of main module**
   - `if __name__ == '__main__'` 필수
+
+  ## 현실 예시
+
+  ### multiprocessing 자원 inherit에 관하여
+
+  ```py
+  import multiprocessing, as mp
+
+  # these global objects will be imported(inherited) by spawned process
+  # not serialized(pickled)
+  x = 0
+  class A:
+    y = 0
+
+  def f():
+      print(x) # 0
+      print(A.y) # 0
+
+  def g(x, A):
+      print(x) # 1
+      print(A.y) # 0; really, not even args are inherited?
+
+  def main():
+      global x
+      x = 1
+      A.y = 1
+      p = mp.Process(target = f)
+      p.start()
+      # args will be serialized(pickled)
+      q = mp.Process(target = g, args = (x, A))
+      q.start()
+
+
+  if __name__=="__main__":
+      mp.set_start_method('spawn')
+      main()
+  ```
+
+  - 위와 같은 결과가 나오는 이유
+    - `mp.Process(target = f)`
+      - main 프로세스가 내용을 실행하다가, `main()`함수 실행
+      - `p = mp.Process(target = f)`에서 f를 spawn해서 새 프로세스 실행
+      - f가 있는 환경 다시 새로 initialize한 뒤에, `f`실행
+      - x는 0, A.y는 0이 옳음
+    - `mp.Process(target = g, args(x, A))`
+      - `q = mp.Process(target = g, args(x, A))`에서 g를 spawn해서 새 프로세스 실행
+      - g가 있는 파일 다시 새로 initialize한 뒤에, `g`실행
+      - x는 pickled된 `args`가 넘겨져와서 1
+      - `A`는 unpickled 되는데, 클래스의 경우 클래스 자체의 state(클래스변수)는 pickled되지 않으므로, 사실상 global resource인 `class A`가 대신 참조되어서 `A.y`는 0
+  - 참고
+    - **serialize**
+      - 한 오브젝트를 다른 형태로 변환시키는 것
+      - e.g
+        - pickle은 serialization protocol의 한 가지 가능한 형태임
