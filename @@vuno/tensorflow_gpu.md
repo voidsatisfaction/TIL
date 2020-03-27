@@ -10,6 +10,8 @@
 
 ### 도커를 사용하지 않는 경우(네이티브 윈도우 환경)
 
+https://www.tensorflow.org/install/gpu?hl=ko
+
 - `python3 -c "import tensorflow as tf; tf.test.is_gpu_available()"`로 현재 gpu가 사용가능한지 확인
   - 이 커맨드는 수시로 활용
 - CUDA 설치
