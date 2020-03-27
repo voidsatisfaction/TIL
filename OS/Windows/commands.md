@@ -2,22 +2,24 @@
 
 위는 Windows cmd커맨드 아래는 그에 대응하는 linux 커맨드
 
-- `dir`
+- `DIR`
   - `ls`
-- `cd`
+- `CD`
   - `cd or pwd`
-- `type`
+- `TYPE`
   - `cat`
-- `netstat (-ano)`
-  - `netstat`
-- `rmdir (directory name) /s`
+- `RMDIR (directory name) /s /q`
   - `rm -rf (directory name)`
-- `START /B program`
-  - `program &`
-- `TASKKILL /pid (process id)`
-  - `kill -9 (pid)`
 - `DEL /f (filename)`
   - `rm (filename)`
+- `SET VAR1=ABC`
+  - `export VAR1=ABC`
+- `START /B program`
+  - `program &`
+- `NETSTAT`
+  - `netstat (-ano)`
+- `TASKKILL /pid (process id)`
+  - `kill -9 (pid)`
 - `COPY (source file) (destination)`
   - `cp (source file) (destination)`
 - `XCOPY /e /h /k (source folder) (destination\source folder name)`
