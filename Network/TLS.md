@@ -8,6 +8,10 @@
 ## 의문
 
 - *TLS에서 맨 처음 클라이언트가 ClientHello 메시지를 보내고 Server가 ServerHello메시지를 보내면서 인증서와 공개키를 준다고 했는데, 이것들은 암호화가 된 정보들인가? 아니면 되지 않아도 되는가? 만일, 암호화기 되어있다면 클라이언트는 어떻게 복호화하는가?*
+- 브라우저는 자신이 CA list를 갖고 있어서 server로 부터 받은 certificate이 신용 가능한 CA로부터 사인된 것인지 확인할 수 있는데, 그렇다면 단순 http 애플리케이션은(`requests`, `axios`) 어떻게 해당 certificate이 신용 가능한지 판단할 수 있는가?
+  - 애초에 chrome browser는 OS에 내장된 certificate program을 활용(혹은 유저에 의해서 추가됨)
+  - library에서는 TLS 처리하는 모듈에서 인증서 체인을 검증해주는 기능이 존재함. 인증서가 있는 곳은 설정을 따로 해주어야 함
+- *근데, 사실, certificate을 중간에 해커가 탈취하면, 변장 공격이 가능한 것 아닌가?*
 
 ## TLS의 정의
 
