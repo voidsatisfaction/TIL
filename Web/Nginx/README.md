@@ -2,6 +2,11 @@
 
 - Nginx란
 - Nginx 설정 파일의 구조
+  - Configuration file
+  - Feature-Specific Conguration Files
+  - Contexts
+  - Virtual Servers
+  - Inheritance
 - 기능 예시
 
 참고: https://nginx.org/en/docs/beginners_guide.html
@@ -21,15 +26,106 @@
 
 ## Nginx 설정 파일의 구조
 
-- 지시(directives)
-  - 단순 지시(simple directives)
-    - 이름 파라미터;
-  - 블록 지시(block directives)
-    - 컨텍스트
-      - 블록 지시 속에 다양한 다른 지시들을 갖는 경우
-      - 다른 모든 컨텍스트의 밖에 놓인 지시들은 `main context`속에 있다고 생각할 수 있음
-      - `events`, `http` 지시들은 `main` 컨텍스트에 있고, `server`는 `http`안에, `location`은 `server`안에 존재
-    - `#`는 커멘트
+### Configuration file
+
+- 형식
+  - 텍스트
+- 이름
+  - default `nginx.conf`
+- 위치
+  - `/etc/nginx` or `/usr/local/nginx/conf` or `/usr/local/etc/nginx`에 위치
+- 구조
+  - directive + parameter
+    - 각 라인은 ;로 끝남
+    - 어떤 directive는 container(block)로 역할하여 관련된 directive들을 `{}`로 감쌈
+- 주의 사항
+  - configuration file을 변경한 뒤에는 `reload`가 필요함
+    - nginx process restart
+    - reload
+
+```nginx
+user nobody;
+error_log logs/error.log notice;
+worker_processes 1;
+```
+
+### Feature-Specific Conguration Files
+
+- 유지보수를 쉽게 하기
+  - feature-specific 파일들을 `/etc/nginx/conf.d` 디렉터리에 두고 `include` directive로 main `nginx.conf`파일에 넣어두자
+
+```nginx
+include conf.d/http;
+include conf.d/stream;
+include conf.d/exchange-enhanced;
+```
+
+### Contexts
+
+- 개요
+  - 서로 다른 traffic type에 적용되는 여러 directive의 top level block
+- 종류
+  - `events`
+    - General connection processing
+  - `http`
+    - HTTP traffic
+  - `mail`
+    - Mail traffic
+  - `stream`
+    - TCP / UDP traffic
+  - 위의 contexts 밖에 위치한 directive들은 `main` 컨텍스트 안에 있다고 간주
+
+### Virtual Servers
+
+- 개요
+  - 각각의 traffoc-handling context에서, 리퀘스트들을 프로세싱하기 위한 virtual server들을 정의하기 위하여 `server`블록을 포함시켜야 함
+    - traffic 타입에 따라서, `server` 블록에 넣을 수 있는 directive가 다름
+- 예시
+  - `http` context에서는, 각 `server` directive는 request의 processing을 제어할 수 있음(도메인과 IP주소에 따라서)
+  - `mail` 과 `stream` context에서는, `server`가 특정 TCP나 UNIX 소켓에 도착한 traffic에 대한 processing을 제어할 수 있음
+
+Sample Configuration File with Multiple Contexts
+
+```nginx
+user nobody; # a directive in the 'main' context
+
+events {
+    # configuration of connection processing
+}
+
+http {
+    # Configuration specific to HTTP and affecting all virtual servers
+
+    server {
+        # configuration of HTTP virtual server 1
+        location /one {
+            # configuration for processing URIs starting with '/one'
+        }
+        location /two {
+            # configuration for processing URIs starting with '/two'
+        }
+    }
+
+    server {
+        # configuration of HTTP virtual server 2
+    }
+}
+
+stream {
+    # Configuration specific to TCP/UDP and affecting all virtual servers
+    server {
+        # configuration of TCP virtual server 1
+    }
+}
+```
+
+### Inheritance
+
+- 개요
+  - child context
+    - 다른 context(parent) 속에 포함된 context
+    - parent level의 모든 directive의 설정을 상속받음
+    - overidding가능
 
 ## 기능 예시
 
