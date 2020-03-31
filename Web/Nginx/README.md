@@ -7,6 +7,13 @@
   - Contexts
   - Virtual Servers
   - Inheritance
+- Nginx reverse proxy
+  - 개요
+  - Passing a Request
+  - Configuring Buffers
+- HTTP Load Balancing
+  - Proxying HTTP Traffic to a Group of Servers
+  - Load Balancing 방법
 - 기능 예시
 
 참고: https://nginx.org/en/docs/beginners_guide.html
@@ -126,6 +133,100 @@ stream {
     - 다른 context(parent) 속에 포함된 context
     - parent level의 모든 directive의 설정을 상속받음
     - overidding가능
+
+## Nginx reverse proxy
+
+### 개요
+
+- proxy의 사용 이유
+  - load balancing
+  - application server로 request를 패스하는데, HTTP가 아닌 다른 프로토콜로(CGI 등) 전환
+
+### Passing a Request
+
+Proxy 예제
+
+```
+// .php로 끝나는 모든 request를 http://127.0.0.1:8000 으로 넘겨줌
+location ~ \.php {
+  proxy_pass http://127.0.0.1:8000;
+}
+```
+
+- non-HTTP proxied server
+  - `fastcgi_pass`
+  - `uwsgi_pass`
+  - `scgi_pass`
+  - `memcached_pass`
+- Request header
+  - 기본
+    - `Host`필드는 `$proxy_host`
+    - `Connection`필드는 `close`
+    - value가 비어있는 헤더의 필드는 아에 제거
+  - 사용자 정의로 애플리케이션 서버로 보낼 헤더를 재구성 가능(추가할 수도 있고, 빈 값을 넣어서 제거할 수도 있음)
+
+```
+location /some/path/ {
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_pass http://localhost:8000;
+}
+
+location /some/path/ {
+  proxy_set_header Accept-Encoding "";
+  proxy_pass http://localhost:8000
+}
+```
+
+### Configuring Buffers
+
+- 개요
+  - *기본값으로 nginx는 proxied server로부터 response를 버퍼함*
+    - 구체적으로 어떻게 optimization을 한다는 것인지
+
+*proxy_bind*는 무엇을 하는 역할?
+
+## HTTP Load Balancing
+
+### 개요
+
+- Load Balancing의 이유
+  - optimizing resource utilization
+  - maximizing throughput(일정 시간의 처리량)
+  - reducing latency
+  - ensuring fault-tolerant configurations
+
+### Proxying HTTP Traffic to a Group of Servers
+
+- `upstream` directive를 이용(`http` context 내부에 위치)
+  - `server`는 nginx에서 동작하는 가상의 서버를 의미(`upstream`은 nginx뒤에서 동작하는 proxied 서버)
+
+```
+http {
+  // backend Group(proxied servers)
+  // three server configurations
+  upstream backend {
+    server backend1.example.com weight=5;
+    server backend2.example.com;
+    server 192.0.0.1 backup;
+  }
+
+  // virtual server on nginx(proxy server)
+  server {
+    location / {
+      proxy_pass http://backend;
+    }
+  }
+}
+```
+
+- load-balancing 방법
+  - Round Robin
+  - Least Connections
+  - IP Hash
+  - Generic Hash
+  - Least Time
+  - Random
 
 ## 기능 예시
 
