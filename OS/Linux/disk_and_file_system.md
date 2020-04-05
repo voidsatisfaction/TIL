@@ -31,6 +31,10 @@
   - 파티션 테이블로부터 적절한 파티션 위치를 받아야 함
   - 파티션상의 파일 시스템 데이터베이스에서 원하는 파일 데이터 검색
 
+Virtual File System
+
+![](./images/linux/ch4/virtual_file_system1.jpeg)
+
 ## 파일 시스템
 
 ### 개요
