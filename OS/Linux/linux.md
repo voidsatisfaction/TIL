@@ -303,6 +303,15 @@ Linux abstraction level overview
 
 - `drwxr-xr-x`
   - `d`: 데릭터리 타입, 일반 파일은 `-`
+    - 장치 파일
+      - `b`
+        - block
+      - `c`
+        - character
+      - `p`
+        - pipe
+      - `s`
+        - socket
   - `rwx`: 사용자 접근 권한이 읽고 쓰고 실행 가능
   - `r-x`: 그룹 접근 권한이 읽고 실행 가능
   - `r-x`: 기타 접근 권한(world permission)이 읽고 실행 가능
