@@ -13,6 +13,8 @@
     - For applications where no possibility of replay attack can be tolerated, the server can use one-time nonce values that will not be honored for a second use. This requires the overhead of the server remembering which nonce values have been used until the nonce timestamp (and hence the digest built with it) has expired,
   - (만약 기억하는 것이 아니라면) nonce자체를 decode할 수 있는가?
     - AES암호와 같은 대칭키 암호를 사용하면 되지 않을까?
+- *처음 Digest인증을 하고 나서, 그 다음부터는 어떻게 세션을 유지할 수 있는가?*
+  - 계속 리소스 접근할 때 마다 확인할 수도 없는 노릇이고..
 
 ## 개요
 
