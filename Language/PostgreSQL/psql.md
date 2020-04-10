@@ -15,3 +15,9 @@
   - database_name 데이터베이스에 연결
 - `\dt+`
   - 접속한 database의 table을 listup(size포함)
+- `0 0 * * 0 pg_dump -U postgres dbname > ~/postgres/backups/dbname.bak`
+  - 백업파일을 생성하는 쉘 스크립트 크론탭 설정
+  - 더 발전된 설정
+    - TODAY=`date +"%Y%m%d"`
+    - docker exec dental_web_postgres_1 pg_dump -U postgres > ~/dental_clinical.${TODAY}.bak
+      - 오늘 날짜로 백업 파일을 생성
