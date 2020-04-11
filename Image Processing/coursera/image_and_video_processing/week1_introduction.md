@@ -5,6 +5,7 @@
 - Human and visual system
 - Image formation - Sampling & Quantization
 - Simple image operations
+- Python image processing with Pillow
 
 ## 의문
 
@@ -155,14 +156,16 @@ import numpy as np
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 IMAGE_DIRECTORY = os.path.join(CURRENT_DIRECTORY, 'images')
-FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'gaejook.jpeg')
-DEST_FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'converted_gaejook.jpeg')
+FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'gaejook_png.png')
+DEST_FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'converted_gaejook_png.png')
 
 if __name__ == '__main__':
     picture = Image.open(FILE_PATH)
     # for numpy array, it is three dimentional array
     # y axis -> x axis -> r,g,b value
     picture_array = np.array(picture)
+
+    print(picture_array.shape)
 
     # make brighter image
     intensified_picture_array = picture_array + 100
@@ -176,5 +179,4 @@ if __name__ == '__main__':
 
     new_picture = Image.fromarray(intensified_picture_array)
     new_picture.save(DEST_FILE_PATH)
-
 ```
