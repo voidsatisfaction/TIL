@@ -156,27 +156,139 @@ import numpy as np
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 IMAGE_DIRECTORY = os.path.join(CURRENT_DIRECTORY, 'images')
-FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'gaejook_png.png')
-DEST_FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'converted_gaejook_png.png')
+FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'gaejook.jpeg')
+DEST_FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'converted_gaejook.jpeg')
+DIFF_FILE_PATH = os.path.join(IMAGE_DIRECTORY, 'diff_gaejook.jpeg')
+
+def convert_brighter_image(picture_array, unit: int):
+    intensified_picture_array = picture_array + 100
+    intensified_picture_array[intensified_picture_array < 100] = 255
+
+    return intensified_picture_array
+
+def convert_darker_image(picture_array, unit: int):
+    intensified_picture_array = picture_array - 100
+    intensified_picture_array[intensified_picture_array > 155] = 0
+
+    return intensified_picture_array
+
+def convert_nxn_average_image(picture_array, n: int):
+    assert n % 2 == 1
+
+    # when n = 3
+    # [(-1, 1), (-1, 0), (-1. -1), ..., (1, 1)]
+    position = []
+    start, end = int(-n/2), int(n/2)+1
+    for i in range(start, end):
+        for j in range(start, end):
+            position.append((i, j))
+
+    Y, X, rgb = picture_array.shape
+
+    new_picture_array = np.zeros((Y, X, rgb))
+
+    for y in range(Y):
+        for x in range(X):
+            converted_rgb_pixel = np.zeros((3, ))
+
+            for pos in position:
+                pos_y, pos_x = pos
+
+                y_neighborhood = y + pos_y
+                x_neighborhood = x + pos_x
+
+                if y_neighborhood < 0 or y_neighborhood >= Y or x_neighborhood < 0 or x_neighborhood >= X:
+                    neighborhood_rgb_pixel = np.zeros((3, ))
+                else:
+                    neighborhood_rgb_pixel = picture_array[y_neighborhood][x_neighborhood]
+
+                converted_rgb_pixel += neighborhood_rgb_pixel
+
+            #  9 to n * n
+            converted_rgb_pixel /= n*n
+
+            new_picture_array[y][x] = converted_rgb_pixel
+
+    return np.uint8(new_picture_array)
+
+def convert_rotation_image(picture_array, radian):
+    (Y, X, rgb) = picture_array.shape
+
+    rotated_picture_array = np.zeros((Y, X, rgb))
+
+    rotation_transform_matrix = (
+        np.array((round(-np.sin(radian), 3), round(np.cos(radian), 3))),
+        np.array((round(np.cos(radian), 3), round(np.sin(radian), 3)))
+    )
+
+    for y in range(Y):
+        for x in range(X):
+            y_basis, x_basis = rotation_transform_matrix
+
+            print('hi')
+            print(y_basis, x_basis)
+            print(y, x)
+
+            rotated_vertex_x, rotated_vertex_y = y * y_basis + x * x_basis
+
+            print(rotated_vertex_x, rotated_vertex_y)
+
+
+def create_diff_picture_array(picture_array1, picture_array2):
+    (Y, X, rgb) = picture_array1.shape
+
+    diff_picture_array = np.zeros((Y, X, rgb))
+
+    for y in range(Y):
+        for x in range(X):
+            for channel in range(rgb):
+                target_value1 = picture_array1[y][x][channel]
+                target_value2 = picture_array2[y][x][channel]
+
+                if target_value1 < target_value2:
+                    diff_picture_array[y][x][channel] = 0
+                else:
+                    diff_picture_array[y][x][channel] = target_value1 - target_value2
+
+    return np.uint8(diff_picture_array)
 
 if __name__ == '__main__':
     picture = Image.open(FILE_PATH)
     # for numpy array, it is three dimentional array
     # y axis -> x axis -> r,g,b value
-    picture_array = np.array(picture)
+    original_picture_array = np.array(picture)
 
-    print(picture_array.shape)
+    print(original_picture_array.shape)
 
     # make brighter image
-    intensified_picture_array = picture_array + 100
-    intensified_picture_array[intensified_picture_array < 100] = 255
+    intensified_picture_array = convert_brighter_image(original_picture_array, 100)
 
     # make darker image
-    intensified_picture_array = picture_array - 100
-    intensified_picture_array[intensified_picture_array > 155] = 0
+    intensified_picture_array = convert_darker_image(original_picture_array, 100)
 
     print(intensified_picture_array)
 
-    new_picture = Image.fromarray(intensified_picture_array)
-    new_picture.save(DEST_FILE_PATH)
+    # make blur image
+    # intensified_picture_array = convert_nxn_average_image(
+    #     original_picture_array,
+    #     7
+    # )
+
+    intensified_picture_array = convert_rotation_image(
+        original_picture_array,
+        np.pi/2
+    )
+
+    print(intensified_picture_array)
+    print(intensified_picture_array.shape)
+
+    converted_picture = Image.fromarray(intensified_picture_array)
+    converted_picture.save(DEST_FILE_PATH)
+
+    diff_picture_array = create_diff_picture_array(
+        intensified_picture_array,
+        original_picture_array
+    )
+    diff_picture = Image.fromarray(diff_picture_array)
+    diff_picture.save(DIFF_FILE_PATH)
 ```
