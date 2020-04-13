@@ -17,6 +17,17 @@
 - *스트림이란 무엇인가?*
   - 표준 입력, 표준 출력은?
 - *파일 시스템은 정확히 무엇인가? 왜 시스템인가?*
+- terminal vs console vs shell vs tty
+  - `terminal`
+    - text input/output environment
+  - `console`
+    - physical terminal
+  - `shell`
+    - command line interpreter
+  - *`tty`*
+    - teletypewriter
+  - 참고
+    - [What is the difference between Terminal, Console, Shell, and Command Line?](https://askubuntu.com/questions/506510/what-is-the-difference-between-terminal-console-shell-and-command-line)
 
 ## 1. 리눅스 빅 픽쳐
 
@@ -226,12 +237,14 @@ Linux abstraction level overview
 
 - shell variable
   - 개요
-    - 텍스트 문자열의 값을 포함하는 임시변수
+    - shell의 session내에만 유지되는 텍스트 문자열의 값을 포함하는 임시변수
+      - 한 번 설정되면, 해당 shell의 session에서는 계속 값이 유지된다.(해당 쉘의 환경변수가 되는 것임)
     - `STUFF=blah`
 - environment variable
   - 개요
     - 운영체제가 셸의 모든 환경 변수들을 셸이 실행하는 프로그램으로 전달
     - `export STUFF=blah`
+      - 한 번 설정되면, 설정한 shell의 session뿐 아니라, os전체에 해당 값이 계속 유지 됨
   - e.g)
     - `less` 명령줄 옵션들을 `LESS` 환경 변수에 부여할 수 있음
 - `PATH`
