@@ -3,9 +3,13 @@
 - 도커 기초
   - 도커의 역사
   - 도커란
+  - 도커 엔진
+  - 도커 아키텍처
+  - 도커 기반 기술
   - 컨테이너
   - 이미지
   - 핫한 이유
+- 도커 Best Practice
 - 도커 실습
   - (참고)도커 커맨드
   - 도커 구성
@@ -16,6 +20,11 @@
 - 도커 이미지 만들고 배포하기
 - 팁
 
+## 의문
+
+- *도커가 존재하기 전에는, 도대체 어떻게 가상화 기술을 사용해왔는가?*
+  - 예를들어서, cloud9 같은 서비스는 어떻게 동작해왔던 것인지..
+
 ## 도커 기초
 
 ### 도커의 역사
@@ -25,10 +34,149 @@
 ### 도커란
 
 - 정의
+  - 동작하는 애플리케이션을 개발하고, 운반하기 위한 Open platform
   - 컨테이너 기반의 오픈소스 가상화 플랫폼
     - 도커는 리눅스컨테이너 기반
-- 서버 개발
-  - 다양한 프로그램, 실행환경을 컨테이너로 추상화하고 동일한 인터페이스를 제공하여 프로그램의 배포 및 관리를 단순하게 해줌
+  - **애플리케이션을 인프라로부터 격리**
+    - 도커를 사용하면, 인프라를 애플리케이션을 다루듯이 다룰 수 있음
+    - 코드를 작성하고 프러덕션 환경에서 애플리케이션을 쉽게 디플로이 가능
+- 도커 플랫폼
+  - Docker는 container라고 불리는 loosely isolated environment에서 애플리케이션을 동작시키고, 패키징하는 기능을 제공
+  - 하나의 호스트에서 여러 컨테이너를 동시에 동작시킬 수 있음
+  - 하이퍼바이저 도움 없이, 직접 host machine kernel에서 동작함
+- 기능
+  - 컨테이너의 lifecycle을 매니징 할 수 있는 플랫폼과 툴링을 제공
+    - 1\. 애플리케이션 개발과 컨테이너를 사용한 supporting components
+    - 2\. 컨테이너가 배포하거나 애플리케이션을 테스팅하는 하나의 단위가 됨
+    - 3\. 준비되면, 애플리케이션을 배포 환경에 컨테이너나 orchestrated service로 배포할 수 있음
+- 도커의 장점
+  1. 애플리케이션의 빠르고 일관된 배달
+  2. 반응성이 높은 배포와 스케일링
+  3. 동일한 하드웨어에서 보다 많은 작업량 수행하기
+
+### 도커 엔진
+
+도커 엔진
+
+![](./images/docker_engine1.png)
+
+- 개요
+  - 클라이언트-서버 애플리케이션
+- 구성
+  - **데몬 프로세스(서버)**
+    - `dockerd` 커맨드
+  - **데몬에게 메시지를 주기 위한 REST API 인터페이스**
+  - **CLI 인터페이스 클라이언트**
+    - `docker` 커맨드
+    - 클라이언트는 데몬과 다른 시스템에 존재해도 네트워크를 이용하여 통신 가능
+- 시나리오
+  - CLI는 Docker REST API를 사용하여, Docker daemon을 제어하거나 상호작용을 함
+    - scripting 혹은 direct CLI command를 사용
+  - 데몬은 Docker object를 생성하고 관리함
+    - images, containers, networks, volumes
+
+### 도커 아키텍처
+
+도커 아키텍처 개요
+
+![](./images/docker_architecture1.svg)
+
+- **Docker daemon(`dockerd`)**
+  - 개요
+    - Docker API 리퀘스트를 listen하고, image, container, network, volume 과 같은 Docker object들을 관리함
+- **Docker client(`docker`)**
+  - 개요
+    - 사용자가 Docker와 상호작용할 때 주로 사용하는 방법
+  - 예시
+    - `docker run` 커맨드 실행
+    - 클라이언트가 커맨드를 `dockerd`에 전송
+    - 내용 수행
+  - `docker`의 커맨드는 Docker API를 사용하는데, 하나의 클라이언트가 다수의 데몬과 상호작용할 수 있음
+- **Docker registries**
+  - 개요
+    - 도커 이미지를 저장하는 장소
+  - 특징
+    - Docker Hub는 public registry
+    - private registry 작성 가능
+    - `docker pull` or `docker run` 커맨드를 실행할 경우, 필요한 이미지들이 설정한 레지스트리로부터 pulled됨
+    - `docker push` 커맨드를 실행할 경우, 설정한 레지스트리로 이미지가 push됨
+- **Docker objects**
+  - **Images**
+    - 개요
+      - 하나의 도커 컨테이너를 제작하기 위한 read-only instruction template
+    - 특징
+      - 하나의 이미지는 다른 이미지의 기반이 되기도 함
+      - Dockerfile을 만들어서 자기자신의 이미지를 생성할 수 있음
+        - Dockerfile속에 있는 instruction은 이미지의 layer를 만듬
+        - Dockerfile을 변경했을 경우, 변경된 부분만 layer가 다시 만들어짐(instruction내용이 그대로면 cache된 것을 그냥 씀)
+  - **Containers**
+    - 개요
+      - 한 이미지의 실행할 수 있는 instance
+      - **컨테이너는 create하거나 start할 때 제공하는 옵션 설정 뿐 아니라, 이미지에 의해서 정의됨**
+    - 특징
+      - Docker API나 CLI를 이용해서 conatiner를 create, start, stop, move, delete 할 수 있음
+      - 컨테이너를 하나, 혹은 그 이상의 network에 연결시킬 수 있고, storage를 장착할 수 있음
+      - container의 현재 state를 기반으로 새로운 이미지를 생성할 수 있음
+      - 기본적으로 한 컨테이너는 다른 컨테이너나 호스트 머신이랑 잘 격리되어 있음
+        - 컨테이너의 네트워크, 스토리지, 다른 서브시스템들을 어떻게 격리시킬 것인지 선택할 수 있음
+      - 컨테이너가 제거될 때, 영속적 소티리지에 저장되지 않은 상태에 대한 변화는 사라짐
+    - `docker run -it ubuntu /bin/bash`를 실행했을 때, 일어나는 일
+      1. `ubuntu`이미지가 로컬에 존재하지 않으면, registry에서 이미지를 pull해옴(as if `docker pull ubuntu`)
+      2. Docker가 새 컨테이너 생성(as if `docker container create`)
+      3. Docker가 그 container의 final layer에 read-write 파일 시스템을 할당. running container가 로컬 파일 시스템의 디렉터리와 파일을 생성하거나 수정할 수 있게 함
+      4. Docker가 default network에 연결할 수 있도록 network interface를 생성(옵션을 제공하지 않았을 경우). 컨테이너에 IP 주소 할당. 기본적으로, 컨테이너는 호스트 머신의 네트워크 연결을 사용하여 외부 네트워크에 연결할 수 있음
+      5. Docker가 컨테이너를 시작하고, `/bin/bash`를 실행. container는 interactively(`-i`), 자신의 terminal에서(`-t`) 실행되기 때문에, input을 키보드를 통하여 제공할 수 있고, 그동안 output은 terminal로 표시됨
+      6. `exit` 명령을 터미널에서 실행하면, container는 멈추지만, 제거되지는 않음. 다시 시작할 수 있거나 제거할 수 있음
+  - **Services**
+    - 개요
+      - 다수의 Docker 데몬들에 걸쳐서 컨테이너를 스케일링 가능하게 함
+        - 다수의 container가 다수의 매니저와 워커를 갖는 하나의 swarm으로, 상호작용을 함
+      - 하나의 swarm의 각 멤버는 하나의 Docker daemon이며, 모든 데몬들은 Docker API를 사용하여 커뮤니케이션을 함
+      - 하나의 서비스는 desired state를 정의할 수 있게 하는데, 이를테면 특정 시간에 반드시 사용 가능해야만 하는 복제 서비스의 개수 등이 포함 됨
+      - consumer에게는 docker service는 하나의 application으로 보임
+      - Docker engine은 Docker 1.12나 그것보다 높은 버전에서 swarm을 지원
+  - Network
+  - Volume
+
+### 도커 기반 기술
+
+- 개요
+  - Docker는 Go로 작성되었으며, Linux kernel의 특정 기능을 사용함
+- 종류
+  - **Namespaces**
+    - 개요
+      - container라고 불리는 격리된 workspace를 제공하기 위하여 사용됨
+        - 컨테이너를 실행하면, 도커가 그 컨테이너의 namespace의 집합을 생성
+      - layer of isolation을 제공
+      - 각각의 aspect of a container는 분리된 namespace에서 동작하고, 그것의 접근은 그 namespace에서만 한정됨
+      - *namespace가 정확히 무엇일까?*
+    - 도커 엔진이 사용하는 namespace(Linux)
+      - `pid`: Process isolation(Process ID)
+      - `net`: Managing network interfaces(Networking)
+      - `ipc`: Managing access to IPC resources(InterProcess Communication)
+      - `mnt`: Managing filesystem mount points(Mount)
+      - `uts`: isolating kernel and version identifiers(Unix Timesharing System)
+  - **Control groups(`cgroups`)**
+    - 개요
+      - 자원의 특정 집합으로 application을 제한함
+      - Docker Engine이 사용가능한 하드웨어 자원들을 컨테이너끼리 공유하도록 하고, 선택적으로, 제한 설정을 부여
+      - e.g) 하나의 특정 컨테이너의 메모리 사용량 조절
+  - **Union file systems(UnionFS)**
+    - 개요
+      - 레이어를 만드므로써, 동작하는 파일 시스템
+        - 그 덕분에 매우 가볍고 빠름
+      - 도커 엔진은 UnionFS를 사용하여, 컨테이너들을 위한 block을 생성
+    - 사용 가능한 종류
+      - `UnionFS`변종
+        - AUFS
+        - btrfs
+        - vfs
+        - DeviceMapper
+  - **Container format**
+    - 개요
+      - namespace와 control group과 UnionFS를 결합한 하나의 wrapper
+      - default는 `libcontainer`
+        - 미래에는, BSD Jail이나 Solaris Zones등의 기술을 결합해서 다른 container format을 지원할 예정
 
 ### 컨테이너
 
@@ -88,6 +236,32 @@
 - 새로운 기능들이 빠르게 추가
 - 훌륭한 생태계
 - 커뮤니티 지원
+
+## 도커 Best practice
+
+### 1. How to keep your image small
+
+- Start with an appropriate base image
+  - JDK가 필요하면, official `openjdk` 이미지를 불러오자
+- Use multistage builds
+  - 하나의 Dockerfile에서 java application을 구축하기 위해서`maven` 이미지를 사용한 뒤에, `tomcat` 이미지를 사용하고 java artifacts를 올바른 장소로 복사하는것이 가능
+    - `RUN` 커맨드를 최소화 하자
+- 공통 부분을 갖는 다양한 이미지를 갖는다면, 공유되는 컴포넌트를 갖는 base image를 만드는 것을 고려하라
+- **production image를 lean하지만 debugging을 허용하기 위해서, production image를 debug image의 base image로 만드는 것을 고려하라**
+  - 추가적인 testing / debugging tooling이 production image의 top에 추가될 수 있음
+- 이미지를 만들 때, 자동 생성되는 `latest`에 의존하지 말고, 제대로 된 태그를 넣어라.
+
+### 2. Where and how to persist application data
+
+- storage driver를 사용하여 container에 application 데이터를 저장하지 말라
+  - 컨테이너의 사이즈를 증가시키고, I/O 측면에서 비효율적(volumes, bind mounts에 비해서)
+- production 환경에서는 **volumes**
+- developement 환경에서는 bind mount
+- production 환경에서는, **secret** 을 사용하여 중요한 application data를 저장하고, **configs** 를 사용하여, 덜 중요한 파일들(config)을 저장하자.
+  - standalone containers를 사용하고 있다면, single-replica service를 사용하는 것을 고려하자
+  - *애초에 secret, configs은 무엇을 하는 기능인지?*
+
+### 3. Use CI/CD for testing and deployment
 
 ## 도커 실습
 
