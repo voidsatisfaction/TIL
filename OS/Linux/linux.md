@@ -26,6 +26,7 @@
     - command line interpreter
   - *`tty`*
     - teletypewriter
+  - *정확히 위의 넷의 관계가 어떻게 되는지? 무엇이 무엇의 superset인지? 등등..*
   - 참고
     - [What is the difference between Terminal, Console, Shell, and Command Line?](https://askubuntu.com/questions/506510/what-is-the-difference-between-terminal-console-shell-and-command-line)
 
