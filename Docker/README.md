@@ -24,6 +24,7 @@
 
 - *도커가 존재하기 전에는, 도대체 어떻게 가상화 기술을 사용해왔는가?*
   - 예를들어서, cloud9 같은 서비스는 어떻게 동작해왔던 것인지..
+- *도커 컨테이너 마다 ip가 부여된다면, 어떤 기준으로 ip가 부어되고 어떤 값을 갖게 되는가?*
 
 ## 도커 기초
 
@@ -145,8 +146,9 @@
 - 종류
   - **Namespaces**
     - 개요
-      - container라고 불리는 격리된 workspace를 제공하기 위하여 사용됨
-        - 컨테이너를 실행하면, 도커가 그 컨테이너의 namespace의 집합을 생성
+      - 컨테이너 별 자원 격리
+        - container라고 불리는 격리된 workspace를 제공하기 위하여 사용됨
+          - 컨테이너를 실행하면, 도커가 그 컨테이너의 namespace의 집합을 생성
       - layer of isolation을 제공
       - 각각의 aspect of a container는 분리된 namespace에서 동작하고, 그것의 접근은 그 namespace에서만 한정됨
       - *namespace가 정확히 무엇일까?*
@@ -158,12 +160,13 @@
       - `uts`: isolating kernel and version identifiers(Unix Timesharing System)
   - **Control groups(`cgroups`)**
     - 개요
-      - 자원의 특정 집합으로 application을 제한함
+      - 컨테이너 별 자원 관리(제한)
+        - 자원의 특정 집합으로 application을 제한함
       - Docker Engine이 사용가능한 하드웨어 자원들을 컨테이너끼리 공유하도록 하고, 선택적으로, 제한 설정을 부여
       - e.g) 하나의 특정 컨테이너의 메모리 사용량 조절
   - **Union file systems(UnionFS)**
     - 개요
-      - 레이어를 만드므로써, 동작하는 파일 시스템
+      - 레이어를 만듦으로써, 동작하는 파일 시스템
         - 그 덕분에 매우 가볍고 빠름
       - 도커 엔진은 UnionFS를 사용하여, 컨테이너들을 위한 block을 생성
     - 사용 가능한 종류
