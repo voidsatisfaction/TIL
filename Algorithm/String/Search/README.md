@@ -18,6 +18,7 @@
 from typing import List
 
 # dfa[j]: search[j+1] != text[i+1] 이면, text[i+1]을 dfa[j]에 들어있는 search의 index와 비교를 해야 함
+# dfa[j]: pattern[0..j]까지 중에서 접두사 접미사가 일치하는 최대길이
 
 def kmp(text: str, search: str) -> List[int]: # return all indices
   # initialize dfa machine
