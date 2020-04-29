@@ -44,11 +44,11 @@
     - **HKEY**로 시작
       - `HKCU`, `HKLM` 등과 같이 줄임말을 사용
     - 응용프로그램의 경우 설정 항목 검색
-      - `HKEY_CURRENT_USER\Software\제조업체이름\응용 프로그램 이름\버전 번호\설정 이름` 이후
-      - `HKEY_LOCAL_MACHINE\Software\제조업체이름\응용 프로그램 이름\버전 번호\설정 이름` 검색
+      - `HKEY_CURRENT_USER\Software\제조업체이름\응용 프로그램 이름\버전 번호\설정 이름` 이후(user-specific 설정 먼저 검색)
+      - `HKEY_LOCAL_MACHINE\Software\제조업체이름\응용 프로그램 이름\버전 번호\설정 이름` 검색(common 설정을 나중에 검색)
     - 설정 항목 기록
-      - `HKEY_LOCAL_MACHINE` 부터 기록 혹시 로그인한 사용자가 관리자가 아니라 기록하지 못한경우
-      - `HKEY_CURRENT_USER` 에 기록
+      - `HKEY_LOCAL_MACHINE` 부터 기록 혹시 로그인한 사용자가 관리자가 아니라 기록하지 못한경우 (common location에 설정 저장)
+      - `HKEY_CURRENT_USER` 에 기록 (user-specific location에 설정 저장)
     - 종류
       - `HKEY_CLASSES_ROOT(HKCR)`
       - `HKEY_CURRENT_USER(HKCU)`
