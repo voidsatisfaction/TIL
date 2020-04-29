@@ -24,3 +24,7 @@
   - `cp (source file) (destination)`
 - `XCOPY /e /h /k (source folder) (destination\source folder name)`
   - `cp -r (source folder) (destination)`
+- `echo`
+  - `echo`
+- `%환경변수이름%`
+  - `$환경변수이름`
