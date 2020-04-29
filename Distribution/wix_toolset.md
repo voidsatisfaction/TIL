@@ -181,6 +181,7 @@ XML기반
         </Directory>
       </Directory>
 
+      <!-- To save shortcut -->
       <Directory Id="DesktopFolder" Name="Desktop" />
     </Directory>
 
@@ -314,6 +315,7 @@ XML기반
 - Features
   - 개요
     - 유저에게 install 할지 안할지 선택지를 주는 애플리케이션의 분리된 부분
+      - 일반적으로 컴포넌트 단위로 feature를 구분
     - 일반적인 Feature의 구성
       - executable
       - documentation, help files
