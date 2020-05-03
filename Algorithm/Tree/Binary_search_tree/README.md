@@ -47,6 +47,16 @@ Binary Search Tree의 Traverse 방법
 
 ![](./images/binary_search_tree_traverse1.png)
 
+- DFS
+  - Preorder
+    - 그냥 자신 node 참조
+  - Inorder
+    - left subtree의 traversal이 다 끝나야지 자신 node 참조
+  - Postorder
+    - left, right subtrees의 traversal이 다 끝나야지 자신 node 참조
+- BFS
+  - level 별 노드 참조
+
 ## 노드의 삭제
 
 ### 최소(최대) 키를 가지는 노드의 삭제
