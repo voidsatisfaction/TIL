@@ -2,6 +2,9 @@
 
 ## 의문
 
+- *의문) Ethernet interface연결마다 nameserver를 바꿀 필요가 있는가? 애초에, default gateway가 DNS요청을 알아서 처리해주면 되지 않는가?*
+  - 애초에 valid한 DNS는 어떻게 파악되는가? default gateway로부터 파악되는가?
+
 ## 개요
 
 ### 중요한 질문
@@ -275,9 +278,106 @@
 - 위의 과제를 해결하기 위해서, 물리적 네트워크를 관찰할 수 있고, 사용자가 납득할 수 있는 규칙들을 근거로 커널 네트워크 인터페이스를 선택할 수 있는 시스템 서비스를 사용해야 함. 또한, 사용자가 원할 때, 설정을 바꿀 수 있고, 루트 사용자가 아니더라도 무선 네트워크를 변경할 수 있어야 함
   - **네트워크 설정 매니저 사용**
 
-### Network Manager
+## Network Manager
 
+- 개요
+  - **시스템이 부팅할 때, 시작되는 데몬이며, 시스템과 사용자들이 보내는 이벤트들을 듣고, 여러 규칙들을 근거로 네트워크 설정을 변경**
+- 동작
+  - 사용 가능한 모든 네트워크 장치 정보를 수집하고, 연결에 관한 모든 목록을 검색하고, 이어서 한 가지를 활성화 하기로 결정
+  - **e.g) 이더넷 인터페이스를 활성화 하는 방법**
+    - 유선 연결이 가능하다면 이를 사용해서 연결을 시도 그렇지 않으면 무선 연결을 시도
+    - 가능한 무선 네트워크 목록을 검색. 이미 전에 연결했던 네트워크가 사용 가능하다면 NetworkManager는 이를 다시 시도
+    - 만약 이전에 연결한 적이 있는 무선 네트워크가 하나 이상이라면, 가장 최근에 연결한 것으로 선택
+    - 연결이 성립되면, 연결이 끊어지거나 보다 나은 네트워크를 사용할 수 있게 되거나, 사용자가 강제로 변경하려고 할 때까지 이를 유지
+- 특징
+  - 부팅해서 고정적으로 동작하는 것이 아닌, 네트워크 접근마다 DNS, IP를 비롯한 각종 설정을 변경
 - 종류
   - Linux: NetworkManager
   - Android: ConnectivityManager
   - 임베디드: Wicd
+
+### Network Manager와 소통하기
+
+- 의사소통 방법
+  - 일반적으로 Desktop 상단 or 하단의 아이콘으로 상호작용 가능
+  - 셸에서도 NetworkManager에 질문을 하고 제어 할 수 있는 몇 가지 툴들이 있음
+    - `nm-tool` 명령
+      - 현재 연결상태에 대해 빠르게 정리
+    - `nmcli`
+      - commandline에서 NetworkManager 제어
+    - `nm-online`
+      - 네트워크가 동작하는지 동작하지 않는지에 대해 알려줌
+
+### Network Manager 설정
+
+- `/etc/NetworkManager`
+  - NetworkManager 설정 디렉터리
+  - 설정 파일
+    - `NetworkManager.conf`
+- 특정 Interface는 NetworkInterface를 통해 관리하고 싶지 않을 경우가 존재
+  - e.g) Loopback Interface
+    - `NetworkManager.conf` 파일의 `ifupdown` 섹션에서 `managed`값을 false로 설정
+- 네트워크 인터페이스가 활성화 또는 비활성화되었을 때를 위해서 추가적인 시스템 동작을 명시
+  - 일부 네트워크 데몬은 정확하게 동작하기 위해서, 인터페이스를 듣기 시작할 때나 멈출 때를 알아야 함(e.g sshd)
+  - `/etc/NetworkManager/dispatcher.d`에서 모든 것을 실행
+
+## 호스트명 변환
+
+- DNS를 사용하여 호스트명을 변환 하는 것
+
+### 리눅스 시스템의 DNS 검색(축약 버전)
+
+- 응용프로그램이 호스트명에 대한 IP 주소를 찾는 함수를 호출 > 해당 함수는 시스템의 공유 라이브러리에 존재
+- 공유 라이브러리 상의 함수가 실행되면
+  - `/etc/nss-witch.conf` 에 적혀있는 규칙들에 따라 검색 실행
+    - e.g) DNS로 가기 전에 `/etc/hosts`파일을 확인
+- 함수가 이름 검색을 위해 DNS를 사용하기로 결정하면, 추가 설정 파일을 참고로 하여 DNS 네임 서버를 찾음(네임 서버는 IP로 되어있음)
+- 함수는 DNS 검색 요청을 네임 서버로 보냄
+- 네임 서버는 호스트명에 대해 IP 주소로 응답하고, 함수는 이 IP 주소를 응용프로그램으로 반환
+
+### `/etc/hosts`
+
+- 개요
+  - 호스트명 검색 무효화
+
+`/etc/hosts`의 예시
+
+```
+127.0.0.1	localhost
+255.255.255.255	broadcasthost
+::1             localhost
+# Added by Docker Desktop
+# To allow the same kube context to work on the host and the container:
+127.0.0.1 kubernetes.docker.internal
+# End of section
+
+# To resolve python socket.gethostnameby(socket.gethostname()) error problem
+127.0.0.1 yeongyuminui-MacBookPro.local
+
+192.168.10.51 Jira.vuno.local
+192.168.10.51 kb.vuno.local
+```
+
+### `/etc/resolv.conf`
+
+- 개요
+  - DNS 서버의 전통적인 설정 파일
+
+`/etc/resolv.conf`의 예시
+
+```
+nameserver 203.248.252.2
+nameserver 164.124.101.2
+```
+
+- *의문) Ethernet interface연결마다 nameserver를 바꿀 필요가 있는가? 애초에, default gateway가 DNS요청을 알아서 처리해주면 되지 않는가?*
+
+### 캐싱과 제로 구성 DNS
+
+- intermediate daemon을 실행하여 네임 서버의 요청을 도중에 잡아서 가능하면 캐시에 저장된 response를 네임 서버 요청으로 반환
+  - `dnsmasq`, `nscd` 데몬
+
+### `/etc/nsswitch.conf`
+
+- 개요
+  - 사용자 정보와 비밀번호처럼 시스템상의 여러 가지 이름과 관련된 우선권 설정을 제어
