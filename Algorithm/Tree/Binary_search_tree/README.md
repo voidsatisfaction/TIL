@@ -1,5 +1,19 @@
 # Binary Search Tree: 이진 탐색 트리
 
+- 의문
+- 개요
+- API와 효율
+- 사용 가능한 특수 API
+- Iteration
+- 노드의 삭제
+- 2-3트리
+- Left Leaning Red-Back Tree
+- B-Tree
+
+## 의문
+
+## 개요
+
 - 각각의 노드는 키를 소유
 - 왼쪽 서브트리는 그 서브트리에 속하지 않는 노드의 키보다 무조건 작다.
 - 오른쪽 서브트리는 그 서브트리에 속하지 않는 노드의 키보다 무조건 크다.
@@ -29,7 +43,19 @@
 
 ## Iteration: 이터레이션
 
-중위순회를 하면 모든 트리의 노드를 작은 키의 값에서 높은 키의 갚으로 순회할 수 있다. 중위순회를 하면서 모든 키를 새로운 배열에 넣어준다. 전부 다 순회하면 그 배열을 반환한다.
+Binary Search Tree의 Traverse 방법
+
+![](./images/binary_search_tree_traverse1.png)
+
+- DFS
+  - Preorder
+    - 그냥 자신 node 참조
+  - Inorder
+    - left subtree의 traversal이 다 끝나야지 자신 node 참조
+  - Postorder
+    - left, right subtrees의 traversal이 다 끝나야지 자신 node 참조
+- BFS
+  - level 별 노드 참조
 
 ## 노드의 삭제
 
