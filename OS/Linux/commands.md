@@ -2,6 +2,8 @@
 
 ## 꿀 커맨드
 
+- `git log -p -1`
+  - 마지막 1개의 커밋의 코드 diff를 볼 수 있음
 - `lsof -i -nP`
   - 특정 포트를 사용하는 프로세스 확인
   - `lsof -i -nP | grep LISTEN`
