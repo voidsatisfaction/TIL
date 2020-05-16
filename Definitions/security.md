@@ -9,6 +9,8 @@
   - Exposure
   - Countermeasure / Safeguard
   - Control
+  - Session
+- 암호학
 
 ## General
 
@@ -69,3 +71,32 @@
     - 위협을 탐지하는 통제로, 빠르게 탐지할수록 대처하기에 용이
   - 교정통제(Corrective Control)
     - 이미 탐지된 위협이나 취약점에 대처하거나, 위협이나 취약점을 감소시키는 통제
+
+### Session
+
+- 정의
+  - 통신의 주체(클라이언트, 서버)들 간에 구별 가능한 통신이 진행 중인 상태
+
+## 암호학
+
+### Digest
+
+- 정의
+  - 해시 함수의 output
+- 참고
+  - 원본 데이터는 message
+
+### MAC(Message Authentication Code)
+
+MAC 사용 예제
+
+![](./images/security/mac1.png)
+
+- 정의
+  - 메시지의 인증 및 무결성 보호에 쓰이는 작은 크기의 정보
+    - **같은 MAC 값임을 확인하면, 동일한 private key를 가지고 있음을 authenticate한 것**
+    - **또한, MAC 값이 같음을 확인하면, 메시지가 중간에 변조되지 않았다는 것이므로, 메시지의 무결성을 보장해주는 것이기도 함**
+    - 암호화는 메시지에 대한 소극적 공격을 막을 수 있음
+    - 적극적 공격을 막기 위해서는 메시지 인증 등의 방법이 필요
+- 특징
+  - MAC알고리즘은 비밀키를 입력받고 임의 길이의 메시지를 인증하고 MAC를 출력함
