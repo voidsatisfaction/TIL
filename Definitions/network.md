@@ -6,6 +6,8 @@
   - gateway
   - bridge
   - intranet
+- Application Layer
+  - LDAP
 
 ## 네트워크
 
@@ -111,3 +113,23 @@ network bridging의 high level overview
   - *Transparent bridging*
   - *Simple bridging*
   - *Multiport bridging*
+
+## Application Layer
+
+### LDAP(Lightweight Directory Access Protocol)
+
+- 정의
+  - TCP/IP 위에서 분산 디렉터리 정보 서비스를 조회하고 수정하는 application protocol
+- 응용
+  - username과 password의 저장소를 제공
+    - 여러 서로 다른 애플리케이션이 user를 validate하기 위해서 연결함
+- 연산
+  - Add
+  - Bind
+  - Delete
+  - Search and Compare
+  - Modify
+  - StartTLS
+  - ...
+- URI scheme
+  - `ldap://host:port/DN?attributes?scope?filter?extensions`
