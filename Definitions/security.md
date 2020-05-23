@@ -17,6 +17,7 @@
   - E2EE
 - 접근 통제
   - Subject, Object, Access
+- 웹
 
 ## General
 
@@ -143,3 +144,50 @@ MAC 사용 예제
 - Access(접근)
   - 주체와 객체 사이의 정보 흐름
     - CRUD 등의 행위를 하는 주체의 활동
+
+## 웹
+
+### OWASP(Open Web Application Security Project) Top Ten
+
+- 1 Injection
+  - SQL, NoSQL, LDAP 등
+  - 공격자의 신뢰되지 않은 데이터가 인터프리터로 의도하지 않은 커맨드를 실행시키도록 하거나 올바른 인증 없이 데이터 접근할 수 있도록 함
+  - CIA
+- 2 Broken Authentication
+  - 인증, 세션 관리와 같은 코드 구현이 잘못됨
+    - 공격자가 password나 keys, tokens를 탈취하거나, 유저들의 id를 일시적 혹은 영구적으로 추측할 수 있음
+  - CIA
+- 3 Sensitive Data Exposure
+  - 민감한 데이터 보호를 제대로 해두지 않음(경제, 건강, 프라이버시 정보 등)
+    - 공격자는 데이터를 훔치거나 변경할 수 있음
+  - CI
+- 4 XML External Entities(XXE)
+  - 오래전 혹은 잘못 설정된 XML 프로세서는 external entity reference를 XML 문서 내에서 evaluate함
+    - external entity는 내부 파일들을 노출시키는데에 사용되거나, 내부 포트 스캐닝, 외부 코드 실행, DOS 공격에 사용됨
+  - CIA
+- 5 Broken Access Control
+  - 인증된 유저에 대한 authorization 설정이나 제한이 제대로 설정되지 않음
+    - 공격자는 인가되지 않은 기능 혹은 민감한 데이터를 보거나 다른 유저의 데이터를 수정할 수 있음
+  - CIA
+- 6 Security Misconfiguration
+  - 잘못 혹은 충분치 않은 설정(open cloud storage, misconfigured HTTP headers, verbose error messages containing sensitive info)
+  - 항상 모든 라이브러리, OS는 계속해서 업그레이드 해야 함
+  - CIA
+- 7 Cross-Site Scripting XSS
+  - 적절한 validation이나 escaping 없이 신뢰할 수 없는 데이터를 웹 페이지에 포함할 때 발생
+    - 공격자는 스크립트를 희생자의 브라우저에서 실행시켜, 유저의 세션을 갈취하거나, 웹 사이트를 훼손하거나, 유저를 유해한 사이트로 리다이렉트 시킴
+  - CA
+- 8 Insecure Deserialization
+  - 안전하지 않은 deserialization을 행할 때 발생
+    - 공격자가 remote code execution을 할 수 있도록 함
+    - replay attack, injection attacks, privilege escalation attacks을 가능하게 함
+  - CIA
+- 9 Using Components with Known Vulnerabilities
+  - 취약점이 있는 라이브러리, 프레임워크, 그 외 소프트웨어 모듈과 같은 컴포넌트를 사용할 때 발생
+    - 공격자가 데이터를 손실 시키거나, 서버 자체를 빼앗을 수 있음
+  - IA
+- 10 Insufficient Logging & Monitoring
+  - 공격자가 다른 공격을 계속하게 하거나, 다른 시스템을 공격하게 하거나, 함부로 데이터를 추출, 변경, 삭제하게 할 수 있음
+  - 보안 공격이 시작되고나서 대부분의 시스템의 경우, 200일이 지나서야 공격 자체를 탐지 하였다
+    - 심지어, 내부적으로 발견한것이 아니고, 외부의 제3자에 의해서 발견된 경우가 많음
+  - Accountability
