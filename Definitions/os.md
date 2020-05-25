@@ -5,6 +5,7 @@
   - Booting
   - Firmware
   - BIOS
+  - Virtualization
 - File system
   - File system
   - Mount
@@ -32,19 +33,24 @@
 
 ### Booting(운영체제를 initializing(메모리에 올리는 것))
 
+Bootstrap
+
+![](./images/os/bootstrap1.png)
+
 - 정의
 - 과정
   - ① 컴퓨터 전원버튼을 누르고, 메인보드에 전력이 들어오며, 메인보드에 부착된 장치들에게 전력이 공급
   - ② CPU가 ROM에 저장된 펌웨어인 BIOS(Basic Input/Output System)를 실행시킴
-  - ③ 실행된 BIOS는 POST(Power On Self Test)라는 주변 하드웨어를 체크
+  - ③ 실행된 BIOS는 POST(Power On Self Test)즉, 컴퓨터 주변 하드웨어를 체크
     - POST
       - 컴퓨터를 킬 때, 문제가 있나 자가검사 하는 것
-  - ④ 부팅매체(하드디스크, USB, SSD, ...)를 선택하고, 부팅매체의 MBR(부팅 프로그램이 저장된 영역)에 저장된 부팅정보를 읽어오는 Bootstrap을 실행
+  - ④ BIOS가 부팅매체(하드디스크, USB, SSD, ...)를 선택하고, 부팅매체의 MBR(부팅 프로그램이 저장된 영역)에 저장된 부트로더를 RAM으로 읽어오는 Bootstrap을 실행
     - 부팅 우선순위가 존재함(e.g 하드디스크 -> USB -> CD -> Network -> ...)
     - MBR(Master Boot Record)
       - 모든 기억장치(USB, 하드디스크 등)은 첫 번째 섹터(512바이트)에 MBR영역을 갖고 있음
       - Primary partition에 대한 정보 4개를 기록할 수 있는 64바이트 공간 + 운영체제(커널) 코드를 복사해서 메모리에 올려주는 부트 로더가 저장
-  - ⑤ Bootstrap 과정으로 RAM에 Bootloader가 올라가고, 부트로더는 디스크에 있는 OS(커널) 코드를 복사해 메모리에 붙여서 OS 실행
+        - 부트 로더를 RAM 메모리에 올리는 것을 **부트스트랩 과정** 이라 함
+  - ⑤ Bootstrap 과정으로 RAM에 Bootloader가 올라가고, 부트로더는 디스크에 있는 OS(커널) 코드를 복사해 RAM에 올려 OS 실행
     - Bootloader
       - 운영체제를 initializing(메모리에 올림) 해주는 역할
   - ⑥ OS가 부팅됨
@@ -63,6 +69,47 @@
 - 특징
   - 하드웨어들의 Input / Output을 관리하는 소프트웨어
   - 운영체제가 컴퓨터 하드웨어의 입출력을 컨트롤 할 경우에 사용
+
+### Virtualization
+
+- 정의
+  - 가상의 무엇인가를 만드는 기술
+- 구체적 예시
+  - NAT(Network Address Translation)
+    - 존재하지 않는 IP를 가상으로 만들어서 배정
+  - VPN(Virtual Private Network)
+    - 같은 공용 통신망을 통해 통신을 하지만, 패킷을 암호화해서 주고 받아, 마치 사설 네트워크를 만드는 것과 같은 기술
+  - RAID, LVM
+
+### Server Virtualization
+
+- 정의
+- 사용하는 이유
+  - 서버의 자원을 효율적으로 최대한 사용하기 위함
+- 구현에 따른 분류
+  - 전 가상화(Bare-metal/hypervisor)
+    - 개요
+      - 순수한 하드웨어 위에 운영체제나 BIOS가 아닌 Hypervisor가 있는 구조로 이루어지는 가상화
+        - 하이퍼바이저는 가상머신을 만들고 관리하는 프로그램
+    - 특징
+      - VM의 입장에서 하드웨어 자원은 무조건 하이퍼바이저를 통해서 사용 가능
+  - 반(더 진보한) 가상화(Para-virtualization)
+    - 개요
+      - 전 가상화와 달리, VM이 하드웨어 자원을 직접적으로 사용 가능
+  - 호스트 기반 가상화
+    - VMware나 VirtualBox와 같은 가상화 구현 프로그램을 이용한 가상화
+- 세대 별 분류(기술 수준)
+  - 1세대
+    - 하나의 물리적인 서버에 하이퍼바이저로 여러 개의 가상머신을 생성하는 수준
+    - 예시
+      - VirtualBox
+  - 2세대
+    - 다수의 물리적인 서버의 자원들을 하나로 묶어서 서버 풀을 구성하고 관리할 수 있는 수준
+      - 특정 서버에 문제가 생겼을 때, 문제 있던 서버에서 실행중이던 가상머신들을 다른 정상 작동하고 있는 서버로 옮기는 실시간 마이그레이션 기술 사용
+  - 3세대
+    - 다른 하이퍼바이저끼리도 서버 풀을 구성하고 관리가 가능
+    - 예시
+      - OpenStack, CloudStack, Eucalyptus, OpenNebula, ...
 
 ## File system
 
