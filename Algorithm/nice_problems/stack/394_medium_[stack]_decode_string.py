@@ -1,4 +1,6 @@
 # Way1: stack
+# This stack based solution is also same with recursive solution
+# In this solution, we save each state for each processing
 class Solution:
     def decodeString(self, s: str) -> str:
         num_stack = []
