@@ -2,9 +2,15 @@
 
 - 의문
 - General
-  - Daemon
+  - Booting
+  - Firmware
+  - BIOS
+- File system
   - File system
   - Mount
+- Process
+  - Process
+  - Daemon
 
 ## 의문
 
@@ -24,12 +30,41 @@
 
 ## General
 
-### Daemon
+### Booting(운영체제를 initializing(메모리에 올리는 것))
 
-- 사용자가 직접적으로 제어하지 않고, 백그라운드에서 동작하면서 여러 작업을 수행하는 프로그램
-- 유닉스에서 부모 프로세스가 PID 1(init process) 이고, 제어하는 터미널이 없을 때, 그 프로세스를 데몬이라고 부름
-  - 자식 프로세스를 fork 하여 생성 -> 자식을 분기한 자신을 죽임 -> init이 고아가 된 자식 프로세스를 자기 밑으로 데려감
-- MS 계열에서는 서비스라고 부름
+- 정의
+- 과정
+  - ① 컴퓨터 전원버튼을 누르고, 메인보드에 전력이 들어오며, 메인보드에 부착된 장치들에게 전력이 공급
+  - ② CPU가 ROM에 저장된 펌웨어인 BIOS(Basic Input/Output System)를 실행시킴
+  - ③ 실행된 BIOS는 POST(Power On Self Test)라는 주변 하드웨어를 체크
+    - POST
+      - 컴퓨터를 킬 때, 문제가 있나 자가검사 하는 것
+  - ④ 부팅매체(하드디스크, USB, SSD, ...)를 선택하고, 부팅매체의 MBR(부팅 프로그램이 저장된 영역)에 저장된 부팅정보를 읽어오는 Bootstrap을 실행
+    - 부팅 우선순위가 존재함(e.g 하드디스크 -> USB -> CD -> Network -> ...)
+    - MBR(Master Boot Record)
+      - 모든 기억장치(USB, 하드디스크 등)은 첫 번째 섹터(512바이트)에 MBR영역을 갖고 있음
+      - Primary partition에 대한 정보 4개를 기록할 수 있는 64바이트 공간 + 운영체제(커널) 코드를 복사해서 메모리에 올려주는 부트 로더가 저장
+  - ⑤ Bootstrap 과정으로 RAM에 Bootloader가 올라가고, 부트로더는 디스크에 있는 OS(커널) 코드를 복사해 메모리에 붙여서 OS 실행
+    - Bootloader
+      - 운영체제를 initializing(메모리에 올림) 해주는 역할
+  - ⑥ OS가 부팅됨
+
+### Firmware
+
+- 정의
+- 특징
+  - ROM과 같은 비휘발성 메모리에 저장해 사용
+- 종류
+  - BIOS, ...
+
+### BIOS(Basic Input Output System)
+
+- 정의
+- 특징
+  - 하드웨어들의 Input / Output을 관리하는 소프트웨어
+  - 운영체제가 컴퓨터 하드웨어의 입출력을 컨트롤 할 경우에 사용
+
+## File system
 
 ### File system
 
@@ -242,3 +277,29 @@ ext2의 구조
   - file system metadata를 refresh 해줌
   - 디바이스에 접근을 포기함
     - 안전한 디바이스 제거 가능하게 함
+
+## Process
+
+### Process
+
+- 정의
+  - 하나 혹은 그 이상의 스레드에 의해서 실행되고 있는 컴퓨터 프로그램의 인스턴스
+- 분류
+  - fg
+    - 사용자가 직접적으로 제어 하는 프로세스
+  - bg
+    - 사용자가 직접적으로 제어 하지 않는 프로세스
+
+### Daemon
+
+- 정의
+  - 사용자가 직접적으로 제어하지 않고, 부팅 때 자동으로 initialize되어, 백그라운드에서 동작하면서 여러 작업을 수행하는 프로그램
+- 특징
+  - 유닉스에서 부모 프로세스가 PID 1(init process) 이고, 제어하는 터미널이 없을 때, 그 프로세스를 데몬이라고 부름
+    - 자식 프로세스를 fork 하여 생성 -> 자식을 분기한 자신을 죽임 -> init이 고아가 된 자식 프로세스를 자기 밑으로 데려감
+  - MS 계열에서는 서비스라고 부름
+- Daemon vs Service
+  - Daemon
+    - 최초 프로세스인 `init(or systemd)`가 initialize할 때, 실행하는 스크립트 디렉토리에 두면 바로 "데몬"이 됨
+  - Service
+    - `sc.exe`와 같은 프로그램으로 윈도우 API 함수를 이용해 등록해야 함
