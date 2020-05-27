@@ -1,6 +1,10 @@
 # Network 관련 정의
 
 - 네트워크
+  - computer network
+  - internet
+  - intranet
+  - ethernet
   - host
   - router
   - gateway
