@@ -10,6 +10,7 @@
   - gateway
   - bridge
   - intranet
+  - network bandwidth
 - Application Layer
   - LDAP
 
@@ -117,6 +118,12 @@ network bridging의 high level overview
   - *Transparent bridging*
   - *Simple bridging*
   - *Multiport bridging*
+
+### Network Bandwidth(대역폭)
+
+- 정의
+  - 주어진 경로를 통해서 단위 시간당 데이터를 전송 속도
+    - 즉, 단위시간 당 주어진 경로에 얼마나 많은 데이터를 전송할 수 있는가
 
 ## Application Layer
 
