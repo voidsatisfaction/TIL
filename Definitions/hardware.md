@@ -5,6 +5,7 @@
   - Bus
   - Hard-disk
   - ROM
+  - RAID
 
 ## 의문
 
@@ -96,3 +97,35 @@ ROM의 예시
   - 메안보드에 부착돼 있는, 오직 읽기만 가능한 메모리(메모리임)
 - 특징
   - M_BIOS, B_BIOS 메인 바이오스가 저장된 롬, 백업 바이오스가 저장된 롬
+
+### RAID(Redundant Array of Inexpensive Disks)
+
+- 정의
+  - 다수의 물리적 디스크 드라이브 컴포넌트를 하나 혹은 더 많은 논리적인 단위로 결합하는 데이터 저장 가상화 기술
+    - 하드웨어 적인 방법
+      - 운영 체제에 이 디스크가 하나의 디스크 처럼 보이게 함
+    - 소프트웨어 적인 방법
+      - 운영체제 안에서 구현되며, 사용자에게 하나의 디스크인것 처럼 보이게 함
+- 목적
+  - 데이터 중복화(redundancy)
+    - reliability 향상
+  - 성능 향상
+- 특징
+  - 데이터 분배 방식은 여러가지가 있고, 각 방법은 RAID level 이라고 불림
+    - level은 data redundancy와 performance level을 어떻게 설정하느냐에 따라서 갈림
+  - 많은 RAID level은 `parity`라는 error protection scheme을 채용
+- RAID0
+  - Striping
+    - 여러 개의 멤버 하드디스크를 병렬로 배치하여 거대한 하나의 디스크처럼 사용
+  - 특징
+    - 데이터 입출력이 각 멤버 디스크에 공평하게 분배
+    - Performance
+    - 개인 / 소규모 서버에서 많이 사용
+- RAID1
+  - Mirroring
+    - 각 멤버 디스크에 같은 데이터를 중복 기록
+  - 특징
+    - 멤버 디스크 중 하나만 살아남으면 데이터는 보존(복원은 1:1 복사)
+    - Availability
+      - 백업이 아님
+    - 대규모 서버에서 많이 사용
