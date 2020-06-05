@@ -91,7 +91,7 @@
 
 ROM의 예시
 
-![](./images/hadware/rom1.png)
+![](./images/hardware/rom1.png)
 
 - 정의
   - 메안보드에 부착돼 있는, 오직 읽기만 가능한 메모리(메모리임)
