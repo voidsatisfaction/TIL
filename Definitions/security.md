@@ -18,6 +18,8 @@
 - 접근 통제
   - Subject, Object, Access
 - 웹
+  - OWASP Top Ten
+  - JWT
 
 ## General
 
@@ -191,3 +193,70 @@ MAC 사용 예제
   - 보안 공격이 시작되고나서 대부분의 시스템의 경우, 200일이 지나서야 공격 자체를 탐지 하였다
     - 심지어, 내부적으로 발견한것이 아니고, 외부의 제3자에 의해서 발견된 경우가 많음
   - Accountability
+
+### JWT(JASON Web Token)
+
+- 정의
+  - 몇가지의 claim을 assert하는 JSON를 포함하는 payload를 갖는 데이터를 생성하는 표준
+    - claim + signature
+- 구조
+  - Header
+    - `{'alg': 'HS256', 'typ': 'JWT'}`
+  - Payload
+    - `{'loggedInAs': 'admin', 'iat': 1422779638}`
+  - Signature
+    - `HMAC-SHA256(base64urlEncoding(header) + '.' + base64urlEncoding(payload), secret)`
+      - MAC(메시지 보내는 주체의 Authenticity, Integrity 보장)
+- 결과물
+  - `token = base64urlEncoding(header) + '.' + base64urlEncoding(payload) + '.' + base64urlEncoding(signature)`
+  - `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dnZWRJbkFzIjoiYWRtaW4iLCJpYXQiOjE0MjI3Nzk2Mzh9.gzSraSYS8EXBxLN_oWnFSRgCzcmJmMjLiuyu5CSpyHI`
+- 특징
+  - token의 디자인
+    - compact
+    - URL-safe
+    - SSO(Single-Sign-On) context에서 사용 가능
+- 기본 필드(claims)
+  - header
+    - `typ`
+      - token type
+    - `cty`
+      - content type
+    - `alg`
+      - MAC algorithm
+  - payload
+    - `iss`
+      - Issuer
+    - `sub`
+      - Subject
+    - `aud`
+      - Audience
+    - `exp`
+      - Expiration Time
+    - `nbf`
+      - Not Before
+    - `iat`
+      - Issued at
+    - `jti`
+      - JWT ID
+- 단점
+  - 강제로 session을 invalidate하게 할 수 없음
+    - 그렇게 하려면, 서버쪽에 결국 session을 저장하는 storage를 만들어야 함
+    - 근데 그렇게 하면, JWT의 장점이 사라짐
+- 취약점
+  -
+
+#### User Authentication을 위해서 사용되는 경우 access token의 expiration 문제
+
+- 문제
+  - 너무 expiration이 길어도, Spoofing, Replay attack에 취약함
+- 해결
+  - Sliding Session 전략
+    - 개요
+      - 세션을 지속적으로 이용하는 유저에게 자동으로 만료 기한을 늘려주는 방법
+      - 유저가 액션을 취하면 세션 기한을 늘려줌
+  - Refresh Token 전략
+    - 개요
+      - 로그인을 할 때에 AccessToken과 함께, 그에 비해 긴 만료 시간을 갖는 RefreshToken을 클라이언트에 함께 발급
+      - Client는 Accesstoken이 만료되었다는 에러를 받음 => 새 access token발급 요청(with Refresh token)
+    - 단점
+      - 서버는 Refresh token을 storage에 따로 저장하고 있어야 함
