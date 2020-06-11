@@ -258,5 +258,3 @@ MAC 사용 예제
     - 개요
       - 로그인을 할 때에 AccessToken과 함께, 그에 비해 긴 만료 시간을 갖는 RefreshToken을 클라이언트에 함께 발급
       - Client는 Accesstoken이 만료되었다는 에러를 받음 => 새 access token발급 요청(with Refresh token)
-    - 단점
-      - 서버는 Refresh token을 storage에 따로 저장하고 있어야 함
