@@ -16,6 +16,8 @@
   - MAC
   - E2EE
 - 접근 통제
+  - Access Control
+  - Authorization
   - Subject, Object, Access
 - 웹
   - OWASP Top Ten
@@ -136,6 +138,31 @@ MAC 사용 예제
     - 암호화 과정 자체를 공격하는게 아니고, 엔드포인트 자체를 공격(어쨌든 마지막은 decrypt되므로)
 
 ## 접근 통제
+
+### Access Control
+
+- 정의
+  - 장소나 자원에 대한 접근(여기서 접근은 CRUD)의 선택적 제한
+- 절차
+  - authentication
+  - policy definition phase(*이것은 미리 정해지는 것인가? 로그인시에 부여되면 policy가 defined되었다고 보는것인가?*)
+    - access가 authorized되는 phase
+    - authorization은 여기에 해당하는 기능
+  - policy enforcement phase
+    - access request가 승인되고 승인되지 않는 phase
+- c.f) authorization
+  - 자원에 접근하는 권한
+- *예시(정확히 내가 이해한 것인지)*
+  - MSA에서는 API Gateway와 authentication / authorization 서버를 사용해서 Access Control을 행함
+  - 유저가 login을 하면, authentication server에서 subject의 identification을 authenticate를 하고, 유저별로, 그에 관련된 authorization token(certificate)를 부여(policy definition)
+  - 유저는 해당 token(certificate)를 가지고, 다양한 서비스를 접근 가능함. 그러나, 특정 서비스 접근은 유저에게 부여된 authorization에 포함되지 않을 수 있는데, 그런 경우에는 permission deny를 API Gateway에서 반환함(policy enforcement)
+  - 멀티로그인 방지(policy)와 같은 Access Control policy enforcement도 API Gateway에서 담당
+
+### Authorization
+
+- 정의
+  - 자원에 대한 접근 권한을 지정하는 기능(access policy와 비슷)
+    - authorize한다 == 접근 정책을 정의한다
 
 ### Subject, Object, Access
 
