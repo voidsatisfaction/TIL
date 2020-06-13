@@ -7,6 +7,7 @@
   - BIOS
   - Virtualization
 - File system
+  - Partition
   - File system
   - Mount
 - Process
@@ -112,6 +113,17 @@ Bootstrap
       - OpenStack, CloudStack, Eucalyptus, OpenNebula, ...
 
 ## File system
+
+### Partition
+
+- 정의
+  - 하나의 물리적인 하드디스크에 논리적으로 분할 영역을 만드는 것
+  - 하나의 하드디스크를 서로 별개의 하드디스크 처럼 쓰기 위해서 분할하는 것
+- 특징
+  - 파티션을 나누면 서로 다른 드라이브로 인식
+    - C드라이브에 심각한 오류가 발생해도 D드라이브에 있는 파일들은 안전하게 보존 가능
+    - 윈도우를 2개이상 설치해서 사용하는 멀티부팅 가능
+    - 중요 데이터만 따로 보관 가능
 
 ### File system
 
