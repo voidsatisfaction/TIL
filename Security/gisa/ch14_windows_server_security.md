@@ -29,6 +29,10 @@
 
 ![](./images/ch14/windows_system_structure1.png)
 
+Windows 2000 Architecture
+
+![](./images/ch14/windows_2000_architecture.png)
+
 - 개요
   - 5개의 링으로 구분
     - Kernel Mode
@@ -42,6 +46,9 @@
   - 참고
     - 윈도우를 사용할 때, 사용자 모드에 문제가 생기면, OS는 해당 응용프로그램 종료하여 문제를 해결
     - 커널에 문제가 생기는 경우, 메모리의 정보를 덤프하고 시스템 재시작함
+  - NTVDM(NT Virtual Dos Machine)
+    - 개요
+      - 다른 os가 이미 존재할 때, 16-bit/32-bit DOS와 16-bit Windows 프로그램을 동작시킬 수 있는 기술
 
 ### 윈도우의 특징
 
@@ -211,7 +218,7 @@
           - Administrator: 500
           - Guest: 501
           - 일반 사용자: 1000 이상 숫자
-- 윈도우의 권한 상승
+- *윈도우의 권한 상승*
   - 정의
     - 일반 권한의 사용자가 Administrator와 SYSTEM으로 실행되고 있는 프로세스의 권한을 빼앗는 것
   - 방법
