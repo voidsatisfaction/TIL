@@ -5,15 +5,18 @@
 아래의 첫번째 커맨드: Powershell 커맨드
 아래의 두번째 커맨드: Windows CMD
 
-- `ls`
-  - `ls`
-  - `DIR`
+- `ls -a`
+  - `ls -Force`
+  - `DIR /adh`
 - `cd or pwd`
   - `cd`
   - `CD`
 - `cat`
   - `cat`
   - `TYPE`
+- `mkdir /path`
+  - `New-Item /path -ItemType Directory`
+  - ?
 - `rm -rf (directory name)`
   - ?
   - `RMDIR (directory name) /s /q`
