@@ -262,6 +262,90 @@
     - `/var/log/auth.log`, text
     - tcp_wrapper(xinetd)의 접속제어에 관한 로그파일은 언제, 누가, 어디에서 어떻게 접속했는가에 대한 로그 기록
 
+### 유닉스/리눅스 시스템 로그 설정(/etc/syslog.conf)
+
+- 개요
+  - 유닉스에서는 `syslog`라는 오래된 표준 인터페이스(API)에 의해 로그를 생성하고 관리함
+  - `syslogd`는 데몬으로 자동으로 실행되는데, 프로세스의 initialize 시에, `/etc/syslog.conf`를 읽어서 어떤 로그를 어디에 남길지를 결정하게 됨
+- 포맷
+  - `facility.priority; facility.priority action(logfile-location)`
+    - 어떤 facility에 대해서 priority의 경우에 해당하는 상황이 발생하였을 때, action(log file)에 그 기록을 남겨라
+  - facility
+    - \*
+      - 모든 서비스
+    - auth
+      - login, su 처럼 사용자 권한을 사용하거나 변경
+    - console
+      - 콘솔에 일반적으로 나타나는 메시지
+    - cron
+      - 시스템 스케쥴러에서 보내는 메시지
+    - daemon
+      - 별도의 핸들러가 없는 모든 시스템 데몬의 로그
+    - ftp
+      - FTP데몬의 전송
+    - kern
+      - 커널 메시지
+    - ntp
+      - Network Time Protocol이 보내는 메시지
+        - 유닉스 시스템 시간을 일정하게 서로 맞추기 위한 프로토콜
+    - security
+      - 각종 보안 시스템이 보내는 메시지
+    - user
+      - 사용자 프로그램에 대한 로깅
+  - priority
+    - 메시지 우선순위 or log level
+  - action
+    - 로그를 어디에 남길 것인지 결정
+      - 로그 파일
+      - 콘솔
+        - `/dev/console`
+      - 원격 로그 서버
+        - `@192.168.197.133`
+      - user
+        - 지정된 사용자의 스크린으로 메시지를 보냄
+      - \*
+        - 현재 로그인되어 있는 모든 사용자의 스크린으로 메시지를 보냄
+- 설정 예시
+  - `*.info;mail.none;news.none;authpriv.none /var/log/messages`
+    - 모든 서비스에 대한 info 수준 이상의 로그를 `/var/log/messages` 로그 파일에 기록하되, mail, news, authpriv 서비스에 대해서는 로그 파일을 기록하지 말라는 의미
+    - 세미콜론은 or을 의미
+
+### 로그 관리
+
+- 로그 모니터링(실시간 분석)
+  - `tail -f /var/log/messages`
+  - utmp, wtmp, lastlog등 바이너리 형식의 로그파일들은 cat, vi등의 텍스트 편집기를 통해서 확인 불가
+- 로그 순환
+  - `logrotate`는 시스템 로그 파일에 대해서 로테이트, 압축, 또는 메일을 발송해주는 리눅스 시스템 로그파일 관리기
+
 ## 16.3 공개 해킹도구에 대한 이해와 대응
 
+### 크래킹 S/W
+
+- 크래킹 개요
+  - 악의적인 목적을 가지고 시스템에 침입하는 행위 or 쉐어웨어 프로그램을 정식버전으로 변환하는 행위
+- 크래킹 S/W 사례
+  - John the Ripper
+    - 패스워드 점검도구(Windows, Linux, Mac)
+  - pwdump
+    - 윈도우 패스워드 dump 도구
+  - L0phtCrack
+    - 패스워드 취약점 점검도구로, 원격 및 로컬 서버나 PC에 대하여 패스워드 점검하는데 유용
+  - ipccrack
+    - 사용자 계정 패스워드를 원격지에서 추측하여 취약점 점검 도구
+  - chntpw
+    - 물리적 접근이 가능한 시스템에서 패스워드 리셋시키는 프로그램
+  - ERD Commander
+    - 윈도우 시스템에서 패스워드를 복구해야 하는 경우에 사용
+
+### 키로그 S/W
+
 ## 16.4 서버보안용 S/W 설치 및 운영
+
+### 취약점 분석 도구
+
+### 무결성 점검
+
+### 스캔 탐지
+
+### 침입탐지 및 방화벽
