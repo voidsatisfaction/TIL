@@ -78,6 +78,11 @@ Windows 2000 Architecture
     - 한 파일은 최대 4GB까지
     - 접근 제어 사용 불가
     - 현재도 종종 사용됨
+
+NTFS partition structure(without System File Area)
+
+![](./images/ch14/ntfs_partition_structure1.jpg)
+
 - NTFS(NT File System)
   - 특징
     - *HotFixing기능*
@@ -92,7 +97,8 @@ Windows 2000 Architecture
       - 구성
         - Boot code
         - Partition table
-        - Signature
+        - *Signature*
+          - 이것은 뭐하는 Signature인지?
       - 운영체제가 부팅될 때, BIOS에 의해 POST(Power On Self Test)를 마친 후, MBR의 부트 코드를 호출하고, 부트 코드는 부팅 기능 파티션을 찾아 해당 파티션 VBR의 부트 코드를 호출하여 운영체제가 기동
     - VBR(Volume Boot Record)
       - 정의
@@ -358,7 +364,7 @@ Windows 2000 Architecture
           - 성공적으로 부팅됐을 때의 값을 복사본으로 만들어 두었다가, 시스템이 비정상적으로 종료 되었을 때 복사해둔 정보를 바탕으로 부팅할 수 있는 옵션을 사용자에게 제공
           - `HKLM\SYSTEM\Clone`
             - 메모리
-    - HKU(KHEY_USERS)
+    - HKU(HKEY_USERS)
       - 시스템에 있는 모든 계정과 그룹에 관한 정보 저장
       - 모든 계정의 프로파일이 있다는 것을 제외하고는 HKCU와 동일
       - 윈도우 사용하는 사용자가 한 명일 경우, 모든 설정 사항이 HKCU와 동일
@@ -370,9 +376,9 @@ Windows 2000 Architecture
 - 레지스트리 보호
   - 레지스트리 access control
     - UAC(User Access Control)에 의해 일반 사용자는 관리자 암호를 모르면 레지스트리 편집기 사용 불가
-  - 현재 레지스트리 상태 저장
+  - 레지스트리 snapshot
     - 윈도우 시스템의 복원 기능 활용(snapshot)
-  - 레지스트리 키 디스크에 복사
+  - 레지스트리 키 디스크에 복사 `.reg`
     - `.reg`파일에 저장하는 작업
     - 레지스트리 정보 관련 파일
       - `\Windows`, `\winnt`폴더의 `USER.DAT`, `SYSTEM.DAT` 파일로 저장

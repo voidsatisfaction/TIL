@@ -10,6 +10,8 @@
   - Partition
   - File system
   - Mount
+  - Inode
+  - Softlink vs Hardlink
 - Process
   - Process
   - Daemon
@@ -113,6 +115,8 @@ Bootstrap
       - OpenStack, CloudStack, Eucalyptus, OpenNebula, ...
 
 ## File system
+
+*파일 시스템에서 파일과 inode는 어떻게 연결되는가? 파일 이름은 어디에 저장되는가?*
 
 ### Partition
 
@@ -336,6 +340,55 @@ ext2의 구조
   - file system metadata를 refresh 해줌
   - 디바이스에 접근을 포기함
     - 안전한 디바이스 제거 가능하게 함
+
+### Inode
+
+*파일의 이름은 파일시스템의 어디에 저장되는것인지?*
+
+- 정의
+  - 유닉스 계통 파일 시스템에서 사용하는 자료구조
+    - 정규 파일, 디렉터리 등 파일 시스템에 관한 정보를 가지고 있음
+- inode에 포함된 정보
+  - `ls -alh`의 필드
+    - 파일 모드(16비트 플래그)
+      - 파일 형식(-, d, b, c, p, ...)
+      - *실행 플래그*
+        - 이게 뭐야?
+      - 소유자 rwx
+      - 그룹 rwx
+      - 다른 사용자 rwx
+    - 소유자 아이디
+    - 그룹 아이디
+    - 파일 크기
+    - 마지막 수정 시각
+    - 파일 주소(39바이트)
+  - 그 외
+    - 링크 수
+    - 마지막 접근 시각
+    - 아이노드 수정 시각
+- 특징
+  - 파일들은 각자 1개의 inode를 가지고 있음
+  - 일반적으로 파일 시스템을 생성할 때 전체 공간의 약 1%를 inode를 위해 할당
+    - 따라서, 파일 시스템이 가질 수 있는 파일 최대 개수도 한정적(사실상 사용자가 느끼기에는 무한대로 생성가능)
+
+### Softlink vs Hardlink
+
+Simplified hardlink illustration
+
+![](./images/os/simplified_hardlink1.png)
+
+- Softlink
+- Hardlink
+
+Softlink storage
+
+Early implementations of symbolic links stored the symbolic link information as data in regular files. The file contained the textual reference to the link's target, and the file mode bits indicates that the type of the file is a symbolic link.
+
+This method was slow and an inefficient use of disk-space on small systems. An improvement, called fast symlinks, allowed storage of the target path within the data structures used for storing file information on disk (inodes). This space normally stores a list of disk block addresses allocated to a file. Thus, symlinks with short target paths are accessed quickly. Systems with fast symlinks often fall back to using the original method if the target path exceeds the available inode space. The original style is retroactively termed a slow symlink. It is also used for disk compatibility with other or older versions of operating systems.
+
+Although storing the link value inside the inode saves a disk block and a disk read, the operating system still needs to parse the path name in the link, which always requires reading additional inodes and generally requires reading other, and potentially many, directories, processing both the list of files and the inodes of each of them until it finds a match with the link's path components. Only when a link points to a file in the same directory do "fast symlinks" provide significantly better performance than other symlinks.
+
+The vast majority of POSIX-compliant implementations use fast symlinks. However, the POSIX standard does not require the entire set of file status information common to regular files to be implemented for symlinks. This allows implementations to use other solutions, such as storing symlink data in directory entries. - Wikipedia
 
 ## Process
 
