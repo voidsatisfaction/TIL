@@ -38,7 +38,7 @@
 ### Document(interface)
 
 - 정의
-  - 브라우저에 로드된 웹 페이지를 나타내는 인터페이스 ∧ **DOM tree인 웹 페이지 컨텐츠에 대한 entry point역할을 함**
+  - 브라우저에 로드된 웹 페이지를 나타내는 인터페이스 ∧ **DOM tree인 웹 페이지 컨텐츠에 대한 entry point역할을 함(root node)**
     - e.g) 엔트리 포인트 역할: `document.getElementById('....')`
 - 특징
   - DOM tree는 `<body>`, `<table>` 등의 태그를 포함하며, 페이지의 URL을 가져오는 것, 새로운 element를 생성하는 등의 기능을 제공
@@ -71,7 +71,7 @@
 자원에 대한 AC(Access Control) policy
 
 - 정의
-  - 하나의 origin으로 부터 로드 된 document나 script가 어떻게 또 다른 origin으로 부터의 자원과 상호작용하가에 대한 내용을 제한하는 보안 매커니즘
+  - 하나의 origin으로 부터 로드 된 document나 script가 어떻게 또 다른 origin으로 부터의 자원과 상호작용하는가에 대한 내용을 제한하는 보안 매커니즘
 - 특징
   - Origin 변환
     - 정의
@@ -79,7 +79,7 @@
         - `document.domain`을 현재의 도메인 혹은 superdomain으로 변경 가능(js)
   - Cross-origin network access
     - 정의
-      - same-origin policy는 서로다른 두 origin 사이에서 상호작용하는 것을 제어할 수 있음
+      - same-origin policy는 서로다른 두 origin 자원 사이에서 상호작용하는 것을 제어할 수 있음
       - e.g)
         - `XMLHttpRequest`, `<img>` element
     - cross origin 상호작용의 종류
@@ -113,7 +113,7 @@
           - `window.close`
           - `window.focus`
           - `window.postMessage`
-            - 서로 다른 origin사이에서 communication할 때 사용하는 메서드
+            - 서로 다른 origin 자원(document, scripts)사이에서 communication할 때 사용하는 메서드
         - attributes
           - `window.closed`
           - `window.frames`
