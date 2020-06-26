@@ -21,3 +21,5 @@
     - TODAY=`date +"%Y%m%d"`
     - docker exec dental_web_postgres_1 pg_dump -U postgres > ~/dental_clinical.${TODAY}.bak
       - 오늘 날짜로 백업 파일을 생성
+- `\x on`
+  - 데이터를 1레코드마다 더 이쁘게 출력(알아보기 쉬움)
