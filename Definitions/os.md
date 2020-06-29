@@ -6,6 +6,7 @@
   - Firmware
   - BIOS
   - Virtualization
+  - Buffer(data buffer)
 - File system
   - Partition
   - File system
@@ -113,6 +114,18 @@ Bootstrap
     - 다른 하이퍼바이저끼리도 서버 풀을 구성하고 관리가 가능
     - 예시
       - OpenStack, CloudStack, Eucalyptus, OpenNebula, ...
+
+### Buffer(data buffer)
+
+- 정의
+  - 데이터를 한 장소에서 다른 장소로 이동시키는 동안, 임시적으로 저장하기 위해 사용되는 물리적 메모리 저장 장소
+- 특징
+  - 주로 queue를 이용해서 input, output의 timing을 조정함
+- 예시
+  - device에 관련
+    - input device로 부터 데이터를 가져오기 전에 buffer에 데이터가 저장됨
+    - output device로 데이터를 내보내기 전에 buffer에 데이터가 저장됨
+  - 하나의 컴퓨터 안에서 process간에 데이터를 옮기기 위해서도 사용됨
 
 ## File system
 
