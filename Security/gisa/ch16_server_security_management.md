@@ -17,11 +17,13 @@
 
 - 시스템 관리의 6가지 주제
   - AC(Access Control)
-    - Account
-      - 계정과 패스워드 관리
-      - 권한 관리
-      - 세션 관리
-        - 활성화된 접속에 대한 관리
+    - System
+      - Authentication
+        - 계정과 패스워드 관리
+      - Authorization
+        - 권한 관리
+      - Session
+        - 활성화된 세션(접속)에 대한 관리
     - Network
   - 자원 관리
   - 취약점 관리
