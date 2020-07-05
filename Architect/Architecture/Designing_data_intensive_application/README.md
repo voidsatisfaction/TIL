@@ -11,6 +11,9 @@
     - 퍼포먼스의 기술
     - Load를 처리하는 접근법
   - Maintainability
+    - Operability: Making Life Easy for Operations
+    - Simplicity: Managing Complexity
+    - Evolvability: Making Change Easy
 
 ## 의문
 
@@ -239,7 +242,9 @@ backend response time bottleneck
     - 미래를 위한 소프트웨어 변화를 쉽게할 수 있도록 함
     - (= extensibility, modifiability or plasticity)
 
-#### Operability
+#### Operability: Making Life Easy for Operations
+
+**가시화**
 
 - Operation team
   - 미션
@@ -270,6 +275,27 @@ backend response time bottleneck
     - self-healing을 구현하고, administrator가 수동적으로 컨트롤 할 수 있도록 함
     - Exhibiting predictable behavior, minimizing surprises
 
-#### Simplicity
+#### Simplicity: Managing Complexity
 
-#### Evolvability
+- 개요
+  - 단순성이 시스템의 주요 목표가 되어야 함
+- 단순성을 위한 툴
+  - Abstraction
+    - 많은 구체적인 구현을 깔끔하고 알기 쉬운 facade뒤에 감추는 것
+    - 예시
+      - 고수준 프로그래밍 언어
+        - 기계어, CPU 레지스터, syscall 등을 추상화
+      - SQL
+        - 디스크나 인메모리 데이터 구조, 다른 클라이언트로부터의 동시성 request, 크래시 이후의 비일관성 등을 추상화
+
+#### Evolvability: Making Change Easy
+
+- 개요
+  - 시스템은 지속적으로 변화할 것임
+- 해결
+  - Agile
+    - TDD
+    - Refactoring
+  - Simplicity / Abstractions
+    - 쉽게 이해할 수 있으면 쉽게 수정이 가능하다
+- 데이터 시스템에서는 Agility대신에 evolvability라는 용어를 사용
