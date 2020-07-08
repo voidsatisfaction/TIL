@@ -3,6 +3,8 @@
 - graphql-yoga
 - GraphQL Nexus
 - Prisma
+  - 개요
+  - How does Prisma work
 
 ## graphql-yoga
 
@@ -12,6 +14,12 @@
   - 서버 실행이 쉬움
   - Subscription 기능 포함
   - 다양한 client(Apollo, Relay, ...) 호환 가능성
+- 역할
+  - gql client의 query를 receive
+  - gql query parse
+  - gql query validation
+  - resolver execution
+  - response serialization
 
 ```ts
 import { GraphQLServer } from 'graphql-yoga'
@@ -37,11 +45,15 @@ server.start(() => console.log('Server is running on localhost:4000'))
 ## GraphQL Nexus
 
 - 개요
-  - GraphQL을 위한 type definition(schema)
+  - *GraphQL을 위한 type definition(schema)*
+    - *???*
 
-## Prisma
+## Prisma(2)
 
-- 의문
+Prisma ver2의 docs를 기반으로 작성.
+
+ver1의 경우에는 prisma server라는 jvm위에 돌아가는 db와 application layer사이의 추상 레이어가 존재(2에서 삭제).
+
 - 개요
   - 정의
   - 구성
@@ -53,6 +65,8 @@ server.start(() => console.log('Server is running on localhost:4000'))
 
 - 데이터베이스 툴킷
   - 기존의 ORM과 유사 개념
+  - application layer와 db layer를 이어주는 추상 레이어
+    - js의 plain object <-> db record / table
 
 #### 구성
 
@@ -65,6 +79,9 @@ server.start(() => console.log('Server is running on localhost:4000'))
   - GUI to view and edit data in your database
 
 ### How does Prisma work
+
+- Prisma schema
+- Prisma data model
 
 ```
 datasource db {
@@ -97,7 +114,9 @@ model User {
     - Data source
       - db connection
     - Generator
-      - prisma client를 만들고 싶다는것을 지정
+      - prisma client 지정
+        - *클라이언트를 복수개 만들 수 있다는 것인가?*
+        - *다양한 라이브러리 선택이 가능해보임?*
     - Data model
       - application model 정의
 - Prisma data model
