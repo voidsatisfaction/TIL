@@ -50,11 +50,44 @@
   - ③ DOM에 이미지를 표시하기 위한 DOM element를 추가
   - ④ CSS를 사용해서 해당 element를 원하는 width와 height에 맞춰서 위치를 배치시킴
   - ⑤ `enable()` api를 호출해서 element가 이미지를 표시하는 것을 준비시킴
+    - `addEnabledElement()`
+    - `tirggerEvent(EVENTS.ELEMENT_ENABLED)`
+    - `resize()`
+    - `draw` rendering loop 시작
+      - `triggerEvent(EVENTS.PRE_RENDER)`
+      - `drawImageSync()`
+        - layer의 존재
+          - `drawCompositeImage(enabledElement, invalidated)`
+            - layer가 존재하는 경우
+          - `renderLabelMapImage()` or `renderPseudoColorImage()` or `renderColorImage()` or `renderGrayscaleImage()`
+            - layer가 존재하지 않는경우
+        - `enabledElement.invalid = false, enabledElement.needsRedraw = false`
+        - `triggerEvent(element, EVENTS.IMAGE_RENDERED, eventData)`
+      - `requestAnimationFrame(draw)`
   - ⑥ `loadImage()` 를 호출해서 image를 로드함
-  - ⑦ `displayImage()`를 호출해서 loaded image를 표시함
+    - `getImageLoadObject(imageId)`
+      - cache에서 이미지를 가져옴
+    - `loadImageFromImageLoader(imageId, options).promise`
+      - imageId에서 scheme을 추출하고, imageLoader를 선택
+      - `const imageLoadObject = loader(imageId, options)`
+        - image를 Promise로 반환
+      - *여기서 image는 어떤 형태? 바이너리?*
+  - ⑦ `displayImage(element, image, viewport)`를 호출해서 loaded image를 표시함
+    - `enabledElement.image = image`
+    - enabledElement에 layer가 존재하는 경우
+      - `setLayerImage(element, image)`
+    - viewport가 undefined면 defaultViewport로 설정 & viewport 설정 덮어쓰기
+    - `updateImage()`
+      - `enabledElement.needsRedraw = true`
+    - `enable()`에서 설정된 draw rendering loop에서 `renderGrayscaleImage()`등의 메서드로 render됨
 - cornerstone tools library를 사용해서 windowing, pan, zoom, measurements를 수행할 수 있음
 - cornerstoneWADOImageLoader를 사용해서 WADO로부터 직접 데이터 uri를 제공받아서 데이터를 표시할 수 있음
   - 대신 그 떄에는 [여기](https://github.com/cornerstonejs/cornerstoneWADOImageLoader/blob/master/src/imageLoader/wadouri/register.js)에서 지정된 `dicomweb`, `wadouri`, `dicomfile`을 scheme으로 갖는 imageID를 생성해야 함
+
+---
+
+- enabledElement를 포함한, cornerstonejs에서 사용되는 object 개념설명
+  - https://github.com/cornerstonejs/cornerstone/blob/master/src/enabledElements.js
 
 ### Image Ids
 
