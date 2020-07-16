@@ -83,6 +83,7 @@
       - e.g)
         - `XMLHttpRequest`, `<img>` element
     - cross origin 상호작용의 종류
+      - *각 상호작용은 writes, embedding, reads*로 나뉘어지는데, 구체적으로 무슨 기준인것인가?
       - Cross-origin writes
         - 일반적으로 허용됨
         - e.g)
@@ -135,8 +136,9 @@
     - `CORS`(Cross-Origin Resource Sharing)를 사용하면 됨
     - **`CORS`는 서버로부터 어떠한 호스트가 content를 가져올 수 있도록 허가되었는지 명시한 HTTP의 일부분**
   - Cross-oirign access를 막는 방법
-    - request에서 CSRF라고 불리는 예측이 불가능한 토큰을 확인
+    - *request에서 CSRF라고 불리는 예측이 불가능한 토큰을 확인*
       - 이 토큰을 요구하는 페이지의 읽기를 막아야만 함
+      - *정확히 무슨 뜻인지?*
     - 자원이 embeddable하지 않은 것을 확실하게 해야함
 
 ### Iframe(HTML Inline Frame Element)
