@@ -15,11 +15,22 @@
 
 ### generator
 
+참고
+
+- [이터레이터와 제너레이터](https://mingrammer.com/translation-iterators-vs-generators/)
+
+Generator, Iterator relation diagram
+
+![](./images/programming/generator_iterator1.png)
+
 - 정의
-  - 루프의 iteration 행위를 컨트롤하는데에 사용될 수 있는 (서브)루틴
+  - *루프의 iteration 행위를 컨트롤하는데에 사용될 수 있는 (서브)루틴*
+    - 정확히 이게 무슨 뜻일까?
+    - lazy value producer
 - 특징
   - 값의 수열을 생성하나, 모든 값을 전부 포함하는 array를 생성해서 한번에 반환하는 대신, 한 번에 하나의 값을 반환
     - 메모리를 덜 차지함
+    - lazy producing
   - 함수처럼 보이나, 행동은 iterator
   - vs coroutine
     - generator(semi-coroutine)
@@ -31,6 +42,7 @@
 
 - 정의
   - 프로그래머가 container(특히 리스트)를 traverse할 수 있게 하는 object
+    - `next()`를 호출할 때 다음값을 생성해내는 상태를 가진 헬퍼 객체
 - 종류
   - **Internal Iterators**
     - 정의
