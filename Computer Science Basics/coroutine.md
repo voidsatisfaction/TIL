@@ -2,7 +2,13 @@
 
 - 의문
 - 개요
+  - 코루틴이란
+  - subroutine과의 차이
+  - thread와의 비교
+  - generator와의 비교
+  - mutual recursion과의 비교
 - coroutine의 응용
+- coroutine in python
 
 ## 의문
 
@@ -119,3 +125,71 @@ subroutine dispatcher
 - Communicating sequential processes
 - *Reverse communication*
   - mathematical software
+
+## coroutine in python
+
+### 개요
+
+```py
+import asyncio
+
+async def coroutine1():
+    # 1. 이벤트루프에서 첫번째 태스크인 coroutine1을 실행
+    print('coro1 first entry point')
+    # 2. 실행 시점이 이벤트루프로 복귀
+    await asyncio.sleep(0.1)
+    # 5. 1초 뒤 프린트
+    print('coro1 second entry point')
+
+async def coroutine2():
+    # 3. 이벤트루프에서 두번째 태스크인 coroutine2를 실행
+    print('coro2 first entry point')
+    # 4. 실행 시점이 이벤트루프로 복귀
+    await asyncio.sleep(0)
+    # 6. 2초 뒤 프린트
+    print('coro2 second entry point')
+
+loop = asyncio.get_eveny_loop()
+loop.create_task(coroutine1())
+loop.create_task(coroutine2())
+loop.run_forever()
+```
+
+위의 코드를 완전히 이해하는 것이 목표!
+
+### Frame object
+
+파이썬 바이트 코드의 이해1
+
+![](./images/coroutine/python_byte_code1.png)
+
+파이썬 바이트 코드의 이해2
+
+![](./images/coroutine/python_byte_code2.png)
+
+- 정의
+  - 함수를 실행할 때 필요한 정보를 갖고 있는 오브젝트
+- 속성
+  - `frame.f_locals`
+    - 지역 변수의 상태를 나타냄
+  - `frame.f_back`
+    - 자신을 호출한 프레임을 가리킴
+      - 자신이 실행하는 함수가 종료되면, `f_back`프레임으로 다시 돌아감
+      - 스택 프레임들은 f_back들로 연결된 것임
+    - 인터프리터 내부에는 `ThreadState`라는 오브젝트를 갖고 있는데, 이는 현재 실행하고 있는 프레임을 멤버로 가지고 있음
+      - 따라서, 함수 내부에서 함수가 실행되면 새로운 프레임 객체가 만들어지고, 새롭게 생성된 frame의 f_back은 자신을 호출한 함수를 가리키고, `ThreadState`가 현재 실행중인 frame으로 갱신을 함
+  - `frame.f_lasti`
+    - 해당 함수가 가장 최근에 실행한 가장 최근에 실행한 바이트코드의 인덱스(위의 예시에서는 리턴 함수)
+  - `frame.f_code`
+    - 코드 객체(`== func.__code__`)
+    - 속성
+      - `func.__code__.co_code`
+        - 함수의 바이트코드 바이너리(opcode, operand 등)
+      - `func.__code__.co_consts`
+        - 함수 내에서 사용된 상수들
+      - `func.__code__.co_varnames`
+        - 함수에서 사용된 지역변수 이름들
+      - `func.__code__.co_names`
+        - 함수내에서 사용된 전역변수 이름들
+
+### 코루틴의 바이트 코드 이해
