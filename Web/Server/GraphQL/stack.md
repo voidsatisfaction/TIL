@@ -6,6 +6,13 @@
   - 개요
   - How does Prisma work
 
+## graphql
+
+- 정의
+  - API를 위한 query language이며, 쿼리를 실행하기 위한 서버사이드 런타임
+    - 쿼리를 실행할 떄에는, 데이터에 대해서 타입시스템을 사용함
+    - 일종의 프로토콜이라고 보면 될듯
+
 ## graphql-yoga
 
 - 개요
