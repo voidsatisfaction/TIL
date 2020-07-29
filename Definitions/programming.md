@@ -4,9 +4,18 @@
   - coroutine
   - generator
   - iterator
+  - promise
+  - future
+- Data
   - stream
 
 ## General
+
+- coroutine
+- generator
+- iterator
+- promise
+- future
 
 ### coroutine
 
@@ -27,6 +36,7 @@ Generator, Iterator relation diagram
   - *루프의 iteration 행위를 컨트롤하는데에 사용될 수 있는 (서브)루틴*
     - 정확히 이게 무슨 뜻일까?
     - lazy value producer
+    - iterator를 generate한다는 것 보다는, 값을 lazy하게 generate한다고 해석하는것이 바람직해 보임
 - 특징
   - 값의 수열을 생성하나, 모든 값을 전부 포함하는 array를 생성해서 한번에 반환하는 대신, 한 번에 하나의 값을 반환
     - 메모리를 덜 차지함
@@ -72,6 +82,14 @@ Generator, Iterator relation diagram
     - 파이썬
       - **iterator = 데이터의 stream을 나타내는 오브젝트**
   - Contrasting with indexing
+
+### promise
+
+https://en.wikipedia.org/wiki/Futures_and_promises
+
+### future
+
+## Data
 
 ### stream
 
