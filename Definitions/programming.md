@@ -6,6 +6,7 @@
   - iterator
   - promise
   - future
+  - event loop
 - Data
   - stream
 
@@ -42,6 +43,7 @@ Generator, Iterator relation diagram
     - 메모리를 덜 차지함
     - lazy producing
   - 함수처럼 보이나, 행동은 iterator
+    - 단순 iteration뿐 아니라, 값을 기존 스테이트(프레임) 기반으로 동적으로 필요할 때 생성 및 반환
   - vs coroutine
     - generator(semi-coroutine)
       - caller에게 컨트롤을 yield
@@ -88,6 +90,27 @@ Generator, Iterator relation diagram
 https://en.wikipedia.org/wiki/Futures_and_promises
 
 ### future
+
+### event loop
+
+- 정의
+  - 하나의 프로그램 안에서, 이벤트나 메시지를 wait하거나 dispatch해주는 프로그래밍 구조물
+  - event provider, event handler와 함께 조합되어 동작함
+  - 동의어
+    - message dispatcher, message loop, message pump, run loop
+- 특징
+  - 하나의 프로그램의 central control flow를 event loop가 구성할 경우(nodejs), main loop 혹은 main event loop라 불림
+- 사용
+
+```
+function main
+    initialize()
+    while message != quit
+        message := get_next_message()
+        process_message(message)
+    end while
+end function
+```
 
 ## Data
 
