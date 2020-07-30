@@ -5,6 +5,12 @@
 - 왜 클래스를 아래와 같은 형식으로 import하는 것인지...?
   - `log_cls = 'celery.app.log:Logging'`
     - `symbol_by_name()`함수를 가지고 import를 하는데, 정적으로 import를 하는 것이 아니라, 사용자의 인터페이스 및 모듈 구조에 따라서 동적으로 모듈을 import해서 사용해야하는 경우가 있기 때문임
+- *왜 `worker_init`의 리시버는 `multiprocessing.Pool`을 쓸 수 없는것인가?*
+  - 진짜 안되는지 실험
+  - `worker_init`실험
+    - concurrency = 2인 경우 print 횟수
+  - `worker_process_init`실험
+    - concurrency = 2인 경우 print 횟수
 
 ## 기본 개념
 
@@ -59,6 +65,17 @@
 
 ## 실행 흐름
 
+```py
+def on_worker_init(self):
+    """Called when the worker (:program:`celery worker`) starts."""
+
+def on_worker_shutdown(self):
+    """Called when the worker (:program:`celery worker`) shuts down."""
+
+def on_worker_process_init(self):
+    """Called when a child process starts."""
+```
+
 - `app = Celery('tasks', broker='pyamqp://guest@localhost//')`
 - `@app.task`
 - `def add(x, y): return x + y`
@@ -73,6 +90,21 @@
   - `celery.bin.worker:worker.run()`
     - pool class를 import
     - `worker = self.app.Worker() = celery.app.base.Worker = celery.apps.worker:Worker` 이니셜라이징
+      - `celery.worker.worker:WorkController`의 init 실행
+      - `self.setup_instance(**self.prepare_args(**kwargs))`
+        - 큐, 큐 제외 옵션, pidfile 등을 셋업
+        - `self.setup_queues(queues, exclude_queues)`
+        - `signals.worker_init.send(sender=self)`
+          - **worker_init 시그널의 receiver가 호출되는 순간**
+          - **worker_process_init** 시그널의 receiver가 호출되는 순간은 process_initializer가 실행되는 순간이다. 즉, worker process가 실행되는 순간
+        - `self.concurrency = cpu_count()`
+          - concurrency 설정
+        - 로그 레벨 설정
+        - eventloop 사용여부 설정 반영
+        - initialize bootsteps
+          - `self.pool_cls = _concurrency.get_implementation(self.pool_cls)`
+            - prefork, solo, ...
+          - `self.blueprint.apply`
     - `worker.start() = celery.worker.worker:WorkController.start()`
       - `self.blueprint.start(self)`
     - `worker.exitcode`
