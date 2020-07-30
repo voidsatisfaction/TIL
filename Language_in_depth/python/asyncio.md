@@ -57,36 +57,35 @@ async def count(i):
     print(i)
 
 async def main():
-    # 3. asyncio.gather() 실행으로 일단 main의 실행 흐름을 yield
-    # asyncio.gather 시점에서 애초에 task가 다 등록이 되는것인가? task가 메인루프에서 등록된다의 의미?
-    # 7. event loop는 태스크로 등록된 count(1) 코루틴을 실행.
-    # 8. event loop는 count(1) 로부터 yield 된 실행 흐름을 받아, count(2)코루틴을 실행
-    # 9. event loop는 count(2) 로부터 yield 된 실행 흐름을 받아, count(3)코루틴을 실행
-    # 10. count(3) coroutine은 event loop로 실행 흐름 yield
-    # 11. event loop는 count(1)에서 asyncio.sleep(1)이 끝난 뒤에(?? 애초에 끝났다는 것을 어떻게 알지?), 실행 흐름을 다시 count(1) 코루틴으로 넘겨줌
-    # 13. event loop는 count(2)에서 asyncio.sleep(2)이 끝난 뒤에, 실행 흐름을 다시 count(2) 코루틴으로 넘겨줌
-    # 14. event loop는 count(2)에서 asyncio.sleep(3)이 끝난 뒤에, 실행 흐름을 다시 count(3) 코루틴으로 넘겨줌
+    # 4. asyncio.gather() 실행으로 count(1), count(2), count(3)의 태스크를 메인루프에 등록 후 일단 main의 실행 흐름을 yield
+    # 8. event loop는 그 다음 태스크로 등록된 count(1) 코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
+    # 9. event loop(??)는 count(1) 로부터 yield 된 실행 흐름을 받아, count(2)코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
+    # 10. event loop는 count(2) 로부터 yield 된 실행 흐름을 받아, count(3)코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
+    # 11. event loop는 (태스크 큐에 존재하는??) count(1)에서 asyncio.sleep(1)이 끝난 뒤에(?? 애초에 끝났다는 것을 어떻게 알지?), 실행 흐름을 다시 count(1) 코루틴으로 넘겨줌
+    # 13. event loop는 (태스크 큐에 존재하는??) count(2)에서 asyncio.sleep(2)이 끝난 뒤에, 실행 흐름을 다시 count(2) 코루틴으로 넘겨줌
+    # 14. event loop는 (태스크 큐에 존재하는??) count(3)에서 asyncio.sleep(3)이 끝난 뒤에, 실행 흐름을 다시 count(3) 코루틴으로 넘겨줌
     await asyncio.gather(count(1), count(2), count(3))
 
 async def main2():
-    # 5. print 실행
+    # 6. print 실행
     print('main2 start')
-    # 6. asyncio.sleep로 sleep 태스크 등록(??) 후 event loop로 실행 흐름 yield
+    # 7. asyncio.sleep로 sleep 가 끝난후 다음 실행 상태를 태스크 등록(??) 후 event loop로 실행 흐름 yield
     await asyncio.sleep(2)
     print('main2 end')
 
 async def main_of_main():
-    # 2. event loop는 main() 코루틴을 먼저 실행
-    # 4. event loop는 main2() 코루틴을 실행
+    # 2. event loop는 main(), main1() 코루틴을 태스크를 이벤트루프에 등록
+    # 3. event loop는 현재 태스크에 가장 먼저 존재하는 main() 태스크를 실행
+    # 5. event loop는 그 다음 실행해야 할 태스크인 main2() 코루틴을 실행
     # 12. event loop는 main2의 asyncio.sleep(2)가 끝난 뒤에 main2() coroutine으로 실행 흐름 넘겨줌. 실행이 끝나면 event loop으로 실행 흐름 다시 넘겨줌
-    # 15. event loop는 asyncio.gather의 task가 다 끝난것을 인지
+    # 15. event loop는 현재 task queue에 아무 원소도 존재하지 않은것을 인지
     await asyncio.gather(main(), main2())
 
 if __name__ == "__main__":
     import time
     s = time.perf_counter()
     # 1. event loop 생성 및 main_of_main() coroutine 실행
-    # 16. event loop 제거 및 순차적 실행
+    # 16. event loop 제거 및 asyncio.run이후 코드의 순차적 실행
     asyncio.run(main_of_main())
     # main2 start
     # 1
@@ -121,6 +120,8 @@ if __name__ == "__main__":
   - `await`
     - 의미
       - 실행 흐름의 컨트롤을 event loop로 넘겨줌
+        - caller coroutine이 아니라?
+          - event loop로 넘겨주는 것이고, event loop는 task queue를 보고 task가 존재하면 그 태스크로 실행 흐름을 넘겨줄 뿐
       - 만약 `await f()` 식을 `g()` 스코프에서 봄 == `g()`의 실행을 `f()`의 결과가 반환될 때 까지 await함
         - 그러면서 실행 흐름의 컨트롤을 event loop로 넘겨줌
     - `await f()`
