@@ -8,6 +8,8 @@
   - Same-origin policy
   - Iframe(HTML Inline Frame Element)
   - Referer
+- Server
+  - WSGI
 
 ## 의문
 
@@ -179,3 +181,63 @@
     - *??*
 - e.g)
   - `Referer: https://developer.mozilla.org/en-US/docs/Web/JavaScript`
+
+## Server
+
+### WSGI(Web Server Gateway Interface(WSGI))
+
+- 정의
+  - web server가 request를 파이썬으로 작성된 web application 혹은 framework로 포워딩 하기 위한 호출 컨벤션
+    - 현재 버전은 1.0.1
+- 배경
+  - 2010년 이전에는, 다양한 파이썬 웹 프레임워크가 있었으나, 각 종류마다 지원하는 웹 서버가 달라서 사용가능한 웹 서버의 선택이 제한되었음
+  - Java의 경우에는 servlet API가 다양한 웹 애플리케이션 프레임워크가 servlet를 지원하는 다양한 웹 서버에서 동작할 수 있었음
+  - 그래서 WSGI라는 implementation-agnostic interface가 생겨남
+- 구성
+  - server <-> \[WSGI middleware\] <-> application
+
+Example1: WSGI-compatible "Hello, World" application
+
+```py
+def application(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    yield b'Hello, World\n'
+
+# environ
+## CGI environment variable들을 포함하는 딕셔너리. 그외에도 request parameters, metadata 도 포함
+
+# start_response(status, response_headers)
+## 호출할 수 있으며, status와 response_headers를 인자로 받을 수 있음
+
+# yield b'Hello, World\n'
+## iterable of byte strings
+```
+
+Example2: calling an application
+
+```py
+from io import BytesIO
+
+def call_application(app, environ):
+    status = None
+    headers = None
+    body = BytesIO()
+
+    def start_response(rstatus, rheaders):
+        nonlocal status, headers
+        status, headers = rstatus, rheaders
+
+    app_iter = app(environ, start_response)
+    try:
+        for data in app_iter:
+            assert status is not None and headers is not None, \
+                "start_response() was not called"
+            body.write(data)
+    finally:
+        if hasattr(app_iter, 'close'):
+            app_iter.close()
+    return status, headers, body.getvalue()
+
+environ = {...} # environ dict
+status, headers, body = call_application(app, environ)
+```
