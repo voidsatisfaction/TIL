@@ -262,7 +262,13 @@ if __name__ == '__main__':
 - `async for`
   - asynchronous iterator를 iterate 하기 위한 키워드
   - asynchronous iterator의 목적은 asynchronous code를 각 스테이지에서 이터레이션을 하면서 호출할 수 있도록 하기 위함
-  - 아직 잘 모르겠음
+  - container를 iterate할 때, IO bound 작업을 포함하는 경우에도 iterate하기 위한 키워드
+- `async with`
+  - asynchronous enter, exit
+    - `def __aenter__(self)`
+    - `def __aexit__(self)`
+
+`async for`, Async Generators + Comprehensions의 예시
 
 ```py
 import asyncio
@@ -274,7 +280,7 @@ async def mygen(u: int = 10):
         print(u)
         yield 2 ** i
         i += 1
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.1) # event loop로 실행 제어권을 넘김
 
 async def main():
     g = [i async for i in mygen(10)] # 동기적으로 실행됨
@@ -286,7 +292,161 @@ print(g)
 print(f)
 ```
 
-## What is an event loop?
+- `async for`, `async with`는 coroutine의 실행 제어권을 eventloop로 넘기는 속성을 지키기 위해서만 필요함
+
+### The Event Loop and `asyncio.run()`
 
 - event loop
-  - 하나의 프로그램에서의 event나 message를 기다리거나, dispatch하는 프로그래밍 구조
+  - 개요
+    - coroutine들을 감시하는 `while True`문이며, 무엇이 idle인지, 어떤 코루틴이 실행 가능한지를 확인
+    - 어떤 코루틴이 사용가능하게 되면, 그러한 idle coroutine에게 실행 흐름을 넘겨줄 수 있음
+- `asyncio.run()`
+  - 개요
+    - event loop를 가져오고, 태스크가 끝날 때 까지 실행되며, event loop를 closing함
+
+`get_event_loop()`를 사용한 asyncio
+
+```py
+loop = asyncio.get_event_loop()
+try:
+    loop.run_until_complete(main())
+finally:
+    loop.close()
+```
+
+- `asyncio.get_event_loop()`
+  - 개요
+    - 튜닝을 제대로 할 것이 아니면, `asyncio.run()`으로 충분함
+- 우리가 알아야 할 중요한 것들
+  - #1 코루틴은 event loop와 엮여야지만 여러 동작을 수행할 수 있음
+  - #2 기본 설정으로, async IO event loop는 싱글 스레드의 싱글코어에서 동작함
+    - 물론, multiprocessing을 사용해서 여러 프로세스에서 event loop를 돌릴수도 있음
+  - #3 Event loop들은 pluggable함
+    - 자신만의 event loop를 만들어서 태스크를 동작 시킬 수 있음
+    - 실제로 asyncio 패키지 자체도, event loop의 구현을 두가지로 함
+      - selector
+      - proactor
+
+### Web crawling 예제
+
+Python web crawling 예제
+
+```py
+#!/usr/bin/env python3
+# areq.py
+
+"""Asynchronously get links embedded in multiple pages' HMTL."""
+
+import asyncio
+import logging
+import re
+import sys
+from typing import IO
+import urllib.error
+import urllib.parse
+
+import aiofiles
+import aiohttp
+from aiohttp import ClientSession
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s:%(name)s: %(message)s",
+    level=logging.DEBUG,
+    datefmt="%H:%M:%S",
+    stream=sys.stderr,
+)
+logger = logging.getLogger("areq")
+logging.getLogger("chardet.charsetprober").disabled = True
+
+HREF_RE = re.compile(r'href="(.*?)"')
+
+async def fetch_html(url: str, session: ClientSession, **kwargs) -> str:
+    """GET request wrapper to fetch page HTML.
+
+    kwargs are passed to `session.request()`.
+    """
+
+    resp = await session.request(method="GET", url=url, **kwargs)
+    resp.raise_for_status()
+    logger.info("Got response [%s] for URL: %s", resp.status, url)
+    html = await resp.text()
+    return html
+
+async def parse(url: str, session: ClientSession, **kwargs) -> set:
+    """Find HREFs in the HTML of `url`."""
+    found = set()
+    try:
+        html = await fetch_html(url=url, session=session, **kwargs)
+    except (
+        aiohttp.ClientError,
+        aiohttp.http_exceptions.HttpProcessingError,
+    ) as e:
+        logger.error(
+            "aiohttp exception for %s [%s]: %s",
+            url,
+            getattr(e, "status", None),
+            getattr(e, "message", None),
+        )
+        return found
+    except Exception as e:
+        logger.exception(
+            "Non-aiohttp exception occured:  %s", getattr(e, "__dict__", {})
+        )
+        return found
+    else:
+        for link in HREF_RE.findall(html):
+            try:
+                abslink = urllib.parse.urljoin(url, link)
+            except (urllib.error.URLError, ValueError):
+                logger.exception("Error parsing URL: %s", link)
+                pass
+            else:
+                found.add(abslink)
+        logger.info("Found %d links for %s", len(found), url)
+        return found
+
+async def write_one(file: IO, url: str, **kwargs) -> None:
+    """Write the found HREFs from `url` to `file`."""
+    res = await parse(url=url, **kwargs)
+    if not res:
+        return None
+    async with aiofiles.open(file, "a") as f:
+        for p in res:
+            await f.write(f"{url}\t{p}\n")
+        logger.info("Wrote results for source URL: %s", url)
+
+async def bulk_crawl_and_write(file: IO, urls: set, **kwargs) -> None:
+    """Crawl & write concurrently to `file` for multiple `urls`."""
+    async with ClientSession() as session:
+        tasks = []
+        for url in urls:
+            tasks.append(
+                write_one(file=file, url=url, session=session, **kwargs)
+            )
+        await asyncio.gather(*tasks)
+
+if __name__ == "__main__":
+    import pathlib
+    import sys
+
+    assert sys.version_info >= (3, 7), "Script requires Python 3.7+."
+    here = pathlib.Path(__file__).parent
+
+    with open(here.joinpath("urls.txt")) as infile:
+        urls = set(map(str.strip, infile))
+
+    outpath = here.joinpath("foundurls.txt")
+    with open(outpath, "w") as outfile:
+        outfile.write("source_url\tparsed_url\n")
+
+    asyncio.run(bulk_crawl_and_write(file=outpath, urls=urls))
+```
+
+## AsyncIO in Context
+
+### When and Why Is Async IO the Right Choice?
+
+- IO-bound 태스크가 많을 경우
+  - Network IO
+  - Peer-to-peer, multi-user network(group chatroom)
+  - Read/Write operation ∧ worry less about holding a lock
