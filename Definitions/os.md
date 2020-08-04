@@ -16,6 +16,7 @@
 - Process
   - Process
   - Daemon
+  - Processor affinity
 
 ## 의문
 
@@ -42,6 +43,7 @@ Bootstrap
 ![](./images/os/bootstrap1.png)
 
 - 정의
+  - 운영체제 프로그램을 메모리에 올리는 것
 - 과정
   - ① 컴퓨터 전원버튼을 누르고, 메인보드에 전력이 들어오며, 메인보드에 부착된 장치들에게 전력이 공급
   - ② CPU가 ROM에 저장된 펌웨어인 BIOS(Basic Input/Output System)를 실행시킴
@@ -428,3 +430,15 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
     - 최초 프로세스인 `init(or systemd)`가 initialize할 때, 실행하는 스크립트 디렉토리에 두면 바로 "데몬"이 됨
   - Service
     - `sc.exe`와 같은 프로그램으로 윈도우 API 함수를 이용해 등록해야 함
+
+### Processor affinity
+
+- 동의어
+  - CPU pinning, cache affinity
+- 정의
+  - process나 thread를 하나의 CPU나 복수개의 CPU 그룹으로 바인딩 하여, process나 thread가 지정된 CPU나 CPU 그룹에서만 실행되도록 하는 것
+    - queue를 이용하여 구현
+- 장점
+  - processor를 고정시키므로써, cpu cache memory속의 캐시를 그대로 사용할 수 있게 함(퍼포먼스 향상)
+- 단점
+  - 로드 밸런싱을 해야함
