@@ -11,6 +11,12 @@
     - concurrency = 2인 경우 print 횟수
   - `worker_process_init`실험
     - concurrency = 2인 경우 print 횟수
+- *애초에 시그널은 어떻게, 누가 listen하고 있는것인지?*
+- *task pool은 어떻게 관리되고 있는지?*
+  - blueprint에 힌트가 있을것같지만..
+- *`celery`에서 `worker_process_init`에서 initializing한 모델 오브젝트를 워커에서도 같은 오브젝트로서 사용 가능한 이유는?*
+- *셀러리 워커 프로세스는 어디에서 무한 루프를 돌고 있는 것인가? 애초에 무한루프를 도는 것이 아닌가?*
+  - *무한 루프를 돌지 않으면 프로세스가 매번 죽고 새로 생길텐데?*
 
 ## 기본 개념
 
@@ -86,7 +92,9 @@ def on_worker_process_init(self):
     - celery worker 프로그램을 argv를 갖고 실행
     - `self.setup_app_from_commandline(self, argv)`
       - 각종 preload_option들을 갖고 와서 오브젝트에 설정
-      - `self.app`에 celery app 오브젝트 설정
+      - **`self.app`에 사용자가 정의한 celery app 오브젝트 설정**
+        - 설정을 보아하니, 모듈 경로만 지정할 경우 `app` 이라는 오브젝트 혹은 `celery`라는 오브젝트로 initialize를 시켜야만 함
+          - 그 외에 다른 의심 변수들도 `Celery`타입인지 확인한 뒤에 맞으면 반환함
   - `celery.bin.worker:worker.run()`
     - pool class를 import
     - `worker = self.app.Worker() = celery.app.base.Worker = celery.apps.worker:Worker` 이니셜라이징
@@ -107,4 +115,17 @@ def on_worker_process_init(self):
           - `self.blueprint.apply`
     - `worker.start() = celery.worker.worker:WorkController.start()`
       - `self.blueprint.start(self)`
+        - `self.on_start()`
+          - 이는 `celery.apps.worker:Worker:on_start()`메서드의 동작
+          - `self.emit_banner()`
+            - 워커 banner를 터미널에 출력
+      - `bootsteps`
+        - *각 부트스트랩 과정마다 `start()` 메서드를 호출하는 것으로 보이나, 구체적으로 어떻게 실행하는지는 모름*
+        - `celery.worker.components:Hub`,
+        - `celery.worker.components:Pool`,
+        - `celery.worker.components:Beat`,
+        - `celery.worker.components:Timer`,
+        - `celery.worker.components:StateDB`,
+        - `celery.worker.components:Consumer`,
+        - `celery.worker.autoscale:WorkerComponent`
     - `worker.exitcode`

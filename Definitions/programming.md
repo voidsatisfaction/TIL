@@ -4,9 +4,11 @@
   - coroutine
   - generator
   - iterator
+  - asynchronous iterator, generator
   - promise
   - future
   - event loop
+  - argc vs argv
 - Data
   - stream
 
@@ -85,6 +87,15 @@ Generator, Iterator relation diagram
       - **iterator = 데이터의 stream을 나타내는 오브젝트**
   - Contrasting with indexing
 
+### asynchronous iterator, generator
+
+- asynchronous iterator
+  - 의미
+    - iterator가 container원소를 traverse할 때, IO bound 동작과 같은 비동기적인 동작도 함께 할 때, 그러한 iterator를 말함
+- asynchronous generator
+  - 의미
+    - generator가 lazy하게 값을 produce하는 경우 IO bound 동작과 같은 비동기적인 동작도 함께 할 때, 그러한 generator를 말함
+
 ### promise
 
 https://en.wikipedia.org/wiki/Futures_and_promises
@@ -111,6 +122,17 @@ function main
     end while
 end function
 ```
+
+### argc vs argv
+
+- `argc`
+  - 정의
+    - argument count
+    - 프로그램으로 전달되어진 인자의 개수
+- `argv`
+  - 정의
+    - argument vector
+    - 스트링 인자 벡터
 
 ## Data
 
