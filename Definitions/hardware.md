@@ -6,6 +6,8 @@
   - Hard-disk
   - ROM
   - RAID
+- CPU
+  - CPU cache
 - GPU
   - MIG
 
@@ -156,6 +158,30 @@ ROM의 예시
     - Availability
       - 백업이 아님
     - 대규모 서버에서 많이 사용
+
+## CPU
+
+### CPU cache
+
+- 정의
+  - main memory에서 데이터를 가져오는 시간을 절약하기 위하여 CPU가 사용하는 하드웨어 캐시
+- 특징
+  - main memory에서 자주 사용되는 데이터의 복사본을 processor 코어 근처의 더 작고 빠른 메모리에 두는 캐시
+  - CPU는 메인 메모리에 읽거나 쓰기 전에, CPU 캐시를 확인하고, 만약 있으면 그쪽의 데이터를 읽거나 씀
+  - 크기가 128KiB 부터 4.5MiB까지 다양함
+- 종류
+  - instruction cache
+  - data cache
+    - 계층 구조
+      - L1, L2, L3, L4
+      - 멀티코어의 경우
+        - L1
+          - 코어끼리 공유x
+        - L2
+          - 코어끼리 공유 가능성o
+  - TLB(Translation Lookaside Buffer)
+    - virtual-to-physical 주소 변환을 빠르게 할 수 있도록 도와주는 캐시
+    - MMU(Memory Management Unit)에 속하며, 직접적으로 CPU 캐시라고 불리지는 않음
 
 ## GPU
 
