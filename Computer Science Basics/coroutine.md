@@ -169,6 +169,12 @@ loop.run_forever()
 
 - 정의
   - 함수를 실행할 때 필요한 정보를 갖고 있는 오브젝트
+- 특징
+  - 함수를 실행되는데에 사용됨
+  - Call stack
+  - Value stack
+  - Local variables
+  - 마지막에 실행된 바이트코드의 인덱스가 존재
 - 속성
   - `frame.f_locals`
     - 지역 변수의 상태를 나타냄
@@ -193,3 +199,320 @@ loop.run_forever()
         - 함수내에서 사용된 전역변수 이름들
 
 ### 코루틴의 바이트 코드 이해
+
+제너레이터의 이해
+
+```py
+def generator():
+    recv = yield 1
+    return recv
+
+# 0 LOAD_CONST 1 (1)
+# 2 YIELD_VALUE
+# 4 STORE_FAST 0 (recv)
+
+# 6 LOAD_FAST 0 (recv)
+# 8 RETURN_VALUE
+
+gen = generator()
+gen.send(None) # 1
+gen.send(2) # 2
+
+gen = generator()
+gen.send(None) # 1
+
+lasti = gen.gi_frame.f_lasti
+lasti # 2 -> YIELD_VALUE를 의미(어디까지 제너레이터가 진행되었는지)
+```
+
+- 코루틴
+  - 특징
+    - 제너레이터 기반
+    - thread state와 유사하게, frame 오브젝트를 갖고 있음
+    - frame 오브젝트
+      - 코루틴이 어디까지 실행되었는지 알고 있음
+      - 지역 변수들의 상태 저장(함수 일시정지 후 재개 가능)
+- `yield from == await`
+  - 기능
+    - **제너레이터 내부에서 또 다른 제너레이터(subgenerator)를 사용하기 위함**
+      - 따라서 코루틴을 이해하기 위해서는 제너레이터를 이해하는 것이 중요함
+- `await`
+  - 기능
+    - **제너레이터 안에서 서브제너레이터를 실행하는 것과 거의 유사 ~ yield from**
+- `send`함수의 내부
+  - 스레드의 state를 가져옴
+    - `PyThreadState *tstate = PyThreadState_GET();`
+  - generator의 gi_frame을 가져옴
+    - `PyFrameObject *f = gen->gi_frame;`
+  - argument 처리를 해줌
+    - `*(f->f_stacktop++) = result;`
+    - 프레임의 value stack의 top에 argument를 넣어줌
+      - 그래서 generator안으로 값을 넘겨줄 수 있었음
+  - 스레드 state의 현재 실행중인 frame을 generator의 f_back으로 넘겨줌(콜스택)
+    - `f->f_back = tstate->frame;`
+      - generator의 실행이 끝나면 tstate의 frame으로 다시 돌아옴
+  - **`result = PyEval_EvalFrameEx(f, exc);`**
+    - 프레임을 실행하는 함수
+    - 바이트의 OP코드는 이 함수 내부에서 실행됨
+  - `Py_CLEAR(f->f_back);`
+
+### Event Loop for non-preemptive multitasking
+
+`asyncio.sleep()`에 대한 설명(완전히 같은 구현은 아님)
+
+```py
+async def sleep(delay, result=None, *, loop=None):
+    if delay <= 0:
+        await __sleep0()
+        return result
+
+    if loop is None:
+        loop = events.get_event_loop()
+    future = loop.create_future()
+    # event loop에 delay이후에 set_result를 호출하도록 스케쥴링 함
+    # future, result는 future.set_result의 파라미터로 들어감
+    h = loop.call_later(delay, future.set_result, future, result)
+
+    # await future은 yield from이며 send와 같음
+    # Q) 이 send된 값은 어디에서 받고 있는가?
+    return await future
+
+# __sleep0의 내부구현
+@types.coroutine
+def __sleep0():
+    yield
+
+# Future의 내부구현
+class Future:
+    def __await__(self):
+        if not self.done():
+            # This tells task to wait for completion
+            # self를 yield한 값을 어디에서 받고 있는가? -> Task객체
+            yield self
+        if not self.done()+
+            raise RuntimeError("await wasn't used with future")
+        return self.result()
+
+    __iter__ = __await__ # yield from과 compatible하게 만들어줌
+
+
+# Future를 래핑한 친구
+class Task(Future):
+    def _step(self):
+        try:
+            # coroutine을 직접 send
+            # coroutine과 event loop에 관련된 부분은 대부분 이곳에 존재
+            result = self.coro.send(None)
+        except StopIteration as exc:
+            self.set_result(exc.value)
+        except Exception as exc:
+            self.set_exception(exc)
+        else:
+            # e.g) asyncio.sleep(0)에서 yield만 했을 경우(== yield None)
+            if result is None:
+                # 다시 스케쥴링
+                self._loop.call_soon(self._step)
+            # 원래의 구현에서는 Future를 체크하는것이 아니라, 어떠한 flag값을 체크하는데, 이해에 큰 무리가 없음
+            elif isinstance(result, Future):
+                # Future자체에 self._step을 add_done 콜백으로 등록
+                result.add_done_callback(self._step)
+
+    def __init__(self, coro, *, loop=None):
+        super().__init__(loop=loop)
+        self._coro = coro
+        self._loop.call_soon(self._step)
+
+
+class Future:
+    # Q) promise오브젝트의 then같은 느낌?
+    def add_done_callback(self, fn):
+        self._callbacks.append(fn)
+
+    # Q) promise오브젝트의 resolve 함수 같은 느낌?
+    def set_result(self, result):
+        self._result = result
+        self._state = _FINISHED
+        # 바로 callback들을 실행하는 것이 아님
+        self._schedule_callbacks()
+
+    def _schedule_callbacks(self):
+        callbacks = self._callbacks[:]
+        if not callbacks:
+            return
+
+        self._callbacks[:] = []
+        for callback in callbacks:
+            # callback함수들을 이벤트루프에 스케쥴링함(태스크 큐에 삽입)
+            self._loop.call_soon(callback, self)
+```
+
+- 태스크가 생성(create_task)
+- 태스크의 `_stop`이 `call_soon`에 의하여 스케쥴링 됨
+- `_stop`메서드에서 coroutine을 send
+  - 헤당 코루틴 내부에 값이 없을 때, `_step`이 다시한 번 스케쥴링 됨
+    - *근데, 그럼 무한루프가 되는 것이 아닌가?*
+  - 값이 있는 경우에는, `_stop`을 `Future`의 add_done_callback에 넘겨줌
+- 추후에 Future가 완료되어서 값이 `set_result`즉, 값이 세팅되면 해당 콜백들이 이벤트루프에 스케쥴링 됨
+
+핸들 오브젝트(함수를 래핑한 친구)
+
+```py
+class Handle:
+    def __init__(self, callback, args, loop):
+        self._callback = callback
+        self._args = args
+        self._loop = loop
+
+    # 넘겨주었던 callback을 실행함
+    def _run(self):
+        self._callback(*self._args)
+
+
+class TimeHandle(Handle):
+    def __init__(self, when, callback, args, loop):
+        super().__init__(callback, args, loop)
+        self._when = when
+
+    # 비교연산자가 있기 때문에, 정렬이 가능
+    def __gt__(self, other):
+        return self._when > other._when
+```
+
+### Making Custom Event Loop
+
+Custom Evevnt loop 만들기
+
+```py
+# nodejs의 event loop와 매우 유사
+class CustomEventLoop(AbstractEventLoop):
+    def __init__(self):
+        # timer handle를 갖음(특정 시간이 되면 실행될 친구들을 갖고 있음)
+        self._scheduled = []
+        # 수행할 준비가 된 handle 오브젝트들이 존재
+        self._ready = deque()
+
+    def create_future(self):
+        return Future(loop=self)
+
+    def create_task(self, coro):
+        return Task(coro, loop=self)
+
+    def time(self):
+        return time.monotonic()
+
+    # just for not making exception
+    def get_debug(self):
+        pass
+
+    def _timer_handle_cancelled(self, handle):
+        pass
+
+    # many other public functions
+    def call_soon(self, callback, *args):
+        handle = Handle(callback, args, self)
+        self._ready.append(handle)
+        return handle
+
+    def call_later(self, delay, callback, *args):
+        timer = self.call_at(self.time() + delay, callback, *args)
+        return timer
+
+    # Q) 애초에 근데, 어떻게, 지금 상황이 몇초가 지난것인지 알 수 있는지?
+    def call_at(self, when, callback, *args):
+        timer = TimerHandle(when, callback, args, self)
+        heappush(self._scheduled, timer)
+        return timer
+
+    def run_forever(self):
+        while True:
+            self._run_once()
+
+    def _run_once(self):
+        while self._scheduled and self._scheduled[0]._when <= self.time():
+            timer = heappop(self._scheduled)
+            self._ready.append(timer)
+
+        len_ready = len(self._ready)
+        for _ in range(len_ready):
+            handle = self._ready.popleft()
+            handle._run()
+
+        timeout = 0
+        if self._scheduled and not self._ready:
+            timeout = max(0, self._scheduled[0]._when - self.time())
+        time.sleep(timeout)
+```
+
+- 한계
+  - 위의 코드에서는 `timeout`이 0인경우 spinning(무한루프)
+  - `timeout`이 무한대에 가까우면 Freezing
+- **위의 한계를 극복하기 위하여 Selector를 도입**
+- Selector
+  - 기능
+    - 운영체제의 polling함수를 설정할 수 있도록 만든 래핑 클래스
+    - 각 운영체제마다 사용하는 poll이 다름
+    - defualtselector는 운영체제에 맞는 selector를 가져옴
+
+Selector 예시 코드
+
+```py
+import selectors
+import socket
+
+ssocket, csocket = socket.socketpair()
+ssocket.setblocking(False)
+csocket.setblocking(False)
+
+selector = selectors.DefaultSelector()
+selector.register(ssocket.fileno(), selectors.EVENT_READ)
+selector.select(timeout=None) # wating here(blocking until a registered event comes)
+
+ssocket.recv(1) # b'\0'
+
+
+# from other threads
+csocket.send(b'\0')
+```
+
+개선된 Custom Event Loop
+
+```py
+class CustomEventLoop(AbstractEventLoop):
+    def __init__(self):
+        self._scheduled = []
+        self._ready = deque()
+        self._selector = selectors.DefaultSelector()
+        self._ssocket, self._csocket = socket.socketpair()
+        self._ssocket.setblocking(False)
+        self._csocket.setblocking(False)
+        self._selector.register(self._ssocket.fileno(), selectors.EVENT_READ)
+
+    def call_soon_threadsafe(self, callback, *args):
+        handle = self.call_soon(callback, *args)
+        self._csocket.send(b'\0')
+        return handle
+
+    ...
+
+    def _run_once(self):
+        while self._scheduled and self._scheduled[0]._when <= self.time():
+            timer = heappop(self._scheduled)
+            self._ready.append(timer)
+
+        len_ready = len(self._ready)
+        for _ in range(len_ready):
+            handle = self._ready.popleft()
+            handle._run()
+
+        timeout = None
+        if self._ready:
+            # 바로 실행해야 하는 친구들이 있으면 실행
+            timeout = 0
+        elif self._scheduled:
+            # 0번의 쨰와 현재 시간이 차 시간만큼 나중에 실행
+            timeout = max(0, self._scheduled[0]._when - self.time())
+
+        events = self._selector.select(timeout)
+        if events:
+            self._ssocket.recv(1)
+```
