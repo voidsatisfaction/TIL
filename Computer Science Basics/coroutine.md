@@ -260,6 +260,8 @@ lasti # 2 -> YIELD_VALUE를 의미(어디까지 제너레이터가 진행되었�
 
 `asyncio.sleep()`에 대한 설명(완전히 같은 구현은 아님)
 
+*이 부분이 잘 이해가 안된다. 특히, `await`가 `yield from`이며, `send`와 같다는게 무슨 뜻인지?*
+
 ```py
 async def sleep(delay, result=None, *, loop=None):
     if delay <= 0:
