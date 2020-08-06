@@ -9,6 +9,12 @@
   - mutual recursion과의 비교
 - coroutine의 응용
 - coroutine in python
+  - 개요
+  - Frame object
+  - 코루틴의 바이트 코드 이해
+  - Event Loop for non-preemptive multitasking
+  - Making Custom Event Loop
+  - 부록1: yield from
 
 ## 의문
 
@@ -517,4 +523,146 @@ class CustomEventLoop(AbstractEventLoop):
         events = self._selector.select(timeout)
         if events:
             self._ssocket.recv(1)
+```
+
+### 부록1: yield from
+
+yield from 코드의 예시1: 결과 받아오기
+
+```py
+def reader():
+    for i in range(4):
+        yield '<< %s' % i
+
+def reader_wrapper(g):
+    # These three codes are same
+    # way1
+    yield from g
+
+    # way2
+    # for i in g:
+    #     yield i
+
+    # way3
+    # yield g.send(None)
+    # yield g.send(None)
+    # yield g.send(None)
+    # yield g.send(None)
+
+wrap = reader_wrapper(reader())
+for i in wrap:
+    print(i)
+
+# Result
+# << 0
+# << 1
+# << 2
+# << 3
+```
+
+- `yield`
+  - **실행 흐름과 값을 원래 스레드 state의 프레임으로 넘겨줌**
+- `yield from`
+  - 기능
+    - **서브제너레이터로 실행흐름과 parameter를 넘겨주고, lazy하게 값을 생성하게 한 뒤에 그것을 자신의 caller로 해당 값과 실행 흐름을 넘겨줌**
+      - transparent two way channel
+    - caller와 sub-generator 사이에 transparent한 bidirectional connection을 establish해줌
+      - transparent
+        - 모든것을 올바르게 propagate하는 것(값, exceptions 등)
+      - bidirectional
+        - both sent from and to a generator
+
+yield from 코드의 예시2: 파라미터 넘겨주기
+
+```py
+
+def writer():
+    while True:
+        w = (yield)
+        print('>> ', w)
+
+
+def writer_wrapper(coro):
+    # way1
+    yield from coro
+
+    # way2
+    # coro.send(None)
+    # while True:
+    #     sent = (yield)
+    #     coro.send(sent)
+
+    # way3
+    # coro.send(None)
+    # coro.send((yield))
+    # coro.send((yield))
+    # coro.send((yield))
+    # coro.send((yield))
+    # yield
+
+
+w = writer()
+wrap = writer_wrapper(w)
+wrap.send(None)
+for i in range(4):
+    print(wrap.send(i))
+```
+
+- 위의 코드처럼 `yield from`은 실행 흐름과 parameter를 넘겨줌
+  - sub generator로 데이터 송신 가능
+
+yield from 코드의 예시3: 예외 처리
+
+```py
+class SpamException(Exception):
+    pass
+
+def writer():
+    while True:
+        try:
+            w = (yield)
+        except SpamException:
+            print('***')
+        else:
+            print('>> ', w)
+
+def writer_wrapper(coro):
+    # way1
+    yield from coro
+
+    # way2
+    # coro.send(None)
+    # while True:
+    #     try:
+    #         sent = (yield)
+    #     except Exception as e:
+    #         coro.throw(e)
+    #     else:
+    #         coro.send(sent)
+
+w = writer()
+wrap = writer_wrapper(w)
+wrap.send(None)
+for i in [0, 1, 2, 'spam', 4]:
+    if i == 'spam':
+        wrap.throw(SpamException)
+    else:
+        wrap.send(i)
+
+# # Expected Result
+# >>  0
+# >>  1
+# >>  2
+# ***
+# >>  4
+#
+# # Actual Result
+# >>  0
+# >>  1
+# >>  2
+# Traceback (most recent call last):
+#   ... redacted ...
+#   File ... in writer_wrapper
+#     x = (yield)
+# __main__.SpamException
 ```
