@@ -7,6 +7,7 @@
   - BIOS
   - Virtualization
   - Buffer(data buffer)
+  - POSIX
 - File system
   - Partition
   - File system
@@ -128,6 +129,19 @@ Bootstrap
     - input device로 부터 데이터를 가져오기 전에 buffer에 데이터가 저장됨
     - output device로 데이터를 내보내기 전에 buffer에 데이터가 저장됨
   - 하나의 컴퓨터 안에서 process간에 데이터를 옮기기 위해서도 사용됨
+
+### POSIX
+
+- 정의
+  - Portable Operating System Interface
+  - **OS 사이의 compatibility를 유지하기 위하여 IEEE가 제정한 OS 인터페이스 표준**
+- 정의 범위
+  - API
+  - Shells
+  - Utility interfaces
+- 윈도우와 POSIX
+  - Cygwin
+  - WSL(Windows Subsystem for Linux)
 
 ## File system
 
