@@ -59,9 +59,9 @@ async def count(i):
 async def main():
     # 4. asyncio.gather() 실행으로 count(1), count(2), count(3)의 태스크를 메인루프에 등록 후 일단 main의 실행 흐름을 yield
     # 8. event loop는 그 다음 태스크로 등록된 count(1) 코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
-    # 9. event loop(??)는 count(1) 로부터 yield 된 실행 흐름을 받아, count(2)코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
-    # 10. event loop는 count(2) 로부터 yield 된 실행 흐름을 받아, count(3)코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
-    # 11. event loop는 (태스크 큐에 존재하는??) count(1)에서 asyncio.sleep(1)이 끝난 뒤에(?? 애초에 끝났다는 것을 어떻게 알지?), 실행 흐름을 다시 count(1) 코루틴으로 넘겨줌
+    # 9. event loop(??)는 count(1) 로부터 yield 된 실행 흐름을 받아, 다음 태스크인 count(2)코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
+    # 10. event loop는 count(2) 로부터 yield 된 실행 흐름을 받아, 다음 태스크인 count(3)코루틴을 실행. asyncio.sleep에서 event loop로 실행 흐름 yield
+    # 11. event loop는 (태스크 큐에 존재하는??) count(1)에서 asyncio.sleep(1)이 끝난 뒤에(?? 애초에 끝났다는 것을 어떻게 알지? - 이벤트루프가 현재 시간을 가져올 수 있는 메서드를 갖고 있음), 실행 흐름을 다시 count(1) 코루틴으로 넘겨줌
     # 13. event loop는 (태스크 큐에 존재하는??) count(2)에서 asyncio.sleep(2)이 끝난 뒤에, 실행 흐름을 다시 count(2) 코루틴으로 넘겨줌
     # 14. event loop는 (태스크 큐에 존재하는??) count(3)에서 asyncio.sleep(3)이 끝난 뒤에, 실행 흐름을 다시 count(3) 코루틴으로 넘겨줌
     await asyncio.gather(count(1), count(2), count(3))
@@ -69,7 +69,7 @@ async def main():
 async def main2():
     # 6. print 실행
     print('main2 start')
-    # 7. asyncio.sleep로 sleep 가 끝난후 다음 실행 상태를 태스크 등록(??) 후 event loop로 실행 흐름 yield
+    # 7. asyncio.sleep로 sleep 가 끝난후 코루틴의 다음 실행 상태를 태스크 등록(??) 후 event loop로 실행 흐름 yield
     await asyncio.sleep(2)
     print('main2 end')
 
