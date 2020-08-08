@@ -9,6 +9,7 @@
   - Buffer(data buffer)
   - POSIX
 - File system
+  - File descriptor vs System open-file table vs Vnode Table
   - Partition
   - File system
   - Mount
@@ -18,6 +19,8 @@
   - Process
   - Daemon
   - Processor affinity
+  - Process group
+  - Pipeline
 
 ## 의문
 
@@ -146,6 +149,97 @@ Bootstrap
 ## File system
 
 *파일 시스템에서 파일과 inode는 어떻게 연결되는가? 파일 이름은 어디에 저장되는가?*
+
+### File descriptor vs System open-file table vs Vnode Table
+
+파일 그 자체와, 파일로 연결을 open하는 것은 차이가 존재함
+
+File descriptor, File table, Inode table1
+
+![](./images/os/file_descriptor_file_table_inode1.png)
+
+File descriptor, File table, Inode table2
+
+![](./images/os/file_descriptor_file_table_inode2.png)
+
+File descriptor, File table, Inode table3
+
+![](./images/os/file_descriptor_file_table_inode3.png)
+
+- file descriptor
+  - 정의
+    - Unix계열의 OS에서(POSIX), file이나 input/output 자원을 접근하기 위해서 사용하는 abstract handler(indicator)
+    - file descriptor는 **per-process file descriptor table** 이라는 곳으로 인덱싱 되며, 각각의 file descriptor는 **(open)file table** 이라고 불리는 시스템 전체의 scope인 모든 프로세스에 의하여 open된 파일들을 담는 테이블과 연결이 됨
+    - inode table과도 인덱싱되어서, 실제 파일이 어디있는지와도 대응이됨
+    - e.g)
+      - `pipe`, `network socket`
+  - 특징
+    - POSIX API에 포함됨
+    - 음이 아닌 양의 정수
+      - `C File*`로 open된 file descriptor를 `int fileno(FILE* fp);` 함수로 가져올 수 있음
+    - 유닉스 계열의 시스템에서는, 유닉스 파일 타입이라고 명명된 모든 것을 참조할 수 있음
+      - regulart files, directories, block, character device, unix domain sockets, named pipe 등
+        - 그래서 `lsof`커맨드로 소켓등도 확인할 수 있는것임
+    - 유닉스 계열 시스템에서의 fd에의 operations
+      - fd의 생성
+        - `open()`
+        - `socket()`
+        - `pipe()`
+        - `epoll_create()`(linux)
+        - ...
+      - 하나의 fd에 대한 operation
+        - `read()`, `write()`
+        - `recv()`, `send()`
+        - `fstat()`
+        - `fchmod()`, `fchown()`
+        - ...
+      - 여러 fd에 대한 operation
+        - `select()`
+        - `poll()`
+        - `kqueue()`
+        - ...
+      - fd-table에 대한 operation
+        - `close()`
+        - `dup()`
+        - `fcntl()`
+      - file locking
+        - `flock()`
+        - `fcntl() (F_GETLK, F_SETLK and F_SETLKW)`
+        - `lockf()`
+      - Sockets
+        - `connect()`
+        - `bind()`
+        - `listen()`
+        - `accept()`
+        - `getsocketname()`
+        - `getsocketopt()`
+
+|Integer value|Name|`<unistd.h>` symbolic constant|`<stdio.h>` file stream|
+|-------------|----|-------------------------------|----------------------|
+|0|(해당 프로세스의) Standard input|STDIN_FILENO|stdin|
+|1|(해당 프로세스의) Standard output|STDOUT_FILENO|stdout|
+|2|(해당 프로세스의) Standard error|STDERR_FILENO|stderr|
+
+- system open-file table(file table)
+  - 정의
+    - 하나의 파일에 대한 connection을 트래킹 하기 위한 테이블(kernel에서 관리)
+  - 특징
+    - 각각의 엔트리는 connection status를 갖음
+      - read, write
+      - 파일의 current offset
+      - vnode의 pointer
+- vnode table
+  - 정의
+    - open file이나 device에 대한 엔트리를 갖는 테이블(kernel에서 관리)
+    - 각 엔트리는 vunode라고 함
+      - 파일에 대한 메타데이터, *pointers to functions that operate on the file.*
+        - *정확히 어떤 함수의 포인터를 말하는 것인지*
+  - 특징
+    - inode의 copy를 갖음
+
+각각의 개념은 reference count를 갖으며, reference count가 0이 되어야만 각각의 entry를 삭제 가능 >> 그래서 파일이 열린 상태에서는(다른 프로세스가 해당 파일을 참조하고 있음) 삭제가 불가능했던것임
+
+*만약 파일을 close하지 않은 상태로 프로세스가 종료된다면 무슨 일이 벌어지는가? 그냥 system open-file table에 대응하는 entry를 process종료 전에 dereference시켜주는가?*
 
 ### Partition
 
@@ -456,3 +550,32 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
   - processor를 고정시키므로써, cpu cache memory속의 캐시를 그대로 사용할 수 있게 함(퍼포먼스 향상)
 - 단점
   - 로드 밸런싱을 해야함
+
+### Process group
+
+- 정의
+  - POSIX 준수 OS에서의 하나 혹은 하나이상의 프로세스들을 의미
+- 기능
+  - signal의 분배를 조정하는데에 사용됨
+    - signal이 프로세스 그룹으로 보내지면, 그룹의 모든 프로세스로 해당 시그널을 보냄(broadcast)
+- 참고) session
+  - 정의
+    - 하나나 하나이상의 프로세스 그룹의 컬렉션
+  - 특징
+    - 프로세스는 하나의 세션에서 다른 세션으로 migration불가
+
+### Pipeline
+
+*pipe는 왜, 어떻게 파일로 관리되는것인지?*
+
+Pipeline
+
+![](./images/os/pipeline1.png)
+
+- 정의
+  - Unix 계열 OS에서, *message passing* 을 사용하는 IPC(Inter-Process Communication)
+  - standard stream에 의해서 process들의 집합이 체인된 것인데, 그리하여, 각각의 프로세스의 stdout이 다른 프로세스의 stdin으로 패싱됨
+  - 두번째 프로세스는 첫번째 프로세스가 실행되고 있는 동안에 실행되며 concurrent한 성질을 갖음
+- 종류
+  - anonymous pipes
+  - named pipes
