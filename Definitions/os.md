@@ -22,6 +22,7 @@
   - Processor affinity
   - Process group
   - Pipeline
+  - IPC
 
 ## 의문
 
@@ -620,3 +621,54 @@ Pipeline
       - 보내는 쪽의 데이터가 buffer에 일시적을 존재
       - 받는 쪽은 buffer로 부터 데이터를 받음
   - `netcat`, `socat`을 이용해서 socket과 연결도 가능
+
+### IPC(Inter-Process Communication)
+
+- 정의
+  - **OS가** 프로세스들이 데이터를 공유하는 방법을 제공하는 매커니즘
+    - 주로 client-server 모델을 사용
+- 접근
+  - host 내부
+    - File
+      - 대부분의 OS
+    - Socket
+      - 대부분의 OS
+      - network interface 사용
+        - Stream-oriented(TCP)
+        - Message-oriented(UDP)
+    - Unix domain socket
+      - POSIX / Windows 10
+      - kernel 내부에서 커뮤니케이션 발생
+        - domain socket은 file system을 주소공간으로 사용
+    - Shared memory
+      - POSIX / Windows
+      - 다수의 프로세스가 같은 메모리 블록을 접근(shared buffer)
+    - Pipe
+      - Anonymous pipe
+        - POSIX / Windows
+        - stdin, stdout을 활용한 unidirectional data channel
+        - 프로세스에 의해서 데이터가 작성되면, OS는 다른 프로세스가 다 읽을 때 까지 데이터 buffering함
+      - *Named pipe*
+        - POSIX / Windows
+        - pipe가 file과 같이 간주됨(stdin, stdout 대신)
+        - 프로세스들은 named pipe에 일반 파일처럼 write하거나 read함
+    - Signal
+      - 대부분의 OS
+      - system message를 프로세스끼리 주고 받음
+      - 데이터 전송 보다는, 명령을 내리기 위해서 사용
+    - *Message queue*
+      - 대부분의 OS
+      - 프로세스들이 직접적으로 연결되지 않아도, message queue를 이용해서 읽고 쓸 수 있음
+    - *Message passing*
+      - RPC 등에서 사용
+      - 다수의 프로그램이 message queue들을 이용해서 커뮤니케이션을 하고 non-OS managed channel을 이용하기도 함
+        - concurrency 모델에서 사용됨
+    - *Memory-mapped file*
+      - 파일이 RAM과 매핑되어있고, memory 주소들을 바꿈으로써, 수정될 수 있음
+  - host-to-host
+    - Socket
+      - 대부분의 OS
+      - network interface 사용
+        - Stream-oriented(TCP)
+        - Message-oriented(UDP)
+    - RPC
