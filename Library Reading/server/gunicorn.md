@@ -10,6 +10,12 @@
 - *gunicorn이 pre-fork 모델을 사용하고, worker를 multiprocessing방식으로 관리한다고 할 때, 웹 소켓이 worker와 직접 연결되어 있는 경우, client에서 server로 message push하는 경우에는 일반적인 대응이 가능하나, server에서 client message로 broadcast하는 경우에는, 실제로 모든 클라이언트로 어떻게 broadcast할 수 있는가?*
   - 가설1: socket서버가 initialize하는 타이밍이 worker의 포크 전타이밍이라서, 모든 worker가 같은 socket서버 오브젝트를 공유함
 - *gunicorn의 worker_class를 무엇으로 설정하든, pre-fork 모델은 유지되는가? worker_class가 적용되는 시점은 언제인가?*
+- wsgi서버로 gunicorn을 사용하고, web application framework로 flask를 사용할 경우, gunicorn의 worker class를 eventlet으로 둘 경우, 각 request의 로컬 객체는 어떻게 생성되는가? 같은 스레드인데?
+  - `werkzeug`에서 context local이라는 개념을 도입하여, green thread마다 context local 관련 데이터 스트럭처를 저장(stack, context variable 등)
+  - [참고1](https://github.com/pallets/werkzeug/blob/master/src/werkzeug/local.py)
+    - Each thread has its own greenlet, use that as the identifier for the context.
+    - If greenlets are not available fall back to the current thread ident
+  - [참고2](https://werkzeug.palletsprojects.com/en/1.0.x/local/)
 
 ## 개요
 
