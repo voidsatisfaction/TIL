@@ -218,13 +218,13 @@ backend response time bottleneck
 - Scaling up vs Scaling out
   - 두 방식을 mix하는 경우가 가장 적절할 때가 많음
 - 전략
-  - stateless, stateful machine에 대한 관점
+  - **stateless, stateful machine에 대한 관점**
     - 기존
       - stateless인 서비스를 다수의 머신에 배치, stateful 데이터 시스템을 single node에 배치
     - 현재
       - distributed data system
         - 분산 시스템의 추상화가 잘 되어있어야 함
-  - 어떤 operation이 common이고 어떤 operation이 rae인가에 대한 전제를 잘 해야함
+  - **어떤 operation이 common이고 어떤 operation이 rare인가에 대한 전제를 잘 해야함**
   - **general-purpose building blocks + patterns**
 
 ### Maintainability
@@ -262,7 +262,7 @@ backend response time bottleneck
     - 해당 시스템에 대한 기관의 지식을 보존
 - 좋은 operability
   - 의미
-    - making routine tasks easy
+    - **making routine tasks easy**
     - 운영 팀이 높은 가치의 작업에 노력을 집중할 수 있게 함
   - 방법
     - 런타임 행동과 시스템 내부를 가시화 해서 모니터링 함
