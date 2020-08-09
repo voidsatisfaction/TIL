@@ -8,6 +8,7 @@
   - Virtualization
   - Buffer(data buffer)
   - POSIX
+  - Everything is a file
 - File system
   - File descriptor vs System open-file table vs Vnode Table
   - Partition
@@ -145,6 +146,22 @@ Bootstrap
 - 윈도우와 POSIX
   - Cygwin
   - WSL(Windows Subsystem for Linux)
+
+### Everything is a file
+
+- 정의
+  - Unix의 특징 중 하나
+  - **다양한 범위의 input/output 자원은 filesystem name space를 통해서 노출된 simple streams**
+    - documents, directories, hard-drives, modems, keyboards, printers, inter-process, network communications
+- 특징
+  - 같은 툴이나 유틸리티와 API가 다양한 범위의 자원으로 활용 가능
+  - 다양한 파일 타입이 존재
+  - **정확히는 Everything is a file descriptor가 맞음**
+  - psudo, virtual filesystem들도 존재해서, file-like 구조로 시스템의 정보나 프로세스의 정보를 노출
+    - mount됨
+    - virtual filesystem의 예시
+      - `/proc`
+        - owner, access permissions등의 유닉스 파일 속성을 갖음
 
 ## File system
 
@@ -566,7 +583,11 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
 
 ### Pipeline
 
-*pipe는 왜, 어떻게 파일로 관리되는것인지?*
+- *pipe는 왜, 어떻게 파일로 관리되는것인지?*
+- *pipeline은 socket과 어떤 차이가 있는지?*
+  - pipeline은 특정 호스트 안에서만 IPC가능하게 함
+  - socket은 IPv4, IPv6를 사용해서 호스트 사이의 IPC를 가능하게 함
+    - unix socket은 pipeline과 거의 비슷한 역할을 함
 
 Pipeline
 
@@ -577,5 +598,25 @@ Pipeline
   - standard stream에 의해서 process들의 집합이 체인된 것인데, 그리하여, 각각의 프로세스의 stdout이 다른 프로세스의 stdin으로 패싱됨
   - 두번째 프로세스는 첫번째 프로세스가 실행되고 있는 동안에 실행되며 concurrent한 성질을 갖음
 - 종류
-  - anonymous pipes
-  - named pipes
+  - **anonymous pipes**
+    - 하나의 프로세스에서 작성되는 데이터는 OS에 의해 다음 프로세스로 읽히기 전까지 buffer로 저장됨
+    - uni-directional
+    - shell 문법에서는 `|`로 구분
+      - `process1 | process2 | process3`
+      - `|`는, shell에게 왼쪽 커맨드의 stdout을 오른쪽 커맨드의 stdin으로 연결해주는 역할
+    - 일반적으로 프로세스의 stderr는 pipe로 전달되지 않음
+  - **named pipes**
+    - 파일을 생성하므로써, 메시지가 프로세스 양방향으로 전달될 수 있음
+    - 프로세스들이 끝나도 그대로 존재
+    - python3의 `multiprocessing.Queue`가 named pipe를 사용해서 프로세스 사이의 데이터 송수신을 함
+      - object가 queue에 놓임
+      - object가 pickled됨
+      - background thread가 pickled데이터를 pipe로 전달
+        - 다수의 프로세스끼리 queue에 데이터를 주고 받을 때에는 항상 순서대로 전송 / 수신이 된다는 보장이 없음
+- 구현
+  - 유닉스 계열의 시스템에서, *파이프라인의 모든 프로세스(파이프 라인의 모든 프로세스가 무슨 의미인지?)*는 동시에 시작되며, 스트림이 적절하게 연결되고, 스케줄러에 의해 관리되며, 다른 모든 프로세스가 machine에서 실행됨
+  - buffering이 존재
+    - 보내는 쪽이 5000bytes/s 로 보내고, 받는 프로그램이 100bytes/s로 받아도, 데이터가 상실되지 않음
+      - 보내는 쪽의 데이터가 buffer에 일시적을 존재
+      - 받는 쪽은 buffer로 부터 데이터를 받음
+  - `netcat`, `socat`을 이용해서 socket과 연결도 가능
