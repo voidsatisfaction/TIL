@@ -1,6 +1,18 @@
-# 7. Parallelism and Concurrency
+# 8. Parallelism and Concurrency
+
+- 의문
+- 7.1 개요
+- 7.2 Models of Parallelism and Concurrency
+- 7.3 The Structure of a Process
+- 7.4 Multi-Process Parallelism
 
 ## 의문
+
+- `multiprocessing`이나, `threading` 모듈의 queue는 정확히 어떻게 구현이 되어있는 것인가?
+  - disk를 활용한 것인지? memory?인지?
+    - disk는 좀 많이 느릴것 같긴함
+  - `threading`의 경우에는 heap영역을 활용한것인가?
+  - `multiprocessing`은 IPC이므로, socket?, shared memory?, disk?
 
 ## 7.1 개요
 
@@ -140,10 +152,73 @@ int main(int argc, char** argv) {
 
 ### Multi-Processing in Windows
 
+- spawning
+  - `CreateProcessW()` Windows의 API가 사용됨
+
 ### The multiprocessing Package
+
+- 기능
+  - pooling processes
+  - queues
+  - forking
+  - creating shared memory heaps
+  - connection processes together
+  - etc..
 
 ### Spawning and Forking Processes
 
+- multiprocessing package
+  - Forking an **Interpreter(POSIX)**
+    - *Interpreter 프로세스 자체를 fork하는 것이라면, 내부의 evaluation loop등도 같이 copy되는 것이어서 오버헤드가 심한거겠지?*
+  - Spawning a new Interpreter process(POSIX & Windows)
+  - Running a Fork Server(POSIX)
+    - 새 프로세스가 만들어지고, 어떠한 숫자의 프로세스들도 포크가능
+
+fork를 사용한 멀티 프로세싱 프로그래밍
+
+```py
+import multiprocessing as mp
+import os
+import time
+
+class Test:
+    def __init__(self):
+        self.a = None
+
+t = Test()
+
+def to_celcius(f):
+    time.sleep(1)
+    print(t) # <__main__.Test object at 0x109a7f7f0>
+    print(t.a) # None
+
+if __name__ == '__main__':
+    mp.set_start_method('fork')
+    p = mp.Process(target=to_celcius, args=(110,))
+    p.start()
+    pid = os.getpid()
+    t.a = 1
+    print(t) # <__main__.Test object at 0x109a7f7f0>
+    print(t.a) # 1
+```
+
+- **중요**
+  - 위에서 `print(t)`를 했을 때, child process와 parent process는 같은 t를 print했을 때, object address를 갖으나, 엄연히 둘은 물리적인 메모리상에서 다른 오브젝트이다.
+  - child process는 parent process로부터 자원을 상속(clone)받을 뿐, 완전히 동일한 자원은 아님
+
 ### Creation of Child Processes
+
+- 새로운 python interpreter process를 생성할 때에는, 데이터를 `pickle`을 사용해서 전달
+  - *fork(), spawn() 둘다 마찬가지인가?*
+- multiprocessing을 통한 subprocess의 생성과 동일한 커맨드
+  - POSIX
+    - `python -c 'from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=<i>, pipe_handle=<j>)' --multiprocessing-fork`
+      - `<i>`
+        - filehandle discriptor
+      - `<j>`
+        - pipe handle descriptor
+  - Windows
+    - `python.exe -c 'from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=<k>, pipe_handle=<j>)' --multiprocessing-fork`
+      - *윈도우인데 왜 fork인지?*
 
 ### Piping Data to the Child Process
