@@ -351,3 +351,158 @@ Structure of Thread
 - 배경
   - 하나의 프로세스는 하나의 PC만 갖을 수 있으므로, 현대의 OS는 다수의 thread를 만들어 get around함
     - 각각의 thread는 자신만의 PC를 갖음
+
+## 7.8 Asynchronous Programming
+
+### Generators
+
+### Coroutines
+
+- Generator의 한계
+  - immediate caller에게만 값을 yield할 수 있음
+  - `yield from`의 등장
+
+
+`yield from`의 예시
+
+```py
+def gen_letters(start, x):
+    i = start
+    end = start + x
+    while i < end:
+        yield chr(i)
+        i += 1
+
+def letters(upper):
+    if upper:
+        yield from gen_letters(65, 26) # A-Z
+    else:
+        yield from gen_letters(97, 26) # a-z
+
+for letter in letters(False):
+    # Lower case a-z
+    print(letter)
+
+
+for letter in letters(True):
+    # Upper case A-Z
+    print(letter)
+```
+
+- coroutine
+  - 개요
+    - bi-directionally 메시지를 주고 받을 수 있음
+      - `async` 키워드로 명시적으로 정의하면 코루틴임
+  - 특징
+    - `cr_origin` 속성에 caller에 대한 정보를 저장
+- task API
+  - 개요
+    - 다수의 코루틴을 concurrently 실행하고 스케쥴링하는데에 사용됨
+- **`asyncio.run()`**
+  - 기능
+    - 새 event loop 실행
+    - coroutine object를 task로 래핑
+    - *그 태스크가 끝났을 때 동작할 callback 세팅*
+      - *callback은 무엇으로 설정이 되는 것일까?*
+    - 태스크가 끝날 때 까지 loop를 돔
+    - result를 반환
+- Event Loops
+  - 개요
+    - async code를 붙여주고, task를 갖고 있는 오브젝트
+  - 동작
+    - 시작하면, 루프는 run once 혹은 run forever 로 동작함
+    - event loop에 task가 등록
+      - event loop가 가지고 있는 task(`asyncio.Task`)들은 callback을 갖을 수 있음
+    - **event loop는 각각의 coroutine이 끝났는지 확인함**
+      - `await`키워드는 다수의 state를 반환함
+      - **event loop는 task로 등록된 코루틴이 `await ...` 이 completed 라는 결과를 반환할 때까지 계속해서 실행할 것임**
+      - 끝난 것을 확인하면 해당 task로 등록된 코루틴을 마저 실행
+    - loop는 태스크가 끝나거나 실패하면 callback을 실행함
+
+coroutine을 사용한 port-scanning 예시
+
+```py
+import time
+import asyncio
+
+timeout = 1.0
+
+async def check_port(host: str, port: int, results: list):
+    try:
+        future = asyncio.open_connection(host=host, port=port)
+        r, w = await asyncio.wait_for(future, timeout=timeout)
+        results.append(port)
+        w.close()
+    except asyncio.TimeoutError:
+        pass
+
+async def scan(start, end, host):
+    tasks = []
+    results = []
+    for port in range(start, end):
+        tasks.append(check_port(host, port, results))
+    await asyncio.gather(*tasks)
+    return results
+
+if __name__ == '__main__':
+    start = time.time()
+    host = 'localhost'
+    results = asyncio.run(scan(80, 100, host))
+    for result in results:
+        print('Port {0} is open'.format(result))
+    print('Completed scan in {0} seconds'.format(time.time() - start))
+```
+
+### Asynchronous Generators
+
+- 개요
+  - 함수가 `async`키워드와 `yield` statement를 포함하고 있는경우, 해당 함수를 호출하면 async generator object로 변함
+  - `__anext__()`를 갖고, `async for`를 사용해서 iterate해야 함
+
+
+async generator를 사용한 port-scanning 예시
+
+```py
+import time
+import asyncio
+
+timeout = 1.0
+
+async def check_ports(host: str, port: int, results: list):
+    found = 0
+    try:
+        future = asyncio.open_connection(host=host, port=port)
+        r, w = await asyncio.wait_for(future, timeout=timeout)
+        yield port
+        w.close()
+        if found >= max:
+            return
+    except asyncio.TimeoutError:
+        pass
+
+async def scan(start, end, host):
+    results = []
+    async for port in check_ports(host, start, end, max=1):
+        results.append(port)
+    return results
+
+if __name__ == '__main__':
+    start = time.time()
+    host = 'localhost'
+    results = asyncio.run(scan(80, 100, host))
+    for result in results:
+        print('Port {0} is open'.format(result))
+    print('Completed scan in {0} seconds'.format(time.time() - start))
+```
+
+## 7.9 Subinterpreters
+
+Subinterpreter의 구조
+
+![](./images/ch8/subinterpreter_structure1.png)
+
+- 개요
+  - 인터프리터는 evaluation loop의 컨테이너
+  - 자신만의 memory, reference counter, garbage collection을 갖음
+    - *`runtime state`에는 무엇이 포함되는가?*
+  - CPython은 `Py_NewInterpreter()`메서드를 이용해서 인터프리터를 생성할 수 있음
