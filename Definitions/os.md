@@ -614,6 +614,7 @@ Pipeline
       - object가 pickled됨
       - background thread가 pickled데이터를 pipe로 전달
         - 다수의 프로세스끼리 queue에 데이터를 주고 받을 때에는 항상 순서대로 전송 / 수신이 된다는 보장이 없음
+        - *근데 굳이 왜 background thread를 사용해야 했을까?*
 - 구현
   - 유닉스 계열의 시스템에서, *파이프라인의 모든 프로세스(파이프 라인의 모든 프로세스가 무슨 의미인지?)*는 동시에 시작되며, 스트림이 적절하게 연결되고, 스케줄러에 의해 관리되며, 다른 모든 프로세스가 machine에서 실행됨
   - buffering이 존재

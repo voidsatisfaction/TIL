@@ -9,6 +9,7 @@
 - CPU
   - CPU cache
 - GPU
+  - GPGPU
   - MIG
 
 ## 의문
