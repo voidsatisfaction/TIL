@@ -16,6 +16,7 @@
     - Each thread has its own greenlet, use that as the identifier for the context.
     - If greenlets are not available fall back to the current thread ident
   - [참고2](https://werkzeug.palletsprojects.com/en/1.0.x/local/)
+  - *그렇다면, context local의 원리는? 결국 코루틴이면, 코루틴의 frame인가?*
 
 ## 개요
 

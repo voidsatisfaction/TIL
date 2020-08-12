@@ -17,6 +17,10 @@
 - *`celery`에서 `worker_process_init`에서 initializing한 모델 오브젝트를 워커에서도 같은 오브젝트로서 사용 가능한 이유는?*
 - *셀러리 워커 프로세스는 어디에서 무한 루프를 돌고 있는 것인가? 애초에 무한루프를 도는 것이 아닌가?*
   - *무한 루프를 돌지 않으면 프로세스가 매번 죽고 새로 생길텐데?*
+- *prefork 옵션의 경우, fork를 사용한 multiprocessing프로그래밍을 하는 것을 말하는가?*
+  - `celery worker pool`이 celery worker process에서 모델을 initializing 한 뒤에 worker로 fork를 한다면, 해당 모델의 인스턴스는 서로 다른데, 왜 gpu 자원의 중복할당이 이루어지지 않는것인가?(그것은 인스턴스화 할 때에만 자원을 할당하기 때문?)
+  - 모델 인스턴스가 서로 다른데, 아무런 이상없이 동작할 수 있는 이유?
+    - 내부의 state가 다 같아서?
 
 ## 기본 개념
 
