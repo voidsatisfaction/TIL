@@ -14,8 +14,10 @@
 - `multiprocessing`이나, `threading` 모듈의 queue는 정확히 어떻게 구현이 되어있는 것인가?
   - disk를 활용한 것인지? memory?인지?
     - disk는 좀 많이 느릴것 같긴함
+      - 애초에 IPC에서도 disk를 사용하는 경우가 없음
   - `threading`의 경우에는 heap영역을 활용한것인가?
   - `multiprocessing`은 IPC이므로, socket?, shared memory?, disk?
+- *파이썬에서 `multiprocessing.Queue`와 `multiprocessing.Pipe`의 차이는?*
 
 ## 7.1 개요
 
@@ -231,35 +233,37 @@ if __name__ == '__main__':
   - 자식 프로세스로 데이터를 넘겨줌
     - preparation data object
     - BaseProcess child class instance
-  - 자식 프로세스의 실행
-    - `spawn_main(pipe_handle, parent_pid=None, tracker_fd=None)`
-      - child process의 엔트리 포인트
-      - Windows
-        - `source_process = _winapi.OpenProcess(...., parent_pid)`
-        - `new_handle = reduction.duplicate(pipe_handle, source_process=source_process)`
-        - `fd = msvcrt.open_osfhandle(new_handle, os.O_RDONLY)`
-        - `parent_sentinel = source_process`
-      - POSIX
-        - `fd = pipe_handle`
-        - `parent_sentinel = os.dup(pipe_handle)`
-    - `exitcode = _main(fd, parent_sentinel)`
-      - `parent_sentinel`
-        - 자식을 실행하는 동안 주모 프로세스가 끝났는지 체크하기 위함
-      - `fd`
-        - 부모 프로세스의 파이프
-    - `def _main(fd, parent_sentinel)` 함수 실행
-      - preparation data object
-      - BaseProcess child class instance 데이터 pipe로부터 가져옴
-    - `self._bootstrap(parent_sentinel)`
-      - deserialized된 데이터로부터 BaseProcess instance의 시작을 다룸
-      - target 함수가 arguments와 keyword arguments와 함께 호출됨
-      - `BaseProcess.run()`실행
-      - `def run(self)`
-        - `if self._target: self._target(*self._args, **self._kwargs)`
-      - 자식 프로세스의 exit code 반환
+  - target 함수 실행
+- 위의 과정에서 자식 프로세스의 실행 흐름
+  - `spawn_main(pipe_handle, parent_pid=None, tracker_fd=None)`
+    - child process의 엔트리 포인트
+    - Windows
+      - `source_process = _winapi.OpenProcess(...., parent_pid)`
+      - `new_handle = reduction.duplicate(pipe_handle, source_process=source_process)`
+      - `fd = msvcrt.open_osfhandle(new_handle, os.O_RDONLY)`
+      - `parent_sentinel = source_process`
+    - POSIX
+      - `fd = pipe_handle`
+      - `parent_sentinel = os.dup(pipe_handle)`
+  - `exitcode = _main(fd, parent_sentinel)`
+    - `parent_sentinel`
+      - 자식을 실행하는 동안 주모 프로세스가 끝났는지 체크하기 위함
+    - `fd`
+      - 부모 프로세스의 파이프의 file descriptor
+  - `def _main(fd, parent_sentinel)` 함수 실행
+    - preparation data object
+    - BaseProcess child class instance 데이터 pipe로부터 가져옴
+  - `self._bootstrap(parent_sentinel)`
+    - deserialized된 데이터로부터 BaseProcess instance의 시작을 다룸
+    - target 함수가 arguments와 keyword arguments와 함께 호출됨
+    - `BaseProcess.run()`실행
+    - `def run(self)`
+      - `if self._target: self._target(*self._args, **self._kwargs)`
+    - 자식 프로세스의 exit code 반환
 - 위의 과정에서의 insight
   - child process가 시작되고나서(target 함수 실행 후)는 더이상 부모 프로세스로부터 데이터를 받아오지 않음
     - 그 이후에 자원을 서로 주고받으려면 IPC를 사용해야 함
+  - *타겟함수와 args, kwargs는 preparation data object에 들어있는 것인지 아님, BaseProcess child class instance에 존재하는 것인지*
 
 `_main(fd, parent_sentinel)` 함수의 내부 구조
 
