@@ -96,11 +96,44 @@ Generator, Iterator relation diagram
   - 의미
     - generator가 lazy하게 값을 produce하는 경우 IO bound 동작과 같은 비동기적인 동작도 함께 할 때, 그러한 generator를 말함
 
-### promise
+### futures and promises(delay, deferred)
 
 https://en.wikipedia.org/wiki/Futures_and_promises
 
-### future
+*일반적으로 python에서는 promise 부분은 threading이나 multiprocessing을 이용해서 계산하고, 그 결과는 child thread or process로부터 받아와서 `set_result()`로 future 값을 설정해주는가? 그럼 결국 asyncio의 coroutine에서도 마찬가지?*
+
+- 정의
+  - **처음에는 알 수 없는 결과에 대한 프록시의 역할을 하는 오브젝트**
+    - 일반적으로 해당 값에 대한 computation이 끝나지 않았기 떄문
+  - **value(future)를 계산(promise)과 decouple 하는 것**
+- 특징
+  - concurrent programming languages에서 동기적으로 프로그램을 실행하는데에 사용되는 구조물
+  - future의 값을 설정하는 것의 명칭
+    - `resolving` or `fulfilling` or `binding`
+- future vs promise
+  - future
+    - read-only placeholder view of a variable
+    - 어떤 promise가 해당 future의 값을 정할지는 정해지지 않고, 서로 다른 promise가 값을 설정할 수 있으나, 그것은 오직 한번만 가능함
+  - promise
+    - writable
+      - single assignment container which sets the value of the future
+- future와 promise가 동시에 사용되는 경우
+  - future가 값이고, promise가 값을 설정하는 함수의 역할
+    - return value (future)
+    - asynchronous function (promise)
+- implicit vs explicit
+  - implicit
+    - future를 사용하면, 자동적으로 값을 받아서 일반적인 reference처럼 사용할 수 있는 경우
+    - 일반적으로 프로그래밍 언어에서 구현
+  - explicit(stinging, forcing)
+    - user가 값을 갖기 위해서 `get`과 같은 메서드를 사용해야 하는 경우
+    - 일반적으로 라이브러리로 구현
+- Blocking vs non-blocking semantics
+  - future의 값을 즉시 혹은 동기적으로 접근하려고 하는 경우 디자인
+    - future가 resolve될 떄 까지 thread나 process를 blocking
+    - 동기적 접근을 하면 언제나 error를 throwing
+    - 동기적 접근을 할 타이밍에 future가 resolve되어 있으면 future 값에 접근 가능하게 두고, resolve되어 있지 않으면 error를 throw
+      - race condition이 발생할 가능성이 높음
 
 ### event loop
 
