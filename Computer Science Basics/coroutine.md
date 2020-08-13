@@ -486,7 +486,9 @@ selector.select(timeout=None) # wating here(blocking until a registered event co
 ssocket.recv(1) # b'\0'
 
 
+#####
 # from other threads
+#####
 csocket.send(b'\0')
 ```
 
@@ -532,6 +534,52 @@ class CustomEventLoop(AbstractEventLoop):
         if events:
             self._ssocket.recv(1)
 ```
+
+### 부록0: asyncio.run(main, *, debug=True)
+
+*도대체 누가 future의 `set_result()`함수를 실행시켜주는가?*
+
+- 1 `asyncio.run(main, *, debug=False)`
+  - 1-1 현재 돌고 있는 이벤트 루프가 존재하면 => 런타임 에러 발생
+  - 1-2 새 이벤트 루프 생성 & 세팅
+  - 1-3 `loop.run_until_complete(main)`
+- 2 `loop.run_until_complete(self, future)`
+  - 2-1 main이 coroutine이면 Task로 래핑해줌
+  - 2-2 `tasks.ensure_future(future, loop=self)`
+    - coroutine이나 awaitable을 future로 래핑
+    - `task = loop.create_task(coro_or_future)`
+    - `loop.create_task(coro)`
+      - `task = tasks.Task(coro, loop=self, name=name)`
+        - *이 부분 복습 필요*
+        - Task class(futures._PyFuture)
+        - `super().__init__(loop=loop)`
+        - `self._loop.call_soon(self.__step, context=self._context)`
+        - `_register_task(self)`
+      - `return task`
+  - 2-3 `future.add_done_callback(_run_until_complete_cb)`
+  - 2-4 `self.run_forever()`
+  - 2-5 `future.result()`
+- 3 `self.run_forever()`
+  - `stop()`이 호출될 때 까지 run함
+  - 3-1 *`events._set_running_loop(self)`*
+    - event loop가 사용하는 low level function
+  - 3-2 무한 루프
+    - `self._run_once()`
+- 4 `self._run_once(self)`
+  - 이벤트 루프의 한번의 full iteration
+  - 현재 모든 준비된 callback들을 호출하고 -> I/O를 polling -> resulting callback들을 스케쥴링 -> `call_later` callback을 스케쥴링
+  - 4-1 캔슬링된 scheduled 태스크는 `handle._scheduled = False`
+  - 4-2 if) ready인 태스크가 존재 => selector timeout = 0 else => timeout = selector max timeout과 scheduled priority queue의 가장 앞요소의 when 중에서 더 최솟값을 assign
+  - 4-3 `event_list = self._selector.select(timeout)` & `self._process_events(event_list)`
+    - *특정 이벤트가 발생할 떄 까지 일단 blocking? fd의 이벤트 dispatch를 기다림. 그런데 무슨 이벤트일까?*
+      - `BaseSelectorEventLoop(base_events.BaseEventLoop)` 에서 정의된 `selector = selectors.DefaultSelector()`
+    - selector로부터 받아온 이벤트를 processing
+  - 4-4 scheduled된 task를 iterate하면서, 현재 시간보다 이전에 끝난 task들을 schedule heap에서 pop하고 ready queue에 넣어줌
+    - *시간과 별개로, 그냥 `set_result()`로 끝난 future를 어떻게 파악해서 ready에 넣어줄 수 있는가?*
+    - *coroutine을 task로 쌓은 경우, 콜백은 무엇이고 어떻게 실행되는가?*
+  - 4-5 ready로 스케쥴된 callback들을 호출
+    - `handle = self._ready.popleft()`
+    - `handle._run()`
 
 ### 부록1: yield from
 
