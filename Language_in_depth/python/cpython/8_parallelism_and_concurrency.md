@@ -15,9 +15,12 @@
   - disk를 활용한 것인지? memory?인지?
     - disk는 좀 많이 느릴것 같긴함
       - 애초에 IPC에서도 disk를 사용하는 경우가 없음
-  - `threading`의 경우에는 heap영역을 활용한것인가?
+  - *`threading`의 경우에는 heap영역을 활용한것인가?*
   - `multiprocessing`은 IPC이므로, socket?, shared memory?, disk?
-- *파이썬에서 `multiprocessing.Queue`와 `multiprocessing.Pipe`의 차이는?*
+    - pipe이다
+- 파이썬에서 `multiprocessing.Queue`와 `multiprocessing.Pipe`의 차이는?
+  - multiprocessing.Queue의 경우에는, 내부적으로 semaphore를 암시적으로 사용하고 있으므로, race condition이 일어나지 않음
+  - multiprocessing.Pipe의 경우에는, 명시적으로 lock을 해주어야지만 race condition을 막을 수 있음
 
 ## 7.1 개요
 
@@ -410,6 +413,7 @@ for letter in letters(True):
       - *callback은 무엇으로 설정이 되는 것일까?*
     - 태스크가 끝날 때 까지 loop를 돔
     - result를 반환
+    - event loop를 닫음
 - Event Loops
   - 개요
     - async code를 붙여주고, task를 갖고 있는 오브젝트
@@ -420,6 +424,7 @@ for letter in letters(True):
     - **event loop는 각각의 coroutine이 끝났는지 확인함**
       - `await`키워드는 다수의 state를 반환함
       - **event loop는 task로 등록된 코루틴이 `await ...` 이 completed 라는 결과를 반환할 때까지 계속해서 실행할 것임**
+        - *completed 라는 것은 어떻게 확인? polling? pushing?*
       - 끝난 것을 확인하면 해당 task로 등록된 코루틴을 마저 실행
     - loop는 태스크가 끝나거나 실패하면 callback을 실행함
 
