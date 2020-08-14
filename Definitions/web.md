@@ -6,6 +6,7 @@
   - Document(interface)
   - Origin
   - Same-origin policy
+  - CORS
   - Iframe(HTML Inline Frame Element)
   - Referer
 - Server
@@ -16,7 +17,9 @@
 - Cross origin error는 어디에서 generate되는 것일까?
   - 서버?
   - 브라우저?
-    - 아마 브라우저 같은것이, Server에서 response header만 설정해주면 동작이 제대로 되기 떄문
+    - 브라우저이다.
+- CORS동작에서 preflight request를 보내는 주체는 누구인가?
+  - 브라우저일듯
 
 ## HTML
 
@@ -142,6 +145,139 @@
       - 이 토큰을 요구하는 페이지의 읽기를 막아야만 함
       - *정확히 무슨 뜻인지?*
     - 자원이 embeddable하지 않은 것을 확실하게 해야함
+
+### CORS(Cross-Origin Resource Sharing)
+
+Preflight request sequence diagram
+
+![](./images/web/cors_preflight_sequence1.png)
+
+Preflight Cross-Origin HTTP request, response header의 예시
+
+```
+OPTIONS /doc HTTP/1.1
+Host: bar.other
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Connection: keep-alive
+Origin: http://foo.example
+
+# actual request가 보내질 때에는 POST 리퀘스트 메소드를 사용
+Access-Control-Request-Method: POST
+
+# actual request가 보내질 때, X-PINGOTHER, Content-Type 커스텀 헤더를 포함시킬 것
+Access-Control-Request-Headers: X-PINGOTHER, Content-Type
+
+#######
+# 서버가 위 CORS request를 보고 받아들이지 말지 판단 가능
+#######
+
+HTTP/1.1 204 No Content
+Date: Mon, 01 Dec 2008 01:15:39 GMT
+Server: Apache/2
+
+# 서버의 CORS Access control에 관한 정보
+Access-Control-Allow-Origin: https://foo.example
+
+# POST, GET method로 주어진 자원 query가능함
+Access-Control-Allow-Methods: POST, GET, OPTIONS
+
+# 해당 자원을 query할 때, 사용 가능한 헤더
+Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
+
+# preflight request에 대한 response를 얼마나 캐시 가능한지(86400초 = 24시간)
+Access-Control-Max-Age: 86400
+
+Vary: Accept-Encoding, Origin
+Keep-Alive: timeout=2, max=100
+Connection: Keep-Alive
+```
+
+Real Cross-Origin HTTP request, response header의 예시
+
+```
+POST /doc HTTP/1.1
+Host: bar.other
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Connection: keep-alive
+X-PINGOTHER: pingpong
+Content-Type: text/xml; charset=UTF-8
+Referer: https://foo.example/examples/preflightInvocation.html
+Content-Length: 55
+Origin: https://foo.example
+Pragma: no-cache
+Cache-Control: no-cache
+
+<person><name>Arun</name></person>
+
+
+HTTP/1.1 200 OK
+Date: Mon, 01 Dec 2008 01:15:40 GMT
+Server: Apache/2
+Access-Control-Allow-Origin: https://foo.example
+Vary: Accept-Encoding, Origin
+Content-Encoding: gzip
+Content-Length: 235
+Keep-Alive: timeout=2, max=99
+Connection: Keep-Alive
+Content-Type: text/plain
+
+[Some XML payload]
+```
+
+- 정의
+  - 브라우저가 어떤 origin에서 동작하는 웹 애플리케이션에게 다른 origin에 존재하는 자원의 접근권을 주기 위한 추가적인 HTTP 헤더를 사용하는 매커니즘
+  - e.g
+    - `https://domain-a.com`로부터 서빙된 js코드가 `XMLHttpRequest`를 사용해서 `https://domain-b.com/data.json` 자원을 요청하는 경우
+- 특징
+  - 브라우저가 기본적으로 cross-origin HTTP request를 막음
+    - 다른 origin으로부터의 response가 올바른 CORS 헤더를 갖고 있어야지만 자원을 사용할 수 있게 함
+    - 같은 origin자원으로의 요청은 항상 허락됨
+  - credentials(XMLHttpRequest)
+    - actual request를 credential을 이용해서 보낼 수 있는지 여부 확인
+      - **쿠키를 사용하는 경우에 필요!**
+      - `HTTP cookies` or `HTTP Authentication information`을 이용
+    - cross-site XMLHttpRequest는 default로는 브라우저가 credentials(쿠키 등)을 보내지 않음
+      - `const invocation = new XMLHttpRequest();`
+      - `invocation.withCredentials = true`로 설정해야 Cookie도 같이 전송함
+    - 서버에서는 `Access-Control-Allow-Credentials`를 true로 설정해주어야 함
+    - 서버에서는 반드시 `Access-Control-Allow-Origin` 헤더 필드를 설정해주어야 함(`*` 제외)
+- CORS 대상
+  - `XMLHttpRequest` or `Fetch API`
+  - web fonts
+  - webGL textures
+  - Images/video frames
+  - CSS Shapes from images
+- 동작
+  - 서버가 웹 브라우저로부터 어떤 origin이 해당 정보를 접근할 수 있도록 허용할 것인지 작성된 추가적인 HTTP header를 더해야 CORS 표준이 동작함
+  - \[preflight\]
+    - server data에 side-effect를 일으킬 수 있는 HTTP request method에 대해서, CORS 스펙은 browser에게 preflight request를 보내도록 함(Simple request는 해당하지 않음)
+      - 미리 한 번 request가능한지 체크
+    - simple request의 조건
+      - Http Method
+        - `GET`, `HEAD`, `POST`
+      - User agent로 인해서 자동적으로 선택된 헤더 & CORS-safelisted request-header들 만 헤더필드에 존재해야 함
+        - `Accept`
+        - `Accept-Language`
+        - `Content-Language`
+        - `Content-Type`
+          - `application/x-www-form-urlencoded`
+          - `multipart/form-data`
+          - `text/plain`
+        - ...
+      - `XMLHttpRequestUpload` 오브젝트에 이벤트 리스너가 존재하지 않아야 함
+      - `ReadableStream`이 리퀘스트에서 사용되지 않아야 함
+  - 서버로부터 approval을 받은 이후에는 실제 request를 보냄
+    - 서버는 `credential`을 requests와 같이 보내도록 강제할 수 있음
+      - Cookie나 HTTP Authorization
+  - CORS 실패는 에러를 나타내나, 보안적인 이유로, js에서 error를 사용할 수 없음
+    - 코드상으로는 그저 에러가 났다는 것만 알 수 있음
+    - 브라우저 콘솔상에서만 확인 가능
 
 ### Iframe(HTML Inline Frame Element)
 
