@@ -11,6 +11,7 @@
   - Everything is a file
 - File system
   - File descriptor vs System open-file table vs Vnode Table
+  - I/O multiplexing
   - Partition
   - File system
   - Mount
@@ -258,6 +259,21 @@ File descriptor, File table, Inode table3
 각각의 개념은 reference count를 갖으며, reference count가 0이 되어야만 각각의 entry를 삭제 가능 >> 그래서 파일이 열린 상태에서는(다른 프로세스가 해당 파일을 참조하고 있음) 삭제가 불가능했던것임
 
 *만약 파일을 close하지 않은 상태로 프로세스가 종료된다면 무슨 일이 벌어지는가? 그냥 system open-file table에 대응하는 entry를 process종료 전에 dereference시켜주는가?*
+
+### I/O multiplexing
+
+- 정의
+  - 하나 이상의 I/O대상(file descriptor)이 준비가 될 때 kernel로부터 notification을 받는 것
+    - *결국 내부적으로는 무한 루프를 도는 것인지*
+- 예시
+  - client가 다수의 file descriptor들을 다룰 때(stdin, stdout, network socket)
+  - client가 다수의 socket을 다룰 때
+  - TCP server가 연결 listen과 생성된 client socket을 다룰 때
+  - 서버가 TCP, UDP를 동시에 다룰 때
+- 방식
+  - `select`
+  - `poll`
+  - `epoll`
 
 ### Partition
 
