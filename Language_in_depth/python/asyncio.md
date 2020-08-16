@@ -1,10 +1,27 @@
 # AsyncIO in Python
 
+- 참고
+- 의문
+- 부록1. `asyncio.loop.run_in_executor()`
+- The asyncio Package and async/await
+- Async IO Design Patterns
+- AsyncIO's Roots in Generators
+- AsyncIO in Context
+
 ## 참고
 
 - https://docs.python.org/ko/3/library/asyncio-task.html
 
 ## 의문
+
+## 부록1. `asyncio.loop.run_in_executor()`
+
+`asyncio.loop.run_in_executor()`의 sequence diagram
+
+![](./images/asyncio/asyncio_run_in_executor.png)
+
+- Threadpool Executor를 이용한 concurrent programming
+  - aiofiles가 이를 통해서 구현되어 있음
 
 ## The asyncio Package and async/await
 
