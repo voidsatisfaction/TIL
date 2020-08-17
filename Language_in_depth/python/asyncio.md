@@ -14,7 +14,47 @@
 
 ## 의문
 
-## 부록1. `asyncio.loop.run_in_executor()`
+## 부록0. python의 asyncio.futures.Future vs concurrent.futures.Future
+
+### `asyncio.futures.Future`
+
+- 개요
+  - Event loop를 사용하여 future computation과 value를 분리하는 경우에 사용되는 Future
+- 특징
+  - 자신의 event loop를 지정 `self._loop = loop`
+  - `loop.create_future`로 event loop에서 직접 future를 생성하는 경우가 많음
+  - thread-safe이 아님
+  - `add_done_callback()`으로 등록된 callback은 event loop의 `call_soon()`을 통해서 호출됨
+  - `set_result`
+- `self.set_result()`
+  - `self.__schedule_callbacks()` 호출
+  - `self._loop.call_soon(callback, self, context=ctx)` 으로 event loop의 ready queue에 등록
+
+### `concurrent.futures.Future`
+
+- 개요
+  - Thread를 사용하여 future computation과 value를 분리하는 경우에 사용되는 Future
+- 특징
+  - `threading.Condition`을 사용하여, thread-safe 임을 보장
+    - 모든 method는 `with self._condition` 으로 시작함
+  - `self.set_result()`
+    - `self._result = result`
+    - 모든 waiter에게 자기자신을 notification으로 보냄
+    - `self._invoke_callback()`
+      - 자기자신이(promise를 행하는 스레드가(child thread)) 모든 콜백함수를 실행
+
+### 서로 다른 future type의 chain
+
+- `asyncio.futures.wrap_future`
+  - `concurrent.futures.Future`와 `asyncio.futures.Future`를 체이닝함
+
+## 부록1. `asyncio.run(coro)`
+
+`asyncio.run()`의 sequence diagram
+
+![](./images/asyncio/asyncio_run.png)
+
+## 부록2. `asyncio.loop.run_in_executor(fn)`
 
 `asyncio.loop.run_in_executor()`의 sequence diagram
 
