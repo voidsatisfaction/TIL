@@ -551,10 +551,18 @@ class CustomEventLoop(AbstractEventLoop):
     - `loop.create_task(coro)`
       - `task = tasks.Task(coro, loop=self, name=name)`
         - *이 부분 복습 필요*
-        - Task class(futures._PyFuture)
-        - `super().__init__(loop=loop)`
-        - `self._loop.call_soon(self.__step, context=self._context)`
-        - `_register_task(self)`
+        - `class Task(futures._PyFuture)`
+          - `super().__init__(loop=loop)`
+            - `class Future:`
+              - `_state = _PENDING`
+              - `_result`
+              - `_exception`
+              - `_loop`
+              - `_source_traceback`
+              - `_callbacks`
+            - `self._coro = coro`
+          - `self._loop.call_soon(self.__step, context=self._context)`
+          - `_register_task(self)`
       - `return task`
   - 2-3 `future.add_done_callback(_run_until_complete_cb)`
   - 2-4 `self.run_forever()`
