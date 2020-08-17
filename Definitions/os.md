@@ -264,6 +264,7 @@ File descriptor, File table, Inode table3
 
 - 정의
   - 하나 이상의 I/O대상(file descriptor)이 준비가 될 때 kernel로부터 notification을 받는 것
+    - file descriptor의 이벤트 감지
     - *결국 내부적으로는 무한 루프를 도는 것인지*
 - 예시
   - client가 다수의 file descriptor들을 다룰 때(stdin, stdout, network socket)
