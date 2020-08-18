@@ -9,6 +9,7 @@
   - future
   - event loop
   - argc vs argv
+  - weak reference
 - Data
   - stream
 
@@ -166,6 +167,28 @@ end function
   - 정의
     - argument vector
     - 스트링 인자 벡터
+
+### weak reference
+
+- 정의
+  - reference s.t 참조하는 오브젝트를 garbage collector로부터 보호할 수 없음
+- 특징
+  - 언제든지 gc에 의해서 회수될 수 있음
+  - 다양한 level의 weak reference가 존재
+    - Java
+      - soft, weak, phantom references
+  - 일반적으로 weak reference는 직접 사용되기 보다는, weak array 혹은 key나 value가 weak reference인 container를 통해서 사용됨
+- use case
+  - reference counting을 사용하는 gc의 경우, reference cycle의 하나의 링크를 weak reference로 만들어서 reference cycle을 부술 수 있음
+  - key가 object에의 reference인 associative array(map, hash map)가 있을 때, 해당 object를 단순히 key로서 사용한다고 해서 계속 살려두는 것을 방지
+    - list of references
+  - observer pattern을 사용하는 경우(event handling), strong reference가 유지되는 경우에는, 해당 오브젝트들은 반드시 명시적으로 unregistered 되어야 함
+    - 그렇지 않으면 memory leak이 발생
+    - weak reference를 사용하는 경우에는 unregister가 필요 없게 됨
+      - *근데, 언제든지 gc에 의하여 회수될 수 있는 것 또한 위험한것 아닌가?*
+  - 언제든지 다시 생성될 수 있는 cached data를 갖고 있을 때, weak reference는 cache가 reclaimed 되도록 도와줌. 효과적으로 discardable memory를 만들면서
+- 예시
+  - DOM에서는 parent-to-child reference는 strong, child-to-parent reference는 weak
 
 ## Data
 
