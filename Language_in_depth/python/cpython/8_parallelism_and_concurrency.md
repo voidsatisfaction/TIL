@@ -412,8 +412,9 @@ for letter in letters(True):
     - *그 태스크가 끝났을 때 동작할 callback 세팅*
       - *callback은 무엇으로 설정이 되는 것일까?*
     - 태스크가 끝날 때 까지 loop를 돔
-      - 그 동안에 태스크는 Thread pool executor를 이용하여서 실행이 됨
+      - 그 동안에 태스크는 Thread 등을 이용하여서 실행이 됨
         - **결국에는, 태스크를 실행하는 thread가 반드시 존재해야하는데, 오버헤드가 큰 multiprocessing이 아닌, threading을 이용한 방식을 채용(어차피 IO Bound 문제를 해결하기 위한 방안)**
+          - *그런데 multipcoessing을 이용해서 CPU bound문제를 해결할 수도 있는것 아닌가?*
     - result를 반환
     - event loop를 닫음
 - Event Loops

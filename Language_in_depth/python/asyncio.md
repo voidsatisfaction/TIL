@@ -2,7 +2,10 @@
 
 - 참고
 - 의문
-- 부록1. `asyncio.loop.run_in_executor()`
+- 부록0. python의 asyncio.futures.Future vs concurrent.futures.Future
+- 부록1. python의 asyncio.futures.Future vs asyncio.tasks.Task
+- 부록2. `asyncio.run(coro)`
+- 부록3. `asyncio.loop.run_in_executor(fn)`
 - The asyncio Package and async/await
 - Async IO Design Patterns
 - AsyncIO's Roots in Generators
@@ -19,16 +22,17 @@
 ### `asyncio.futures.Future`
 
 - 개요
-  - Event loop를 사용하여 future computation과 value를 분리하는 경우에 사용되는 Future
+  - Event loop와 상호작용하며, threading을 사용하여 future computation과 value를 분리하는 경우에 사용되는 Future
+    - *`multiprocessing`은 사용하지 않는것일까?*
 - 특징
   - 자신의 event loop를 지정 `self._loop = loop`
   - `loop.create_future`로 event loop에서 직접 future를 생성하는 경우가 많음
   - thread-safe이 아님
   - `add_done_callback()`으로 등록된 callback은 event loop의 `call_soon()`을 통해서 호출됨
-  - `set_result`
-- `self.set_result()`
-  - `self.__schedule_callbacks()` 호출
-  - `self._loop.call_soon(callback, self, context=ctx)` 으로 event loop의 ready queue에 등록
+  - `self.set_result()`
+    - `self.__schedule_callbacks()` 호출
+    - `self._loop.call_soon(callback, self, context=ctx)` 으로 event loop의 ready queue에 등록
+      - **`concurrent.futures.Future`와 다르게 자신이 직접 모든 콜백함수를 실행하지 않음**
 
 ### `concurrent.futures.Future`
 
@@ -43,18 +47,31 @@
     - `self._invoke_callback()`
       - 자기자신이(promise를 행하는 스레드가(child thread)) 모든 콜백함수를 실행
 
-### 서로 다른 future type의 chain
+### 서로 다른 future type의 chaining
 
 - `asyncio.futures.wrap_future`
   - `concurrent.futures.Future`와 `asyncio.futures.Future`를 체이닝함
+  - e.g)
+    - `concurrent.futures.Future`의 result가 set이 되면, 해당 result값을 asyncio.futures.Future에 set_result로 전달
+      - 반대도 가능
 
-## 부록1. `asyncio.run(coro)`
+## 부록1. python의 asyncio.futures.Future vs asyncio.tasks.Task
+
+### `asyncio.futures.Future` vs `asyncio.tasks.Task`
+
+- `asyncio.tasks.Task`
+  - Future로 래핑된 coroutine
+- `asyncio.futures.Future`
+
+## 부록2. `asyncio.run(coro)`
 
 `asyncio.run()`의 sequence diagram
 
 ![](./images/asyncio/asyncio_run.png)
 
-## 부록2. `asyncio.loop.run_in_executor(fn)`
+- *실제로 Future의 computation부분의 코드가 궁금하긴 함*
+
+## 부록3. `asyncio.loop.run_in_executor(fn)`
 
 `asyncio.loop.run_in_executor()`의 sequence diagram
 
@@ -62,6 +79,7 @@
 
 - Threadpool Executor를 이용한 concurrent programming
   - aiofiles가 이를 통해서 구현되어 있음
+  - coroutine이 직접적으로 사용되지 않았으므로, `Task`오브젝트는 생성되지 않음
 
 ## The asyncio Package and async/await
 
