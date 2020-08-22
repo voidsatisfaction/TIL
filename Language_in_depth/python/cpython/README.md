@@ -1,5 +1,23 @@
 # Introduction
 
+CPython from code to execution1
+
+![](./images/cpython_from_code_to_execution1.png)
+
+CPython from code to execution2
+
+![](./images/cpython_from_code_to_execution2.png)
+
+- 의문
+- CPython
+- CPython의 구성
+  - 폴더 구성
+- The Python Language and Grammar
+  - CPython Compiler가 C로 작성된 이유
+  - Python Language Specification
+
+## 의문
+
 ## Cpython
 
 - 개요
@@ -29,7 +47,7 @@
 
 **CPython source code는 65% Python과 24% C?!**
 
-## The Python Lnaguage and Grammar
+## The Python Language and Grammar
 
 - compiler
   - 개요
