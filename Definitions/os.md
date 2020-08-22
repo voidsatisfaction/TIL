@@ -24,6 +24,8 @@
   - Process group
   - Pipeline
   - IPC
+- Application Layer
+  - deb
 
 ## 의문
 
@@ -690,3 +692,10 @@ Pipeline
         - Stream-oriented(TCP)
         - Message-oriented(UDP)
     - RPC
+
+## Application Layer
+
+### deb
+
+- 정의
+  - Linux distribution Debian과 해당 관련 리눅스 배포판의 software package format의 확장자
