@@ -52,8 +52,9 @@
 - `asyncio.futures.wrap_future`
   - `concurrent.futures.Future`와 `asyncio.futures.Future`를 체이닝함
   - e.g)
-    - `concurrent.futures.Future`의 result가 set이 되면, 해당 result값을 asyncio.futures.Future에 set_result로 전달
-      - 반대도 가능
+    - `concurrent.futures.Future`의 result가 set이 되면, 해당 result값을 `asyncio.futures.Future에` set_result로 전달
+      - `call_soon_threadsafe()`메서드를 호출
+    - 위의 반대도 가능
 
 ## 부록1. python의 asyncio.futures.Future vs asyncio.tasks.Task
 
