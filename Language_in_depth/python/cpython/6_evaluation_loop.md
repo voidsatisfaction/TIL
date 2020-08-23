@@ -1,6 +1,138 @@
 # Eveluation Loop
 
+- 의문
+- 0. 부록: python gil scheduling
+- 개요
+
 ## 의문
+
+- 파이썬의 스레딩 같은 경우에는, evaluation loop이 interpreter process에서 1개만 동작하고, 각 스레드가 lock으로 evaluation loop 자원을 점유하도록 하여, 자신이 실행해야 할 코드 오브젝트를 실행 하는 것인가?
+  - 그렇기 때문에 결국에는 한번에 하나의 스레드의 instruction밖에 실행하지 못하는 것인가?
+  - I/O bound 연산의 경우에는 CPU bound 동작이 없으므로 득을 볼 수 있는 것인가?
+  - **아니다. 각 스레드마다 evaluation loop이 존재한다. 다만, GIL로 락이 걸려있을 뿐**
+
+## 0. 부록: python gil scheduling
+
+Python GIL scheduling 예시 코드
+
+```py
+import threading
+from types import SimpleNamespace
+
+DEFAULT_INTERVAL = 0.05
+gil_mutex = threading.RLock()
+gil_condition = threading.Condition(lock=gil_mutex)
+switch_condition = threading.Condition()
+
+# dictionary-like object that supports dot (attribute) syntax
+gil = SimpleNamespace(
+    drop_request=False,
+    locked=True,
+    switch_number=0,
+    last_holder=None,
+    eval_breaker=True
+)
+
+
+def drop_gil(thread_id):
+    if not gil.locked:
+        raise Exception("GIL is not locked")
+
+    gil_mutex.acquire()
+
+    gil.last_holder = thread_id
+    gil.locked = False
+
+    # Signals that the GIL is now available for acquiring to the first awaiting thread
+    gil_condition.notify()
+
+    gil_mutex.release()
+
+    # force switching
+    # Lock current thread so it will not immediately reacquire the GIL
+    # this ensures that another GIL-awaiting thread have a chance to get scheduled
+
+    if gil.drop_request:
+        switch_condition.acquire()
+        if gil.last_holder == thread_id:
+            gil.drop_request = False
+            switch_condition.wait()
+
+        switch_condition.release()
+
+
+def take_gil(thread_id):
+    gil_mutex.acquire()
+
+    while gil.locked:
+        saved_switchnum = gil.switch_number
+
+        # Release the lock and wait for a signal from a GIL holding thread,
+        # set drop_request=True if the wait is timed out
+
+        timed_out = not gil_condition.wait(timeout=DEFAULT_INTERVAL)
+
+        # 일정 timed_out이 지난 뒤에, gil을 다시 획득하려 함
+        if timed_out and gil.locked and gil.switch_number == saved_switchnum:
+            gil.drop_request = True
+
+    # lock for force switching
+    switch_condition.acquire()
+
+    # Now we hold the GIL
+    gil.locked = True
+
+    if gil.last_holder != thread_id:
+        gil.last_holder = thread_id
+        gil.switch_number += 1
+
+    # force switching, send signal to drop_gil
+    switch_condition.notify()
+    switch_condition.release()
+
+    if gil.drop_request:
+        # block gil switching
+        gil.drop_request = False
+
+    gil_mutex.release()
+
+def execution_loop(target_function, thread_id):
+    # Compile Python function down to bytecode and execute it in the while loop
+
+    bytecode = compile(target_function)
+
+    while True:
+
+        # **drop_request indicates that one or more threads are awaiting for the GIL**
+        if gil.drop_request:
+            # release the gil from the current thread
+            drop_gil(thread_id)
+
+            # immediately request the GIL for the current thread
+            # at this point the thread will be waiting for GIL and suspended until the function return
+            take_gil(thread_id)
+
+        # bytecode execution logic, executes one instruction at a time
+        instruction = bytecode.next_instruction()
+        if instruction is not None:
+            execute_opcode(instruction)
+        else:
+            return
+```
+
+- 각 thread는 자신만의 evaluation loop를 가짐
+  - 그렇지 않으면 굳이 lock을 할 필요가 없을듯
+- 스레드가 새로 생성되면 `take_gil()` 메서드 실행
+- GIL을 특정 thread가 가져감(take_gil)
+- evaluation loop는 해당 thread의 thread state에서 frame오브젝트를 가져옴
+- frame오브젝트는 code object를 가져옴
+- evaluation loop는 해당 code object를 실행
+- 동작이 끝나고, 기존에 gil을 기다리는 스레드가 존재하면(`gil.drop_request = True`) `drop_gil` 메서드 실행
+- 의문
+  - *위의 psudo code에서 gil에 의한 lock은 evaluation loop의 어디에서 일어나는지?*
+    - 표현되지 않은듯 하다
+  - *새로운 스레드가 spawn되면 `take_gil()`이 동작한다고 했는데, 여기서 일단 `gil_mutex.acquire()`를 한 뒤에, `gil.drop_request = True`로 설정하고, 계속해서 무한루프를 돌고, `drop_gil()`에서 `gil.locked = False`가 될 때까지 반복하는데, 그 전에 `drop_gil()`에서도 `gil_mutex.acquire()`를 호출하는데, 그럼 데드락이 발생하는 것 아닌가?*
+    - `gil_condition.wait()`이 자신의 **lock을 release하면서** timeout까지 기다리거나, `notify()`메서드가 다른 lock을 acquire한 곳에서 호출되기 까지 기다림.
 
 ## 개요
 
@@ -198,6 +330,22 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
 
 main_loop:
     for (;;) {
+    // if (eval_frame_handle_pending(tstate) != 0) {
+    //     goto error;
+    // }
+    // eval_frame_handle_pending
+    /* GIL drop request */
+    if (_Py_atomic_load_relaxed(&ceval2->gil_drop_request)) {
+        /* Give another thread a chance */
+        if (_PyThreadState_Swap(&runtime->gilstate, NULL) != tstate) {
+            Py_FatalError("tstate mix-up");
+        }
+        drop_gil(ceval, ceval2, tstate);
+
+        /* Other threads may run now */
+
+        take_gil(tstate);
+
     fast_next_opcode:
         f->f_lasti = INSTR_OFFSET();
 
