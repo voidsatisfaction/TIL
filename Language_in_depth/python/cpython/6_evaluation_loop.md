@@ -129,10 +129,12 @@ def execution_loop(target_function, thread_id):
 - evaluation loop는 해당 code object를 실행
 - 동작이 끝나고, 기존에 gil을 기다리는 스레드가 존재하면(`gil.drop_request = True`) `drop_gil` 메서드 실행
 - 의문
-  - *위의 psudo code에서 gil에 의한 lock은 evaluation loop의 어디에서 일어나는지?*
-    - 표현되지 않은듯 하다
+  - 위의 psudo code에서 gil에 의한 lock은 evaluation loop의 어디에서 일어나는지?
+    - `take_gil()`함수에서 무한 루프를 돌게 되어있음
   - *새로운 스레드가 spawn되면 `take_gil()`이 동작한다고 했는데, 여기서 일단 `gil_mutex.acquire()`를 한 뒤에, `gil.drop_request = True`로 설정하고, 계속해서 무한루프를 돌고, `drop_gil()`에서 `gil.locked = False`가 될 때까지 반복하는데, 그 전에 `drop_gil()`에서도 `gil_mutex.acquire()`를 호출하는데, 그럼 데드락이 발생하는 것 아닌가?*
     - `gil_condition.wait()`이 자신의 **lock을 release하면서** timeout까지 기다리거나, `notify()`메서드가 다른 lock을 acquire한 곳에서 호출되기 까지 기다림.
+    - 스레드가 여러개인 경우, `take_gil()` 각 함수들은 `take_gil()`의 코드 중 `timed_out = not gil_condition.wait(timeout=DEFAULT_INTERVAL)`에서 블로킹 되고 있고, condition에 `wait()` 순서를 데이터로 관리 (FIFO) 하고 있고, `gil`을 소유하고 있는 thread는 `drop_gil()`에서 가장 먼저 `wait()`하고 있던 thread의 `wait()`을 풀어주고, (`gil_condition.notify(), gil_mutex.release()`) 자신도 `take_gil()`에서 순서를 기다림
+  - *`GIL`은 priority나 waiting 타임을 상황에 따라서 변경하는 로직이 존재하는가?*
 
 ## 개요
 
