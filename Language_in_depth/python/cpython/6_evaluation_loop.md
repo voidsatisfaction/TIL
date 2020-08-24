@@ -136,6 +136,78 @@ def execution_loop(target_function, thread_id):
     - 스레드가 여러개인 경우, `take_gil()` 각 함수들은 `take_gil()`의 코드 중 `timed_out = not gil_condition.wait(timeout=DEFAULT_INTERVAL)`에서 블로킹 되고 있고, condition에 `wait()` 순서를 데이터로 관리 (FIFO) 하고 있고, `gil`을 소유하고 있는 thread는 `drop_gil()`에서 가장 먼저 `wait()`하고 있던 thread의 `wait()`을 풀어주고, (`gil_condition.notify(), gil_mutex.release()`) 자신도 `take_gil()`에서 순서를 기다림
   - *`GIL`은 priority나 waiting 타임을 상황에 따라서 변경하는 로직이 존재하는가?*
 
+참고: 파이썬 condition
+
+```py
+import time
+import threading
+
+condition = threading.Condition()
+
+def t1():
+    print('t1')
+    print('t1 condition acquiring')
+    condition.acquire()
+    print('t1 condition acquired')
+    print('t1 condition waiting')
+    condition.wait()
+    print('t1 condition waited')
+
+def t2():
+    print('t2')
+    print('t2 condition acquiring')
+    condition.acquire()
+    print('t2 condition acquired')
+    print('t2 condition waiting')
+    condition.wait()
+    print('t2 condition waited')
+
+    while True:
+        pass
+
+def t3():
+    print('t3')
+    print('t3 condition acquiring')
+    condition.acquire()
+    print('t3 condition acquired')
+    print('t3 condition notifing')
+    condition.notify()
+    print('t3 condition notified')
+    print('t3 condition releasing')
+    condition.release()
+    print('t3 condition released')
+
+    while True:
+        pass
+
+f1 = threading.Thread(target=t1)
+f2 = threading.Thread(target=t2)
+f3 = threading.Thread(target=t3)
+
+f1.start()
+time.sleep(1)
+f2.start()
+time.sleep(1)
+f3.start()
+
+# t1
+# t1 condition acquiring
+# t1 condition acquired
+# t1 condition waiting
+# t2
+# t2 condition acquiring
+# t2 condition acquired
+# t2 condition waiting
+# t3
+# t3 condition acquiring
+# t3 condition acquired
+# t3 condition notifing
+# t3 condition notified
+# t3 condition releasing
+# t3 condition released
+# t1 condition waited
+```
+
 ## 개요
 
 - Code objects
