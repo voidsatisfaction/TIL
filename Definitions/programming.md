@@ -10,6 +10,7 @@
   - event loop
   - argc vs argv
   - weak reference
+  - mutex(lock)
 - Data
   - stream
 
@@ -189,6 +190,12 @@ end function
   - 언제든지 다시 생성될 수 있는 cached data를 갖고 있을 때, weak reference는 cache가 reclaimed 되도록 도와줌. 효과적으로 discardable memory를 만들면서
 - 예시
   - DOM에서는 parent-to-child reference는 strong, child-to-parent reference는 weak
+
+### mutex(lock)
+
+- 정의
+  - 다수의 스레드가 실행되는 환경에서, 자원에 접근하는데에 제한을 강제하는 synchronization mechanism
+    - mutual exclusion concurrency control policy를 강제함
 
 ## Data
 
