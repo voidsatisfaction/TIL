@@ -11,6 +11,8 @@
   - argc vs argv
   - weak reference
   - mutex(lock)
+  - scope
+  - closure
 - Data
   - stream
 
@@ -196,6 +198,96 @@ end function
 - 정의
   - 다수의 스레드가 실행되는 환경에서, 자원에 접근하는데에 제한을 강제하는 synchronization mechanism
     - mutual exclusion concurrency control policy를 강제함
+
+### scope
+
+- 정의
+  - 변수와 같은 이름이 해당 엔티티를 참조할 때, 그러한 바인딩이 valid한 프로그램상의 region(부분)
+    - scope block이라고도 불림
+    - **본질은 이름과 entity의 바인딩을 적용한다는 것!**
+      - 다만, **프로그램상의 부분** 을 어떻게 두느냐가 다름
+- 특징
+  - 프로그램의 다른 부분에서는, 해당 이름이 다른 엔티티(different binding)나 아무것도 참조하지 않을(unbinding) 수 있음
+- scope of binding
+  - visibility of an entity
+    - 이름으로부터의 관점이 아니라, entity로부터의 관점
+- 종류
+  - **lexical scope(static scope)**
+    - 정의
+      - **이름과 엔티티사이의 바인딩이 적용되는 소스코드의 부분**
+        - 소스코드에 있어서의 scope
+    - 특징
+      - 대부분의 프로그래밍 언어가 채택
+      - name resolution은 소스코드의 위치와 lexical context(변수나 함수가 정의된 위치)에 기반하여 행해짐
+      - **closure를 위한 scope는 호출된 장소가 아니라, closure가 정의된 lexical context에 의존함**
+      - early binding
+        - name resolution이 컴파일 타임에 정해짐
+  - **dynamic scope**
+    - 정의
+      - 런타임에 있어서의 scope
+    - 특징
+      - name resolution은 name이 실행시에 조우할 때의 program state에 의존함
+        - execution context or calling context
+      - late binding
+        - name resolution이 런타임에 정해짐
+- scope vs extent vs context
+  - scope
+    - identifier의 property
+    - 고정됨
+  - *context*
+    - program에서의 포지션의 property
+      - source code에서의 포지션(lexical context)
+      - runtime 에서의 포지션(execution context, runtime context, calling context)
+        - execution context
+          - lexical context + runtime state(e.g call stack)
+          - 예시
+            - 변수(name)가 컨텍스트에 들어왔다 == 프로그램의 실행 포인트가 변수(name)의 스코프에 존재한다
+            - 변수(name)가 컨텍스트를 벗어났다 == 프로그램의 실행 포인트가 변수(name)의 스코프를 벗어났다
+              - 함수의 반환 등
+        - 실행 중에, 프로그램은 다양한 스코프에 들어갔다가 나왔다가 하며, 실행할 시에, identifiers are "in context" or "not in context", hence identifiers "come into context" or "go out of context" as the program enters or exits the scope
+    - 위치에 따라서 다름
+  - extent(lifetime)
+    - scope의 super set
+      - 존재하는 변수는 반드시 보인다고 할 수 없음, 존재하나 접근할 수 없을 수도 있고, 주어진 이름으로 참조가 불가능한 경우(out of context == 프로그램이 out of the scope of the name)
+  - *아직 scope와 context의 차이가 뭔지 잘 모르겠다*
+- name resolution(binding)
+  - 컴파일러나 인터프리터는 매칭을 하기 위해서, 컨텍스트에 있는 모든 entities를 체크함
+  - name resolution rule을 따름
+    - 애매함 방지
+    - inner-to-outer rule
+      - Python의 LEGB(Local, Enclosing, Global, Built-in)
+      - name은 implicit하게 narrowest relevant context로 resolving함
+  - 일부 경우에는, `global`, `nonlocal` 등의 키워드를 사용해서 name resolution을 명시적으로 지정 가능
+- level of scope
+  - 개요
+    - global scope
+    - local scope
+    - block scope
+    - 함수형 언어에서는 다양한 scope 지원
+      - expression scope
+    - file scope
+      - C
+    - scope의 시작과 끝
+      - C
+        - scope이 선언과 함께 시작함
+        - 따라서, 다른 주어진 블록에서 선언된 다른 이름은 다른 scope를 가질 수 있음
+        - 함수를 사용하기 전에 선언해야만 함(정의는 하지 않더라도)
+        - mutual recursion을 위해서는, forward declaration이 필요함
+      - js, python
+        - 정의된 장소와 상관없이 name의 scope이 관련 블록의 시작 부분에서 시작함
+        - 주어진 블록에 존재하는 모든 name은 같은 scope를 갖음
+  - 종류
+    - expression scope
+    - block scope
+    - function scope
+    - file scope
+    - module scope
+    - global scope
+
+### closure(lexical closure / function closure)
+
+- 정의
+  -
 
 ## Data
 
