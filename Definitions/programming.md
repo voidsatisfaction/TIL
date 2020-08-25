@@ -15,6 +15,8 @@
   - closure
 - Data
   - stream
+- Program
+  - Manifest file
 
 ## General
 
@@ -325,3 +327,19 @@ end function
   - Stream processing
     - 병렬 프로세싱, 특히 그래픽 프로세싱에서는 stream이라는 말이 소프트웨어 뿐 아니라 하드웨어에도 적용됨
     - There it defines the quasi-continuous flow of data that is processed in a dataflow programming language as soon as the program state meets the starting condition of the stream.
+
+## Program
+
+### Manifest file
+
+- 정의
+  - accompanying files 그룹의 metadata를 포함하는 파일
+- 특징
+  - 단순 메타 데이터
+    - name, version number
+  - 라이센스
+  - 패키징
+    - distribution포함된 파일들 열거
+    - entry point
+    - cryptographic hash, checksum
+      - authenticity & integrity 보장
