@@ -203,6 +203,10 @@ end function
 
 ### scope
 
+*the function name sum_of_squares has file scope. 라고 표현하는데, name has scope? scope includes name?*
+
+*namespace는 scope의 구체적인 구현?(e.g python에서는 이름과 대응되는 값의 dictionary `__dict__`)*
+
 - 정의
   - 변수와 같은 이름이 해당 엔티티를 참조할 때, 그러한 바인딩이 valid한 프로그램상의 region(부분)
     - scope block이라고도 불림
@@ -262,13 +266,6 @@ end function
   - 일부 경우에는, `global`, `nonlocal` 등의 키워드를 사용해서 name resolution을 명시적으로 지정 가능
 - level of scope
   - 개요
-    - global scope
-    - local scope
-    - block scope
-    - 함수형 언어에서는 다양한 scope 지원
-      - expression scope
-    - file scope
-      - C
     - scope의 시작과 끝
       - C
         - scope이 선언과 함께 시작함
@@ -279,12 +276,51 @@ end function
         - 정의된 장소와 상관없이 name의 scope이 관련 블록의 시작 부분에서 시작함
         - 주어진 블록에 존재하는 모든 name은 같은 scope를 갖음
   - 종류
+    - **name-entity binding에서 프로그램의 부분이 무엇인가?**
     - expression scope
+      - 개요
+        - 주로 함수형 언어에서 `let-expression`이라는 식을 활용해서, declaration's scope를 하나의 식으로 한정할 수 있도록 함
+      - e.g) perl
+        - `do { my $x = f(); $x * $x }`
+      - e.g) python
+        - list comprehension
     - block scope
+      - 개요
+        - 많은 언어들이 채용
+        - 주로 함수에 속하는 블록이 많음
+          - 단독 블록으로 사용되는 경우에는, 변수 scope를 나이스하게 다룰 수 있도록 함
+        - control flow를 위해서 사용되는 경우도 많음
+          - `if`, `while`, `for` 등
     - function scope
+      - 개요
+        - 함수의 local variable은 함수가 return할 때, 즉, scope가 끝날때 끝남
+        - 함수 내부에서 함수가 실행되는 경우
+          - lexical scoping
+            - 함수 안에서 함수가 실행되면 caller의 context는 goes out되는 것이고, called 함수는 caller함수의 local variables에 대한 접근이 불가능함
+            - local variables는 그것들이 선언된 함수 안에서만 in context임
+          - dynamic scoping
+            - caller의 context는 called의 context에 유지됨
+            - 오직 반환될 때만 context가 날라감
+        - 함수가 first-class object ∧ 함수의 안에서 지역적으로 생성되고 반환될 수 있을 때 매우 복잡해짐
+          - local이 아닌, nested 함수의 변수들은 closure를 생성함
+          - 함수 자체 뿐 아니라, 함수의 environment 역시도 반환되어야 하고, 잠재적으로 다른 컨택스트에서 실행됨
+          - 컴파일러 지원이 필수
+      - static local variables
+        - C에서는 variable의 lifetime이 program의 lifetime과 같음
     - file scope
+      - 개요
+        - 어떠한 함수에도 속하지 않고 파일의 top level에 선언된 scope이며, 해당 file 전체에 영향을 끼치는 scope
+        - C와 C++ 에서 특히 사용됨
     - module scope
+      - 개요
+        - 특정 모듈 전체에서 유효한 scope
+      - 예시
+        - 파이썬
+          - `sys.__dict__.keys()`
+            - `__dict__`는 sys의 namespace를 갖으며, module scope의 구체적인 구현체이다
     - global scope
+      - 개요
+        - 전체 프로그램을 통틀어 효력을 갖는 scope
 
 ### closure(lexical closure / function closure)
 
