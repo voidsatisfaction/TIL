@@ -208,16 +208,39 @@ end function
 *namespace는 scope의 구체적인 구현?(e.g python에서는 이름과 대응되는 값의 dictionary `__dict__`)*
 
 - 정의
-  - 변수와 같은 이름이 해당 엔티티를 참조할 때, 그러한 바인딩이 valid한 프로그램상의 region(부분)
-    - scope block이라고도 불림
-    - **본질은 이름과 entity의 바인딩을 적용한다는 것!**
-      - 다만, **프로그램상의 부분** 을 어떻게 두느냐가 다름
+  - 정책적 정의
+    - 변수와 같은 이름이 해당 엔티티를 참조할 때, 그러한 바인딩이 valid한 프로그램상의 region(부분)
+      - scope block이라고도 불림
+      - **본질은 이름과 entity의 바인딩을 적용한다는 것!**
+        - 다만, **프로그램상의 부분** 을 어떻게 두느냐가 다름
+    - e.g)
+      - 파이썬은 블록 스코프를 채택하고 있으므로, 지금의 컨텍스트에서는 해당 name은 어떠한 entity에 대응되고 있다
+  - 국소적 정의
+    - 특정 name(identifier)-entity binding이 적용되는 범위
+    - e.g) 이 name은 이 블록의 스콥을 가진다
 - 특징
   - 프로그램의 다른 부분에서는, 해당 이름이 다른 엔티티(different binding)나 아무것도 참조하지 않을(unbinding) 수 있음
 - scope of binding
   - visibility of an entity
     - 이름으로부터의 관점이 아니라, entity로부터의 관점
-- 종류
+
+lexical scope vs dynamic scope
+
+```sh
+$ # bash language
+$ x=1
+$ function g () { echo $x ; x=2 ; }
+$ function f () { local x=3 ; g ; }
+$ f # does this print 1, or 3?
+3
+$ echo $x # does this print 1, or 2?
+1
+```
+
+bash는 dynamic scope를 채택하므로, 위의 결과는... 3,1
+lexical scope의 경우에는... 1,2
+
+- 분류
   - **lexical scope(static scope)**
     - 정의
       - **이름과 엔티티사이의 바인딩이 적용되는 소스코드의 부분**
@@ -241,6 +264,7 @@ end function
     - identifier의 property
     - 고정됨
   - *context*
+    - *실제 특정 스콥(함수, 블록, 모듈 등)에서의 상황?*
     - program에서의 포지션의 property
       - source code에서의 포지션(lexical context)
       - runtime 에서의 포지션(execution context, runtime context, calling context)
@@ -321,6 +345,107 @@ end function
     - global scope
       - 개요
         - 전체 프로그램을 통틀어 효력을 갖는 scope
+- 언어별 scope
+  - js
+    - lexical scope
+    - hoisting(variable, function)
+  - python
+    - LEGB(Local, Enclosing, Global, Built-in)
+    - forward reference
+
+js scoping problem
+
+```js
+a = 1;
+function f() {
+  alert(a);
+  var a = 2;
+}
+f()
+
+// alert message is undefined
+// local hoisted variable a shadows global variable a
+```
+
+python scoping examples
+
+```py
+## forward reference
+
+def f():
+    print(x)
+
+x = 'global'
+f() # global
+
+## lexical scope & function scope
+
+def f():
+    x = 'f'
+    print(x)
+
+x = 'global'
+
+print(x) # global
+f() # f
+print(x) # global
+
+## lexical scope & function scope & error
+
+def f():
+    print(x)
+    # declared local variable makes this variable's scope to this function
+    x = 'f'
+
+x = 'global'
+f()
+# Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+#   File "<stdin>", line 2, in f
+# UnboundLocalError: local variable 'x' referenced before assignment
+
+## default name resolution overriding
+
+def f():
+    print(x)
+
+def g():
+    global x
+    print(x)
+    x = 'g'
+
+x = 'global'
+f() # global
+g() # global
+f() # g
+
+## global keyword for default name resolution(LEGB) overriding
+
+def f():
+    def g():
+        global x
+        print(x)
+    x = 'f'
+    g()
+
+x = 'global'
+f()
+
+## nonlocal keyword for default name resolution(LEGB) overriding
+
+def f():
+    def g():
+        nonlocal x
+        x = 'g'
+    x = 'f'
+    g()
+    print(x)
+
+x = 'global'
+
+f() # g
+print(x) # global
+```
 
 ### closure(lexical closure / function closure)
 
