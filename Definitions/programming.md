@@ -450,7 +450,13 @@ print(x) # global
 ### closure(lexical closure / function closure)
 
 - 정의
-  -
+  - **함수와 environment를 저장하는 record**
+    - *record* 가 무엇인지?
+    - environment는 해당 함수의 각각의 *free variable(locally 사용되나, enclosing scope에서 정의된 변수)* 를 값 또는 reference로 매핑하는 것을 말함
+- 관계 정리
+  - **클로저는 함수가 captured variables를 closure의 값 혹은 references의 복제본을 통하여 접근하는 것을 허용함**
+    - 함수가 해당 scope의 밖에서 호출되었을 때에도
+    - *왜 복제본을 통하여 접근하는가?*
 
 ## Data
 
