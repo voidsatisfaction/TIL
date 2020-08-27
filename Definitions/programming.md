@@ -286,6 +286,7 @@ lexical scope의 경우에는... 1,2
     - 애매함 방지
     - inner-to-outer rule
       - Python의 LEGB(Local, Enclosing, Global, Built-in)
+        - frame object에서 scope관리
       - name은 implicit하게 narrowest relevant context로 resolving함
   - 일부 경우에는, `global`, `nonlocal` 등의 키워드를 사용해서 name resolution을 명시적으로 지정 가능
 - level of scope
@@ -327,7 +328,8 @@ lexical scope의 경우에는... 1,2
             - 오직 반환될 때만 context가 날라감
         - 함수가 first-class object ∧ 함수의 안에서 지역적으로 생성되고 반환될 수 있을 때 매우 복잡해짐
           - local이 아닌, nested 함수의 변수들은 closure를 생성함
-          - 함수 자체 뿐 아니라, 함수의 environment 역시도 반환되어야 하고, 잠재적으로 다른 컨택스트에서 실행됨
+          - **함수 자체 뿐 아니라, 함수의 environment 역시도 반환되어야 하고, 잠재적으로 다른 컨택스트에서 실행됨**
+            - 파이썬에서는, frame object를 생성할 때, closure argument가 존재함
           - 컴파일러 지원이 필수
       - static local variables
         - C에서는 variable의 lifetime이 program의 lifetime과 같음
@@ -345,12 +347,12 @@ lexical scope의 경우에는... 1,2
     - global scope
       - 개요
         - 전체 프로그램을 통틀어 효력을 갖는 scope
-- 언어별 scope
+- 언어별 scope / name resolution policy
   - js
     - lexical scope
     - hoisting(variable, function)
   - python
-    - LEGB(Local, Enclosing, Global, Built-in)
+    - **LEGB(Local, Enclosing, Global, Built-in)**
     - forward reference
 
 js scoping problem
@@ -429,7 +431,7 @@ def f():
     g()
 
 x = 'global'
-f()
+f() # global
 
 ## nonlocal keyword for default name resolution(LEGB) overriding
 
@@ -452,11 +454,15 @@ print(x) # global
 - 정의
   - **함수와 environment를 저장하는 record**
     - *record* 가 무엇인지?
-    - environment는 해당 함수의 각각의 *free variable(locally 사용되나, enclosing scope에서 정의된 변수)* 를 값 또는 reference로 매핑하는 것을 말함
-- 관계 정리
+    - environment
+      - 해당 함수의 각각의 free variable를 값 또는 reference로 매핑하는 특수한 scope
+    - free variable
+      - locally 사용되나, enclosing scope에서 정의된 변수
+- 용어 및 관계 정리
   - **클로저는 함수가 captured variables를 closure의 값 혹은 references의 복제본을 통하여 접근하는 것을 허용함**
     - 함수가 해당 scope의 밖에서 호출되었을 때에도
     - *왜 복제본을 통하여 접근하는가?*
+  - 일부 문헌에서는 반환되는 함수 자체를 클로저라고 하는 경우도 있으므로 혼동하지 않도록 조심
 
 ## Data
 
