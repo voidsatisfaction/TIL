@@ -215,6 +215,7 @@ f3.start()
     - 오브젝트 s.t AST로부터 파싱된 bytecode형태의 discrete 연산의 리스트를 포함
     - code object는 input이 있어야 실행이 가능
       - input은 local, global 변수의 형태로 받아들여짐(Value Stack에서 다뤄짐)
+    - **결국 컴파일러는 코드 오브젝트를 생성하는 역할이고, 그것을 실제로 실행하고 state를 다루는 것은 interpreter의 역할**
   - 생성되는 장소
     - `.pyc` file
     - compiler
@@ -240,7 +241,7 @@ RuntimeError
 - stack frame
   - 개요
     - 함수 사이에 변수가 반환되는 것과 함수들이 호출되는 것을 가능하게 하는 데이터 타입
-      - arguments, local variables을 포함한 상태 정보를 갖음
+      - arguments, local variables, global variables, 을 포함한 상태 정보를 갖음
   - 특징
     - 다양한 runtime에서 사용되는 데이터 타입
     - 모든 함수 호출시에 생성되며, 순서대로 stacked됨
@@ -248,6 +249,10 @@ RuntimeError
 큰 그림
 
 ![](./images/ch6/evaluation_loop1.png)
+
+Interpreter thread frame code object
+
+![](./images/ch6/python_interpreter_thread_frame1.png)
 
 *interpreter & evaluation loop & thread의 관계를 한눈에 보면 좋겠다.*
 
