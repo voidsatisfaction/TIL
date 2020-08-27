@@ -245,6 +245,7 @@ RuntimeError
   - 특징
     - 다양한 runtime에서 사용되는 데이터 타입
     - 모든 함수 호출시에 생성되며, 순서대로 stacked됨
+    - *evaluation loop는 각 frame마다 동작하기 시작하는 듯?*
 
 큰 그림
 
@@ -511,7 +512,85 @@ main_loop:
 
           ...
         }
-  ...
+exiting:
+    if (tstate->use_tracing) {
+        if (tstate->c_tracefunc) {
+            if (call_trace_protected(tstate->c_tracefunc, tstate->c_traceobj,
+                                     tstate, f, PyTrace_RETURN, retval)) {
+                Py_CLEAR(retval);
+            }
+        }
+        if (tstate->c_profilefunc) {
+            if (call_trace_protected(tstate->c_profilefunc, tstate->c_profileobj,
+                                     tstate, f, PyTrace_RETURN, retval)) {
+                Py_CLEAR(retval);
+            }
+        }
+    }
+
+    /* pop frame */
+exit_eval_frame:
+    if (PyDTrace_FUNCTION_RETURN_ENABLED())
+        dtrace_function_return(f);
+    _Py_LeaveRecursiveCall(tstate);
+    tstate->frame = f->f_back;
+
+    return _Py_CheckFunctionResult(tstate, NULL, retval, __func__);
+}
+
+// call.c
+
+PyObject*
+_Py_CheckFunctionResult(PyThreadState *tstate, PyObject *callable,
+                        PyObject *result, const char *where)
+{
+    assert((callable != NULL) ^ (where != NULL));
+
+    if (result == NULL) {
+        if (!_PyErr_Occurred(tstate)) {
+            if (callable)
+                _PyErr_Format(tstate, PyExc_SystemError,
+                              "%R returned NULL without setting an error",
+                              callable);
+            else
+                _PyErr_Format(tstate, PyExc_SystemError,
+                              "%s returned NULL without setting an error",
+                              where);
+#ifdef Py_DEBUG
+            /* Ensure that the bug is caught in debug mode.
+               Py_FatalError() logs the SystemError exception raised above. */
+            Py_FatalError("a function returned NULL without setting an error");
+#endif
+            return NULL;
+        }
+    }
+    else {
+        if (_PyErr_Occurred(tstate)) {
+            Py_DECREF(result);
+
+            if (callable) {
+                _PyErr_FormatFromCauseTstate(
+                    tstate, PyExc_SystemError,
+                    "%R returned a result with an error set", callable);
+            }
+            else {
+                _PyErr_FormatFromCauseTstate(
+                    tstate, PyExc_SystemError,
+                    "%s returned a result with an error set", where);
+            }
+#ifdef Py_DEBUG
+            /* Ensure that the bug is caught in debug mode.
+               Py_FatalError() logs the SystemError exception raised above. */
+            Py_FatalError("a function returned a result with an error set");
+#endif
+            return NULL;
+        }
+    }
+    return result;
+}
+
+...
+
 error:
     /* Log traceback info. */
     PyTraceBack_Here(f);
@@ -522,14 +601,40 @@ error:
         call_exc_trace(tstate->c_tracefunc, tstate->c_traceobj,
                        tstate, f);
     }
-exit_eval_frame:
-    if (PyDTrace_FUNCTION_RETURN_ENABLED())
-        dtrace_function_return(f);
-    _Py_LeaveRecursiveCall(tstate);
-    tstate->frame = f->f_back;
+```
 
-    return _Py_CheckFunctionResult(tstate, NULL, retval, __func__);
-}
+TARGET(LOAD_FAST) 함수의 에러시의 메시지와 대응 및 value stack
+
+```py
+import dis
+
+def coco():
+    print('hi')
+
+x = 2
+def test_func():
+    print(x)
+    x = 1
+
+dis.dis(test_func)
+
+# test_func()
+#
+# 8           0 LOAD_GLOBAL              0 (print)
+#             2 LOAD_FAST                0 (x)
+#             4 CALL_FUNCTION            1
+#             6 POP_TOP
+
+# 9           8 LOAD_CONST               1 (1)
+#            10 STORE_FAST               0 (x)
+#            12 LOAD_CONST               0 (None)
+#            14 RETURN_VALUE
+# Traceback (most recent call last):
+# File "dis_test.py", line 15, in <module>
+#   test_func()
+# File "dis_test.py", line 8, in test_func
+#  print(x)
+# UnboundLocalError: local variable 'x' referenced before assignment
 ```
 
 - CPython 일부 함수 설명
