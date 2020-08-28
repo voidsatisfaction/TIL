@@ -216,6 +216,7 @@ f3.start()
     - code object는 input이 있어야 실행이 가능
       - input은 local, global 변수의 형태로 받아들여짐(Value Stack에서 다뤄짐)
     - **결국 컴파일러는 코드 오브젝트를 생성하는 역할이고, 그것을 실제로 실행하고 state를 다루는 것은 interpreter의 역할**
+    - 변수의 scope도 code object가 결정해줌(이미 컴파일타임에 끝남)
   - 생성되는 장소
     - `.pyc` file
     - compiler
@@ -245,7 +246,7 @@ RuntimeError
   - 특징
     - 다양한 runtime에서 사용되는 데이터 타입
     - 모든 함수 호출시에 생성되며, 순서대로 stacked됨
-    - *evaluation loop는 각 frame마다 동작하기 시작하는 듯?*
+    - evaluation loop는 각 frame마다 동작
 
 큰 그림
 
@@ -267,7 +268,8 @@ Interpreter thread frame code object
     - frame object는 스레드와 link 되어야 함
     - frame stack에서 frame object가 실행 됨
     - 변수는 value stack에서 참조됨
-  - *다수의 파이썬 스레드가 동작하는 경우, 각 thread 이벤트루프에 code object를 어떻게 보내줄 수 있는가?*
+  - 다수의 파이썬 스레드가 동작하는 경우, 각 thread 이벤트루프에 code object를 어떻게 보내줄 수 있는가?
+    - 각 파이썬 스레드마다 각자의 이벤트루프를 갖고 있으나, gil에 의하여 한 타이밍에 하나의 이벤트루프만 동작하도록 제한함
 - Thread State
   - 개요
     - 스레드의 상태를 나타내는 자료구조
@@ -306,7 +308,10 @@ Interpreter thread frame code object
           - 함수내에서 사용된 전역변수 이름들
       - `f_builtins`
       - `f_globals`
+        - global symbol table(PyDictObject) (namespace)
+        - *값도 포함인지? 아니면 name만 존재하는지?*
       - `f_locals`
+        - local symbol table(any mapping) (namespace)
       - `f_valuestack`
         - Pointer to last local
       - `f_stacktop`
@@ -322,6 +327,8 @@ Interpreter thread frame code object
       - `f_executing`
       - `f_blockstack`
       - `f_localsplus`
+        - `locals + stack`
+        - *이게 뭐지?*
 
 ### Frame Object Initialization API
 
@@ -389,6 +396,8 @@ _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
   names = co->co_names;
   consts = co->co_consts;
   fastlocals = f->f_localsplus;
+
+  // closure support
   freevars = f->f_localsplus + co->co_nlocals;
 
   first_instr = (_Py_CODEUNIT *) PyBytes_AS_STRING(co->co_code);
