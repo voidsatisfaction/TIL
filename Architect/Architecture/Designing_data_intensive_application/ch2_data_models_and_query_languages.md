@@ -74,3 +74,65 @@ resume의 Tree 구조 표현
     - 사람에게 의미가 있는 데이터의 경우, 미래에 변화한다면 전부다 바꿔야 하는 오버헤드 발생
   - normalization
     - duplication의 제거
+
+### History of many-to-many relationship resolution
+
+- Many-to-many relationship을 DB에서 어떻게 표현할 것인가?
+  - hierarchical model
+    - 개요
+      - 모든 데이터는 tree로 나타내어짐(JSON과 비슷함)
+    - 한계
+      - 개발자가 데이터를 duplicate하게 저장할 것인지(denormalize), application level에서 서로의 record를 참조하도록 할 것인지 정해야 했음
+  - network model
+    - 개요
+      - hierarchical model의 일반화
+        - 각 record는 여러 parent를 가질 수 있음
+    - 한계
+      - 개발자가 특정 record를 fetch하려면, application code에서 access path를 지정해줘야만 함
+        - 잘 작성했을 때, 최적화가 잘 된다는 장점도 있긴 함
+      - 사장됨
+  - relational model
+    - 개요
+      - query optimizer가 쿼리를 진행하는 순서나 사용하는 인덱스를 알아서 최적화해 줌
+      - application에 새로운 기능을 추가하기 쉬움
+      - 복잡한 query optimizer를 한번만 작성하면, 어느 상황에서든 쉽게 이용 가능
+    - 한계
+      - query optimizer가 엄청나게 복잡함
+  - document model
+    - 개요
+      - hierarchical model은 nested data를 저장한다는 측면에서는 회귀이나, separate table에 데이터를 저장하기로 함
+
+### document model vs relational model
+
+- 공통점
+  - many-to-one and many-to-many relationships을 표현하는 것 자체는 본질적으로 다르지 않음
+    - 둘다, related item은 unique identifier에 의해서 참조됨
+      - relational model
+        - foreign key
+      - document model
+        - document reference
+- 비교적 장점
+  - document model
+    - schema flexibility
+    - better performance due to locality
+  - relational model
+    - better support for joins
+    - better support for many-to-one and many-to-many relationships
+- 비교적 단점
+  - document model
+    - document안에서 직접적으로 nested item을 참조할 수 없음
+      - the second item in the list of positions for user 251로 쿼리해야 함(hierarchical model의 access path와 유사)
+      - 너무 깊은 레벨이 아닌 이상, 큰 문제는 아님
+    - poor support for joins
+      - 애플리케이션의 성질에 따라서 다름
+        - many-to-many relationship이 많은 경우에 문제
+        - application level에서 join을 emulate할 수 있으나, 더 비효율적이고 application이 복잡해질 가능성이 커짐
+  - relational model
+
+#### Schema flexibility in the document model
+
+- ~schemaless~
+- schema-on-read
+  - data structure은 implicit 하고, 데이터가 읽혀질 때만 interpreted됨
+- schema-on-write
+  - schema가 explicit하고, 작성된 데이터는 해당 형태를 유지하는것을 보증
