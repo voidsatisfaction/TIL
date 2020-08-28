@@ -3,6 +3,15 @@
 - 의문
 - Data model 개요
 - Relational Model vs Document Model
+  - Relational model
+  - The Birth of NoSQL
+  - Object-Relational Mismatch
+  - Many-to-one and Many-to-Many Relationships
+  - History of many-to-many relationship resolution
+  - document model vs relational model
+    - Schema flexibility
+    - Data locality for queries
+    - Convergence of document and relational databases
 
 ## 의문
 
@@ -40,10 +49,10 @@
 ### The Birth of NoSQL
 
 - 배경
-  - RDB보다 매우 높은 scalability를 갖고, 매우 높은 write throughput을 갖는 데이터 베이스의 필요성
+  - RDB보다 매우 높은 **scalability를** 갖고, 매우 높은 **write throughput**을 갖는 데이터 베이스의 필요성
   - 상업 DB 제품 보다 오픈소스에 대한 선호의 확산
   - 관계 모델에 의해서 잘 서포트되지 않는 특별한 쿼리의 지원 필요성
-  - 관계 스키마의 제약에 대한 실망과, 보다 다이나믹하고 표현적인 데이터 모델의 필요성
+  - 관계 스키마의 제약에 대한 실망과, **보다 다이나믹하고 표현적인 데이터 모델의 필요성**
 
 ### Object-Relational Mismatch
 
@@ -129,10 +138,77 @@ resume의 Tree 구조 표현
         - application level에서 join을 emulate할 수 있으나, 더 비효율적이고 application이 복잡해질 가능성이 커짐
   - relational model
 
-#### Schema flexibility in the document model
+#### Schema flexibility
 
 - ~schemaless~
 - schema-on-read
-  - data structure은 implicit 하고, 데이터가 읽혀질 때만 interpreted됨
+  - 개요
+    - data structure은 implicit 하고, 데이터가 읽혀질 때만 interpreted됨
+  - 적절한 사용 예
+    - colletion의 item이 어떠한 이유에서든지 서로 다른 구조를 갖는 경우
+    - **데이터의 구조가 자신이 컨트롤 할 수 없는 외부로부터 결정이 될 때**
 - schema-on-write
-  - schema가 explicit하고, 작성된 데이터는 해당 형태를 유지하는것을 보증
+  - 개요
+    - schema가 explicit하고, 작성된 데이터는 해당 형태를 유지하는것을 보증
+  - 적절한 사용 예
+    - 모든 record가 같은 데이터 구조를 갖는 것을 강제할 수 있는 경우
+
+e.g) data format을 변화시킬 경우
+
+document model db (schema-on-read)
+
+```js
+if (user && user.name && !user.first_name) {
+  user.first_name = user.name.split(' ')[0]
+}
+```
+
+rdb (schema-on-write)
+
+```sql
+ALTER TABLE users ADD COLUMN first_name text;
+UPDATE users SET first_name = split_part(name, ' ', 1); -- PostgreSQL
+```
+
+- 방법1(위)
+  - MySQL 이외의 대부분의 RDBMS는 `ALTER TABLE` 문을 a few milliseconds에 끝냄
+- 방법2
+  - `first_name` 칼럼을 default NULL로 두고, read time에 채우는 방법도 존재함(document db랑 비슷함)
+
+#### Data locality for queries
+
+- document model에서 애플리케이션의 document 전체를 접근할 때에는 storage locality로 인한 퍼포먼스 advantage가 존재
+  - 만약 데이터가 여러 테이블에 나누어져 있으면, 데이터 모두 가져오려면, 다양한 index를 lookup해야만 함
+- document는 작게 유지하는 것을 권장
+- *data locality가 정확히 뭐지?*
+
+#### Convergence of document and relational databases
+
+- RDB
+  - XML 지원
+    - MySQL을 제외한 대부분의 RDBMS는 XML을 지원함
+    - XML document의 local modification이 가능
+  - JSON 지원
+    - PostgreSQL, MySQL, IBM DB2는 JSON document를 지원함
+- document db
+  - join 지원
+    - Rethink DB
+  - application layer에서의 자동 join 지원
+    - MongoDB
+- 점점더 두 진영의 기능상 특징이 서로 닮아감
+
+## Query Languages for Data
+
+- SQL
+  - declarative
+    - 데이터의 패턴을 명시(WHAT)
+    - HOW는 query optimizer에게 맡기자
+      - index, join method, 순서 등 알아서 진행함
+    - parallel execution을 가능하게 함
+- IMS / CODASYL
+  - imperative
+    - 데이터를 어떻게 가져오는가를 명시(HOW)
+- 번외
+  - declarative query는 css도 마찬가지
+    - 구체적으로 어떻게 배경화면이 초록색이 되는지는 지정하지 않음
+    - `js`에서는 DOM API를 이용해서 직접 imparative하게 제어 가능
