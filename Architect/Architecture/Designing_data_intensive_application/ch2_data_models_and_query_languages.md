@@ -17,6 +17,10 @@
 
 ## Data model 개요
 
+Data model과 추상레이어
+
+![](./images/ch2/data_model_abstraction_layer1.png)
+
 - 데이터 모델이 소프트웨어 개발에 가장 중요한 요소중 하나
   - 작성되는 소프트웨어의 관점에서 중요할 뿐 아니라
   - 문제 해결의 생각적 기반이 됨
@@ -33,6 +37,10 @@
     - 바이트를 전자 전류, 빛의 pulse, 자기장 등으로 나타내도록 환원
 
 ## Relational Model vs Document Model
+
+Data model category
+
+![](./images/ch2/data_model_category1.png)
 
 ### Relational model
 
@@ -75,7 +83,7 @@ resume의 Tree 구조 표현
 - 1:다 관계는 Tree구조를 암시함
   - JSON으로 잘 나타낼 수 있음
 
-### Many-to-one and Many-to-Many Relationships
+### ID 사용의 이점
 
 - ID 사용의 이점
   - 사람에게 전혀 ID의 의미가 없기 떄문에, 변화할 필요가 없다는 점
@@ -115,7 +123,7 @@ resume의 Tree 구조 표현
 
 - 공통점
   - many-to-one and many-to-many relationships을 표현하는 것 자체는 본질적으로 다르지 않음
-    - 둘다, related item은 unique identifier에 의해서 참조됨
+    - **둘다, related item은 unique identifier에 의해서 참조됨**
       - relational model
         - foreign key
       - document model
