@@ -3,6 +3,13 @@
 - 의문
 - 0. 부록: python gil scheduling
 - 개요
+- Frame Execution
+- The Value Stack
+- Macros
+- Stack Effects
+- Opcode Predictions
+- `CALL_FUNCTION`, `CALL_METHOD`
+- Conclusion
 
 ## 의문
 
@@ -10,6 +17,7 @@
   - 그렇기 때문에 결국에는 한번에 하나의 스레드의 instruction밖에 실행하지 못하는 것인가?
   - I/O bound 연산의 경우에는 CPU bound 동작이 없으므로 득을 볼 수 있는 것인가?
   - **아니다. 각 스레드마다 evaluation loop이 존재한다. 다만, GIL로 락이 걸려있을 뿐**
+- *PREDICT macro는 얼마나 효율적인가? 그렇게 시간복잡도에 큰 영향을 끼치는가?*
 
 ## 0. 부록: python gil scheduling
 
@@ -124,14 +132,14 @@ def execution_loop(target_function, thread_id):
   - 그렇지 않으면 굳이 lock을 할 필요가 없을듯
 - 스레드가 새로 생성되면 `take_gil()` 메서드 실행
 - GIL을 특정 thread가 가져감(take_gil)
-- evaluation loop는 해당 thread의 thread state에서 frame오브젝트를 가져옴
-- frame오브젝트는 code object를 가져옴
+- 해당 thread의 thread state에서 와 다른 정보로부터 frame오브젝트 생성
+  - frame오브젝트는 code object를 포함
 - evaluation loop는 해당 code object를 실행
 - 동작이 끝나고, 기존에 gil을 기다리는 스레드가 존재하면(`gil.drop_request = True`) `drop_gil` 메서드 실행
 - 의문
   - 위의 psudo code에서 gil에 의한 lock은 evaluation loop의 어디에서 일어나는지?
     - `take_gil()`함수에서 무한 루프를 돌게 되어있음
-  - *새로운 스레드가 spawn되면 `take_gil()`이 동작한다고 했는데, 여기서 일단 `gil_mutex.acquire()`를 한 뒤에, `gil.drop_request = True`로 설정하고, 계속해서 무한루프를 돌고, `drop_gil()`에서 `gil.locked = False`가 될 때까지 반복하는데, 그 전에 `drop_gil()`에서도 `gil_mutex.acquire()`를 호출하는데, 그럼 데드락이 발생하는 것 아닌가?*
+  - 새로운 스레드가 spawn되면 `take_gil()`이 동작한다고 했는데, 여기서 일단 `gil_mutex.acquire()`를 한 뒤에, `gil.drop_request = True`로 설정하고, 계속해서 무한루프를 돌고, `drop_gil()`에서 `gil.locked = False`가 될 때까지 반복하는데, 그 전에 `drop_gil()`에서도 `gil_mutex.acquire()`를 호출하는데, 그럼 데드락이 발생하는 것 아닌가?
     - `gil_condition.wait()`이 자신의 **lock을 release하면서** timeout까지 기다리거나, `notify()`메서드가 다른 lock을 acquire한 곳에서 호출되기 까지 기다림.
     - 스레드가 여러개인 경우, `take_gil()` 각 함수들은 `take_gil()`의 코드 중 `timed_out = not gil_condition.wait(timeout=DEFAULT_INTERVAL)`에서 블로킹 되고 있고, condition에 `wait()` 순서를 데이터로 관리 (FIFO) 하고 있고, `gil`을 소유하고 있는 thread는 `drop_gil()`에서 가장 먼저 `wait()`하고 있던 thread의 `wait()`을 풀어주고, (`gil_condition.notify(), gil_mutex.release()`) 자신도 `take_gil()`에서 순서를 기다림
   - *`GIL`은 priority나 waiting 타임을 상황에 따라서 변경하는 로직이 존재하는가?*
@@ -212,7 +220,7 @@ f3.start()
 
 - Code objects
   - 개요
-    - 오브젝트 s.t AST로부터 파싱된 bytecode형태의 discrete 연산의 리스트를 포함
+    - 오브젝트 s.t AST로부터 파싱된 bytecode형태의 discrete 연산의 리스트 and list of variables and symbol table
     - code object는 input이 있어야 실행이 가능
       - input은 local, global 변수의 형태로 받아들여짐(Value Stack에서 다뤄짐)
     - **결국 컴파일러는 코드 오브젝트를 생성하는 역할이고, 그것을 실제로 실행하고 state를 다루는 것은 interpreter의 역할**
@@ -379,7 +387,7 @@ _PyEval_EvalFrame(PyThreadState *tstate, PyFrameObject *f, int throwflag)
 
 // 위의 interp->eval_frame(tstate, f, throwflag) 의 호출은
 // 아래의 _PyEval_EvalFrameDefault() 메서드의 호출과 같음
-
+// this function is only option for CPython
 PyObject* _Py_HOT_FUNCTION
 _PyEval_EvalFrameDefault(PyThreadState *tstate, PyFrameObject *f, int throwflag)
 {
@@ -477,6 +485,9 @@ main_loop:
           }
 
           case TARGET(LOAD_FAST): {
+              // The list of variable pointers is stored in `fastlocals`, which is copy of the PyFrame attribute `f_localsplus`
+              // oparg is a number, pointing to the index in the `fastlocals` array pointer
+              // loading of a local is simply a copy of the pointer instead of having to look up the variable name
               PyObject *value = GETLOCAL(oparg);
               if (value == NULL) {
                   format_exc_check_arg(tstate, PyExc_UnboundLocalError,
@@ -520,6 +531,41 @@ main_loop:
           }
 
           ...
+
+          case TARGET(LIST_APPEND): {
+              // element to be appended is from the value stack
+              PyObject *v = POP();
+              // list pointer is loaded
+              PyObject *list = PEEK(oparg);
+              int err;
+              // defined at Objects > listobject.c
+              err = PyList_Append(list, v);
+              Py_DECREF(v);
+              if (err != 0)
+                  goto error;
+              // guess the next operation
+              // CPU can jump to that instruction and not have to go through the loop again
+              PREDICT(JUMP_ABSOLUTE);
+              DISPATCH();
+          }
+
+          ...
+
+          case TARGET(CALL_FUNCTION): {
+              PREDICTED(CALL_FUNCTION);
+              PyObject **sp, *res;
+              sp = stack_pointer;
+              res = call_function(tstate, &sp, oparg, NULL);
+              stack_pointer = sp;
+              PUSH(res);
+              if (res == NULL) {
+                  goto error;
+              }
+              DISPATCH();
+          }
+
+          ...
+
         }
 exiting:
     if (tstate->use_tracing) {
@@ -657,3 +703,69 @@ dis.dis(test_func)
     - `next_instr++`
   - `FAST_DISPATCH()`
     - fast_next_opcode 로 넘어감
+- Cpython에서 C Macro가 많은 이유
+  - 함수 호출 오버헤드 없이 reusable한 코드를 생성할 수 있음
+    - compile time에 macro를 C code로 변환함
+
+## Frame Execution
+
+- `_PyEval_EvalFrameDefault()`
+  - **CPython에서 실행되는 모든 것들은 이 함수를 통과하게 되어있음**
+
+## The Value Stack
+
+- value stack
+  - 정의
+    - `PyObject`인스턴스로 이어지는 포인터의 리스트
+      - 변수, 함수에의 참조(Python object), 또 다른 파이썬 오브젝트일 수 있음
+    - Bytecode instruction은 value stack으로부터 input을 받음
+      - e.g) 함수 호출
+
+## Macros
+
+- `POP()`
+  - Value stack의 가장 위에 있는 원소를 가져오고 pop함
+- `PEEK(0)`
+  - Value stack의 가장 위에 있는 원소의 pointer를 가져옴
+- `DUP_TOP()`
+  - Value stack의 가장 위에 있는 원소의 복사본을 생성하고(같은 오브젝트에 대한 다른 포인터) PUSH함
+- `ROT_TWO()`
+  - Value stack의 가장 위에 있는 원소와 두번쨰 원소의 위치를 바꿔치기 함
+
+## Stack Effects
+
+- 개요
+  - 각 opcode마다 미리 정의된 `stack_effect()` 함수에 의해서 계산되는 stack effect라는 것을 갖고 있음
+  - *각 연산마다 필요한 value stack의 값의 개수?*
+
+## Opcode Predictions
+
+- 개요
+  - 일부의 opcode는 페어로 등장하는데, 첫번째 opcode를 실행할 때, 두번째 opcode를 추측할 수 있음
+    - `COMPARE_OP` 는 주로 `POP_JUMP_IF_FALSE`나 `POP_JUMP_IF_TRUE`가 뒤따름
+  - 추측이 잘 된 경우에는 또 다시 eval-loop와 switch문을 실행할 필요가 없음
+  - 만약 추측이 잘 된경우에는, 두개의 opcode가 마치 하나의 opcode인 것처럼 실행할 수 있음
+
+## `CALL_FUNCTION`, `CALL_METHOD`
+
+- 개요
+  - 또 다른 컴파일된 함수에 대한 reference를 operation argument로 갖음
+  - value stqack에 해당 함수 reference 추가
+  - `call_function(PyThreadState *tstate, PyObject ***pp_stack, Py_ssize_t oparg, PyObject *kwnames)` 호출
+    - `x = PyObject_Vectorcall(func, stack, nargs | PY_VECTORCALL_ARGUMENTS_OFFSET, kwnames);` 호출
+      - `_PyObject_VectorcallTstate(tstate, callable, args, nargsf, kwnames);` 호출
+        - `func = PyVectorcall_Function(callable);`
+        - `res = func(callable, args, nargsf, kwnames);`
+          - *`_PyFunction_Vectorcall(PyObject *func, PyObject* const* stack, size_t nargsf, PyObject *kwnames)`*
+            - vectorcallfunc가 여기서 호출?
+    - `return x`
+  - 또 다른 frame이 해당 thread의 frame stack으로 push됨
+  - evaluation loop이 해당 함수가 끝날 때 까지 실행됨
+  - 새로운 프레임이 생성될 때 마다, 그 frame의 `f_back`은 현재의 frame으로 설정
+
+## Conclusion
+
+- core evaluation loop
+  - 컴파일된 Python code와 C extension modules, libraries, system call사이의 인터페이스
+- value stack에 변수를 loading하기 위해서는 memory allocation과 management가 필요함
+  - 다음 챕터에서 다룸
