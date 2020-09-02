@@ -264,10 +264,6 @@ Interpreter thread frame code object
 
 ![](./images/ch6/python_interpreter_thread_frame1.png)
 
-*interpreter & evaluation loop & thread의 관계를 한눈에 보면 좋겠다.*
-
-*각 스레드마다 하나의 evaluation loop가 존재하는 것인지? 그렇다면 gil이 없으면 한번에 여러 개의 evaluation loop를 돌릴 수 있다는 얘기인데?*
-
 - 중요 개념
   - interpreter는 evaluation loop의 컨테이너
   - interpreter는 적어도 하나의 스레드를 갖음
@@ -295,6 +291,15 @@ Interpreter thread frame code object
     - GIL counter
     - async generator counters
     - ...
+
+파이썬 바이트 코드의 이해1
+
+![](./images/coroutine/python_byte_code1.png)
+
+파이썬 바이트 코드의 이해2
+
+![](./images/coroutine/python_byte_code2.png)
+
 - Constructing Frame Objects
   - Frame Object
     - 개요
@@ -337,6 +342,22 @@ Interpreter thread frame code object
       - `f_localsplus`
         - `locals + stack`
         - *이게 뭐지?*
+- code object vs frame object
+  - `code.co_consts`, `code.co_varnames`, `code.co_names` vs `frame.f_local`
+    - frame object
+      - 런타임에 결정되는 상태를 말함(opcode에 의하여)
+      - `frame.f_locals`과 같은 경우는 현재 실행되고 있는 상태에서의 로컬 변수 e.g) `x -> 10` 과같은 매핑 을 말함
+    - code object
+      - 컴파일 타임에 결정되는 상태를 말함
+      - `code.co_consts`
+        - 상수들의 심볼 테이블
+        - e.g) 0 -> None, 1 -> 10, 2 -> 20
+      - `code.co_varnames`
+        - 지역변수의 심볼 테이블
+        - e.g) 0 -> x, 1 -> y
+      - `code.co_names`
+        - 전역변수의 심볼 테이블
+        - e.g) 0 -> print
 
 ### Frame Object Initialization API
 
@@ -720,6 +741,9 @@ dis.dis(test_func)
       - 변수, 함수에의 참조(Python object), 또 다른 파이썬 오브젝트일 수 있음
     - Bytecode instruction은 value stack으로부터 input을 받음
       - e.g) 함수 호출
+  - 특징
+    - 함수의 호출같은 경우에도, 함수의 reference를 value stack에 push한 뒤에 호출
+    - opcode에 넘겨줄 arguments도 value stack에 push해서 넘겨줌
 
 ## Macros
 
@@ -750,7 +774,7 @@ dis.dis(test_func)
 
 - 개요
   - 또 다른 컴파일된 함수에 대한 reference를 operation argument로 갖음
-  - value stqack에 해당 함수 reference 추가
+  - value stack에 해당 함수 reference 추가
   - `call_function(PyThreadState *tstate, PyObject ***pp_stack, Py_ssize_t oparg, PyObject *kwnames)` 호출
     - `x = PyObject_Vectorcall(func, stack, nargs | PY_VECTORCALL_ARGUMENTS_OFFSET, kwnames);` 호출
       - `_PyObject_VectorcallTstate(tstate, callable, args, nargsf, kwnames);` 호출
