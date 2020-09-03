@@ -713,6 +713,8 @@ dis.dis(test_func)
 # UnboundLocalError: local variable 'x' referenced before assignment
 ```
 
+*위의 예시에서, 에러가 나는 경우 stacktrace는 어떻게 print되는것인지?*
+
 - CPython 일부 함수 설명
   - `Py_INCREF(value)`
     - value object의 reference count를 1 증가시킴
