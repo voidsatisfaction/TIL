@@ -139,3 +139,62 @@ DCT formula1
 DCT formula2
 
 ![](./images/week2/dct2.png)
+
+## 2.6 JPEG-LS and MPEG
+
+### JPEG-LS
+
+JPEG-LS
+
+![](./images/week2/jpeg_ls1.png)
+
+Effectiveness of JPEG-LS
+
+![](./images/week2/jpeg_ls2.png)
+
+JPEG-LS with Quantizer
+
+![](./images/week2/jpeg_ls3.png)
+
+- Predictive lossless compression
+  - 방법
+    - encode
+      - 과거에 encode한 pixel을 바탕으로 앞으로 encode해야 할 pixel의 값을 예측
+      - 예측한 값과 실제 값으로 부터 error 추출
+      - error를 Huffman coding으로 압축함
+    - decode
+      - encode의 역연산
+  - 원리
+    - **정확한 predictor 제작이 핵심!!**
+    - prediction을 정말 잘하면 error은 거의 0으로 수렴할 것
+      - Huffman coding의 압축률이 올라감
+    - prediction이 많이 엇나가면 해당 값에 긴 길이의 코드를 배정
+  - predictor
+    - **어떤 과거의 데이터를 어떻게 가공해서 predict할 것인가?**
+
+### MPEG
+
+MPEG의 원리
+
+![](./images/week2/mpeg1.png)
+
+MPEG의 구조
+
+![](./images/week2/mpeg2.png)
+
+- MPEG
+  - 개요
+    - prediction에 기반한 video compression의 standard
+  - 원리
+    - Temporal prediction(MPEG)
+      - 미래의 frame을 과거의 frame을 기반으로 예측하여 error를 기록
+      - error를 Huffman coding으로 압축
+
+## 2.7 Run-Length Coding
+
+- Run-Length Coding
+  - 개요
+    - binary image를 encoding할 때 아주 유용
+  - 예시
+    - 10,000 x 10,000 이미지의 한 row에 처음 3000개의 픽셀이 100의 값을 갖고, 중간 1000개의 픽셀이 200의 값을 갖고 나머지의 픽셀(6000개)이 100의 값을 갖을 때, 해당 row를 `3000,1000`으로 표현이 가능
+    - encoded value를 Huffman coding을 이용해서 또 압축 가능
