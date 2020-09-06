@@ -24,6 +24,13 @@
   - Process group
   - Pipeline
   - IPC
+- Memory
+  - Address space
+  - Virtual memory
+  - Paging
+  - Swap in and out
+  - Memory segmentation
+  - Overlay
 - Application Layer
   - deb
 
@@ -692,6 +699,163 @@ Pipeline
         - Stream-oriented(TCP)
         - Message-oriented(UDP)
     - RPC
+
+## Memory
+
+*Memory segmentation / paging / virtual memory / swap 개념들 사이의 관계?*
+
+- 메모리 관리 역사
+  - plain physical memory
+  - overlays
+  - segmentation
+  - paging
+
+### Address space
+
+virtual address space and physical address space
+
+![](./images/os/virtual_address_space_and_physical_address_space1.png)
+
+- 정의
+  - 논리적 혹은 물리적인 entity에 대응할 수 있는 주소들의 범위
+    - 반드시 memory에만 해당하는 것이 아님. DNS - IP - MAC 이런식으로 네트워크 address space를 분리할 수 있음
+  - space이므로, 수학적인 대수구조로 생각하면 mapping도 쉽게 의미 유추 가능
+- 특징
+  - 다양한 layer끼리의 mapping and translation
+    - higher-level address는 lower-level address로 매핑되어야 함
+      - e.g)
+        - logical disk위에 있는 fs는 linear한 주소를 absolute LBA sector 주소(Cylinder-Head-Sector 등)로 바꿔야 함
+        - DNS - IP - MAC address space 매핑
+  - virtual - physical address translation
+    - virtual address space의 서로 다른 pages를 page file 혹은 메인 메모리의 physical address로 매핑
+
+### Virtual memory
+
+![](./images/os/virtual_memory1.png)
+
+- 정의
+  - memory 관리 기술 s.t. 실제로 주어진 머신에서 사용가능한 메모리 자원의 idealized abstraction
+  - 결과적으로, 유저에게는 매우 큰 main memory가 있는 것 처럼 보임
+- 개요
+  - OS는 프로그램이 사용하는 memory address(virtual address)를 컴퓨터 메모리의 실제 physical address로 매핑함
+  - 일반적으로 하드웨어 MMU(Memory Management Unit) 라는 하드웨어 서포트가 필요함
+    - CPU에 존재하는 address를 변환해주는 하드웨어
+      - virtual addresses <-> physical addresses
+  - OS 내부의 소프트웨어는 실제 메모리의 크기보다 더 큰 virtual address space를 사용할 수 있도록 하는 기능도 있음
+- 장점
+  - 프로그램이 다른 프로그램과 공유가 되는 메모리공간을 다루는 복잡도로부터 해방
+    - 실제 메모리의 fragmentation을 숨김
+    - kernel이 다루도록 함
+  - memory isolation
+    - 보안 강화
+  - paging
+    - 실제 물리적으로 사용가능한 메모리보다 더 많이 메모리 사용 가능
+- 단점
+  - Embedded system과 같은 특수 목적의 컴퓨터 시스템은, 반응속도가 느린 등의 단점이 생김
+  - MMU와 같은 하드웨어를 내장해야 하므로, 비용 문제
+- 사용
+  - 과거의 컴퓨터 메인프레임은 Virtual memory 기능이 없었음
+  - 1960, 1970 년대에는 메모리가 매우 비쌌음
+    - virtual memory가 널리 퍼진 계기
+  - 현대 OS에서는 각 프로세스마다 그에 대응되는 virtual address space를 갖음
+    - 옛날 OS에서는 모든 프로세스를 하나의 virtualized memory로 이루어진 address space에서 실행
+
+#### Paged virtual memory
+
+- 개요
+  - 거의 모든 현재의 virtual memory 구현은 virtual address space를 page(연속된 virtual memory address의 블록들)로 분리함
+  - page는 적어도 4KB의 크기이며, 보다 더 큰 페이지 사이즈를 사용할 수 있음
+
+### Paging
+
+*페이징 기술을 사용하면, 각 프로세스마다 virtual memory를 사용하게 되는데, 어떻게 buffer overflow공격이 가능한 것인지? 자신의 process 내부의 virtual address의 값을 바꾸는 것인지?*
+
+결국 페이징이라는 것은, 프로그램이 virtual memory를 사용할 수 있도록 하는 방법론인데, 그 virtual memory속의 page는 physical memory 혹은 disk의 같은 크기의 page와 1:1매칭되는 unit이고, virtual memory는 linear하게 구성됨
+
+- 정의
+  - 메인 메모리에서 사용하기 위해, secondary storage(디스크)로부터 데이터를 가져오거나 거기에 데이터를 저장하는 메모리 관리 scheme
+- 특징
+  - OS가 관장
+  - OS는 page라고 불리는 secondary storage로부터 같은 크기의 블록 데이터를 갖고 옴
+  - virtual memory 구현에 매우 중요함
+    - 실제 물리적 메모리 보다 더 많은 메모리를 프로그램이 사용가능하게 함
+  - 하나의 process의 virtual address space는 여러개의 page의 구성으로 이루어져 있음
+- page fault
+  - 경우의 수
+    - 1 해당 virtual address에 변환이 불간으한 경우(invalid)
+      - OS는 segmentation fault signal을 해당 프로그램을 보냄
+    - 2 RAM(Physical memory)에 존재하지 않는 페이지를 프로세스가 참조하려 할 때 나는 에러
+      - 다른 page를 위하여 일시적으로 disk로 해당 page 저장
+        - backing store은 다음과 같이 불림
+          - swap partition (if it is a disk partition)
+          - swap file (if it is a file)
+          - page file (if it is a file)
+      - control을 해당 프로그램에서 os로 넘김
+      - page는 disk로부터 가져와서 physical memory로 넣어줌
+        - physical memory가 가득 차지 않은 경우
+        - page가 physical memory에 저장되고, page table, TLB가 업데이트 됨
+        - 다시 instruction 실행
+      - physical memory가 가득 차 있는 경우
+        - 하나 혹은 그 이상의 physical memory의 페이지가 paged out되어서 여유 공간을 만들어야 함
+        - page table은 기존에 physical memory에 존재하던 page들이 더 이상 존재하지 않는다고 마킹함
+        - TLB 업데이트
+          - paged out된 페이지를 제거함
+      - *page frame?*
+
+page table translation process
+
+![](./images/os/mmu_translation_process1.png)
+
+- page table
+  - 정의
+    - OS의 virtual address - physical address매핑을 저장하는 장소
+      - 각각의 mapping은 PTE(Page Table Entry) 라고 불림
+  - 개요
+    - program이 마치 linear한 메모리를 사용할 수 있는 것처럼 virtual address를 다룰 수 있게 하고, 해당 virtual address를 physical address로 매핑함
+      - 매핑을 가능하게 해주는 하드웨어는 MMU
+  - 구조
+    - TLB(Translation Lookaside Buffer)
+      - 최근에 사용된 매핑 캐시를 저장
+      - *associative cache*
+  - virtual address - physical address translation(mapping)
+    - virtual address가 physical address로 변환 시도
+    - TLB를 탐색
+      - 존재하면 physical memory address를 반환
+    - Page walk
+      - MMU나 OS TLB miss handler가 Page table을 확인해서 매핑이 존재하는지 확인
+    - 존재하면 TLB에 작성해야 함
+    - 다시 처음 시도했던 변환을 처음부터 다시 시도(TLB 서칭이 다시 일어남)
+- page supervisor
+- pinned pages
+
+### Swap in and out
+
+- 개요
+  - swap out
+    - 프로세스가 사용하는 메모리를 메인메모리에서 디스크로 저장함
+  - swap in
+    - 프로세스가 사용하는 메모리를 디스크에서 메인메모리로 불러옴
+
+### Memory segmentation
+
+*segmentation fault와 관련이 있는가?*
+
+- 정의
+  - 컴퓨터의 primary memory를 segment나 section들로 분리하는 메모리 관리 기술
+- 특징
+  - 메모리 위치에 대한 참조는 세그먼트임을 나타내는 값과 offset을 가지고 이루어짐
+  - x86-64 아키텍처에서는 레거시 시스템이 되었음
+    - 대신 memory-paging을 사용함
+    - 그래도 backward compatibility를 이유로 서포트 자체는 함
+- 장점
+  - process간의 memory를 격리시켜서 system의 reliability를 높임
+
+### Overlay
+
+- 정의
+  - 프로그램 코드나 다른 데이터의 블록을 기존에 메인메모리에 저장되어 있던 것을 덮어씌우는 프로세스
+- 특징
+  - 컴퓨터의 메인 메모리보다 더 큰 메모리를 차지하는 프로그램을 동작할 수 있게 하는 방법(Paging과는 다른)
 
 ## Application Layer
 
