@@ -31,6 +31,8 @@
   - Swap in and out
   - Memory segmentation
   - Overlay
+- Virtualization
+  - LXC
 - Application Layer
   - deb
 
@@ -856,6 +858,62 @@ page table translation process
   - 프로그램 코드나 다른 데이터의 블록을 기존에 메인메모리에 저장되어 있던 것을 덮어씌우는 프로세스
 - 특징
   - 컴퓨터의 메인 메모리보다 더 큰 메모리를 차지하는 프로그램을 동작할 수 있게 하는 방법(Paging과는 다른)
+
+## Virtualization
+
+- 종류
+  - OS-level virtualization
+  - Application virtualization
+
+### OS-level virtualization
+
+- 정의
+  - **kernel이 다수의 격리된 user space instance를 허락하는 OS 패러다임**
+    - user space는 kernel space와 대비되는 개념
+- user space instance를 부르는 이름
+  - containers, Zones, virtual private servers, partitions, virtual environments, virtual kernels, jails
+    - 위의 user space instance에서 동작하는 프로그램은 진짜 computer의 user space처럼 보이게 됨
+    - 그러나, 컨테이너에 할당된 컨텐츠와 장치만 볼 수 있음
+- 동작
+  - **OS-virtualization(containerization) 에서는 전체 OS의 일부의 자원들만 할당된 컨테이너 에서 프로그램을 동작시킬 수 있음**
+  - 각각의 컨테이너는 임의의 개수의 컴퓨터 프로그램을 포함함
+  - 이러한 프로그램들은 concurrently, separately 동작하고 서로서로 상호작용하기도 함
+  - c.f) application virtualization
+    - 하나의 프로그램이 파일 시스템만 격리된 곳에 놓여짐
+- 사용
+  - virtual hosting 환경
+    - 제한된 하드웨어 자원을 서로 신뢰하지 못하는 다수의 유저들사이에 안전하게 할당시킬 때
+  - 서버 하드웨어의 통합
+    - 여러 호스트에 존재하는 하드웨어 자원의 통합
+  - improved security
+- 특성
+  - 오버헤드
+    - full virtualization보다는 적은 오버헤드
+      - OS 레벨 virtual partition에 있는 프로그램들은 OS의 일반적인 system call 인터페이스만 사용하며, emulation이나 중간의 virtual machine이 존재하지 않음
+  - 유연성
+    - 다른 virtualization 접근 방식보다 유연하지는 않음
+      - guest OS를 호스트 OS와 다른 것으로 *호스팅* 할 수 없음
+        - *근데 docker는 windows docker에서 linux호스팅 가능하지 않나?*
+  - 스토리지
+    - file-level *copy-on-write(COW)* 메커니즘 제공하는 경우도 존재
+      - 파티션끼리 기본 fs는 공유되고, 파티션들은 파일을 수정할 때, 자신들의 카피를 만듬
+    - block-level copy-on-write 보다 공간 복잡도에 효율적이고 캐시하기에 간단함
+      - whole-system virtualization에서 채용
+
+### LXC(Linux Container)
+
+- 정의
+  - **다양한 격리된 Linux system(container)을 하나의 Linux kernel을 사용하는 컨트롤 호스트 위에 동작시키는 OS level의 virtualization**
+- 원리
+  - **cgroups**
+    - 자원의 제한과 우선순위 부여
+      - CPU, memory, block I/O, network, ...
+      - virtual machine이 필요 없음
+    - Linux kernel이 제공하는 기능
+  - **namespace isolation**
+    - OS의 environment에 대한 application의 뷰를 완전히 격리
+      - process tree, networking, user IDs, mounted fs 등
+  - LXC는 위의 두 기술의 결합
 
 ## Application Layer
 
