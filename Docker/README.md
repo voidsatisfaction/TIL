@@ -24,7 +24,20 @@
 
 - *도커가 존재하기 전에는, 도대체 어떻게 가상화 기술을 사용해왔는가?*
   - 예를들어서, cloud9 같은 서비스는 어떻게 동작해왔던 것인지..
-- *도커 컨테이너 마다 ip가 부여된다면, 어떤 기준으로 ip가 부어되고 어떤 값을 갖게 되는가?*
+  - 가상화는 여러가지 종류가 존재
+- 도커 컨테이너 마다 ip가 부여된다면, 어떤 기준으로 ip가 부어되고 어떤 값을 갖게 되는가?
+  - `docker network`로 묶여있는 경우, 해당 네트워크 브릿지를 기준으로 각자 private network의 ip를 부여받음
+    - e.g) `172.21.0.0.1/16`
+  - 각 컨테이너의 통신은 해당 docker network에 부여된 gateway(아마 virtual)로 통신가능
+- docker run 에서 `-t`옵션의 역할
+  - 무옵션일 경우에는 단순히 stdout stream을 갖게 됨
+    - `docker run ... | ...`가 가능
+  - `-t` 옵션을 부착하는 경우에는 psudo-TTY, 즉, 터미널 드라이버를 부착하는 것
+    - `-t`만 주어지는 경우에는, 터미널 드라이버가 부착되나, stdin을 인식하지 못하므로, 컨테이너를 커맨드라인에서 제어할 수 없음
+  - `-i` 옵션이 보통 사용되며, 이는, 유저의 입력의 stdin stream을 부착하는 것과 같음
+    - `-i`만 주어지는 경우에는, 컨테이너가 유저입력을 stdin으로 받아들이므로, 컨테이너 내부에서 커맨드라인으로 제어할 수 있으나, 뷰가 단순히 stdout으로만 나오므로, 터미널 뷰가 아니라 불편함
+  - 보통 `-it` 형태로 많이 사용
+    - 일반적인 터미널과 같은 역할을 함
 
 ## 도커 기초
 
@@ -103,30 +116,34 @@
     - `docker push` 커맨드를 실행할 경우, 설정한 레지스트리로 이미지가 push됨
 - **Docker objects**
   - **Images**
-    - 개요
-      - 하나의 도커 컨테이너를 제작하기 위한 read-only instruction template
+    - 정의
+      - **하나의 도커 컨테이너를 제작하기 위한 read-only instruction template**
     - 특징
       - 하나의 이미지는 다른 이미지의 기반이 되기도 함
       - Dockerfile을 만들어서 자기자신의 이미지를 생성할 수 있음
         - Dockerfile속에 있는 instruction은 이미지의 layer를 만듬
         - Dockerfile을 변경했을 경우, 변경된 부분만 layer가 다시 만들어짐(instruction내용이 그대로면 cache된 것을 그냥 씀)
+      - Base image는 `scratch` 이미지
+        - 오직 Dockerfile 안에서만 `FROM scratch`로 minimal image생성 가능
   - **Containers**
-    - 개요
-      - 한 이미지의 실행할 수 있는 instance
+    - 정의
+      - **한 이미지의 실행 가능한 instance**
       - **컨테이너는 create하거나 start할 때 제공하는 옵션 설정 뿐 아니라, 이미지에 의해서 정의됨**
     - 특징
       - Docker API나 CLI를 이용해서 conatiner를 create, start, stop, move, delete 할 수 있음
       - 컨테이너를 하나, 혹은 그 이상의 network에 연결시킬 수 있고, storage를 장착할 수 있음
       - container의 현재 state를 기반으로 새로운 이미지를 생성할 수 있음
+        - `docker commit`
       - 기본적으로 한 컨테이너는 다른 컨테이너나 호스트 머신이랑 잘 격리되어 있음
         - 컨테이너의 네트워크, 스토리지, 다른 서브시스템들을 어떻게 격리시킬 것인지 선택할 수 있음
-      - 컨테이너가 제거될 때, 영속적 소티리지에 저장되지 않은 상태에 대한 변화는 사라짐
+        - OS level virtualization
+      - 컨테이너가 제거될 때, 영속적 스토리지에 저장되지 않은 상태에 대한 변화는 사라짐
     - `docker run -it ubuntu /bin/bash`를 실행했을 때, 일어나는 일
       1. `ubuntu`이미지가 로컬에 존재하지 않으면, registry에서 이미지를 pull해옴(as if `docker pull ubuntu`)
       2. Docker가 새 컨테이너 생성(as if `docker container create`)
-      3. Docker가 그 container의 final layer에 read-write 파일 시스템을 할당. running container가 로컬 파일 시스템의 디렉터리와 파일을 생성하거나 수정할 수 있게 함
+      3. Docker가 그 container의 final layer에 *read-write 파일 시스템을 할당.(구체적인 의미가 뭐지?)* running container가 로컬 파일 시스템의 디렉터리와 파일을 생성하거나 수정할 수 있게 함
       4. Docker가 default network에 연결할 수 있도록 network interface를 생성(옵션을 제공하지 않았을 경우). 컨테이너에 IP 주소 할당. 기본적으로, 컨테이너는 호스트 머신의 네트워크 연결을 사용하여 외부 네트워크에 연결할 수 있음
-      5. Docker가 컨테이너를 시작하고, `/bin/bash`를 실행. container는 interactively(`-i`), 자신의 terminal에서(`-t`) 실행되기 때문에, input을 키보드를 통하여 제공할 수 있고, 그동안 output은 terminal로 표시됨
+      5. Docker가 컨테이너를 시작하고, `/bin/bash`를 실행. container는 interactively(`-i (stdin을 연결함)`), 자신의 terminal에서(`-t (psudo terminal을 부착)`) 실행되기 때문에, input을 키보드를 통하여 제공할 수 있고, 그동안 output은 terminal로 표시됨
       6. `exit` 명령을 터미널에서 실행하면, container는 멈추지만, 제거되지는 않음. 다시 시작할 수 있거나 제거할 수 있음
   - **Services**
     - 개요
@@ -164,7 +181,7 @@
         - 자원의 특정 집합으로 application을 제한함
       - Docker Engine이 사용가능한 하드웨어 자원들을 컨테이너끼리 공유하도록 하고, 선택적으로, 제한 설정을 부여
       - e.g) 하나의 특정 컨테이너의 메모리 사용량 조절
-  - **Union file systems(UnionFS)**
+  - **Union File Systems(UnionFS)**
     - 개요
       - 레이어를 만듦으로써, 동작하는 파일 시스템
         - 그 덕분에 매우 가볍고 빠름
@@ -187,7 +204,9 @@
 
 - 정의
   - 격리된 공간에서 프로세스가 동작하는 기술
-    - *여기에서 격리된 공간의 정의?*
+    - 여기에서 격리된 공간의 정의?
+      - namespace의 격리
+      - 자원제한으로써의 격리
 - 기존의 가상화 기술과의 차이
   - 기존
     - OS의 가상화(전가상화)
@@ -196,7 +215,8 @@
       - 반가상화 방법도 생겼으나, 여전히 무겁고 느림
   - 리눅스 컨테이너
     - 프로세스의 격리
-      - *프로세스의 격리의 정확한 의미는? - 프로세스를 격리했는데 어떻게 새로운 OS(?)처럼 행동할 수 있는가?*
+      - 프로세스의 격리의 정확한 의미는? - 프로세스를 격리했는데 어떻게 새로운 OS(?)처럼 행동할 수 있는가?
+        - 프로세스의 자원에 대한 view와 자원 자체 접근에 대한 격리임
       - CPU나 메모리는 딱 프로세스가 필요한 만큼만 추가로 사용
       - 성능적 손실이 거의 없음
 
