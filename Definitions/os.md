@@ -17,6 +17,8 @@
   - Mount
   - Inode
   - Softlink vs Hardlink
+  - file system types
+    - UnionFS
 - Process
   - Process
   - Daemon
@@ -568,6 +570,29 @@ This method was slow and an inefficient use of disk-space on small systems. An i
 Although storing the link value inside the inode saves a disk block and a disk read, the operating system still needs to parse the path name in the link, which always requires reading additional inodes and generally requires reading other, and potentially many, directories, processing both the list of files and the inodes of each of them until it finds a match with the link's path components. Only when a link points to a file in the same directory do "fast symlinks" provide significantly better performance than other symlinks.
 
 The vast majority of POSIX-compliant implementations use fast symlinks. However, the POSIX standard does not require the entire set of file status information common to regular files to be implemented for symlinks. This allows implementations to use other solutions, such as storing symlink data in directory entries. - Wikipedia
+
+### File system types
+
+#### UnionFS
+
+- 정의
+  - 다른 file system과의 union mount를 구현한 Linux, FreeBSD, NetBSD용 파일 시스템
+    - *여기서 다른 file system 이라는 것은 같은 UnionFS 계열의 FS를 말하는 것인가? 아니면 ext4 이런 파일 시스템도 지원이 가능하다는 것인가?*
+- 특징
+  - 분리된 파일 시스템의 디렉터리와 파일들을(branches) 투명하게 overlay해서 하나의 일관성 있는 파일 시스템으로 만듬
+    - 같은 경로에 있는 디렉터리의 컨텐츠들은 새 virtual fs의 하나의 통합된 디렉터리 안에서 같이 보이게 됨
+  - branche들을 마운트 하는 경우에는, priority가 명시됨
+    - 같은 브랜치가 같은 이름의 파일을 갖고 있다면, 우선순위가 높은쪽을 보게 됨
+  - 각 브랜치는 read-only 혹은 read/write 파일 시스템이 될 수 있어서, 그 경우에는 merged copy는 특정한 real file system으로 보내짐
+    - Copy on Write
+    - e.g) Live CDs
+  - docker
+    - *docker image의 레이어화를 시키기 위해서 사용됨*
+      - *구체적으로 어떤 원리인지?*
+      - 각 레이어마다 실행되고나서의 fs상의 이전레이어의 state와의 state diff를 저장?
+- 다른 unionfs 구현체
+  - aufs
+  - overlayfs
 
 ## Process
 
