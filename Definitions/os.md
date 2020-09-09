@@ -51,10 +51,17 @@
   - *애초에 파일 시스템의 파일과 드리아브 크기 제한을 빵빵하게 만들면 될텐데 왜 제한이 빡빡하게 만들어서 계속 확장하게 되었는가?*
   - *구체적으로 Inode란 무엇인가?*
     - 무엇을 저장하는가?
+- Memory
+  - *Paging에 사용되는 TLB, Page Table역시 데이터를 저장해야 하는데, 해당 공간은 어디에서 나는가?*
+    - *MMU?? 아니면 physical 메모리이긴 하나 별도 메모리에서 분리된 특수한 공간?*
 
 ## General
 
 ### Booting(운영체제를 initializing(메모리에 올리는 것))
+
+Booting process
+
+![](./images/os/booting_process1.png)
 
 Bootstrap
 
@@ -205,7 +212,7 @@ File descriptor, File table, Inode table3
       - `pipe`, `network socket`
   - 특징
     - POSIX API에 포함됨
-    - 음이 아닌 양의 정수
+    - 음이 아닌 정수
       - `C File*`로 open된 file descriptor를 `int fileno(FILE* fp);` 함수로 가져올 수 있음
     - 유닉스 계열의 시스템에서는, 유닉스 파일 타입이라고 명명된 모든 것을 참조할 수 있음
       - regulart files, directories, block, character device, unix domain sockets, named pipe 등
@@ -244,6 +251,8 @@ File descriptor, File table, Inode table3
         - `getsocketname()`
         - `getsocketopt()`
 
+three standard POSIX file descriptors
+
 |Integer value|Name|`<unistd.h>` symbolic constant|`<stdio.h>` file stream|
 |-------------|----|-------------------------------|----------------------|
 |0|(해당 프로세스의) Standard input|STDIN_FILENO|stdin|
@@ -278,10 +287,11 @@ File descriptor, File table, Inode table3
     - file descriptor의 이벤트 감지
     - *결국 내부적으로는 무한 루프를 도는 것인지*
 - 예시
-  - client가 다수의 file descriptor들을 다룰 때(stdin, stdout, network socket)
-  - client가 다수의 socket을 다룰 때
-  - TCP server가 연결 listen과 생성된 client socket을 다룰 때
-  - 서버가 TCP, UDP를 동시에 다룰 때
+  - I/O대상은 Unix의 경우에는 파일로 나타나는 모든 것으로 이해가 가능하겠다
+    - client가 다수의 file descriptor들을 다룰 때(stdin, stdout, network socket) - file
+    - client가 다수의 socket을 다룰 때 - file
+    - TCP server가 연결 listen과 생성된 client socket을 다룰 때 - file
+    - 서버가 TCP, UDP를 동시에 다룰 때 - file
 - 방식
   - `select`
   - `poll`
@@ -704,6 +714,10 @@ Pipeline
 
 ## Memory
 
+Memory abstraction example
+
+![](./images/os/memory_abstraction1.png)
+
 *Memory segmentation / paging / virtual memory / swap 개념들 사이의 관계?*
 
 - 메모리 관리 역사
@@ -784,8 +798,9 @@ virtual address space and physical address space
   - 하나의 process의 virtual address space는 여러개의 page의 구성으로 이루어져 있음
 - page fault
   - 경우의 수
-    - 1 해당 virtual address에 변환이 불간으한 경우(invalid)
+    - 1 해당 virtual address에 변환이 불가능한 경우(invalid)
       - OS는 segmentation fault signal을 해당 프로그램을 보냄
+        - *paging인데 왜 segmentation fault인가? memory segmentation과는 전혀 다른 의미인가?*
     - 2 RAM(Physical memory)에 존재하지 않는 페이지를 프로세스가 참조하려 할 때 나는 에러
       - 다른 page를 위하여 일시적으로 disk로 해당 page 저장
         - backing store은 다음과 같이 불림
@@ -793,8 +808,8 @@ virtual address space and physical address space
           - swap file (if it is a file)
           - page file (if it is a file)
       - control을 해당 프로그램에서 os로 넘김
-      - page는 disk로부터 가져와서 physical memory로 넣어줌
-        - physical memory가 가득 차지 않은 경우
+      - physical memory가 가득 차지 않은 경우
+        - page를 disk로부터 가져와서 physical memory로 넣어줌
         - page가 physical memory에 저장되고, page table, TLB가 업데이트 됨
         - 다시 instruction 실행
       - physical memory가 가득 차 있는 경우
@@ -802,7 +817,12 @@ virtual address space and physical address space
         - page table은 기존에 physical memory에 존재하던 page들이 더 이상 존재하지 않는다고 마킹함
         - TLB 업데이트
           - paged out된 페이지를 제거함
+          - 새로운 페이지를 TLB에 등록
       - *page frame?*
+
+the structure of page table
+
+![](./images/os/page_table1.png)
 
 page table translation process
 
@@ -858,6 +878,7 @@ page table translation process
   - 프로그램 코드나 다른 데이터의 블록을 기존에 메인메모리에 저장되어 있던 것을 덮어씌우는 프로세스
 - 특징
   - 컴퓨터의 메인 메모리보다 더 큰 메모리를 차지하는 프로그램을 동작할 수 있게 하는 방법(Paging과는 다른)
+    - *더 필요하면 기존에 자신이 사용하던 메모리도 덮어씌워서?!*
 
 ## Virtualization
 
@@ -866,6 +887,10 @@ page table translation process
   - Application virtualization
 
 ### OS-level virtualization
+
+OS-level virtualization
+
+![](./images/os/os_level_virtualization1.png)
 
 - 정의
   - **kernel이 다수의 격리된 user space instance를 허락하는 OS 패러다임**
