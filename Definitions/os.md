@@ -578,12 +578,17 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
 - 정의
   - 다른 file system과의 union mount를 구현한 Linux, FreeBSD, NetBSD용 파일 시스템
     - *여기서 다른 file system 이라는 것은 같은 UnionFS 계열의 FS를 말하는 것인가? 아니면 ext4 이런 파일 시스템도 지원이 가능하다는 것인가?*
+  - c.f) union mount
+    - 다수의 디렉터리를 하나의 디렉터리로 합쳐서, 결합된 컨텐츠 처럼 보이게 하는 것
+    - *e.g) CD-ROM 또는 DVD 안에 있는 컨텐츠를 업데이트 할경우, CD의 마운트 포인트를 union mount에 있는 writable directory로 overlay할 수 있고, 그 다음에, union directory 속에 있는 파일들을 업데이트하면 결국에는 writable directory로 만드는 것과 같음*
+      - *애초에 CD-ROM이 Read-only인데 파일 시스템을 overlay하고 union directory속의 내용을 바꾼다고 정말 내부 내용이 바뀌는가?*
 - 특징
   - 분리된 파일 시스템의 디렉터리와 파일들을(branches) 투명하게 overlay해서 하나의 일관성 있는 파일 시스템으로 만듬
     - 같은 경로에 있는 디렉터리의 컨텐츠들은 새 virtual fs의 하나의 통합된 디렉터리 안에서 같이 보이게 됨
-  - branche들을 마운트 하는 경우에는, priority가 명시됨
+  - branch들을 마운트 하는 경우에는, priority가 명시됨
     - 같은 브랜치가 같은 이름의 파일을 갖고 있다면, 우선순위가 높은쪽을 보게 됨
-  - 각 브랜치는 read-only 혹은 read/write 파일 시스템이 될 수 있어서, 그 경우에는 merged copy는 특정한 real file system으로 보내짐
+  - *각 브랜치는 read-only 혹은 read/write 파일 시스템이 될 수 있어서, 그 경우에는 merged copy는 특정한 real file system으로 보내짐*
+    - *이게 무슨소리?*
     - Copy on Write
     - e.g) Live CDs
   - docker
