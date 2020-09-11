@@ -91,7 +91,7 @@ CMD python /app/app.py
 - layer
   - 개요
     - 각 레이어는 이전 레이어와의 fs상의 차이의 집합
-    - 레이어는 stacked됨
+    - 레이어는 스택으로 쌓임
   - 종류
     - image layer
       - Read only layer
@@ -106,3 +106,36 @@ CMD python /app/app.py
   - container
     - layer stack의 가장위에 writable layer가 존재
     - container가 삭제되면, writable layer 역시 삭제되나, 원래 존재하던 image는 그대로 남아있음
+
+#### Container size on disk
+
+- `docker ps -s` 커맨드로 확인 가능
+  - `size`
+    - 각 컨테이너의 writable layer에 사용된 data(disk)의 크기
+  - `virtual size`
+    - read-only image data를 위해 사용된 데이터의 양 + 컨테이너의 writable layer `size`
+    - 주의
+      - 임의의 두 컨테이너는 read-only image layer를 공유할 수 있으므로, 단순히 `virtual size`를 더하기만 해서는 용량을 과도하게 추정하는 것일 뿐
+- 그외 고려해야할 것들
+  - `json-file` logging driver를 사용할 경우, 해당 파일이 디스크에 차지하는 공간
+    - 일반적으로 rotation이 설정되지 않음
+  - 컨테이너가 사용하는 `Volumes` and `bind mount`
+  - 컨테이너의 configuration 파일들에 의해서 사용되는 디스크 공간
+    - 일반적으로 작음
+  - 디스크에 작성된 메모리
+    - swapping이 enabled된 경우
+  - checkpoint들
+    - experimental checkpoint/restore 기능을 사용할 경우
+    - *애초에 cehckpoint가 무엇인지?*
+
+#### The copy-on-write (CoW) strategy
+
+- CoW 전략
+  - 최대한의 효율을 위한 파일 공유와 복사 전략
+  - I/O 최소화 및 연속된 레이어들의 사이즈 최소화
+- 예시
+  - lower layer에 파일이나 디렉터리가 존재한 경우
+    - 다른 레이어에서 read access가 필요한 경우
+      - 그냥 기존에 존재하던 파일을 사용
+    - 다른 레이어에서 write access가 필요한 경우
+      - 기존에 있던 파일을 복사한 뒤에, 수정함
