@@ -5,7 +5,6 @@
   - Booting
   - Firmware
   - BIOS
-  - Virtualization
   - Buffer(data buffer)
   - POSIX
   - Everything is a file
@@ -34,7 +33,10 @@
   - Memory segmentation
   - Overlay
 - Virtualization
+  - OS-level virtualization
   - LXC
+  - Virtualization
+  - Server Virtualization
 - Application Layer
   - deb
 
@@ -102,47 +104,6 @@ Bootstrap
 - 특징
   - 하드웨어들의 Input / Output을 관리하는 소프트웨어
   - 운영체제가 컴퓨터 하드웨어의 입출력을 컨트롤 할 경우에 사용
-
-### Virtualization
-
-- 정의
-  - 가상의 무엇인가를 만드는 기술
-- 구체적 예시
-  - NAT(Network Address Translation)
-    - 존재하지 않는 IP를 가상으로 만들어서 배정
-  - VPN(Virtual Private Network)
-    - 같은 공용 통신망을 통해 통신을 하지만, 패킷을 암호화해서 주고 받아, 마치 사설 네트워크를 만드는 것과 같은 기술
-  - RAID, LVM
-
-### Server Virtualization
-
-- 정의
-- 사용하는 이유
-  - 서버의 자원을 효율적으로 최대한 사용하기 위함
-- 구현에 따른 분류
-  - 전 가상화(Bare-metal/hypervisor)
-    - 개요
-      - 순수한 하드웨어 위에 운영체제나 BIOS가 아닌 Hypervisor가 있는 구조로 이루어지는 가상화
-        - 하이퍼바이저는 가상머신을 만들고 관리하는 프로그램
-    - 특징
-      - VM의 입장에서 하드웨어 자원은 무조건 하이퍼바이저를 통해서 사용 가능
-  - 반(더 진보한) 가상화(Para-virtualization)
-    - 개요
-      - 전 가상화와 달리, VM이 하드웨어 자원을 직접적으로 사용 가능
-  - 호스트 기반 가상화
-    - VMware나 VirtualBox와 같은 가상화 구현 프로그램을 이용한 가상화
-- 세대 별 분류(기술 수준)
-  - 1세대
-    - 하나의 물리적인 서버에 하이퍼바이저로 여러 개의 가상머신을 생성하는 수준
-    - 예시
-      - VirtualBox
-  - 2세대
-    - 다수의 물리적인 서버의 자원들을 하나로 묶어서 서버 풀을 구성하고 관리할 수 있는 수준
-      - 특정 서버에 문제가 생겼을 때, 문제 있던 서버에서 실행중이던 가상머신들을 다른 정상 작동하고 있는 서버로 옮기는 실시간 마이그레이션 기술 사용
-  - 3세대
-    - 다른 하이퍼바이저끼리도 서버 풀을 구성하고 관리가 가능
-    - 예시
-      - OpenStack, CloudStack, Eucalyptus, OpenNebula, ...
 
 ### Buffer(data buffer)
 
@@ -969,6 +930,47 @@ OS-level virtualization
     - OS의 environment에 대한 application의 뷰를 완전히 격리
       - process tree, networking, user IDs, mounted fs 등
   - LXC는 위의 두 기술의 결합
+
+### Virtualization
+
+- 정의
+  - 가상의 무엇인가를 만드는 기술
+- 구체적 예시
+  - NAT(Network Address Translation)
+    - 존재하지 않는 IP를 가상으로 만들어서 배정
+  - VPN(Virtual Private Network)
+    - 같은 공용 통신망을 통해 통신을 하지만, 패킷을 암호화해서 주고 받아, 마치 사설 네트워크를 만드는 것과 같은 기술
+  - RAID, LVM
+
+### Server Virtualization
+
+- 정의
+- 사용하는 이유
+  - 서버의 자원을 효율적으로 최대한 사용하기 위함
+- 구현에 따른 분류
+  - 전 가상화(Bare-metal/hypervisor)
+    - 개요
+      - 순수한 하드웨어 위에 운영체제나 BIOS가 아닌 Hypervisor가 있는 구조로 이루어지는 가상화
+        - 하이퍼바이저는 가상머신을 만들고 관리하는 프로그램
+    - 특징
+      - VM의 입장에서 하드웨어 자원은 무조건 하이퍼바이저를 통해서 사용 가능
+  - 반(더 진보한) 가상화(Para-virtualization)
+    - 개요
+      - 전 가상화와 달리, VM이 하드웨어 자원을 직접적으로 사용 가능
+  - 호스트 기반 가상화
+    - VMware나 VirtualBox와 같은 가상화 구현 프로그램을 이용한 가상화
+- 세대 별 분류(기술 수준)
+  - 1세대
+    - 하나의 물리적인 서버에 하이퍼바이저로 여러 개의 가상머신을 생성하는 수준
+    - 예시
+      - VirtualBox
+  - 2세대
+    - 다수의 물리적인 서버의 자원들을 하나로 묶어서 서버 풀을 구성하고 관리할 수 있는 수준
+      - 특정 서버에 문제가 생겼을 때, 문제 있던 서버에서 실행중이던 가상머신들을 다른 정상 작동하고 있는 서버로 옮기는 실시간 마이그레이션 기술 사용
+  - 3세대
+    - 다른 하이퍼바이저끼리도 서버 풀을 구성하고 관리가 가능
+    - 예시
+      - OpenStack, CloudStack, Eucalyptus, OpenNebula, ...
 
 ## Application Layer
 
