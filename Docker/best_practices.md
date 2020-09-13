@@ -4,6 +4,8 @@
 - How to keep your images small
 - Where and how to persist application data
 - Best practices for writing Dockerfiles
+  - Dockerfile instructions
+- Prune unused Docker objects
 
 ## 의문
 
@@ -128,3 +130,52 @@
   - `WORKDIR`은 절대 경로로 지정하라(explicit)
   - `RUN cd ... && do-something` 대신 `WORKDIR`을 사용하라
     - 메인테이닝 하기 쉬움
+
+## Prune unused Docker objects
+
+- 개요
+  - docker는 docker object를 명령을 받기 전까지는 prune하지 않음
+  - e.g command)
+    - `docker image prune`
+    - `docker system prune`
+- Prune images
+  - 개요
+    - docker image는 별도로 명령을 받기 전까지 지워지지 않음
+  - 명령
+    - `docker image prune`
+      - dangling image만 제거
+        - not tagged, not referenced by any container
+    - `docker image prune -a`
+      - 사용되지 않는 이미지 전부 제거
+    - `docker image prune -a --filter "until=24h"`
+      - 24시간 이상된 이미지 중에서만 prune함
+- Prune container
+  - 개요
+    - container를 stop하면 자동적으로 지워지지 않음
+    - stopped container의 writable layer는 여전히 디스크 공간을 차지함
+    - `docker container prune ..` 으로 해당 공간 청소 가능
+  - 명령
+    - `docker container prune`
+      - stop된 컨테이너 제거
+    - `docker container prune --filter "until=24h"`
+      - 24이상된 stop 컨테이너만 prune함
+- Prune volumes
+  - 개요
+    - volume은 host의 공간을 차지하며, 자동적으로 지워지지 않음(데이터 파괴 방지)
+  - 명령
+    - `docker volume prune`
+    - `docker volume prune --filter "label!=keep"`
+      - `keep`이라는 레이블이 달려지지 않은 볼륨만 제거
+- Prune networks
+  - 개요
+    - docker network는 많은 디스크 공간을 차지하지 않으나, `iptables` 룰을 생성하고, 브릿지 네트워크 디바이스와 라우팅 테이블 entries를 생성함
+  - 명령
+    - `docker network prune`
+      - 어떠한 컨테이너도 사용하고 있지 않은 네트워크를 prune함
+    - `docker network prune --filter "until=24h"`
+- Prune all
+  - 명령
+    - `docker system prune`
+      - images, containers, networks를 전부 prune
+    - `docker system prune --volumes`
+      - + volumes까지 prune

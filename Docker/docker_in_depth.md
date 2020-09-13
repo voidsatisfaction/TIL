@@ -1,11 +1,27 @@
 # Docker in depth
 
 - 의문
+- Dockerfile
+  - image
+  - container
 - Persist application data
   - Volume
   - Storage drivers
+- Orchestration
 
 ## 의문
+
+## Dockerfile
+
+- 정의
+  - 이미지를 만들기 위해 필요한 모든 커맨드를 포함하는 텍스트 파일
+  - c.f) image
+    - 정의
+      - **하나의 도커 컨테이너를 제작하기 위한 read-only instruction template**
+  - c.f) container
+    - 정의
+      - **한 이미지의 실행 가능한 instance**
+      - *순환 논법?*
 
 ## Persist application data
 
@@ -60,7 +76,7 @@ docker run -d \
 ### Storage drivers
 
 - 정의
-  - 컨테이너의 writable 레이어에 데이터를 생성할 수 있도록 허락해줌
+  - 컨테이너의 writable 레이어에 데이터를 생성할 수 있도록 함
   - image layer, container layer의 상호작용을 처리함
 - 특징
   - 컨테이너가 삭제되면 해당 레이어의 데이터도 삭제
@@ -70,8 +86,8 @@ docker run -d \
     - 차이
       - 각 storage driver마다 layer들의 상호작용 대한 구현은 각자 다름
     - 공통
-      - 모든 드라이버는 stackable image layer를 사용
-      - CoW(Copy-on-Write) 전략 사용
+      - **모든 드라이버는 stackable image layer를 사용**
+      - **CoW(Copy-on-Write) 전략 사용**
 
 #### images and layers
 
@@ -192,3 +208,15 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
     - 동작하는 container와는 독립적이며, efficient I/O를 위해서 고안됨
     - 컨테이너 끼리 공유 가능
     - container의 writable layer의 크기를 증가시키지 않음
+
+## Orchestration
+
+- orchestrator
+  - **컨테이너화된 애플리케이션을 scale, maintain, manage하는 툴**
+  - 종류
+    - Kubernetes
+    - Docker Swarm
+- 배경
+  - container화 된 process의 **portability** 와 **reproduccibility**
+    - container화 된 application을 클라우드나 데이터센터로 옮기고 스케일링 가능하게 함
+  - 배포와 스케일링툴, 관리의 자동화가 필요함(e.g 실패한 컨테이너를 자동으로 교체)
