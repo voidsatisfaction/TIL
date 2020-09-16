@@ -5,6 +5,7 @@
   - apt vs apt-get
 - 꿀 터미널 키
 - git
+- awk
 - ln
 
 ## 꿀 커맨드
@@ -34,6 +35,29 @@
   - `/검색`: 검색
 - `xxd ~.dcm | less`
   - 바이너리 파일 읽기 + space로 한페이지씩 보기
+- `systemctl`
+  - `systemd`라는 프로세스 관리하고, 유닛으로 서비스를 제어하는 시스템 자원 통합 관리 도구를 제어하는 커맨드
+    - 데몬 관리
+  - `systemctl start <service>`
+  - `systemctl stop <service>`
+  - `systemctl status <service>`
+  - `systemctl enable <service>`
+    - 서비스 활성화
+    - *서비스 시작과의 차이는?*
+  - c.f) `journalctl`
+    - 데몬 프로세스가 제대로 구동되지 않는 경우에 로그를 볼 수 있는 명령어
+    - `journalctl -xe`
+- `time <command>`
+  - 커맨드를 수행하는데에 걸리는 시간 측정
+  - e.g)
+    - `time wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.19.9.tar.xz`
+    - output
+      - real
+        - 시작과 끝까지의 모든 시간
+      - user
+        - user mode에서 사용된 CPU time
+      - sys
+        - kernel mode에서 사용된 CPU time
 
 ### ;, &, &&
 
@@ -78,6 +102,11 @@
     - 결과적으로 commit 하나의 내용을 되돌리는데, 해당 커밋의 역연산의 커밋을 함
   - `git reset <commit>`
     - 결과적으로 commit 하나의 내용을 되돌리는데, 커밋 자체가 없었던 것 처럼 함
+
+## awk
+
+- `awk 'NR == 2 { print $0; exit }' [FILE]`
+  - 특정 레코드만 출력
 
 ## ln
 
