@@ -106,7 +106,7 @@ CMD python /app/app.py
 
 - layer
   - 개요
-    - 각 레이어는 이전 레이어와의 fs상의 차이의 집합
+    - 각 레이어는 이전 레이어와의 fs상의 차이의 집합이며, 레이어 자체도 하나의 file system
     - 레이어는 스택으로 쌓임
   - 종류
     - image layer
@@ -187,22 +187,22 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
 - `docker history <image_id>`
   - 이미지의 각 레이어 별 커맨드와 사이즈 확인 가능
 
-#### Copying makes continaer efficient
+#### Copying makes container efficient
 
-- `aufs`, `overlay`, `overlay2` CoW 순서
-  - 업데이트 할 파일이 존재하는 image layer를 찾음
+- `aufs`, `overlay`, `overlay2`에서의 CoW 순서
+  - 1 업데이트 할 파일이 존재하는 image layer를 찾음
     - 최신 레이어부터 base layer 마다 순차적으로 찾음
     - 찾으면 빠른 속도를 위해서 캐싱
-  - `copy_up` operation을 행하여, 컨테이너의 writable 레이어에 복사함
+  - 2 `copy_up` operation을 행하여, 컨테이너의 writable 레이어에 복사함
     - `copy_up` operation은 성능 오버헤드를 발생시킴
       - 오버헤드 정도는 storage driver 마다 차이가 남
       - 파일이 클 수록, 많은 레이어가 존재할 수록, 깊은 디렉터리 트리 구조를 가질 수록 오버헤드가 큼
     - 파일이 처음 수정될 때 처음에만 `copy_up` 연산을 행하므로 그나마 오버헤드가 경감됨
-  - 변경은 복사된 파일에만 진행됨
-    - 컨테이너는 아래 레이어에 존재하는 read-only 파일의 복제본을 볼 수 없음
+  - 3 변경은 복사된 파일에만 진행됨
+    - 컨테이너는 복사 및 변경 이후에 아래 레이어에 존재하는 read-only 파일의 복제본을 볼 수 없음
 - `Btrfs`, `ZFS`와 다른 드라이버는 CoW를 다른식으로 핸들링함
 - 주의
-  - 데이터를 많이 consume하는 컨테이너는 그렇지 않은 컨에티너보다 많은 디스크 공간을 차지함
+  - 데이터를 많이 consume하는 컨테이너는 그렇지 않은 컨테이너보다 많은 디스크 공간을 차지함
     - 대부분의 write operation이 컨테이너의 writable top layer의 새 디스크공간을 차지하기 때문
   - **write-heavy 애플리케이션의 경우, 데이터를 컨테이너에 저장하지말고, volume을 사용하라**
     - 동작하는 container와는 독립적이며, efficient I/O를 위해서 고안됨
@@ -217,6 +217,6 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
     - Kubernetes
     - Docker Swarm
 - 배경
-  - container화 된 process의 **portability** 와 **reproduccibility**
+  - container화 된 process의 **portability** 와 **reproducibility**
     - container화 된 application을 클라우드나 데이터센터로 옮기고 스케일링 가능하게 함
   - 배포와 스케일링툴, 관리의 자동화가 필요함(e.g 실패한 컨테이너를 자동으로 교체)
