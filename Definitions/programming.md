@@ -16,6 +16,7 @@
 - Data
   - stream
 - Program
+  - Library
   - Manifest file
 
 ## General
@@ -502,6 +503,35 @@ print(x) # global
     - There it defines the quasi-continuous flow of data that is processed in a dataflow programming language as soon as the program state meets the starting condition of the stream.
 
 ## Program
+
+### Library
+
+- 정의
+  - 컴퓨터 프로그램에 의해서 사용되는 non-volatile 자원의 collection
+    - 포함되는 자원
+      - configuration data
+      - documentation
+      - help data
+      - message templates
+      - pre-written code
+      - subroutine
+      - classes
+      - values
+      - type specification
+    - 행동 구현의 collection
+      - resuability
+        - independent program들이나 sub-program들에서 재사용됨
+      - interface
+        - 라이브러리를 사용할 때 내부 구현을 알 필요가 없음
+- 종류
+  - 프로그램 라이프 사이클에 따른 분류
+    - static library
+      - 라이브러리의 코드가 메인 프로그램 빌드 타임에 접근되는 경우
+    - dynamic library
+      - 프로세스가 시작할때, 혹은 동작하는 도중의 부분으로 executable이 실행되고 나서 library behavior이 연결되는 경우
+        - loaded at runtime
+        - linker에 의해서 dynamic library가 로드 되고 링크될 수 있음 or 실행 도중에 application이 명시적으로 module이 로드되도록 요청할 수 있음
+      - 메인 프로그램의 executable를 빌드하고 배포하는 것을 library 구현과는 독립적으로 시행함
 
 ### Manifest file
 
