@@ -11,6 +11,8 @@
   - Referer
 - Server
   - WSGI
+- JS
+  - ArrayBuffer
 
 ## 의문
 
@@ -377,3 +379,28 @@ def call_application(app, environ):
 environ = {...} # environ dict
 status, headers, body = call_application(app, environ)
 ```
+
+## JS
+
+### ArrayBuffer
+
+- 정의
+  - *generic*, fixed-length raw 바이너리 데이터 버퍼를 나타낼 때 사용됨
+  - array of bytes
+    - 다른 언어에서는 byte array와 유사
+- 특징
+  - 직접 수정할 수 없음
+    - `typed array object`를 생성하거나 `DataView` 라는 특정 포맷의 버퍼 오브젝트를 생성해서 buffer를 read, write할 수 있음
+  - 이미 존재하는 데이터로부터 array buffer를 얻을 수 있음
+    - Base64 string
+    - local file
+
+### Source map
+
+- 정의
+  - minified나 coffeeScript, TypeScript와 같은 언어로부터 컴파일된 js의 경우, debug할 때, 기존 소스에 기반하여 할 수 있도록 도와주는 파일
+    - original source <-(map)-> transformed source
+- 사용법
+  - source map을 생성
+  - transformed file에 source map의 경로를 지정
+    - `//# sourceMappingURL=http://example.com/path/to/your/sourcemap.map`
