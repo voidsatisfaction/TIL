@@ -8,6 +8,7 @@
   - Volume
   - Storage drivers
 - Orchestration
+- Docker daemon configuration
 
 ## 의문
 
@@ -220,3 +221,73 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
   - container화 된 process의 **portability** 와 **reproducibility**
     - container화 된 application을 클라우드나 데이터센터로 옮기고 스케일링 가능하게 함
   - 배포와 스케일링툴, 관리의 자동화가 필요함(e.g 실패한 컨테이너를 자동으로 교체)
+
+## Docker daemon configuration
+
+- 개요
+  - 일반적인 설치로는, docker daemon은 system utility에 의해서 실행됨
+    - 도커가 머신이 reboot하면 자동으로 재시작할 수 있도록 함
+  - `dockerd` 커맨드로 사용자가 실행 가능
+    - 대신 foreground로 실행되며, 로그가 터미널로 전송됨
+
+### Configure the Docker daemon
+
+- `dockerd` 를 시작할때 flag로 지정
+- **JSON configuration file(preferred)**
+  - 위치
+    - Linux
+      - `/etc/docker/daemon.json`
+    - Windows
+      - `C:\ProgramData\docker\config\daemon.json`
+
+`/etc/docker/daemon.json` 파일의 예시
+
+```json
+{
+    "default-address-pools": [{"base": "172.17.0.1/16", "size":24}],
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    },
+    "debug": true,
+    "tls": true,
+    "tlscert": "/var/docker/server.pem",
+    "tlskey": "/var/docker/serverkey.pem",
+    "hosts": ["tcp://192.168.59.3:2376"]
+}
+```
+
+### Docker daemon directory
+
+- 개요
+  - docker daemon은 모든 데이터를 하나의 디렉터리에 저장함
+    - docker objects들(containers, images, volumes, service definition and secrets)
+    - 위치
+      - Linux
+        - `/var/lib/docker`
+      - Windows
+        - `C:\ProgramData\docker`
+    - 위치 변경 방법
+      - `data-root` configuration option을 사용하면 됨
+- 주의
+  - 동시에 여러 데몬이 같은 위치에 데이터를 저장하면, 에러가 생길 가능성이 높음
+
+### OOME(Out Of Memory Exceptions)
+
+- 개요
+  - system에서 사용가능한 메모리보다 컨테이너가 더 많이 메모리를 사용하는 경우 발생
+  - kernel OOM killer에 의해서 container 혹은 Docker daemon이 killed될 수 있음
+    - 이는 OS 레벨에서 kill시키는 것이므로 도커가 주체적으로 조정 못함
+    - Docker daemon은 OOM priority가 조정되므로, 더 killed될 확률은 적음
+    - 대신 container자체가 killed될 확률은 더 높음(OOM priority를 조정하지 않음)
+      - `--oom-kill-disable`나 `--oom-score-adj`를 수동으로 설정하면 안됨
+- OOME로 인한 리스크 대응
+  - 애초에 proudction 환경에 배포하기 전에 memory 필요량을 측정
+  - container에 메모리 사용 제한을 넣음
+  - Docker host의 Swap 설정을 잘 설정함
+    - system memory가 전부 소진되는 것을 막아줌
+  - 컨테이너를 service화 시켜서 service-level 제한을 둠
+- Daemon의 log를 읽자
+  - `/var/log/syslog`
