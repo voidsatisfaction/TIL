@@ -9,6 +9,22 @@
   - Storage drivers
 - Orchestration
 - Docker daemon configuration
+  - Configure the Docker daemon
+    - Docker daemon directory
+    - OOME(Out Of Memory Exceptions)
+  - Control Docker with systemd
+- Configure containers
+  - Start containers automatically
+  - Keep containers alive during daemon downtime
+  - Run multiple services in a container
+  - Container runtime metrics
+  - Runtime options with Memory, CPUs, and GPUs
+  - Logging
+  - Security
+  - Scale your app
+  - Extend Docker
+- Configure networking
+- Manage application data
 
 ## 의문
 
@@ -239,6 +255,8 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
       - `/etc/docker/daemon.json`
     - Windows
       - `C:\ProgramData\docker\config\daemon.json`
+  - 특징
+    - HTTP proxy빼고는 다 설정 가능
 
 `/etc/docker/daemon.json` 파일의 예시
 
@@ -259,7 +277,7 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
 }
 ```
 
-### Docker daemon directory
+#### Docker daemon directory
 
 - 개요
   - docker daemon은 모든 데이터를 하나의 디렉터리에 저장함
@@ -274,7 +292,7 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
 - 주의
   - 동시에 여러 데몬이 같은 위치에 데이터를 저장하면, 에러가 생길 가능성이 높음
 
-### OOME(Out Of Memory Exceptions)
+#### OOME(Out Of Memory Exceptions)
 
 - 개요
   - system에서 사용가능한 메모리보다 컨테이너가 더 많이 메모리를 사용하는 경우 발생
@@ -291,3 +309,63 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
   - 컨테이너를 service화 시켜서 service-level 제한을 둠
 - Daemon의 log를 읽자
   - `/var/log/syslog`
+
+### Control Docker with systemd
+
+- 개요
+  - 많은 Linux distribution들은 `systemd`를 Docker daemon을 시작하기 위해서 사용함
+- Docker daemon 시작
+  - `sudo systemctl start docker`
+  - `sudo service docker start`
+    - `systemctl`이 없는 경우
+- Docker daemon이 부팅이 시작되면 동작하도록 하기
+  - 대부분의 Linux distribution
+    - `sudo systemctl enable docker`
+      - 반대는 `sudo systemctl disable docker`
+
+## Configure containers
+
+### Start containers automatically
+
+- 개요
+  - docker는 restart policy를 제공
+    - container가 exit하거나 docker가 restart할 때를 제어하기 위함
+  - c.f) `--live-restore`
+    - Docker daemon이 죽어도 container가 동작하도록 하는 설정
+- 종류
+  - `no`
+    - container를 자동으로 재시작하지 않음
+  - `on-failure`
+    - non-zero exit code인 경우에는 재시작
+  - `always`
+    - container가 멈출 경우 재시작
+    - 수동으로 멈춘 경우에는, docker daemon이 재시작되거나, container 그 자체가 수동으로 재시작되는 경우에만 재시작
+  - `unless-stopped`
+    - `always`와 유사하나, container가 어떤 이유로든지 stop되면 docker daemon이 재시작되어도 재시작하지 않음
+- 예시
+  - `docker run -d --restart unless-stopped redis`
+    - runtime에 policy만 변경 가능
+- 특징
+  - restart policy는 적어도 10초 동안 성공적으로 동작하는 컨테이너에만 적용됨
+  - 수동으로 컨테이너를 멈춘경우에는, restart policy는 무시됨
+  - restart policy는 container에만 적용됨
+    - swarm service는 다름
+- Process manager
+  - 사용 가능하나, restart policy와 혼용하지 않도록 해야 함
+  - 컨테이너 안에서 process manager를 사용하는 것은 좋지 못함
+
+### Keep containers alive during daemon downtime
+
+- 개요
+  - 기본 설정으로는, docker daemon이 꺼지면, 동작하는 container도 꺼지나, live restore 설정을 하면, daemon이 없어도 컨테이너를 동작시킬 수 있음
+    - docker upgrade의 경우에는, patch release의 경우에만 지원됨
+      - `YY.MM.x` not `YY.MM`
+- 설정
+  - `/etc/docker/daemon.json`
+    - `{ "live-restore": true }`
+    - docker daemon을 재시작
+      - `systemctl reload docker` or
+      - `SIGHUP` signal을 dockerd 프로세스로 보냄
+- 특징
+  - swarm services에는 적용 불가
+    - swarm service는 swarm manager에 의해서 관리됨
