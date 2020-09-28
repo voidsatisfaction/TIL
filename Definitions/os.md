@@ -703,6 +703,27 @@ Pipeline
         - Message-oriented(UDP)
     - RPC
 
+#### Signal(IPC)
+
+- 정의
+  - IPC의 제한된 형태이며, Unix, Unix-like나 POSIX-compliant 운영체제에서 사용됨
+  - 프로세스 혹은 스레드에게 전송되는 비동기 notification
+- 동작
+  - 1 signal을 보냄
+  - 2 OS가 타겟 프로세스의 일반적인 실행 흐름을 interrupt해서 signal 전달
+  - 3 프로세스가 signal handler를 등록했었으면, 해당 루틴이 실행되며, 그렇지 않은 경우에는 default signal handler가 실행됨
+- 특징
+  - 임베디드 프로그램은 IPC에 있어서 유용하게 사용함
+    - 오버헤드가 적음
+  - interrupt와 유사
+    - 차이점
+      - signal
+        - kernel에 의해서 mediated(중재? 매개?)되며(아마도 via systemcall), process에 의해서 다뤄짐
+          - 커널은 interrupt를 프로세스에 signal로써 넘겨줄 수 있음
+          - e.g) `SIGSEGV`, `SIGBUS`, `SIGILL`, `SIGFPE`
+      - interrupt
+        - processor에 의해서 mediated되며, 커널에 의해서 다뤄짐
+
 ## Memory
 
 Memory abstraction example
