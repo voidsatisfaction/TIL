@@ -532,6 +532,81 @@ print(x) # global
         - loaded at runtime
         - linker에 의해서 dynamic library가 로드 되고 링크될 수 있음 or 실행 도중에 application이 명시적으로 module이 로드되도록 요청할 수 있음
       - 메인 프로그램의 executable를 빌드하고 배포하는 것을 library 구현과는 독립적으로 시행함
+- Linking
+  - 정의
+    - library module에 대한 링크나 심볼로 알려진 참조를 resolve하는 것
+      - *구체적으로 무엇인지?*
+    - executable file이 생성될 때 혹은 런타임에 사용될 때 링킹이 동작함
+  - 특징
+    - *주어진 라이브러리의 집합에서 하나의 링크 타켓이 여러번 등장하는 것은 에러가 아님*
+      - *무슨 소리인지*
+    - 몇몇 프로그래밍 언어는 smart linking을 사용함
+- Shared libraries(object)
+  - 정의
+    - file s.t. executable files과 shared object files 사이에서 공유되도록 의도된 파일
+  - 특징
+    - 프로그램에 의해서 사용되는 모듈은 개개인의 shared objects로부터 memory로 load time이나 runtime에 로드됨
+      - executable file을 만들 때 링커에 의해서 복사되는 것이 아님(static)
+    - 현대 OS는 executable file과 같은 포맷의 shared library files을 갖을 수 있음
+      - 장점
+        - loader는 하나만 있어도 됨
+        - executable 파일들이 shared libraries로 사용될 수 있게 함
+  - 종류
+    - Unix
+      - ELF
+      - Mach-O
+    - Windows
+      - PE
+
+#### DLL(Dynamic-link library) file
+
+- 정의
+  - Windows와 OS/2 운영체제에서 shared library 개념의 마이크로소프트의 구현체
+- 특징
+  - 확장자
+    - `DLL`, `OCX`, `DRV`
+  - DLL의 파일 포맷은 EXE 파일과 동일함
+    - code, data, resources 포함 가능
+  - 시기별
+    - 초기
+      - DLL이 address space에 로드 되면, 해당 라이브러리를 사용하는 모든 프로그램이 그것에 접근함
+      - 라이브러리의 데이터는 모든 프로그램 사이에서 공유됨
+        - indirect IPC(Inter-Process Communication)
+        - corruption
+    - Windows95의 32비트라이브러리 도입
+      - 모든 프로세스가 자신만의 address space를 갖음
+      - DLL 코드는 공유되나, 데이터는 private하게 유지 (명시적으로 요청하는 경우에만 public)
+        - *런타임에 같은 라이브러리가 이미 메모리에 존재하는 것을 어떻게 인식하지?*
+- 배경
+  - 초기 Windows는 하나의 메모리 공간에 모든 프로그램이 함께 동작했음
+  - CPU를 다른 프로그램들에게 양보를 했어야 함
+    - 그래야 GUI가 responsive하게 멀티태스킹이 가능했음
+  - 그래서 operating system 레벨의 연산은 OS인 MS-DOS에서만 제공 되었고, 그것보다 보다 높은 서비스는 윈도우 라이브러리인 DLL에 의해서 제공됨
+  - DOS위의 이 DLL 레이어는 모든 윈도우 프로그램들에게 공유가 되었어야 함
+    - 그래야 1MB 안에서 윈도우가 돌아갈 수 있었음
+  - *연역적 사고 연결이 끊김*
+  - 윈도우는 GDI(Graphics Device Interface)가 서로 다른 드라이버 장치를 로딩할 수 있게 한 것과 같이, 프로그램들이 공유 USER및 GDI 라이브러리에서 API 호출을 할 수 있도록 하였음
+    - 동적 연결
+    - 만약 정적 연결이라면, 이미 컴파일 타임에 해당 라이브러리가 메모리의 code영역으로 올라가게 되므로, 라이브러리를 공유할 수 없음
+  - 초기 윈도우에서는 DLL이 GUI전체의 핵심 토대였고, 지금도 OS를 구축하는데에 핵심 개념임
+- 장점
+  - Modularity
+    - 1 하나의 DLL의 코드와 데이터만 수정해도 다른 모든 애플리케이션을 수정하지 않아도 변화를 적용가능하게 함
+    - 2 플러그인을 위한 일반적인 인터페이스의 사용함으로써, 기존의 모듈 뿐 아니라 새 모듈이 run-time에 seamless하게 인테그레이션 가능
+- 단점
+  - DLL hell
+    - 해결
+      - .NET Framework
+      - Virtualization-based 방식 도입
+- 기능
+  - 개요
+  - 메모리 관리
+  - import libraries
+  - symbol resolution and binding
+  - explicit run-time linking
+  - delayed loading
+
+#### ActiveX
 
 ### Manifest file
 
@@ -546,3 +621,47 @@ print(x) # global
     - entry point
     - cryptographic hash, checksum
       - authenticity & integrity 보장
+
+### Magic number
+
+- 정의(다음 중 하나 혹은 그 이상)
+  - 1 이름이 부여된 상수와 대체될 수 있는 여러번 나타날 수 있는 unexplained 고유 값
+  - 2 file format 혹은 protocol을 구별하기 위해 사용되는 텍스트 값 혹은 숫자 상수
+    - file signatures
+      - e.g)
+        - JAVA
+          - hex `CAFEBABE`
+        - GIF
+          - ASCII code `GIF89a(47 49 46 38 39 61)` or `GIF87a`
+        - JPEG
+          - 일반
+            - 시작 `FF D8`
+            - 끝 `FF D9`
+          - JPEG/JFIF
+            - null terminated string으로 `JFIF(4A 46 49 46)`코드가 포함됨
+          - JPEG/Exif
+            - null terminated string으로 `Exif(45 78 69 66)`코드가 포함됨
+            - 그 다음은 metadata
+        - PNG
+          - `\211 P N G \r \n \032 \n (89 50 4E 47 0D 0A 1A 0A)`
+        - MIDI
+          - `MThd (4D 54 68 64)`
+        - Unix, Linux scripts
+          - shebang `#! (23 21)`
+        - PDF
+          - `%PDF (25 50 44 46)`
+        - MBR(Master Boot Record)
+          - `55 AA`
+        - TIFF
+          - `II*NUL (49 49 2A 00)`
+            - Intel
+            - little endian
+          - `MM*NUL (4D 4D 00 2A)`
+            - Motorola
+            - big endian
+    - protocol
+      - SSL transaction
+        - `client hello`
+      - DHCP
+        - `0x63 0x82 0x53 0x63`
+  - 3 GUID
