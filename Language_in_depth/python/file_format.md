@@ -25,9 +25,6 @@
   - 정의
     - 파이썬 optimized pyc파일(Python3.5 이전에만)
       - Python 3.5부터는 pyc파일만 사용
-- `.pyd`
-  - 정의
-    - C/C++ 헤더와 대응되는 Cython스크립트
 - `.pyi`
   - 정의
     - Stub file
@@ -39,6 +36,12 @@
   - 정의
     - MS-Windows를 위한 Python script archive
     - *왜 따로 있는 것일까?*
+- `.pyd`
+  - 정의
+    - C/C++ 헤더와 대응되는 Cython스크립트
+- `.pyx`
+  - 정의
+    - cython file format
 
 ### 참고: pyi(Stub file)
 
