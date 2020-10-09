@@ -43,7 +43,7 @@
   - `systemctl status <service>`
   - `systemctl enable <service>`
     - 서비스 활성화
-    - *서비스 시작과의 차이는?*
+    - 컴퓨터가 restart되어도 자동으로 동작하도록(daemonize)함
   - c.f) `journalctl`
     - 데몬 프로세스가 제대로 구동되지 않는 경우에 로그를 볼 수 있는 명령어
     - `journalctl -xe`
