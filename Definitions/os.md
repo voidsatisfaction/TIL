@@ -32,6 +32,8 @@
   - Swap in and out
   - Memory segmentation
   - Overlay
+  - OOM killer
+  - Memory overcommitment
 - Virtualization
   - OS-level virtualization
   - LXC
@@ -891,6 +893,92 @@ page table translation process
 - 특징
   - 컴퓨터의 메인 메모리보다 더 큰 메모리를 차지하는 프로그램을 동작할 수 있게 하는 방법(Paging과는 다른)
     - *더 필요하면 기존에 자신이 사용하던 메모리도 덮어씌워서?!*
+
+### OOM killer(Linux)
+
+왜 페이징을 안쓰고 그냥 메모리를 죽여버리는지? >> 페이징과 스와핑까지 사용하고 남은 공간이 없을 때 kill함
+
+*시스템에 현재 동작하는 모든 프로세스의 메모리 사용량이 피지컬 메모리를 상회해서 그런가?*
+
+- 정의
+  - 시스템의 가용 메모리가 매우 적을때, Linux 커널이 프로세스를 동작시키기 위한 메모리 확보를 하기 위해서, 여타 프로세스를 죽이는 프로세스
+- 배경
+  - 일반적으로 프로세스가 시작하면, 커널에 메모리를 요청하는데, 그 요청은 프로세스가 초기에 사용하는 양 보다 더 많음
+    - redundant memory(over allocation)
+    - e.g)
+      - 시스템은 8GB메모리 공간이 존재하는데, 커널은 8.5GB를 해당 프로세스에 할당할 수 있음
+  - 일반적으로는 문제를 일으키지 않으나, 프로세스들이 요청한 메모리를 다 사용하면서, physical memory가 모든 프로세스를 돌리기 위해 충분하지 않은경우에 문제가 생김
+    - *그냥 메모리 스왑하면 안돼?*
+      - *스왑 공간 제한도 다 차서 그런가?*
+- 삭제할 bad 프로세스 선택
+  - 특징
+    - 1 kernel은 필요한 최소한의 메모리만 확보함
+    - 2 Try to reclaim a large amount of memory
+      - *??? 1이랑 모순되는 내용?*
+    - 3 적은 양의 메모리를 사용하는 프로세스는 죽이지 않음
+    - 4 최소한의 숫자의 프로세스만 kill
+    - 5 *Some meticulous algorithms that elevate the sacrifice priority on processes the user wants to kill*
+  - 선정
+    - 리눅스 `proc_oom_score(seq_file, pid_namespace, pid, task)` 함수 호출
+      - *여기서 나오는 seq_file, pid_namespace, pid, task란 무엇인가?*
+      - `oom_badness(task_struct, totalpages)`
+        - 이곳에서 프로세스의 OOM score결정
+- 프로세스 삭제
+  - 삭제할 프로세스가 생긴 경우에는, OOM-Killer가 `oom_kill_task()`함수 실행
+    - 해당 프로세스에 `SIGKILL` 시그널을 보냄
+    - 커널 로그도 남김(Print a warning-level message)
+  - 주로 DB, Apache, 등의 프로세스가 죽을 떄가 많음 or task worker
+- 관련 설정
+  - OOM-killer 자체
+    - `sudo -s sysctl -w vm.oom-kill = 1`
+      - enable
+      - 0은 disable
+      - temporary
+      - permanent
+        - `/etc/sysctl.conf`파일에 `vm.oom-kill = 1`을 텍스트로 넣어둬야 함
+    - `echo 0 > /proc/sys/vm/panic_on_oom`
+      - disable
+  - Memory overcommit(`vm.overcommit_memory`)
+    - 0
+      - kernel이 overcommit할지 말지 결정함(Heuristic)
+    - 1
+      - 항상 overcommit 허용
+    - 2
+      - 제한적 overcommit 허용
+      - `commit 최댓값 = Swap 영역 + 물리 메모리 * vm.overcommit_ratio`
+  - Swappiness(`/proc/sys/vm/swappiness`)
+    - 값이 클 수록 OOM killer가 프로세스를 죽일 확률이 적어지나, 전반적인 작업속도 성능이 나빠짐
+    - 값이 적어지면 OOM killer가 프로세스를 죽일 확률이 높아지나, 전반적인 작업속도 성능이 향상됨
+
+### Memory overcommitment
+
+*실제 필요한 메모리 사용량 > swap + physical memory 인 경우에 OOM-killer가 동작하는 것인지?*
+
+- c.f) Memory commitment
+  - 정의
+    - **프로세스는 메모리 공간을 할당받았다고 생각하지만, 실제로는 물리 메모리 어느 곳에도 할당되어지지 않은 상태**
+- 정의
+  - 실제 physical machine보다 더 많은 메모리를 virtual computing device(or process)에 할당하는 것을 다루는 개념(physical machine의 메모리 양보다 더 많은 양의 메모리를 commit하는 것)
+    - 이것이 가능한 이유는, 할당받은 virtual machine혹은 process는 반드시 할당 받은 메모리를 일정 시점에 다 소비하지 않아도 되기 때문
+    - e.g)
+      - 4GB의 물리적 메모리를 갖는 호스트 내에 4개의 VM이 1GB의 메모리를 갖는 경우에는, 실제로 VM이 겨우 500MB 밖에 메모리를 사용하지 않는경우, 추가적인 VM을 생성할 수 있음
+- 특징
+  - 메모리 사용이 급증하면, Memory swapping이 사용됨
+    - swapping은 실제 메모리를 사용하는 것 보다 느림
+  - `vm.overcommit_memory` 변수의 값에 따라 다름
+    - 0
+      - kernel이 overcommit할지 말지 결정함(Heuristic)
+    - 1
+      - 항상 overcommit 허용
+      - OOM 에러가 날 가능성 존재(risky)
+    - 2
+      - 제한적 overcommit 허용
+      - `commit 최댓값 = Swap 영역 + 물리 메모리 * vm.overcommit_ratio`
+      - PostgreSQL에서 추천되는 옵션
+- 사용 예시
+  - VM
+  - `fork()`
+    - 일시적으로 부모 프로세스의 모든 메모리 주소 공간만큼의 메모리 확보가 필요함
 
 ## Virtualization
 
