@@ -72,13 +72,13 @@
     - 2,3계층 모두 지원 프로토콜
       - MPLS
 - 2계층 터널링 프로토콜
-  - PPTP(Point-to-Point Tunneling Protocol)
+  - **PPTP(Point-to-Point Tunneling Protocol)**
     - 개요
       - IP 페이로드를 암호화하고, IP헤더로 캡슐화하여 전송
       - 터널의 유지 보수 관리를 위해 TCP 연결을 사용하고, 모바일 유저가 서버에 접속하기 용이하게 되어있음
       - PPP(Point-to-Point Protocol)에 기초하여 두 대의 컴퓨터가 직렬 인터페이스를 이용하여 통신할 때 사용
         - 전화선을 통해 서버에 연결하는 PC에서 자주 사용되었음
-  - L2F(Layer 2 Forwarding Protocol)
+  - **L2F(Layer 2 Forwarding Protocol)**
     - 개요
       - 시스코에서 제안된 프로토콜
       - NAS 개시 VPN형이기 때문에, 사용자는 별도의 S/W가 필요 없음
@@ -99,7 +99,49 @@
         - 데이터와 순서번호 보유, 송신자를 확인하고 메시지가 송신되는 동안 수정되지 않았음을 보장하는 헤더로, 암호화 기능 없음
       - ESP
         - IP 페이로드를 암호화하여 데이터 Confidentiality를 제공하므로, 제3자에 의해 데이터 노출 차단
-- SSL VPN
-- 인증
+- **SSL VPN**
+  - 특징
+    - 일반 사용자가 쉽게 사용할 수 있는 보안 프로토콜
+    - IPSec VPN에 비해 설치 및 관리가 편리하고 비용 절감 가능
+    - 클라이언트와 서버 사이의 안전한 통신 채널 관리 담당
+    - 데이터 암호화와 인증을 통해 송수신 경로의 안전성 보장
+    - PKI의 공개키/개인키를 이용한 웹사이트 통신 보안 가능
+- **인증**
+  - 데이터 인증
+    - MAC, HMAC등을 이용하여 무결성 만족 가능
+  - 사용자 인증
+    - 방식
+      - Peer-Peer
+        - PAP(Password Authentication Protocol)
+          - PPP연결시 사용되는 인증 포로토콜
+          - 연결을 원하는 호스트는 사용자 계정과 패스워드를 목적지 호스트로 보내고, 목적지 시스템은 요청 컴퓨터를 인증한 후 연결을 허용하는 두 단계 핸드셰이킹으로 구성
+        - CHAP(Challenge Handshake Authentication Protocol)
+          - PPP 연결 인증 과정의 보안을 위해 보안요소를 강화시킴
+          - 3단계 핸드셰이킹과 해시
+      - Client/Server
+        - TACACS(Terminal Access Controller Access-Control System)
+          - 인증에 필요한 사용자 ID, 암호, PINs 및 암호키 정보를 인증서버에서 데이터베이스 형태로 관리하며 클라이언트로부터의 인증 요청을 처리함
+
+### 29.1.4 MPLS VPN
+
+*정확히 이게 뭔지 잘 모르겠다*
+
+- MPLS 기본 개념
+  - 시스코사의 태그 스위칭과 IBM의 ARIS(Aggregate Route based IP Switching)를 결합해 IETF에서 정한 표준
+  - 유입되는 패킷을 진입부분에서 3계층 주소를 이용해서 해당 라우터가 갖고 있는 레이블 정보와 비교하여 부가적인 MPLS 레이블 정보를 덧붙임
+  - 현재 부여 받은 레이블이 다음 라우터에서 새로운 레이블로 변경되는 작업을 레이블 스와핑이라 함
+- MPLS VPN
+  - 개요
+    - MPLS 통신 네트워크를 이용하여 VPN을 제공하는 서비스로 여타 VPN 구조에 비하여 서비스 도입과 운영관리가 간단하고 편리하며, 저가의 VPN 서비스 제공이 가능
+    - MPLS VPN의 특징은 다음과 같음
+      - 기존 인터넷에 그대로 적용가능
+      - 2계층의 스위칭 속도와 3계층의 라우팅 기능을 접목
+      - 짧고 고정된 길이(4byte)의 레이블을 이용하여 스위칭
+      - packet forwarding은 레이블 스와핑으로 수행
+      - 패킷 지연 시간 감소
+      - 레이블 부여는 LER(Label Edge Router)에서만 수행
+      - 네트워크 내의 라우터와 스위치의 부담을 덜어줌
+      - 여러 가지 다양한 서비스 제공 가능
+        - QoS, VoIP, TE 등
 
 ## 29.2 IPSec(IP Security Protocol)

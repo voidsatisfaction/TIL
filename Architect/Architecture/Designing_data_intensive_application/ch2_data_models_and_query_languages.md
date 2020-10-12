@@ -72,9 +72,9 @@ resume의 Tree 구조 표현
 
 ![](./images/ch2/one_to_many_relation_tree_structure1.png)
 
-- 대부분의 애플리케이션의 개발이 object-oriented하게 되지만, SQL data model의 경우에는 관계형 테이블에 데이터가 저장되면, translation layer가 필요해짐
+- **대부분의 애플리케이션의 개발이 object-oriented하게 되지만, SQL data model의 경우에는 관계형 테이블에 데이터가 저장되면, translation layer가 필요해짐**
   - e.g) ORM(ActiveRecord, Hibernate)
-  - 하지만 ORM도 Object-oriented model과 SQL data model 사이를 완전히 매우지는 못함
+  - 하지만 ORM도 **Object-oriented model** 과 **SQL data model** 사이를 완전히 매우지는 못함
 - 관계형 데이터베이스에서 1:다 관계를 다루는 방법(이력서의 예시)
   - positions, education, contact information을 전부 다 다른 테이블로 두고, foreign key 참조로 이어줌(JOIN사용)
   - XML, JSON 데이터 타입의 데이터를 하나의 행에 저장 가능
@@ -82,6 +82,9 @@ resume의 Tree 구조 표현
     - DB가 encoded column에 대해서 query하는것이 불가능해짐
 - 1:다 관계는 Tree구조를 암시함
   - JSON으로 잘 나타낼 수 있음
+- JSON의 단점
+  - schemaless
+    - 때로는 장점이 되기도 함
 
 ### ID 사용의 이점
 
@@ -220,3 +223,30 @@ UPDATE users SET first_name = split_part(name, ' ', 1); -- PostgreSQL
   - declarative query는 css도 마찬가지
     - 구체적으로 어떻게 배경화면이 초록색이 되는지는 지정하지 않음
     - `js`에서는 DOM API를 이용해서 직접 imparative하게 제어 가능
+
+### 복잡한 버전의 resume
+
+![](./images/ch2/many_to_many_relation_structure1.png)
+
+- normalizing과 ID 사용
+  - ID 사용의 이점
+    - 사람에게 전혀 ID의 의미가 없기 떄문에, 변화할 필요가 없다는 점
+    - ID가 나타내는 정보가 변화하여도 결국 ID는 계속 같은 채로 유지
+      - 사람에게 의미가 있는 데이터의 경우, 미래에 변화한다면 전부다 바꿔야 하는 오버헤드 발생
+      - id에 대응하는 display Name만 변화시켜주면 되는 것
+    - normalization의 key idea
+      - duplication의 제거
+    - updating이 쉬움
+    - localization support가 가능
+    - better search
+  - ID를 사용하지 않으면
+    - 중복된 값을 여러 테이블에 갖고 있어야 함
+- normalizing과 document model의 한계
+  - many-to-one 관계
+    - e.g) 많은 사람들이 특정 지역에 산다 등
+  - many-to-one 관계에 있어서, document model에서는 데이터를 가공하기 힘듬
+    - 데이터를 가져오고, application layer에서 join 기능을 제공해야 함
+  - 애플리케이션의 처음 버전은 join-free document model과 잘 맞아도, 기능이 추가되다 보면 어떻게 될지는 아무도 모름
+    - e.g)
+      - 위의 resume의 경우, orgnization이나 school이 entity가 되어야 할 수도 있음(organization의 webpage, school의 webpage 등)
+      - recommendation이 추가가 되어서, recommendation을 작성하는 사람의 프로필 사진이 걸려있어야 하는 경우 등(many-to-many feature)
