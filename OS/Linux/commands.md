@@ -58,6 +58,20 @@
         - user mode에서 사용된 CPU time
       - sys
         - kernel mode에서 사용된 CPU time
+- 사용자 추가 / 제거
+  - `useradd`
+    - `useradd -m <username> -d /home/<username> -s /bin/bash`
+      - `-m`: 홈 디렉토리도 함께 생성
+      - `-d`: 유저 디렉토리 지정
+      - `-s`: 유저 쉘 지정
+    - `passwd <username>`
+      - 유저 패스워드 설정
+  - `usermod`
+    - 유저 계정 정보 변경
+    - `usermod -aG docker <username>`
+      - 도커 그룹에 username 추가
+  - `deluser`
+    - `deluser <username>`
 
 ### ;, &, &&
 
