@@ -12,6 +12,9 @@
 
 - `du --max-depth=1 -ahl .`
   - 현재 디렉토리에 존재하는 파일 / 폴더의 디스크 사용량을 확인
+  - `sort`커맨드와 결합
+    - `du -alh -d 1 | sort -k 2`
+      - 디스크 사용량을 표시한 후에, output의 두번째 column을 기반으로 오름차순 정렬
 - `git log -p -1`
   - 마지막 1개의 커밋의 코드 diff를 볼 수 있음
 - `lsof -i -nP`
