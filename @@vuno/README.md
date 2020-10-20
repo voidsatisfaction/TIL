@@ -10,6 +10,7 @@
   - BoneAge
   - Pathology
   - Chest X-ray
+  - LungCT
 
 ## 의문
 
@@ -271,3 +272,40 @@ X-ray PA vs AP
       - 가까운 거리에서 촬영하기 때문에 상이 크고 흐릿하게 촬영
         - portable X-ray 기기 사용하기 때문에 먼 거리 촬영 어려움
       - 반듯이 설 수 없고 검사실까지 거동할 수 없는 중환자 or 소아 환자에게 시행 -> 누운자세 or 반좌위 자세로 촬영
+
+### LungCT
+
+- 본질
+  - **모든것은 LungRADS를 계산하기 위함**
+- nodule
+  - plane
+    - axial
+      - LongD
+      - ShortD
+    - saggital
+      - LongD
+      - ShortD
+    - coronal
+      - LongD
+      - ShortD
+  - main plane
+    - 위의 셋 중에서 하나 룰베이스로 고름
+  - default LungRADS
+    - main plane의 LungRADS중에서 가장 큰 것의 스코어
+      - 일부 병원은 axial에서만 LungRADS를 고려하는 경우도 있음
+- nodule category
+  - solid
+    - 색칠
+  - part solid
+    - solid 주위의 점점점
+  - ggn
+    - 점점점
+- nodule etc
+  - spiculation
+    - 노듈의 생긴 모양이 누가봐도 malign인 경우(뾰족뾰족)
+- LungRADS에 관하여
+  - 인증 별로 LungRADS 계산 version이 다를 수 있음
+    - CR
+    - FDA
+    - 한국 식약처
+  - 계약 별로 다를 수 있음
