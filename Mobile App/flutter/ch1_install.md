@@ -27,6 +27,8 @@
 - Material app
   - 모바일과 웹의 표준 디자인 언어(스펙같은 느낌)
 - Flutter는 Material 다양한 widget의 집합을 제공
+  - React로 부터 영감을 받음
+    - UI는 Widgets로 부터 생성함
 
 ### Stateful Widget
 
@@ -115,7 +117,7 @@ class RandomWords extends StatefulWidget {
 
 ```
 
-## 두번쨰 예시
+## 3. 두번쨰 예시
 
 ### 패키지
 
