@@ -26,10 +26,17 @@ Layout 도식화 과정3
 
 - `Container`가 HTML의 `<div>`와 같은 개념인듯
 - `Child`가 `<div>`의 node의 child노드를 가리키는 개념인듯
-- `children`
-  - `Row`의 children은 가로로 배치
-  - `Column`의 children은 세로로 배치?
 - `margin`, `padding`은 HTML의 그것을 그대로 차용
+- `Row`
+  - children
+    - 가로로 배치
+  - `mainAxis`
+    - 가로
+- `Column`
+  - children
+    - 세로로 배치
+  - `mainAxis`
+    - 세로
 
 Layout 코드 모습
 
@@ -134,7 +141,9 @@ Widget titleSection = Container(
 
 Column _buildButtonColumn(Color color, IconData icon, String label) {
   return Column(
+    // ??
     mainAxisSize: MainAxisSize.min,
+    // Column: mainAxis => y
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Icon(icon, color: color),
@@ -156,6 +165,7 @@ Column _buildButtonColumn(Color color, IconData icon, String label) {
 Widget createButtonSection(Color color) {
   Widget buttonSection = Container(
     child: Row(
+      // Row: mainAxis => x
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildButtonColumn(color, Icons.call, 'CALL'),
