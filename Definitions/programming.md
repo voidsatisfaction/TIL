@@ -465,6 +465,63 @@ print(x) # global
     - *왜 복제본을 통하여 접근하는가?*
   - 일부 문헌에서는 반환되는 함수 자체를 클로저라고 하는 경우도 있으므로 혼동하지 않도록 조심
 
+#### The stale closure
+
+```js
+function createIncrement(i) {
+  let value = 0;
+  let values = {
+    num: 0
+  };
+  function increment() {
+    value += i;
+    values.num += i;
+    // console.log(value);
+    console.log(values);
+    // const message = `Current value is ${value}`;
+    let message = `Current value is ${values.num}`;
+    return function logValue() {
+      console.log(message);
+      console.log(values);
+      console.log(value);
+      return values;
+    };
+  }
+
+  return increment;
+}
+
+const inc = createIncrement(1);
+const log1 = inc(); // 1
+const log2 = inc(); // 2
+inc();              // 3
+// Does not work!
+const ref1 = log1();             // "Current value is 1", { num: 3 }, 3
+const ref2 = log2();             // "Current value is 2", { num: 3 }, 3
+log1();
+
+console.log(ref1); // { num: 3 }
+console.log(ref2); // { num: 3 }
+console.log(ref1 === ref2); // true
+```
+
+- 위의 코드 해석
+  - **각 함수마다 고유한 functional scope** 존재
+  - js는 lexical scope
+  - `log1 = inc()`
+    - 이 경우에, `logValue`의 입장에서 당시에 free variable인 message의 값이 "Current value is 1"로 고정됨
+      - free variable은 런타임에 evaluated되나, 함수가 호출되면 자연스럽게 고정된다. 그것을 변화시키려면, enclosed함수에서 값을 변화시키는 수 밖에 없음
+  - `log2 = inc()`
+    - 이 경우에, `logValue`의 입장에서 당시에 free variable인 message의 값이 "Current value is 2"로 고정됨
+  - `ref1 = log1()`
+    - message의 값이 고정되어 있으므로, 그 값을 반환
+    - values는 값이 아니라, reference이므로 incremented된 것을 반환
+    - value는 고정되지 않고, 그동안 inc되었으므로 3반환
+  - `ref2 = log2()`
+    - 위와 마찬가지
+  - `ref1 === ref2`
+    - 서로 같은 values의 reference를 비교하는 것이므로 true반환
+
 ## Data
 
 ### stream
