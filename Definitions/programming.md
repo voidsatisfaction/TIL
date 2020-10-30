@@ -474,11 +474,11 @@ function createIncrement(i) {
     num: 0
   };
   function increment() {
+    // entity의 갱신(값의 갱신)
     value += i;
     values.num += i;
-    // console.log(value);
+
     console.log(values);
-    // const message = `Current value is ${value}`;
     let message = `Current value is ${values.num}`;
     return function logValue() {
       console.log(message);
@@ -505,18 +505,26 @@ console.log(ref2); // { num: 3 }
 console.log(ref1 === ref2); // true
 ```
 
+**entity와 name을 분리해서 생각하는 것이 핵심!!!!**
+
 - 위의 코드 해석
-  - **각 함수마다 고유한 functional scope** 존재
   - js는 lexical scope
+    - scope는 미리 정해지지만(즉, name과 entity의 바인딩(둘의 관계)은 lexer 타임에서 정해지지만), 정작 **entity 자체(값, reference)**는 런타임에 결정된다.
+  - 각 함수마다 고유한 function scope 존재
+  - `const inc = createIncrement(1);`
+    - 이 시점에 `value`, `values` 변수를 increment, logValue 함수 입장에서 free variable로 생성(entity의 결정)
   - `log1 = inc()`
-    - 이 경우에, `logValue`의 입장에서 당시에 free variable인 message의 값이 "Current value is 1"로 고정됨
-      - free variable은 런타임에 evaluated되나, 함수가 호출되면 자연스럽게 고정된다. 그것을 변화시키려면, enclosed함수에서 값을 변화시키는 수 밖에 없음
+    - 이 경우에, `logValue`의 입장에서 당시에 free variable인 message의 entity(값)이 "Current value is 1"로 고정됨
+      - free variable의 scope는 lexcal이나, 함수가 호출되면 그 값이 생성됨
+      - 그 변수의 값을 변화시키려면, 런타임에 enclosed함수에서 값을 변화시키는 로직을 실행하는 수 밖에 없음
+    - 그리고, 기존에 있던 `value`, `values`의 entity를 갱신
   - `log2 = inc()`
     - 이 경우에, `logValue`의 입장에서 당시에 free variable인 message의 값이 "Current value is 2"로 고정됨
   - `ref1 = log1()`
-    - message의 값이 고정되어 있으므로, 그 값을 반환
-    - values는 값이 아니라, reference이므로 incremented된 것을 반환
-    - value는 고정되지 않고, 그동안 inc되었으므로 3반환
+    - js는 lexial scope를 채용하므로, 이미 name과 entity(reference, value)는 binding이 되어있는상태인데, entity가 이전의 operation에 의해서 runtime에 변하였으므로 그것을 따름
+      - message의 값은 변함없이 고정되어 있으므로, 그 값을 반환
+      - values의 entity는 reference이고, runtime에 내부의 값이 변화하였으므로 incremented된 것을 반환
+      - value의 entity는 value이고, runtime에 값이 변화하였으므로 3반환
   - `ref2 = log2()`
     - 위와 마찬가지
   - `ref1 === ref2`
