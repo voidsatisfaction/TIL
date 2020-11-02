@@ -469,6 +469,7 @@ print(x) # global
 
 ```js
 function createIncrement(i) {
+  // entity의 initialization1
   let value = 0;
   let values = {
     num: 0
@@ -479,6 +480,7 @@ function createIncrement(i) {
     values.num += i;
 
     console.log(values);
+    // entity의 initialization2
     let message = `Current value is ${values.num}`;
     return function logValue() {
       console.log(message);
@@ -505,11 +507,11 @@ console.log(ref2); // { num: 3 }
 console.log(ref1 === ref2); // true
 ```
 
-**entity와 name을 분리해서 생각하는 것이 핵심!!!!**
+**entity와 name을 분리해서 생각하는 것이 핵심!!!!(scope의 정의: name과 entity를 연결하는 프로그램 상의 한 부분)**
 
 - 위의 코드 해석
   - js는 lexical scope
-    - scope는 미리 정해지지만(즉, name과 entity의 바인딩(둘의 관계)은 lexer 타임에서 정해지지만), 정작 **entity 자체(값, reference)**는 런타임에 결정된다.
+    - scope는 미리 정해지지만(즉, name과 entity의 바인딩(둘의 관계)은 lexer 타임에서 정해지지만), 정작 **entity 자체(값, reference)** 는 런타임에 결정된다.
   - 각 함수마다 고유한 function scope 존재
   - `const inc = createIncrement(1);`
     - 이 시점에 `value`, `values` 변수를 increment, logValue 함수 입장에서 free variable로 생성(entity의 결정)
