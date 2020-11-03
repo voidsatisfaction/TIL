@@ -15,7 +15,7 @@
 
 ## Why?
 
-view와 business logic의 분리
+**본질: view와 business logic의 분리**
 
 - Core value
   - Simple
@@ -239,12 +239,377 @@ Future<void> main(List<String> args) async {
 ![](./images/cubit1.png)
 
 - 정의
-  - `Bloc` 클래스의 베이스로 사용되는 특별한 타입의 `Stream`
+  - `Bloc` 클래스의 베이스로 사용되는 **특별한 타입의 `Stream`**
   - 일종의 observable
     - `listen()`으로 subscribe(listen, observe)가능
 - 특징
-  - state 변화를 트리거링할 수 있는 함수를 노출함
   - state는 `Cubit`의 output이고, application의 상태의 일부를 나타냄
     - UI 컴포넌트는 state를 푸시받고, 자체적으로 일부만 current state기반으로 redraw함
+  - Cubit은, 자신의 state 변화를 트리거링할 수 있는 함수를 노출함
+  - Cubit역시 `stream`이므로, `subscribe`가능함
+  - `state == nextState` 인 경우는 변화가 발생하지 않음
+
+```dart
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+
+  void increment() => emit(state + 1);
+}
+
+// Basic Usage
+void main() {
+  final cubit = CounterCubit();
+  print(cubit.state);
+  cubit.increment();
+  print(cubit.state);
+  cubit.close();
+}
+
+// Stream Usage
+Future<void> main() async {
+  final cubit = CounterCubit();
+  // subscribe
+  // print on each state change
+  final subscription = cubit.listen(print);
+  // emit a new state
+  cubit.increment();
+  await Future.delayed(Duration.zero);
+  // closing the Cubit
+  await subscription.cancel();
+  await cubit.close();
+}
+
+// Observing a Cubit
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+
+  void increment() => emit(state + 1);
+
+  @override
+  void onChange(Change<int> change) {
+    // called just before the state of the Cubit is updated
+    // Change { currentState: 0, nextState: 1 }
+    print(change);
+    super.onChange(change);
+  }
+}
+
+// BlocObserver
+// Observe all Changes in one place
+class SimpleBlocObserver extends BlocObserver {
+  @override
+  void onChange(Cubit cubit, Change change) {
+    print('${cubit.runtimeType} $change');
+    super.onChange(cubit, change);
+  }
+}
+
+void main() {
+  Bloc.observer = SimpleBlocObserver();
+  CounterCubit()
+    // Change { currentState: 0, nextState: 1 }
+    // CounterCubit Change { currentState: 0, nextState: 1 }
+    ..increment()
+    ..close();
+}
+
+// Error handling
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+
+  void increment() {
+    addError(Exception('increment error!'), StackTrace.current);
+    emit(state + 1);
+  }
+
+  @override
+  void onChange(Change<int> change) {
+    print(change);
+    super.onChange(change);
+  }
+
+  @override
+  void onError(Object error, StackTrace stackTrace) {
+    print('$error, $stackTrace');
+    super.onError(error, stackTrace);
+  }
+}
+
+// Global error handling
+class SimpleBlocObserver extends BlocObserver {
+  @override
+  void onChange(Cubit cubit, Change change) {
+    print('${cubit.runtimeType} $change');
+    super.onChange(cubit, change);
+  }
+
+  @override
+  void onError(Cubit cubit, Object error, StackTrace stackTrace) {
+    print('${cubit.runtimeType} $error $stackTrace');
+    super.onError(cubit, error, stackTrace);
+  }
+}
+
+// print out
+// Exception: increment error!, #0      CounterCubit.increment (file:///main.dart:21:56)
+// #1      main (file:///main.dart:41:7)
+// #2      _startIsolate.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:301:19)
+// #3      _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:168:12)
+
+// CounterCubit Exception: increment error! #0      CounterCubit.increment (file:///main.dart:21:56)
+// #1      main (file:///main.dart:41:7)
+// #2      _startIsolate.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:301:19)
+// #3      _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:168:12)
+
+// Change { currentState: 0, nextState: 1 }
+// CounterCubit Change { currentState: 0, nextState: 1 }
+```
 
 ### Bloc
+
+Bloc
+
+![](./images/bloc1.png)
+
+- 정의
+  - Cubit s.t. **incoming events** 를 outgoing states로 변환
+    - Cubit은 state변화를 위해서 Cubit의 함수를 직접 호출했다면, Bloc은 이벤트를 받아서 갱신
+- 특징
+  - `Cubit`클래스를 extends함
+
+```dart
+enum CounterEvent { increment }
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  // initial state
+  CounterBloc() : super(0);
+
+  // converting any incoming events into one or more outgoing states
+  @override
+  Stream<int> mapEventToState(CounterEvent event) async* {
+    switch (event) {
+      case CounterEvent.increment'
+        yield state + 1;
+        break;
+    }
+  }
+}
+
+// Basic Usage
+Future<void> main() async {
+  final bloc = CounterBloc();
+  print(bloc.state); // 0
+  bloc.add(CounterEvent.increment);
+  await Future.delayed(Duration.zero);
+  print(bloc.state); // 1
+  await bloc.close();
+}
+
+// Stream Usage
+Future<void> main() async {
+  final bloc = CounterBloc();
+  final subscription = bloc.listen(print); // 1
+  bloc.add(CounterEvent.increment);
+  await Future.delayed(Duration.zero);
+  await subscription.cancel();
+  await bloc.close();
+}
+
+// Observing a Bloc
+enum CounterEvent { increment }
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  CounterBloc() : super(0);
+
+  @override
+  Stream<int> mapEventToState(CounterEvent event) async* {
+    switch (event) {
+      case CounterEvent.increment:
+        yield state + 1;
+        break;
+    }
+  }
+
+  // second
+  @override
+  void onChange(Change<int> change) {
+    // Change { currentState: 0, nextState: 1 }
+    print(change);
+    super.onChange(change);
+  }
+
+  // first
+  @override
+  void onTransition(Transition<CounterEvent, int> transition) {
+    // Transition { currentState: 0, event: CounterEvent.increment, nextState: 1 }
+    print(transition);
+    super.onTransition(transition);
+  }
+}
+
+void main() {
+  CounterBloc()
+    ..add(CounterEvent.increment)
+    ..close();
+}
+
+// BlocObserver
+enum CounterEvent { increment }
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  CounterBloc() : super(0);
+
+  @override
+  Stream<int> mapEventToState(CounterEvent event) async* {
+    switch (event) {
+      case CounterEvent.increment:
+        yield state + 1;
+        break;
+    }
+  }
+
+  @override
+  void onEvent(CounterEvent event) {
+    print(event);
+    super.onEvent(event);
+  }
+
+  @override
+  void onChange(Change<int> change) {
+    print(change);
+    super.onChange(change);
+  }
+
+  @override
+  void onTransition(Transition<CounterEvent, int> transition) {
+    print(transition);
+    super.onTransition(transition);
+  }
+}
+
+class SimpleBlocObserver extends BlocObserver {
+  @override
+  void onEvent(Bloc bloc, Object event) {
+    print('${bloc.runtimeType} $event');
+    super.onEvent(bloc, event);
+  }
+
+  @override
+  void onChange(Cubit cubit, Change change) {
+    print('${cubit.runtimeType} $change');
+    super.onChange(cubit, change);
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    print('${bloc.runtimeType} $transition');
+    super.onTransition(bloc, transition);
+  }
+}
+
+// print out
+// CounterEvent.increment
+// CounterBloc CounterEvent.increment
+// Transition { currentState: 0, event: CounterEvent.increment, nextState: 1 }
+// CounterBloc Transition { currentState: 0, event: CounterEvent.increment, nextState: 1 }
+// Change { currentState: 0, nextState: 1 }
+// CounterBloc Change { currentState: 0, nextState: 1 }
+
+// Error handling
+enum CounterEvent { increment }
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  CounterBloc() : super(0);
+
+  @override
+  Stream<int> mapEventToState(CounterEvent event) async* {
+    switch (event) {
+      case CounterEvent.increment:
+        addError(Exception('increment error!'), StackTrace.current);
+        yield state + 1;
+        break;
+    }
+  }
+
+  @override
+  void onChange(Change<int> change) {
+    print(change);
+    super.onChange(change);
+  }
+
+  @override
+  void onTransition(Transition<CounterEvent, int> transition) {
+    print(transition);
+    super.onTransition(transition);
+  }
+
+  @override
+  void onError(Object error, StackTrace stackTrace) {
+    print('$error, $stackTrace');
+    super.onError(error, stackTrace);
+  }
+}
+
+// print out
+// Exception: increment error!, #0      CounterBloc.mapEventToState (file:///main.dart:55:60)
+// <asynchronous suspension>
+// #1      Bloc._bindEventsToStates.<anonymous closure> (package:bloc/src/bloc.dart:232:20)
+// #2      Stream.asyncExpand.onListen.<anonymous closure> (dart:async/stream.dart:579:30)
+// #3      _RootZone.runUnaryGuarded (dart:async/zone.dart:1374:10)
+// #4      _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:339:11)
+// #5      _DelayedData.perform (dart:async/stream_impl.dart:594:14)
+// #6      _StreamImplEvents.handleNext (dart:async/stream_impl.dart:710:11)
+// #7      _PendingEvents.schedule.<anonymous closure> (dart:async/stream_impl.dart:670:7)
+// #8      _microtaskLoop (dart:async/schedule_microtask.dart:43:21)
+// #9      _startMicrotaskLoop (dart:async/schedule_microtask.dart:52:5)
+// #10     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:118:13)
+// #11     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:169:5)
+
+// CounterBloc Exception: increment error! #0      CounterBloc.mapEventToState (file:///main.dart:55:60)
+// <asynchronous suspension>
+// #1      Bloc._bindEventsToStates.<anonymous closure> (package:bloc/src/bloc.dart:232:20)
+// #2      Stream.asyncExpand.onListen.<anonymous closure> (dart:async/stream.dart:579:30)
+// #3      _RootZone.runUnaryGuarded (dart:async/zone.dart:1374:10)
+// #4      _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:339:11)
+// #5      _DelayedData.perform (dart:async/stream_impl.dart:594:14)
+// #6      _StreamImplEvents.handleNext (dart:async/stream_impl.dart:710:11)
+// #7      _PendingEvents.schedule.<anonymous closure> (dart:async/stream_impl.dart:670:7)
+// #8      _microtaskLoop (dart:async/schedule_microtask.dart:43:21)
+// #9      _startMicrotaskLoop (dart:async/schedule_microtask.dart:52:5)
+// #10     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:118:13)
+// #11     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:169:5)
+
+// Transition { currentState: 0, event: CounterEvent.increment, nextState: 1 }
+// CounterBloc Transition { currentState: 0, event: CounterEvent.increment, nextState: 1 }
+// Change { currentState: 0, nextState: 1 }
+// CounterBloc Change { currentState: 0, nextState: 1 }
+
+```
+
+### Cubit vs Bloc
+
+- Cubit
+  - 장점
+    - 간단함
+- Bloc
+  - 장점
+    - traceability
+      - 무엇이 state변화를 이끌었는지 확인 가능(`transition`)
+    - ReactiveX Operations
+      - `buffer`, `debounceTime`, `throttle`
+        - 등의 reactive operator를 지원
+
+Bloc을 이용한 debounce reactive operation
+
+```dart
+@override
+Stream<Transition<CounterEvent int>> transformEvents(
+  Stream<CounterEvent> events,
+  TransitionFunction<CounterEvent, int> transitionFn,
+) {
+  return super.transformEvents(
+    events.debounceTime(const Duration(milliseconds: 300)),
+    transitionFn,
+  );
+}
+```
