@@ -63,6 +63,12 @@ int main() {
 }
 ```
 
+- 참고) `const` vs `static const`
+  - `const`
+    - 상수이나, 해당 file scope바깥에서 사용 가능
+  - `static const`
+    - 상수이나, 해당 file scope바깥에서 사용 불가능
+
 ### Heap: Dynamic Memory Allocation in C
 
 - 개요
