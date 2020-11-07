@@ -532,6 +532,246 @@ console.log(ref1 === ref2); // true
   - `ref1 === ref2`
     - 서로 같은 values의 reference를 비교하는 것이므로 true반환
 
+#### The stale closure react hook
+
+React는 Immutability가 기본.
+
+따라서, useEffect에 인자로 넘겨주는 create함수인 closure는 일반적으로 stale closure가 됨
+(변수의 entity 갱신이 아니라, 변수 자체가 다른 것으로 갱신 되므로)
+
+좋은 예
+
+`SlideList.js`의 좋은 예
+
+```js
+import { Col, Grid, Row } from "antd"
+import React, { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import styled from "styled-components"
+import { ISlide } from "../../interfaces/Slide"
+import { fetchAPI } from "../../utils/DataService"
+import SlideItem from "./SlideItem"
+import * as _ from "lodash"
+const SlideList: React.FC = () => {
+  const { slide_case_id } = useParams<{ slide_case_id?: string }>()
+  const [slides, setSlides] = useState<Array<ISlide>>([])
+  const { useBreakpoint } = Grid
+  const screens = useBreakpoint()
+  const f = async () => {
+    if (!slide_case_id) {
+      setSlides([])
+      return
+    }
+    const r = await fetchAPI(
+      `/v1/api/slide-cases/${slide_case_id}/slides`,
+      "get",
+    )
+    setSlides(r)
+  }
+  // 임의의 state가 변화하면 재정의 됨
+  // 또한, 재정의 시 그 시점에서의 slides로 함수 내부의 slides의 entity가 fix됨
+  // **useCallback()을 사용하면 두번째 array에 등록된 인자가 변했을 때만 함수를 재정의함
+  const updateSlide = (slide: ISlide) => {
+    const index = _.findIndex(slides, (x: ISlide) => x.id === slide.id)
+    if (~index) {
+      const newSlides = _.cloneDeep(slides)
+      newSlides[index] = slide
+      setSlides(newSlides)
+    }
+  }
+  useEffect(() => {
+    f()
+  }, [slide_case_id])
+  return (
+    <Container>
+      <Header>
+        <p>{slide_case_id}</p>
+      </Header>
+      <Body>
+        <Row>
+          {slides.map((slide, index) => (
+            <Col span={screens.xxl ? 12 : 24} key={`slide-item-${slide.id}`}>
+              <SlideItem
+                slide={slide}
+                hasRightBorder={!(index & 1) && screens.xxl ? true : false}
+                updateSlide={updateSlide}
+              />
+            </Col>
+          ))}
+        </Row>
+      </Body>
+    </Container>
+  )
+}
+export default SlideList
+```
+
+`SlideItem.js`의 좋은 예
+
+```js
+const SlideItem: React.FC<ISlideItemProps> = ({
+  slide,
+  hasRightBorder,
+  updateSlide,
+}) => {
+  const history = useHistory()
+  const ws = useWebsocket()
+  const [updatedSlide, setUpdatedSlide] = useState<ISlide | null>(null)
+  // 주의!!!!
+  useEffect(() => {
+    // 웹 소켓 stream으로부터 slide가 push됨
+    const observable = ws.onChangeStatusOfSlide(slide.id)
+    observable.subscribe((slide) => {
+      setUpdatedSlide(slide)
+    })
+  }, [])
+  // deps가 빈 배열 => props, state는 초깃값 유지 (component의 lifecycle에서 더이상 create함수 갱신 없음. 그리고, react state, props는 immutable 즉, state, props와 같은 free variable의 값이 변화하지 않음)
+  // 따라서 이러한 경우에는 props, state는 사용하지 않는것이 바람직
+
+  // 컴포넌트가 새로 rendering되면 useEffect함수를 실행, 즉, create함수의 free variable의 entity도 재정의됨
+  // useEffect에 전달된 create 함수가 react fiber의 linked list의 effect 노드로 등록될 경우, 해당 함수는 모든 등록 phase에서 다 다름
+  // create함수는 매번 새로 생성됨
+  useEffect(() => {
+    if (!updatedSlide) return
+
+    updateSlide(updatedSlide)
+  }, [updatedSlide])
+  return (
+    <Container
+      hasRightBorder={hasRightBorder}
+      onClick={(e) => {
+        if (!slide.dzi_complete) {
+          message.warning(
+            "You can view the slide images after generating pyramid images",
+          )
+          return
+        }
+        history.push(
+          `/viewer/slide-cases/${slide.slide_case_id}/slides/${slide.id}`,
+        )
+      }}
+      dzi_complete={slide.dzi_complete}
+    >
+      ...
+    </Container>
+  )
+}
+export default SlideItem
+```
+
+---
+
+안좋은 예
+
+`SlideList.js`의 잘못된 예
+
+```js
+const SlideList: React.FC = () => {
+  const { slide_case_id } = useParams<{ slide_case_id?: string }>()
+  const [slides, setSlides] = useState<Array<ISlide>>([])
+  const { useBreakpoint } = Grid
+  const screens = useBreakpoint()
+  const f = async () => {
+    if (!slide_case_id) {
+      setSlides([])
+      return
+    }
+    const r = await fetchAPI(
+      `/v1/api/slide-cases/${slide_case_id}/slides`,
+      "get",
+    )
+    setSlides(r)
+  }
+  // 임의의 state가 변화하면 재정의 됨
+  const updateSlide = (slide: ISlide) => {
+    const index = _.findIndex(slides, (x: ISlide) => x.id === slide.id)
+    if (~index) {
+      const newSlides = _.cloneDeep(slides)
+      newSlides[index] = slide
+      setSlides(newSlides)
+    }
+  }
+  useEffect(() => {
+    f()
+  }, [slide_case_id])
+  return (
+    <Container>
+      <Header>
+        <p>{slide_case_id}</p>
+      </Header>
+      <Body>
+        <Row>
+          {slides.map((slide, index) => (
+            <Col span={screens.xxl ? 12 : 24} key={`slide-item-${slide.id}`}>
+              <SlideItem
+                slide={slide}
+                hasRightBorder={!(index & 1) && screens.xxl ? true : false}
+                updateSlide={updateSlide}
+              />
+            </Col>
+          ))}
+        </Row>
+      </Body>
+    </Container>
+  )
+}
+
+export default SlideList
+```
+
+`SlideItem.js`의 잘못된 예
+
+```js
+interface ISlideItemProps {
+  slide: ISlide
+  hasRightBorder: boolean
+  updateSlide: (_: ISlide) => void
+}
+const SlideItem: React.FC<ISlideItemProps> = ({
+  slide,
+  hasRightBorder,
+  updateSlide,
+}) => {
+  const history = useHistory()
+  const ws = useWebsocket()
+  useEffect(() => {
+    const observable = ws.onChangeStatusOfSlide(slide.id)
+    // 여기서 subscribe로 등록된 함수는 불변, 즉, 초기의 updateSlide의 entity역시 변화하지 않음
+    // 근데 updateSlide() 함수가 호출되었을 시, parent에서는 updateSlide자체가 다른 entity로 변경됨
+    // 그럼 기존에 아래 함수에서 호출하고 있는 updateSlide라는 entity는 environment에는 존재하지만 내부의 slides는 처음 값 그대로임(왜냐하면, 기존에 entity가 변화한 것이 아니라, 아에 새로 만들어졌기 때문)
+    // 따라서 변경된 entity가 반영되지 않음
+    // props의 변화에 의존하지 않음
+    observable.subscribe((slide) => {
+      console.log(slide)
+      updateSlide(slide)
+    })
+  }, [])
+  return (
+    <Container
+      hasRightBorder={hasRightBorder}
+      onClick={(e) => {
+        if (!slide.dzi_complete) {
+          message.warning(
+            "You can view the slide images after generating pyramid images",
+          )
+          return
+        }
+        history.push(
+          `/viewer/slide-cases/${slide.slide_case_id}/slides/${slide.id}`,
+        )
+      }}
+      dzi_complete={slide.dzi_complete}
+    >
+      ...
+    </Container>
+  )
+}
+
+export default SlideItem
+
+
+```
+
 ## Data
 
 ### stream
