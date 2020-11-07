@@ -11,6 +11,8 @@
     - 채도
   - viewport
   - window
+- Format
+  - SVG(Scalable Vector Graphics)
 - Medical image
   - Hounsfield scale(HU)
 
@@ -46,6 +48,35 @@
     - window를 viewport에 매핑하여 사용자가 자신의 디바이스에서 적당한 크기로 해당 내용을 볼 수 있음
     - **world-coordinates window clipping -> window-to-viewport transformation -> viewport rendering**
   - physical-device-based 좌표계가 portable하지 않으므로, 정규화된 device coordinates로 알려진 소프트웨어 추상 계층이 viewport를 표현하는데에 상요됨
+
+## Format
+
+### SVG(Scalable Vector Graphics)
+
+SVG의 예시
+
+![](./images/image_processing/svg_example1.png)
+
+- 정의
+  - **XML 기반의 2차원 벡터 이미지 포맷**
+    - XML 텍스트 파일로 이미지와 그 행동이 정의됨
+- 특징
+  - interactivity, animation 지원
+  - XML 기반
+    - 탐색, 인덱싱, 스크립트, 압축 가능
+      - 압축은 `gzip`알고리즘 으로 한 경우, SVG 1.1 뷰어는 해당 이미지를 보여줄 수 있음(코덱이 존재하나봄)
+    - 텍스트 에디터로 변경 가능
+  - 현대 웹 브라우저는 svg 렌더링을 지원
+  - 기존에 렌더링된 오브젝트에 그루핑, 스타일링, 트랜스포밍, 구성될 수 있음
+  - SVG 그리기
+    - XML 엘리먼트를 이용
+    - SVG DOM을 이용
+      - CSS를 이용해서 styling
+      - JavaScript를 이용해서 scripting 가능
+- 허용 그래픽 오브젝트
+  - vector graphic shapes
+  - bitmap images
+  - text
 
 ## Medical image
 
