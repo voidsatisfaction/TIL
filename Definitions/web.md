@@ -3,6 +3,8 @@
 - 의문
 - HTML
   - Document Object Model(DOM)
+    - Virtual DOM
+    - Reconciliation(React)
   - Document(interface)
   - Origin
   - Same-origin policy
@@ -27,12 +29,32 @@
 
 ### Document Object Model(DOM)
 
+**Document <---브라우저---> DOM**
+
+JS와 같은 Scripting언어를 통하여 DOM을 수정 가능하고, 그것은 브라우저에 의해 다시 Document에 반영됨
+
 - 정의
-  - 메모리속에서 웹 페이지를(e.g HTML), document의 구조를 표현함으로써, scripts or 프로그래밍 언어와 연결하는 것
+  - cross-platform ∧ XML, HTML document를 다루는 language-independent 인터페이스
+    - Document에 대한 UI는 Document그 자체
+    - Document에 대한 API는 DOM
+  - 메모리속에서 웹 페이지와 같은, document(e.g HTML, XML)의 구조를 논리적인 트리구조로 표현하여, scripts or 프로그래밍 언어와 연결하는 것
+    - 각 노드는 document의 일부를 나타내는 오브젝트
+    - 구조화된 **objects** 로 문서를 표현
+      - **nodes(= elements)**
+      - **property**
+      - **method**
+- 특징
+  - 웹 페이지의 객체지향적 표현
+  - 문서와 문서의 요소에 접근하기 위해 DOM이 사용됨
+    - Web or XML page = DOM + JS (scripting language)
+      - DOM은 프로그래밍 언어와 독립적으로 디자인되었음
+      - JS는 결국 document를 조작하기 위한 프로그래밍 언어임
+  - 모든 웹 브라우저는 각각 자신만의 방법으로 DOM을 구현하였음
 - 구조
   - logical tree
     - branch는 하나의 node에서 끝남
-    - 각 node는 object들을 포함
+  - node
+    - property
     - DOM method는 tree에 programmatic access를 가능하게 함
       - 그것들을 가지고, document의 구조, 스타일, 내용을 변화시킬 수 있음
     - node는 event handler를 갖을 수 있음
@@ -41,11 +63,156 @@
     - HTML-specific 기능을 포함하기 위해서 확장된 Document
     - 특히 `Element` interface가 강화됨
   - tab, windows, css style, browser history를 비롯한 다양한 브라우저 기능에 접근 가능
+- 중요한 데이터 타입
+  - `document`
+  - `element`
+  - `nodeList`
+  - `attribute`
+  - `namedNodeMap`
+- DOM interfaces
+  - 핵심
+    - DOM의 각 노드 오브젝트는 다양한 인터페이스의 구현으로 되어있음
+  - 예시
+    - `HTML FROM element`
+      - `HTMLFormElement` interface의 구현
+        - `name` property
+      - `HTMLElement` interface의 구현
+        - `className` property
+    - `table object`
+      - `HTMLTableElement` interface의 구현
+        - `createCaption()`
+        - `insertRow()`
+      - `HTMLElement` interface의 구현
+        - `Node` interface의 구현
+
+```js
+var table = document.getElementById("table");
+var tableAttrs = table.attributes; // Node/Element interface
+for (var i = 0; i < tableAttrs.length; i++) {
+  // HTMLTableElement interface: border attribute
+  if(tableAttrs[i].nodeName.toLowerCase() == "border")
+    table.border = "1";
+}
+// HTMLTableElement interface: summary attribute
+table.summary = "note: increased border";
+```
+
+#### Virtual DOM
+
+- 정의
+  - DOM의 가상적인 표현을 메모리에 저장하고, `ReactDOM`과 같은 라이브러리에 의해 실제 DOM과 동기화하는 프로그래밍 개념
+    - 해당 과정을 `Reconciliation`이라고 함
+    - *시간 복잡도를 위해서 공간복자도를 희생? DOM은 그렇게 메모리를 많이 차지하지는 않는가보다?*
+- 특징
+  - React의 선언적 API를 가능하게 함
+    - React에게 원하는 UI의 상태를 알려줌
+    - DOM이 그 상태와 일치하도록 해줌
+    - attribute조작, event handling, 수동 DOM update를 추상화 함
+  - 기술보다는 패턴에 가까움
+    - `React elements`
+      - UI를 나타내는 오브젝트와 연관이 큼
+    - `React Fibers`
+      - **React 16의 새 reconcile엔진**
+        - Virtual DOM의 incremental rendering을 활성화
+      - 컴포넌트 트리에 대한 추가 정보 포함
+      - virtual DOM 구현의 일부
+- React element
+  - 정의
+    - React 앱의 가장 작은 요소
+  - 특징
+    - 브라우저 DOM 엘리먼트와 달리, React element는 일반 객체이며, 쉽게 생성 가능
+    - `ReactDOM.render()`
+      - React 엘리먼트를 루트 DOM 노드에 렌더링하기 위한 함수
+- React component
+  - 정의
+    - React element를 구성 요소로 하는, UI를 재사용 가능한 조각으로 나눈 것
+
+#### Reconciliation(재조정)
+
+그냥 새로 생성된 React element tree를 그대로 DOM에 적용시키면 안돼?
+
+그럼 매번 엄청난 수의 `document.createElement()`를 실행해야 해서 비효율적. 그래서 시간복잡도가 상승
+
+- 정의
+  - `render()`함수로 생성된 새 React element tree와 기존의 React element tree를 비교하는 알고리즘
+- 배경
+  - `render()`
+    - `render()`함수는 React element tree를 만드는 것
+    - state나 props가 갱신되면 `render()`는 새로운 React element tree를 반환
+    - React는 방금 만들어진 트리에 맞게 가장 효과적으로 UI를 갱신하는 방법을 알아낼 필요가 있음
+  - 트리 변환
+    - 하나의 트리를 다른 트리로 변환하기 위한 최소한의 연산 수를 구하는 알고리즘 문제의 시간복잡도는 `O(n^3)`
+    - React는 휴리스틱 알고리즘 구현 `O(n)`
+      - 서로 다른 타입의 엘리먼트는 서로 다른 트리를 만들어낸다.
+      - 개발자가 `key` prop을 통해 여러 렌더링 사이에서 어떤 자식 엘리먼트가 변경되지 않아야 할지 표시해줄 수 있음.
+- 비교 알고리즘(Diffing Algorithm)
+  - Root react element부터 비교
+  - React element의 변화
+    - React element 타입이 다른 경우
+      - 이전 트리를 버리고 완전히 새로운 트리를 구축
+      - 이전 DOM 노드들은 모두 파괴됨
+      - 새로운 DOM 노드들이 DOM에 삽입됨
+      - `componentWillMount()`와 `componentDidMount()`가 연속적으로 실행
+      - 이전 트리와 관련된 모든 state가 사라짐
+    - React element 타입이 같은 경우
+      - 두 엘리먼트의 attribute확인하여, 동일한 내역은 유지하고 변경된 attribute만 갱신
+    - DOM 노드의 처리가 끝나면 해당 노드의 자식들을 재귀적으로 처리
+  - React component의 변화
+    - 같은 타입의 컴포넌트 엘리먼트
+      - 컴포넌트가 갱신되면 인스턴스는 동일하게 유지되어 렌더링 간 state가 유지
+      - React는 새로운 엘리먼트의 내용을 반영하기 위해 현재 컴포넌트 인스턴스의 props를 갱신
+      - `componentWillReceivePorps()`와 `componentWillUpdate()`를 호출
+      - `render()` 메서드가 호출되고 비교 알고리즘이 이전 결과와 새로운 결과를 재귀적으로 처리
+- 자식에 대한 재귀적 처리
+  - 개요
+    - DOM node의 자식들을 재귀적으로 처리할 때, React는 기본적으로 동시에 두 리스트를 순회하고 차이점이 있으면 변경을 생성
+  - `key`속성
+    - 자식들에게 key를 부여하여, 자식 노드의 단순 순서 변경에 의한 자식 전체 re-redering을 방지함
+    - 배열의 index를 key로 부여하지 말자
+      - 배열의 요소가 재배열되면 비효율적인 동작이 됨
+
+key 속성 사용 예시
+
+```html
+/* key 도입 전 - 전체 list re-rendering */
+
+/* before */
+<ul>
+  <li>Duke</li>
+  <li>Villanova</li>
+</ul>
+
+/* after */
+<ul>
+  <li>Connecticut</li>
+  <li>Duke</li>
+  <li>Villanova</li>
+</ul>
+
+/* key 도입 후 - 새로 추가된 key인 2014 li 엘리먼트만 추가해서 rendering */
+
+/* before */
+<ul>
+  <li key="2015">Duke</li>
+  <li key="2016">Villanova</li>
+</ul>
+
+/* after */
+<ul>
+  <li key="2014">Connecticut</li>
+  <li key="2015">Duke</li>
+  <li key="2016">Villanova</li>
+</ul>
+```
+
+- 고려 사항
+  - `re-rendering`은 모든 컴포넌트의 `render()`를 호출하는 것
+    - unmount 후 mount하는 것이 아님
 
 ### Document(interface)
 
 - 정의
-  - 브라우저에 로드된 웹 페이지를 나타내는 인터페이스 ∧ **DOM tree인 웹 페이지 컨텐츠에 대한 entry point역할을 함(root node)**
+  - **브라우저에 로드된 웹 페이지를 나타내는 인터페이스, document의 DOM인터페이스의 root node**
     - e.g) 엔트리 포인트 역할: `document.getElementById('....')`
 - 특징
   - DOM tree는 `<body>`, `<table>` 등의 태그를 포함하며, 페이지의 URL을 가져오는 것, 새로운 element를 생성하는 등의 기능을 제공
