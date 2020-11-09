@@ -539,6 +539,14 @@ React는 Immutability가 기본.
 따라서, useEffect에 인자로 넘겨주는 create함수인 closure는 일반적으로 stale closure가 됨
 (변수의 entity 갱신이 아니라, 변수 자체가 다른 것으로 갱신 되므로)
 
+이러한 stale closure를 막기 위하여, `useEffect()`는 매 렌더링마다 다시 호출되어, `useEffect()`의 `create`함수의 scope를 맞춰줌. 그리고 그 맞춰진 scope를 기준으로 `useEffect()` 의 두번째 인자인 배열속의 내용이 변경되었을 때에만 `create`함수를 호출.
+(`create` 함수는 `useEffect()`의 첫번쨰 인자)
+
+포인트
+
+- React `useEffect()`함수의 구현
+- Immutability
+
 좋은 예
 
 `SlideList.js`의 좋은 예
@@ -625,8 +633,8 @@ const SlideItem: React.FC<ISlideItemProps> = ({
       setUpdatedSlide(slide)
     })
   }, [])
-  // deps가 빈 배열 => props, state는 초깃값 유지 (component의 lifecycle에서 더이상 create함수 갱신 없음. 그리고, react state, props는 immutable 즉, state, props와 같은 free variable의 값이 변화하지 않음)
-  // 따라서 이러한 경우에는 props, state는 사용하지 않는것이 바람직
+  // deps가 빈 배열 => props, state는 초깃값 유지 (component의 lifecycle에서 더이상 create함수 갱신 없음. 그리고, react state, props는 immutable 즉, state, props등과 같은 free variable의 값이 변화하지 않음)
+  // 따라서 이러한 경우에는 props, state는 사용하지 않는것이 바람직(사용할 이유가 없음 - 어차피 초기값만 참조되니까)
 
   // 컴포넌트가 새로 rendering되면 useEffect함수를 실행, 즉, create함수의 free variable의 entity도 재정의됨
   // useEffect에 전달된 create 함수가 react fiber의 linked list의 effect 노드로 등록될 경우, 해당 함수는 모든 등록 phase에서 다 다름
