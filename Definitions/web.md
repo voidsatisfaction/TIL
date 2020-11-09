@@ -102,13 +102,15 @@ table.summary = "note: increased border";
 - 정의
   - DOM의 가상적인 표현을 메모리에 저장하고, `ReactDOM`과 같은 라이브러리에 의해 실제 DOM과 동기화하는 프로그래밍 개념
     - 해당 과정을 `Reconciliation`이라고 함
-    - *시간 복잡도를 위해서 공간복자도를 희생? DOM은 그렇게 메모리를 많이 차지하지는 않는가보다?*
+    - *시간 복잡도를 위해서 공간복잡도를 희생? DOM은 그렇게 메모리를 많이 차지하지는 않는가보다?*
 - 특징
   - React의 선언적 API를 가능하게 함
     - React에게 원하는 UI의 상태를 알려줌
     - DOM이 그 상태와 일치하도록 해줌
+      - 마치, SQL과 RDB Engine과 같은 관계랄까?
     - attribute조작, event handling, 수동 DOM update를 추상화 함
-  - 기술보다는 패턴에 가까움
+      - 선언적으로 인터페이스를 작성할 수 있도록!
+  - 기술보다는 패턴에 가까움(선언적!)
     - `React elements`
       - UI를 나타내는 오브젝트와 연관이 큼
     - `React Fibers`
@@ -134,7 +136,7 @@ table.summary = "note: increased border";
 그럼 매번 엄청난 수의 `document.createElement()`를 실행해야 해서 비효율적. 그래서 시간복잡도가 상승
 
 - 정의
-  - `render()`함수로 생성된 새 React element tree와 기존의 React element tree를 비교하는 알고리즘
+  - **`render()`함수로 생성된 새 React element tree와 기존의 React element tree를 비교하는 알고리즘**
 - 배경
   - `render()`
     - `render()`함수는 React element tree를 만드는 것
@@ -208,6 +210,7 @@ key 속성 사용 예시
 - 고려 사항
   - `re-rendering`은 모든 컴포넌트의 `render()`를 호출하는 것
     - unmount 후 mount하는 것이 아님
+    - **이게 reconcile!!!!**
 
 ### Document(interface)
 
