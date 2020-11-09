@@ -3,13 +3,18 @@
 - 의문
 - Why?
 - Core Concepts
-  - Streams
-    - Stream events를 받는 법
-    - Stream의 종류
-    - stream을 가공하는 methods
-    - stream을 수정하는 methods
-  - Cubit
-  - Bloc
+  - `package:bloc`
+    - Streams
+      - Stream events를 받는 법
+      - Stream의 종류
+      - stream을 가공하는 methods
+      - stream을 수정하는 methods
+    - Cubit
+    - Bloc
+    - Cubit vs Bloc
+  - `package:flutter_bloc`
+    - BlocBuilder
+    - BlocProvider
 
 ## 의문
 
@@ -30,7 +35,9 @@
 
 ## Core Concepts
 
-### Streams
+### `package:bloc`
+
+#### Streams
 
 - 정의(dart)
   - sequence of asynchronous events
@@ -44,7 +51,7 @@
     - Stream
       - 이벤트가 준비되면 자신에게 stream이 event가 준비되었다고 push
 
-#### Stream events를 받는 법
+##### Stream events를 받는 법
 
 Stream events를 받는 법
 
@@ -105,7 +112,7 @@ main() async {
 }
 ```
 
-#### Stream의 종류
+##### Stream의 종류
 
 - Single subscription streams
   - 개요
@@ -126,7 +133,7 @@ main() async {
   - 예시
     - 브라우저의 마우스 이벤트
 
-#### stream을 가공하는 methods
+##### stream을 가공하는 methods
 
 stream을 가공하고, result를 반환
 
@@ -157,7 +164,7 @@ Future<Set<T>> toSet();
   - `drain()`
   - `pipe()`
 
-#### stream을 수정하는 methods
+##### stream을 수정하는 methods
 
 original stream을 기반으로 new stream을 반환
 
@@ -234,7 +241,7 @@ Future<void> main(List<String> args) async {
   - `cast()`
   - `expand()`
 
-### Cubit
+#### Cubit
 
 ![](./images/cubit1.png)
 
@@ -365,7 +372,7 @@ class SimpleBlocObserver extends BlocObserver {
 // CounterCubit Change { currentState: 0, nextState: 1 }
 ```
 
-### Bloc
+#### Bloc
 
 Bloc
 
@@ -586,7 +593,7 @@ class CounterBloc extends Bloc<CounterEvent, int> {
 
 ```
 
-### Cubit vs Bloc
+#### Cubit vs Bloc
 
 - Cubit
   - 장점
@@ -613,3 +620,106 @@ Stream<Transition<CounterEvent int>> transformEvents(
   );
 }
 ```
+
+### `package:flutter_bloc`
+
+#### BlocBuilder
+
+```dart
+BlocBuilder<BlocA, BlocAState>(
+  buildWhen: (previousState, state) {
+    // return true/false to determine whether or not
+    // to rebuild the widget with state
+  },
+  builder: (context, state) {
+    // return widget here based on BlocA's state
+  }
+)
+```
+
+- 개요
+  - Flutter widget 이며, 새로운 state에 대응하여 widget을 생성
+- 특징
+  - builder function은 pure해야 함(Widget만 반환)
+  - c.f) `BlockListener`
+    - state가 변화할 때 마다, side effect를 행할떄 사용
+
+#### BlocProvider
+
+```dart
+BlocProvider(
+  create: (BuildContext context) => BlocA(),
+  child: ChildA(),
+);
+```
+
+- 개요
+  - `BlocProvider.of<T>(context)`를 통해서, children에게 bloc를 제공하는 widget
+  - DI widget이어서, 하나의 bloc 인스턴스가 subtree의 다수의 widget으로 제공될 수 있도록 함
+
+#### MultiBlocProvider
+
+```dart
+MultiBlocProvider(
+  providers: [
+    BlocProvider<BlocA>(
+      create: (BuildContext context) => BlocA(),
+    ),
+    BlocProvider<BlocB>(
+      create: (BuildContext context) => BlocB(),
+    ),
+    BlocProvider<BlocC>(
+      create: (BuildContext context) => BlocC(),
+    ),
+  ],
+  child: ChildA(),
+)
+```
+
+- 개요
+  - 다수의 `BlocProvider`위젯을 하나로 합친 것
+  - 네스팅 없애고 보기 쉬움
+
+#### BlocListener
+
+```dart
+BlocListener<BlocA, BlocAState>(
+  listenWhen: (previousState, state) {
+    // return true/false to determine whether or not
+    // to call listener with state
+  },
+  listener: (context, state) {
+    // do stuff here based on BlocA's state
+  },
+  child: Container(),
+)
+```
+
+- 개요
+  - state 변화에 따라서, `listener`를 호출하는 widget
+  - cubit parameter가 생략되면, `BlocProvider`와 `BuildContext`를 가지고 lookup함
+- 예시
+  - `SnackBar`, `Dialog`, ...
+    - 부작용 수반
+
+#### MultiBlocListener
+
+```dart
+MultiBlocListener(
+  listeners: [
+    BlocListener<BlocA, BlocAState>(
+      listener: (context, state) {},
+    ),
+    BlocListener<BlocB, BlocBState>(
+      listener: (context, state) {},
+    ),
+    BlocListener<BlocC, BlocCState>(
+      listener: (context, state) {},
+    ),
+  ],
+  child: ChildA(),
+)
+```
+
+- 개요
+  - 다수의 `BlocListener` 위젯들을 하나로 결합
