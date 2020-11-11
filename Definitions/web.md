@@ -158,13 +158,13 @@ table.summary = "note: increased border";
       - 이전 트리와 관련된 모든 state가 사라짐
     - React element 타입이 같은 경우
       - 두 엘리먼트의 attribute확인하여, 동일한 내역은 유지하고 변경된 attribute만 갱신
-    - DOM 노드의 처리가 끝나면 해당 노드의 자식들을 재귀적으로 처리
   - React component의 변화
     - 같은 타입의 컴포넌트 엘리먼트
       - 컴포넌트가 갱신되면 인스턴스는 동일하게 유지되어 렌더링 간 state가 유지
       - React는 새로운 엘리먼트의 내용을 반영하기 위해 현재 컴포넌트 인스턴스의 props를 갱신
       - `componentWillReceivePorps()`와 `componentWillUpdate()`를 호출
       - `render()` 메서드가 호출되고 비교 알고리즘이 이전 결과와 새로운 결과를 재귀적으로 처리
+  - DOM 노드의 처리가 끝나면 해당 노드의 자식들을 재귀적으로 처리
 - 자식에 대한 재귀적 처리
   - 개요
     - DOM node의 자식들을 재귀적으로 처리할 때, React는 기본적으로 동시에 두 리스트를 순회하고 차이점이 있으면 변경을 생성
@@ -209,7 +209,8 @@ key 속성 사용 예시
 
 - 고려 사항
   - `re-rendering`은 모든 컴포넌트의 `render()`를 호출하는 것
-    - unmount 후 mount하는 것이 아님
+    - `render()` 함수는, 위에서 설명한 **Diffing알고리즘** 을 수행하는 것 뿐
+      - 무조건 unmount 후 mount하는 것이 아님
     - **이게 reconcile!!!!**
 
 ### Document(interface)
