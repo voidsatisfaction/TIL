@@ -723,3 +723,63 @@ MultiBlocListener(
 
 - 개요
   - 다수의 `BlocListener` 위젯들을 하나로 결합
+
+#### BlocConsumer
+
+```dart
+BlocConsumer<BlocA, BlocAState>(
+  listenWhen: (previous, current) {
+    // return true/false to determine whether or not
+    // to invoke listner with state
+  },
+  listener: (context, state) {
+    // do stuff here based on BlocA's state
+  },
+  buildWhen: (previous, current) {
+    // return true/false to determine whether or not
+    // to rebuild the widget with state
+  },
+  builder: (context, state) {
+    // return widget here based on BlocA's state
+  }
+)
+```
+
+- 개요
+  - 새 state에 반응 하기 위하여 `builder`, `listener`를 한번에 expose하는 것
+  - `listenWhen`, `buildWhen`도 지정가능
+
+#### RepositoryProvider
+
+```dart
+// DI
+RepositoryProvider(
+  create: (context) => RepositoryA(),
+  child: ChildA(),
+);
+
+// Multi
+MultiRepositoryProvider(
+  providers: [
+    RepositoryProvider<RepositoryA>(
+      create: (context) => RepositoryA(),
+    ),
+    RepositoryProvider<RepositoryB>(
+      create: (context) => RepositoryB(),
+    ),
+    RepositoryProvider<RepositoryC>(
+      create: (context) => RepositoryC(),
+    ),
+  ],
+  child: ChildA(),
+)
+
+// retrieve
+context.read<RepositoryA>();
+
+RepositoryProvider.of<RepositoryA>(context)
+```
+
+- 개요
+  - `RepositoryProvider.of<T>(context)`를 이용해서 children에게 repository를 제공하는 widget
+  - DI widget
