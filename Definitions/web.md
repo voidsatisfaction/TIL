@@ -137,16 +137,18 @@ table.summary = "note: increased border";
 
 - 정의
   - **`render()`함수로 생성된 새 React element tree와 기존의 React element tree를 비교하는 알고리즘**
-- 배경
-  - `render()`
+    - *차이를 반영하는것 까지는 포함되지 않음?*
+- 배경 및 reconcile 순서
+  - `render() - 새 react element tree 생성`
     - `render()`함수는 React element tree를 만드는 것
     - state나 props가 갱신되면 `render()`는 새로운 React element tree를 반환
     - React는 방금 만들어진 트리에 맞게 가장 효과적으로 UI를 갱신하는 방법을 알아낼 필요가 있음
-  - 트리 변환
+  - React element tree끼리 비교(Diffing)
     - 하나의 트리를 다른 트리로 변환하기 위한 최소한의 연산 수를 구하는 알고리즘 문제의 시간복잡도는 `O(n^3)`
     - React는 휴리스틱 알고리즘 구현 `O(n)`
       - 서로 다른 타입의 엘리먼트는 서로 다른 트리를 만들어낸다.
       - 개발자가 `key` prop을 통해 여러 렌더링 사이에서 어떤 자식 엘리먼트가 변경되지 않아야 할지 표시해줄 수 있음.
+  - DOM 트리에 기존 트리와의 차이만큼만 다시 re-rendering
 - 비교 알고리즘(Diffing Algorithm)
   - Root react element부터 비교
   - React element의 변화
