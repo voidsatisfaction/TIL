@@ -1,6 +1,7 @@
 # Web 관련 용어 정리
 
 - 의문
+- REST
 - HTML
   - Document Object Model(DOM)
     - Virtual DOM
@@ -24,6 +25,52 @@
     - 브라우저이다.
 - CORS동작에서 preflight request를 보내는 주체는 누구인가?
   - 브라우저일듯
+
+## REST(REpresentational State Transfer)
+
+- 정의
+  - web service를 만드는데에 사용되는 제한사항의 집합을 정의한 소프트웨어 아키텍처
+  - c.f) RESTful web service
+    - REST 아키텍처 스타일을 따르는 웹 서비스
+- 특징
+  - **stateless protocol & standard operation**
+    - 일정한, 사전에 정의된 stateless operation을 사용해서, 텍스트로 표현된 웹 자원을 access할 수 있도록 하는 웹 서비스
+      - c.f) SOAP
+        - 각 서비스마다 자신만의 임의의 operation들의 집합을 노출함
+    - HTTP가 사용되는 경우, `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`등이 사용됨
+    - 빠른 퍼포먼스, reliability, scalability
+- 아키텍처적 제한사항
+  - **Client-server architecture**
+    - 역할 분담
+    - 서버 컴포넌트 단순화
+  - **Statelessness**
+    - 어떠한 클라이언트로부터의 리퀘스트던, request를 serve하기 위해서 필요한 정보가 전부 들어있음
+    - 클라이언트는 새로운 state로 이행될 때, request를 날림
+  - **Cacheability**
+    - scalability
+    - performance 향상
+  - **Layered system**
+    - client와 서버 사이에는 proxy, load balancer등이 존재 할 수 있고, 이는 둘 사이의 communication에 영향을 주지 않음
+    - 서버는 response를 생성하기 위해 다른 서비스와 communication하기도 함
+  - **Code on demand(optional)**
+    - 서버는 js를 비롯하여 실행가능한 코드를 클라이언트로 보내서 기능을 확장하거나 커스터마이징 가능하게 함
+  - **Uniform interface**
+    - RESTful system의 근간
+    - 4가지 제한
+      - Resource identification in requests
+        - 각 리소스는 requests에서 URI를 사용해서 identify됨
+        - 리소스 자체는 클라이언트에게 돌려주는 표현형식과 별개임
+          - e.g) DB의 데이터와 response json
+      - Resource manipulation through representations
+        - 클라이언트가 resource의 representation을 갖고 있는 경우, resource의 state를 지우거나 수정할 수 있는 충분한 정보가 주어짐
+      - Self-descriptive messages
+        - media type나 content type 지정으로 인하여, 메시지를 어떻게 processing해야하는지 명시
+      - Hypermedia as the engine of application state(HATEOAS)
+        - client측에서 application의 구조나 dynamics에 대한 데이터를 다룰 필요가 없음
+- RESTful 웹 서비스의 특징
+  - base URI의 존재
+  - 기본 HTTP methods
+  - media type으로 state transition data element를 정의
 
 ## HTML
 
