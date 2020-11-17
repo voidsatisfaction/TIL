@@ -539,8 +539,8 @@ React는 Immutability가 기본.
 따라서, useEffect에 인자로 넘겨주는 create함수인 closure는 일반적으로 stale closure가 됨
 (변수의 entity 갱신이 아니라, 변수 자체가 다른 것으로 갱신 되므로)
 
-이러한 stale closure를 막기 위하여, `useEffect()`는 매 렌더링마다 다시 호출되어, `useEffect()`의 `create`함수의 scope를 맞춰줌. 그리고 그 맞춰진 scope를 기준으로 `useEffect()` 의 두번째 인자인 배열속의 내용이 변경되었을 때에만 `create`함수를 호출.
-(`create` 함수는 `useEffect()`의 첫번쨰 인자)
+이러한 stale closure를 막기 위하여, `useEffect()`는 매 렌더링마다 다시 호출되어, `useEffect()`의 `create()`함수 속에서 free variable의 entity(값)를 맞춰줌. 그리고 그 맞춰진 scope를 기준으로 `useEffect()` 의 두번째 인자인 배열속의 내용이 변경되었을 때에만 `create()`함수를 호출.
+(`create()` 함수는 `useEffect()`의 첫번쨰 인자)
 
 포인트
 
