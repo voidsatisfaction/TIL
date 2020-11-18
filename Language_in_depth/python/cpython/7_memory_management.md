@@ -1,5 +1,16 @@
 # Memory Management
 
+- 의문
+- 개요
+- 참고: https://rushter.com/blog/python-memory-managment/
+- Memory Allocation in C
+  - Static: Static Memory Allocation in C
+  - Stack: Automatic Memory Allocation in C
+  - Heap: Dynamic Memory Allocation in C
+- Design of the Python Memory Management System
+  - Allocation Domains
+  - Memory Allocators
+
 ## 의문
 
 ## 개요
@@ -13,6 +24,120 @@
 - CPython이 어떻게 OS에 메모리를 할당하는지
   - 어떻게 object memory가 할당되고 free되는지
   - 어떻게 Cpython이 memory leak에 대처하는지
+
+## 참고: https://rushter.com/blog/python-memory-managment/
+
+- Python의 모든 것은 object
+  - 수많은 small memory allocation이 필요함
+  - 메모리 연산의 퍼포먼스가 좋아야 함
+  - fragmentation를 줄여야 함
+  - `PyMalloc`이라는 특별한 memory manager가 존재
+
+### Memory management
+
+#### Large object
+
+- standard C allocator
+
+#### Small object(< 512 bytes) allocation
+
+Block
+
+![](./images/ch7/block1.png)
+
+- Block
+  - 정의
+    - 특정 사이즈의 메모리 덩어리
+      - 8 ~ 512 bytes
+      - 8의 배수
+  - 특징
+    - 정해진 사이즈의 오직 하나의 파이썬 오브젝트만 가질 수 있음
+
+Pool header structure
+
+```c
+struct pool_header {
+    union { block *_padding;
+            uint count; } ref;          /* number of allocated blocks    */
+    block *freeblock;                   /* pool's free list head         */
+    struct pool_header *nextpool;       /* next pool of this size class  */
+    struct pool_header *prevpool;       /* previous pool       ""        */
+    uint arenaindex;                    /* index into arenas of base adr */
+    uint szidx;                         /* block size class index        */
+    uint nextoffset;                    /* bytes to virgin block         */
+    uint maxnextoffset;                 /* largest valid nextoffset      */
+};
+```
+
+Used pool diagram
+
+![](./images/ch7/used_pool1.png)
+
+- Pool
+  - 정의
+    - 같은 사이즈의 블록들의 집합
+  - 특징
+    - 풀의 사이즈는 memory page의 크기와 같음
+      - e.g) 4KB
+    - 같은 사이즈의 블록들의 집합이기 때문에, memory fragment를 방지할 수 있음
+      - 같은 크기의 새 오브젝트를 할당할 때, 그냥 이 공간을 쓰면 됨
+    - 같은 사이즈의 블록들의 pool끼리는 doubly linked list로 이어져 있음
+    - `ref.count`
+      - 사용된 블록의 개수
+    - pool이 처음 initializing될 때, freeblock에 모든 블록을 할당하지 않음
+      - 낮은 어드레스의 처음 두개의 블록만 설정하여, 첫번쨰 블록을 반환
+        - 이러한 전략은 모든 level(arena, pool, block)에서 동일함
+        - lazy allocation
+          - 진짜 필요할 때에만 할당해서 사용
+          - 퍼포먼스 최적화 / 메모리 할당 최적화
+    - pool의 상태가 used
+      - => allocation이 가능한 block이 존재함을 암
+      - 그럼에도 불구하고, `pool->freeblock`이 free list의 마지막을 가리킨다면, 아직 상위 주소 블록을 사용하지 않았다는 것을 의미함
+      - `pool->nextoffset`이 아직 접근하지 않은 상위 레벨의 블록에 대한 address offset
+      - `nextoffset > maxnextoffset` <=> 모든 블록이 적어도 한번은 access되었음
+    - `usedpools`
+      - class에 의해서 그룹회된 pool들의 포인터를 저장
+  - state
+    - used
+      - 부분적으로 사용됨
+    - full
+      - 모든 블록이 할당됨
+    - empty
+      - 모든 블록이 전부 사용가능
+  - 참고
+    - pool, block은 메모리에 직접 할당되는 것이 아니라, arena로부터 할당받은 공간을 사용하는 것
+
+Arena
+
+![](./images/ch7/arena1.png)
+
+Arena object structure
+
+```c
+struct arena_object {
+  uintptr_t address;
+  block* pool_address;
+  uint nfreepools;
+  uint ntotalpools;
+  struct pool_header* freepools;
+  struct arena_object* nextarena;
+  struct arena_object* prevarena;
+};
+```
+
+- Arena
+  - 정의
+    - 64개의 pool(pool은 4KB)에 대해서 메모리를 제공하는, 256kB의 힙에 존재하는 메모리 덩어리
+  - 특징
+    - doubly linked list구조
+    - `freepools`필드는 사용 가능한 풀들의 linked list
+    - 단순히 메모리가 더 필요하면 계속 요구함
+
+#### Memory deallocation
+
+- Small object manager가 memory를 OS로 되돌리는 경우가 가끔 존재
+  - 한 arena에 존재하는 모든 pool이 비어있을 때
+    - e.g) 짧은 시간동안에 temporary object들을 사용하는 경우
 
 ## Memory Allocation in C
 
