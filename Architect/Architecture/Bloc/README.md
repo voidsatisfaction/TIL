@@ -41,15 +41,15 @@
 
 - 정의(dart)
   - sequence of asynchronous events
-  - 사실상 async generator
+  - **Stream이라는 추상 타입을 async generator로 구현했음**
 - 특징
   - Future vs Stream
     - 개요
       - **pull vs push**
     - Future
-      - 자신이 요청해서 다음 이벤트를 받음 pull
+      - 자신이 요청해서 다음 이벤트를 받음(pull)
     - Stream
-      - 이벤트가 준비되면 자신에게 stream이 event가 준비되었다고 push
+      - 이벤트가 준비되면 자신에게 stream이 event가 준비되었다고(push)
 
 ##### Stream events를 받는 법
 
