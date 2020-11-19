@@ -17,6 +17,13 @@
 - linked list를 차례대로 이전deps와 이후deps의 상태변화에 따라서 다른 flag에 기반해서 `create()`함수 호출
   - *혹은 건너뜀(? passive)*
 
+---
+
+- 참고
+  - React Fiber state -> Hook -> Effect(linked list)
+  - `pushEffect()`
+    - effect linked list의 마지막 원소 추가
+
 ### react/src/ReactHooks.js
 
 ```js
@@ -366,6 +373,9 @@ function commitPassiveMountOnFiber(
           recordPassiveEffectDuration(finishedWork);
         }
       } else {
+        // 위에서 HookPassive | HookHasEffect는
+        // mountEffectImpl() 에서는 무조건 그렇게 지정되어 있었고
+        // updateEffectImpl() 에서는 areHookInputsEqual(nextDeps, prevDeps) === False 일 때에만 지정이 되어있었음
         commitHookEffectListMount(HookPassive | HookHasEffect, finishedWork);
       }
       break;
