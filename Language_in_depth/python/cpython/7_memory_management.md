@@ -164,8 +164,131 @@ struct arena_object {
 
 - Reference count가 증가하는 예시
   - assignment operator
-  - argument passing
-  - appending an object to a list(object's rc will be increased)
+  - **argument passing**
+  - **appending an object to a list(object's rerefence count will be increased)**
+- 동작
+  - reference counting field가 0이되면, python 자체에서 memory deallocation function을 호출
+    - 여기서 recursive하게 이 오브젝트가 다른 오브젝트의 reference를 포함하면, 그 object의 reference count도 줄여나감
+      - *이게 빠르게 가능하려면, 어떤 오브젝트가 어떤 오브젝트를 참조하는지 알아야 하는거 아닌가? 그래프 자료구조?*
+- 장단점
+  - 장점
+    - 오브젝트가 필요 없어지면 바로 제거 가능
+  - 단점
+    - circular references
+    - thread locking
+    - overhead
+      - memory
+      - performance
+    - GIL
+    - 다른 현대의 좋은 GC 알고리즘이 존재
+- 글로벌 변수
+  - 파이썬의 프로세스가 끝날 때 까지 계속 살아있음
+    - reference count가 0이되지 않음
+      - 모든 global변수는 dictionary안에서 저장됨
+      - `globals()`함수로 가져올 수 있음
+- `del`
+  - global, local variable을 임의적으로 삭제 가능
+
+```py
+import sys
+
+foo = []
+
+# 2 references, 1 from the foo var and 1 from getrefcount
+print(sys.getrefcount(foo))
+
+
+def bar(a):
+    # 4 references
+    # from the foo var, function argument, getrefcount and Python's function stack
+    print(sys.getrefcount(a))
+
+
+bar(foo)
+# 2 references, the function scope is destroyed
+print(sys.getrefcount(foo))
+```
+
+- 로컬 변수
+  - block scope에서 python interpreter가 나감 => local variables와 그것의 reference를 부숨(name을 부숨)
+  - block에 변수가 존재하면, python interpreter는 그것이 사용된다고 인식
+  - 메모리에서 제거하기 위해서는
+    - 새 값을 변수에 할당
+    - code block에서 벗어나기
+
+### Generational garbage collector
+
+Circular reference
+
+![](./images/ch7/circular_reference1.png)
+
+Circular reference example
+
+```py
+class PyObject(ctypes.Structure):
+    _fields_ = [("refcnt", ctypes.c_long)]
+
+
+gc.disable()  # Disable generational gc
+
+lst = []
+lst.append(lst)
+
+# Store address of the list
+lst_address = id(lst)
+
+# Destroy the lst reference
+del lst
+
+object_1 = {}
+object_2 = {}
+object_1['obj2'] = object_2
+object_2['obj1'] = object_1
+
+obj_address = id(object_1)
+
+# Destroy references
+del object_1, object_2
+
+# Uncomment if you want to manually run garbage collection process
+# gc.collect()
+
+# Check the reference count
+print(PyObject.from_address(obj_address).refcnt) # 1
+print(PyObject.from_address(lst_address).refcnt) # 1
+```
+
+- 문제
+  - `del` statement로 object에 대한 reference를 지움(reference count 1삭감)
+  - python code에서 더이상 접근할 수 없음
+  - 하지만 memory에 상주
+    - reference count가 아직 1임
+- 해결
+  - python 1.5에서 cycle-detecting algorithm이 소개
+  - generational GC trigger(GC가 언제 동작할지 타이밍 잡기)
+    - 주기적으로 동작
+    - 오버헤드 줄이기 위하여 휴리스틱이 많이 도입
+      - generation 도입
+        - container object를 3개의 generation으로 분류
+        - 모든 새 object는 첫번째 generation으로 편입
+        - 첫 generation에서 몇번의 gc round에서 살아남으면 다음 generation으로 보냄
+        - 자손 generation이 더 자주 회수됨
+          - 새로 만들어진 오브젝트는 일찍 죽음
+      - counter, threshold가 존재
+        - `counter = object allocations - deallocations (마지막 collection 이후)`
+        - 새 container object를 aloocation할 때마다, CPython은 첫 generation counter가 threshold를 넘는지 확인
+          - 넘으면, collection process를 진행
+        - 두개 이상의 threshold를 넘는 generation이 있는 경우에는, GC는 더 오래된 generation을 collect함
+          - 더 오래된 generation이 젊은 generation의 오브젝트가 젊은 generation의 오브젝트를 collecting할 수 있기 때문
+    - threshold value
+      - `(700, 10, 10)`
+        - `gc.get_threshold()`함수로 get, set가능
+- Performance tips
+  - graph관련 데이터 구조를 다룰떄 cycle이 발생하기 쉬움
+  - `weakref`모듈의 사용
+    - `weakref.ref`는 reference count를 증가시키지 않고, 해당 오브젝트가 파괴되면 `None`반환
+  - GC를 수동 조작
+    - `gc.disable()`, `gc.collect()`
 
 ## Memory Allocation in C
 
