@@ -2,7 +2,9 @@
 
 - 의문
 - 개요
-- 참고: https://rushter.com/blog/python-memory-managment/
+- 참고1: ![Python memory management](https://rushter.com/blog/python-memory-managment/)
+  - Memory management
+- 참고2: ![Garbage collection in Python](https://rushter.com/blog/python-garbage-collector/)
 - Memory Allocation in C
   - Static: Static Memory Allocation in C
   - Stack: Automatic Memory Allocation in C
@@ -25,9 +27,13 @@
   - 어떻게 object memory가 할당되고 free되는지
   - 어떻게 Cpython이 memory leak에 대처하는지
 
-## 참고: https://rushter.com/blog/python-memory-managment/
+## 참고1: Python memory management
 
-- Python의 모든 것은 object
+Python Memory hierarchical model
+
+![](./images/ch7/memory_hierarchy1.png)
+
+- **Python의 모든 entity는 object**
   - 수많은 small memory allocation이 필요함
   - 메모리 연산의 퍼포먼스가 좋아야 함
   - fragmentation를 줄여야 함
@@ -40,6 +46,8 @@
 - standard C allocator
 
 #### Small object(< 512 bytes) allocation
+
+*python의 bignum은 어떻게 구현되는 것일까?*
 
 Block
 
@@ -104,6 +112,7 @@ Used pool diagram
       - 모든 블록이 할당됨
     - empty
       - 모든 블록이 전부 사용가능
+    - *이러한 state는 어떻게 파악되는 것인지? 그냥 nextoffset과 maxnextoffset과의 관계로 알게 되는것인지?*
   - 참고
     - pool, block은 메모리에 직접 할당되는 것이 아니라, arena로부터 할당받은 공간을 사용하는 것
 
@@ -135,9 +144,28 @@ struct arena_object {
 
 #### Memory deallocation
 
-- Small object manager가 memory를 OS로 되돌리는 경우가 가끔 존재
+- Small object manager가 memory를 OS로 되돌리는 경우가 아주 가끔 존재
   - 한 arena에 존재하는 모든 pool이 비어있을 때
     - e.g) 짧은 시간동안에 temporary object들을 사용하는 경우
+- long-running python process
+  - 위의 특성 때문에 unused memory를 잡아먹을 수 있음
+    - memory leak이 아님
+
+## 참고2: Garbage collection in Python
+
+- Python GC 종류
+  - **Reference counting GC(necessary)**
+    - main
+    - reference cycle문제를 해결하지 못함
+  - **Generational GC(optional)**
+    - reference cycle문제를 다루기 위함
+
+### Reference counting
+
+- Reference count가 증가하는 예시
+  - assignment operator
+  - argument passing
+  - appending an object to a list(object's rc will be increased)
 
 ## Memory Allocation in C
 
