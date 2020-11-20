@@ -15,6 +15,7 @@
   - closure
 - Data
   - stream
+  - lookup table
 - Program
   - Library
   - Manifest file
@@ -816,6 +817,37 @@ export default SlideItem
   - Stream processing
     - 병렬 프로세싱, 특히 그래픽 프로세싱에서는 stream이라는 말이 소프트웨어 뿐 아니라 하드웨어에도 적용됨
     - There it defines the quasi-continuous flow of data that is processed in a dataflow programming language as soon as the program state meets the starting condition of the stream.
+
+### lookup table
+
+- 정의
+  - runtime computation을 보다 간단한 array indexing operation으로 치환한 배열
+    - runtime computation 뿐 아니라, I/O 작업 등도 해당됨
+- 특징
+  - 테이블은 precalculated 되어, static program storage에 저장되는 경우도 있음
+    - 프로그램의 initialization phase에 계산되기도 함
+  - value validation으로 사용되기도 함
+  - pointer function을 input에 대응시켜서, matching input을 시행하기도 함
+  - hardware 자체에 LUT를 심어둔 경우도 있음
+- 역사
+  - 상용로그표도 LUT라고 할 수 있음
+  - 99단도
+  - 엑셀의 `LOOKUP(lookup_value, lookup_vector, result_vector)`함수
+    - lookup_value와 같은 값을 lookup_vector에서 찾아서 그것에 대응하는 result_vector를 반환
+- 응용
+  - Image processing
+    - 개요
+      - input data를 더 바람직한 output format으로 변환
+    - 예시
+      - grayscale picture를 color image로 변환하는 테이블
+      - Hounsfield unit값을 0~255정수로 변환하는 테이블
+      - colormap(palette)
+        - 특정 이미지가 보여질때, 색이나 강도의 값을 정하기 위해서 사용
+      - windowing
+        - 측정된 radiation의 강도를 어떻게 나타낼 것인지 나타내는 개념
+    - 특징
+      - interpolation을 사용하여, LUT와 간단한 computation을 결합하는 방법도 존재
+        - 프로세싱 시간 up, but 정확도 up
 
 ## Program
 
