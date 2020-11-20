@@ -15,6 +15,8 @@
 
 ## 의문
 
+- *특정한 python object의 크기가 지속적으로 늘어나면, 해당 오브젝트의 python memory와 물리적인 memory는 어떤식으로 할당되는가?*
+
 ## 개요
 
 - memory, CPU 는 서로 뗄레야 뗄 수 없는 관계
@@ -92,17 +94,17 @@ Used pool diagram
     - 같은 사이즈의 블록들의 pool끼리는 doubly linked list로 이어져 있음
     - `ref.count`
       - 사용된 블록의 개수
-    - pool이 처음 initializing될 때, freeblock에 모든 블록을 할당하지 않음
-      - 낮은 어드레스의 처음 두개의 블록만 설정하여, 첫번쨰 블록을 반환
-        - 이러한 전략은 모든 level(arena, pool, block)에서 동일함
-        - lazy allocation
-          - 진짜 필요할 때에만 할당해서 사용
-          - 퍼포먼스 최적화 / 메모리 할당 최적화
+    - **lazy allocation**
+      - pool이 처음 initializing될 때, freeblock에 모든 블록을 할당하지 않음
+        - 낮은 어드레스의 처음 두개의 블록만 설정하여, 첫번째 블록을 반환
+          - 이러한 전략은 모든 level(arena, pool, block)에서 동일함
+            - 진짜 필요할 때에만 할당해서 사용
+            - 퍼포먼스 최적화 / 메모리 할당 최적화
     - pool의 상태가 used
       - => allocation이 가능한 block이 존재함을 암
       - 그럼에도 불구하고, `pool->freeblock`이 free list의 마지막을 가리킨다면, 아직 상위 주소 블록을 사용하지 않았다는 것을 의미함
       - `pool->nextoffset`이 아직 접근하지 않은 상위 레벨의 블록에 대한 address offset
-      - `nextoffset > maxnextoffset` <=> 모든 블록이 적어도 한번은 access되었음
+      - `nextoffset > maxnextoffset` <=> 모든 블록이 적어도 한번은 사용 되었음
     - `usedpools`
       - class에 의해서 그룹회된 pool들의 포인터를 저장
   - state
@@ -141,11 +143,14 @@ struct arena_object {
     - doubly linked list구조
     - `freepools`필드는 사용 가능한 풀들의 linked list
     - 단순히 메모리가 더 필요하면 계속 요구함
+      - OS에 직접요구?
+      - Block, Pool은 사실상 physical memory와 먼 관계에 있음
+        - *둘은 그냥 할당된 공간을 사용하기만 하면 됨(?)*
 
 #### Memory deallocation
 
 - Small object manager가 memory를 OS로 되돌리는 경우가 아주 가끔 존재
-  - 한 arena에 존재하는 모든 pool이 비어있을 때
+  - **한 arena에 존재하는 모든 pool이 비어있을 때**
     - e.g) 짧은 시간동안에 temporary object들을 사용하는 경우
 - long-running python process
   - 위의 특성 때문에 unused memory를 잡아먹을 수 있음
