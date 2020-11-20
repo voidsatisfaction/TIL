@@ -4,6 +4,8 @@
 - General
   - Architecture
   - Architect
+- Pattern
+  - publish-subscribe(Pub-Sub)
 
 ## 의문
 
@@ -86,3 +88,24 @@ Design stamina hypothesis
   - **소프트웨어 디자인에 있어서 irreversibility를 제거할 수 있는 방법을 찾아서 architecture를 제거 하는 것**
 - 명언
   - Software is not limited by physics, like buildings are. It is limited by imagination, by design, by organization, In short, **it is limited by properties of people** , not by properties of the world. **"We have met the enemy, and he is us."**
+
+## Pattern
+
+### Publish-subscribe(Pub-Sub)
+
+- 정의
+  - 메시지의 송신자(publisher)는 특정 receiver로 메시지를 직접 보내지게 되도록 프로그램하지 않고, published message를 클래스로 나누어서 카테고리화 함
+    - 수신자에 대해서 무지
+  - 메시지의 수신자(subscriber)는 특정 메시지 타입만 구독
+    - 송신자에 대해서 무지
+- 특징
+  - message queue 패러다임의 자손
+- Message filtering
+  - 정의
+    - reception을 위한 메시지를 선택하고, 가공하는 프로세스를 filtering이라 함
+  - 종류
+    - topic-based
+      - publisher가 정의한 topic(logical channel)을 subscriber가 구독하고 있으면 그 메시지를 전달
+    - content-based
+      - subscriber가 정의한 제한과 메시지의 attributes나 content가 매치되면 해당 메시지를 전달
+    - hybrid
