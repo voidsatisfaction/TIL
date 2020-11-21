@@ -14,6 +14,7 @@
   - Unicast vs Broadcast vs Multicast
   - TCP/IP
   - DHCP
+  - In-band control vs Out-of-band control
 - Hardware
   - 케이블
   - NIC
@@ -194,6 +195,15 @@ network bridging의 high level overview
 - 정의
   - PC마다 각각 IP 주소를 미리 지정해 놓지 않고, DHCP 서버가 그 네트워크에 필요한 IP 주소를 전부 가지고 있다가 IP 주소를 요구하는 PC에는 그떄그떄 자동으로 분배해주는 방식
   - 다 사용된 IP주소는 회수
+
+### In-band control vs Out-of-band control
+
+- In-band control
+  - 정의
+    - control data를 main data와 같은 연결(채널)로 보내는 네트워크 프로토콜의 특성
+- Out-of-band control
+  - 정의
+    - control data를 main data와 다른 연결(채널)로 보내는 네트워크 프로토콜의 특성
 
 ## 하드웨어
 
