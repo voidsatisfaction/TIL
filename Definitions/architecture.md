@@ -109,3 +109,31 @@ Design stamina hypothesis
     - content-based
       - subscriber가 정의한 제한과 메시지의 attributes나 content가 매치되면 해당 메시지를 전달
     - hybrid
+- 구성
+  - 큰 그림
+    - pub -----> message broker(event bus) <-----> sub
+  - 주체
+    - pub
+    - message broker
+      - filtering을 행함
+      - store and forward
+      - message prioritize
+    - sub
+- DDS(Data Distribution Service)에서의 PubSub
+  - 특징
+    - broker가 존재하지 않음
+    - Pub와 Sub는 meta-data를 IP multicast를 통해서 공유함
+    - 공유된 metadata를 캐시하고, message를 route함
+- 장점
+  - Loose coupling
+    - Pub와 Sub는 시스템 구조에 대해서 무지해도 됨
+    - 유연함
+      - c.f) client server 시스템
+  - Scalability
+- 단점
+  - Message delivery issues
+    - 메시지가 반드시 도달하는 것을 보장하도록 잘 설계해야 함
+    - subscriber가 구독하고 있지 않아도, publisher는 구독하고 있다고 착각하는 경우가 있음
+  - PubSub의 노드 수가 많아질 때 문제가 생길 가능성이 매우 커짐
+  - DOS 공격에 취약
+  - broker가 잘못된 sub에게 메시지를 보낼 위험성
