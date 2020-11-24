@@ -823,6 +823,7 @@ export default SlideItem
 - 정의
   - runtime computation을 보다 간단한 array indexing operation으로 치환한 배열
     - runtime computation 뿐 아니라, I/O 작업 등도 해당됨
+  - 수학적으로는, 관점에 따라서 '함수' 혹은 '전사 함수' 라고 생각할 수 있겠다.
 - 특징
   - 테이블은 precalculated 되어, static program storage에 저장되는 경우도 있음
     - 프로그램의 initialization phase에 계산되기도 함
