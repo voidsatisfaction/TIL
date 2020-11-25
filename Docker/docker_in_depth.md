@@ -164,6 +164,8 @@ CMD python /app/app.py
 #### The copy-on-write (CoW) strategy
 
 - CoW 전략
+  - 정의
+    - read의 경우, 기존에 있는 파일을 사용하다가, 변경이 필요할 때에만 copy후 변경하는 전략
   - 최대한의 효율을 위한 파일 공유와 복사 전략
   - I/O 최소화 및 연속된 레이어들의 사이즈 최소화
 - 예시
@@ -369,3 +371,118 @@ ec1ec45792908e90484f7e629330666e7eee599f08729c93890a7205a6ba35f5
 - 특징
   - swarm services에는 적용 불가
     - swarm service는 swarm manager에 의해서 관리됨
+
+### Run multiple services in a container
+
+- 개요
+  - 기본적으로 도커는 하나의 컨테이너가 하나의 역할만 하도록 해야함
+    - 각 컨테이너는 network나 shared volume등을 활용해서 연결
+  - 하지만 일부의 상황에서는, 여러 프로세스를 실행해야 할 경우가 생김
+- 방법
+  - `--init`
+    - tiny init process를 컨테이너에 메인 프로세스로 삽입
+    - *tiny*의 뜻은?
+  - wrapper script
+    - 모든 커맨드를 wrapper script에 포함시킴
+
+wrapper script의 예시
+
+```sh
+#!/bin/bash
+
+# turn on bash's job control
+set -m
+
+# Start the primary process and put it in the background
+./my_main_process &
+
+# Start the helper process
+./my_helper_process
+
+# the my_helper_process might need to know how to wait on the
+# primary process to start before it does its work and returns
+
+
+# now we bring the primary process back into the foreground
+# and leave it there
+fg %1
+```
+
+```dockerfile
+FROM ubuntu:latest
+COPY my_main_process my_main_process
+COPY my_helper_process my_helper_process
+COPY my_wrapper_script.sh my_wrapper_script.sh
+CMD ./my_wrapper_script.sh
+```
+
+### Container Runtime metrics
+
+#### Docker stats
+
+docker stats 예시
+
+![](./images/docker_in_depth/docker_stats1.png)
+
+- `docker stats`
+  - 개요
+    - container's runtime metrics을 live stream가능
+  - 보여주는 데이터
+    - CPU
+    - Memory
+      - usage
+      - limit
+    - Network IO
+
+|Column|Description|
+|NET I/O|해당 컨테이너가 네트워크 인터페이스를 통해서 보내고 받은 데이터의 총량|
+|BLOCK I/O|해당 컨테이너가 host의 block device로부터 쓰여지거나, block device를 읽은 데이터의 양|
+|PIDS|컨테이너가 생성한 process 혹은 thread의 수|
+
+#### Control groups
+
+- 개요
+  - process들의 그룹을 track
+  - CPU, memory, block I/O usage를 expose
+  - network usage metric 접근 가능하도록 함
+  - `/sys/fs/cgroup`
+
+#### Enumerate cgroups
+
+...
+
+### Runtime options with Memory, CPUs, and GPUs
+
+- 개요
+  - default로는 container는 host 커널 스케쥴러가 허락하는 만큼 리소스를 사용가능함
+  - Docker는 `docker run` 커맨드의 flag를 사용해서 runtime memory, CPU 사용량 설정이 가능
+  - `docker info`로 도커데몬의 설정내용 확인 가능
+- Memory
+  - `OOME(Out Of Memory Exception)`
+    - Linux kernel 호스트의 physical memory와 swap memory를 소진하면 메모리를 많이 잡아먹는 프로세스를 kill
+    - Docker daemon은 OOM priority를 조정해서 다른 프로세스보다 덜 죽도록 유도
+    - 컨테이너는 OOM priority가 조정되지 않음
+      - 그렇다고 컨테이너에 직접 `--oom-score-adj`, `--oom-kill-disable`를 설정하는 것은 피해야 함
+  - 컨테이너 메모리 제한
+- CPU
+- GPU
+
+## Configure networking
+
+### Networking overview
+
+- 개요
+  - docker container끼리나 non-docker workload와 연결해주는 기능
+  - platform-agnostic
+- 네트워크 드라이버
+  - `bridge`
+    - standalone containers끼리의 통신에 사용
+  - `host`
+    - container가 docker host의 network를 그대로 사용
+  - `overlay`
+    - 다수의 docker daemon을 연결하고, swarm 서비스를 가능하도록 함
+  - `macvlan`
+    - container에 MAC주소를 부여해서, physical device처럼 보이게 함
+    - docker daemon은 MAC주소로 traffic을 routing함
+  - `none`
+    - 네트워킹을 불가능하게 함
