@@ -114,8 +114,17 @@ Chain Rule의 증명
 - 배경
   - `x^3 + y^3 = 6xy` 과 같은 식은 어떻게 미분하는가?
     - `y`가 x에 대한 함수임에 주의
+- c.f) explicit
+  - 개요
+    - 식에서 한 변수가 명시적으로 다른 변수의 항에 의해서 표현되는 것
+  - e.g)
+    - `y = root(x^3+1)`
+    - `y = xsin(x)`
 - implicit differentiation
   - 개요
-    - y가 x에 대해서 미분가능할 경우, 식의 양변을 x에 대해서 미분하는 것(chain rule, product rule등을 사용)
+    - 식이 explicit하지 않을 경우, implicit differentiation 방법을 사용하여, 도함수를 구할 수 있음
+  - 방식
+    - 식의 양쪽에 대해서 x에 대해서 미분하고, `y'`에 대해서 결과 식을 품
+      - `y`는 x에 대해서 항상 미분가능하는 가정이 있어야 함
   - 문제
     - `x^4 + y^4 = 16`의 `y''`을 구하시오

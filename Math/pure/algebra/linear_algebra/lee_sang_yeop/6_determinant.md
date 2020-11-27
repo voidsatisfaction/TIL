@@ -69,6 +69,7 @@ cycle notation / transposition
     - 성질
       - `σ=(i,j) => I_σ = I_[i]<->[j]`
         - i열과 j열 자리 바꾸기
+        - *주의: σ가 transposition으로서, 하나만 존재하는 경우는 위의 식이 성립하나, σ가 transposition의 합성으로 이루어 진 경우, 단순히 열을 기준으로 자리를 바꾼다고 생각하면 안되고, 기저의 인덱스의 변화를 기준으로 바꾼다고 생각해야 한다. (e.g σ = (1,3,2) = (1,2)◦(1,3) = I(e1, ..., en)를 e1과 e3을 자리바꿈 후, e1과 e2를 자리바꿈 한다 != I를 1열과 3열 자리바꿈 후 1열과 2열 자리바꿈)*
     - 관찰(`σ,τ∈Sn`)
       - ① I_σ의 j-th column은 `e_σ(j)`즉, `I_σ = (e_σ(1), ..., e_σ(n))`
       - ② `A∈Mnxn(F) => A・I_σ = ([A]^σ(1), ..., [A]^σ(n))`
@@ -98,9 +99,12 @@ cycle notation / transposition
     - `= (I_σ)^-1・[L]_Bv^Bv・I_σ = t(I_σ)・[L]_Bv^Bv・I_σ`인데,
     - `t(I_σ)・A' = tt(t(I_σ)・A) = t(tA・I_σ) = tA의 첫번째 열과 두번째 열을 자리바꿈한 뒤에 transpose = A의 첫번째 행과 두번째 행을 자리바꿈`
   - ③ `[L]_Bv^Bv = diag(λ1, λ2, λ3) (λi∈F) => [L]_Bvσ^Bvσ = diag(λ2, λ1, λ3) = diag(λσ(1), λσ(2), λσ(3))`
+    - *`σ=(1,2)`일 때 인가?(중요)*
     - `λi∈F, (i,i)-성분이 λi인 (nxn)-대각행렬을` `diag(λ1, ..., λn)`으로 표기한다
+      - `diag(..., λj(i번째), ...) = 대각행렬인데 (i,i)의 값이 λj가 되는 경우`
     - *`ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`임을 증명*
       - 여기에서 `~`기호는 무엇을 뜻하는가?
+        - `A' = U^-1AU`꼴로 나타낼 수 있다는 것
 
 ## 6.3 Determinant의 정의 1
 
@@ -122,7 +126,7 @@ cycle notation / transposition
 - 정리
   - `det: Mnxn(F) -> F`는 다음과 같이 주어진다
     - `det(A) = |A| = det(aij) = sigma_{σ∈Sn}{sgn(σ)・a_σ(1),1・a_σ(2),2 ... a_σ(n),n}`
-      - 애초에 이건 어떻게 증명? - 일단 3x3 matrix까지는 손으로 해봤으나...
+      - 애초에 이건 어떻게 증명? 특히 *(alternating form 이라는 것을 어떻게 보이지?)*
         - 그 증명이 바로 옆 페이지에 나옴(꿀잼)
         - 그러니까 귀납적(혹은 직관적 혹은 천재적?!)으로 미리 `det`의 식을 예측하고 이 식이 `det`의 조건을 만족함을 보인 후에, uniqueness를 보이는 식으로 전개
 
@@ -149,9 +153,19 @@ cycle notation / transposition
       - S. Lang의 ch7 pp 202-211을 꼭 참조하세요
 - `A∈Mnxn(F)`일 때, A의 rank를 계산하는 가장 효과적인 방법은 A의 row-reduced echelon form - 즉, Gaussian Elimination - 을 이용하는 것
   - Determinant와 sub-determinant를 이용하는 계산법도 S.Lang의 7장을 확인하세요.
-- Gaussian Elimination과 Determinant 행렬식은 다음 성질을 갖는다
-  - 어떤 한 column에 다른 column의 상수배를 더해 주어도, 행렬식은 변하지 않는다. 즉 `i!=j ∧ c∈F, i-th column에 j-th column의 c배 를 더해주면 det(...,[A]^i + c[A]^j, ..., [A]^j, ...) = det(A)`이다.
-  - 위의 내용에서 column을 row로 바꾸어도 좋다
+- **Gaussian Elimination과 Determinant 행렬식은 다음 성질을 갖는다**
+  - ① 어떤 한 column에 다른 column의 상수배를 더해 주어도, 행렬식은 변하지 않는다. 즉 `i!=j ∧ c∈F, i-th column에 j-th column의 c배 를 더해주면 det(...,[A]^i + c[A]^j, ..., [A]^j, ...) = det(A)`이다.
+  - ② 위의 내용에서 column을 row로 바꾸어도 좋다
+  - 참고(elementary operation)
+    - ① 두 column(row)의 교환
+      - `det(..., [A]^j, ..., [A]^i, ...) = -det(A)`
+        - (∵ alternating form의 정의로부터)
+    - ② 한 column(row)에 다른 column(row)의 k배를 더함
+      - `det(..., [A]^i + k・[A]^j, ..., [A]^j, ...) = det(A)`
+        - (∵ alternating n-linear form의 정의로부터)
+    - ③ 한 column(row)에 k(k != 0)배를 곱함
+      - `det(..., k[A]^i, ...) = k・det(A)`
+        - (∵ n-linear form의 정의로부터)
 
 ## 6.5 Determinant의 정의 2
 
