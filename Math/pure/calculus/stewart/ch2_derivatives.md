@@ -128,3 +128,22 @@ Chain Rule의 증명
       - `y`는 x에 대해서 항상 미분가능하는 가정이 있어야 함
   - 문제
     - `x^4 + y^4 = 16`의 `y''`을 구하시오
+
+## 2.7 Rates of Change in the Natural and Social Sciences
+
+- 도함수
+  - y의 x에 대한 순간 변화율
+- 물리학
+  - 직선에서의 먼지의 움직임과 위치 함수 `s = f(t)`
+    - `v(t) = ds/dt` (순간 속도)
+    - `a(t) = dv/dt = d^2s/dt `
+- ...
+- **특수한 것들에서 보편성(추상화)을 끌어냄**
+  - 하나의 수학적 추상개념이 각각의 과학의 다른 해석을 이끌어 낼 수 있음
+  - Mathematics compares the most diverse phenomena and discovers the
+secret analogies that unite them - Fourier
+
+## 2.8 Related Rates
+
+- 개요
+  - 보다 쉽게 측정될 수 있는 하나의 양의 변화를 기반으로 또 다른 양의 변화를 측정
