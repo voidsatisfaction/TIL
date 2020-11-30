@@ -147,3 +147,29 @@ secret analogies that unite them - Fourier
 
 - 개요
   - 보다 쉽게 측정될 수 있는 하나의 양의 변화를 기반으로 또 다른 양의 변화를 측정
+
+## 2.9 Linear Approximations and Differentials
+
+Linear Approximation
+
+![](./images/ch2/linear_approximation_and_differential1.png)
+
+- Linear approximation(tangent line approximation)
+  - 개요
+    - 함수 f: X -> Y에 대해서, x가 a와 충분히 가까울 때, `(a, f(a))`에서의 접선을 곡선 `y = f(x)`의 근사로 생각할 수 있음
+    - `f(x) ~~ f(a) + f'(a)(x-a)`
+  - linearization of f at a
+    - `L(x) = f(a) + f'(a)(x-a)`
+  - 오차 범위
+    - 특정 오차 범위 이내의 `L(x) ~~ f(x)`가 되기 위한, x의 범위는?
+  - 예시
+    - `sin(x) ~~ x (x is near 0)`
+    - `cos(x) ~~ 1 (x is near 0)`
+- Differentials
+  - 정의
+    - f가 미분가능한 함수이고, `y = f(x)`일 떄, `dy = f'(x)dx`
+      - `dy`, `dx`는 differential
+      - `dy`는 `x`와 `dx`에 대한 종속변수
+  - 특징
+    - `∆y≈dy (when ∆x≈0)`
+    - `f(a + dx) ≈ f(a) + dy`
