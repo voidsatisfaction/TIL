@@ -8,6 +8,7 @@
   - Buffer(data buffer)
   - POSIX
   - Everything is a file
+  - Shell vs Terminal
 - File system
   - File descriptor vs System open-file table vs Vnode Table
   - I/O multiplexing
@@ -147,6 +148,23 @@ Bootstrap
     - virtual filesystem의 예시
       - `/proc`
         - owner, access permissions등의 유닉스 파일 속성을 갖음
+
+### Shell vs Terminal
+
+- Shell
+  - 터미널에 부착되어, shell 관련 명령어를 해석해서 실행해주는 프로그램
+- Terminal
+  - 컴퓨터에 접속하기 위한 프로그램
+- c.f) `docker run -it ...`
+  - `-i`
+    - container가 *현재 쉘(?)의* stdin을 받을 수 있도록 함
+  - `-t`
+    - 현재의 쉘을 conatiner의 terminal에 부착
+  - case
+    - `-i`만 존재하는 경우
+      - `-t`가 없으므로, 명령어를 치면 stdout은 나오나, 그것이 다소 이상하게 보임
+    - `-t`만 있는 경우
+      - `-i`가 없으므로, 명령어를 쳐도 container에 반영되지 않음
 
 ## File system
 
