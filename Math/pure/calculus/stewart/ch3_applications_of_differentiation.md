@@ -24,18 +24,18 @@
 - absolute(global) maximum(minimum) value
   - 정의
     - `c∈D, D is domain of f`
-      - `∀x∈D, f(c)≥f(x)` => f(c)는 f의 D에서의 **absolute maximum value**
-      - `∀x∈D, f(c)≤f(x)` => f(c)는 f의 D에서의 **absolute minimum value**
+      - `∀x∈D, f(c)≥f(x)` <=> f(c)는 f의 D에서의 **absolute maximum value**
+      - `∀x∈D, f(c)≤f(x)` <=> f(c)는 f의 D에서의 **absolute minimum value**
     - extreme values
       - absolute maximum value
       - absolute minimum value
 - local maximum(minimum) value
   - 정의
-    - `f(c)≥f(x) (x≈c)` => f의 local maximum
-    - `f(c)≤f(x) (x≈c)` => f의 local minimum
+    - `f(c)≥f(x) (x≈c)` <=> f의 local maximum
+    - `f(c)≤f(x) (x≈c)` <=> f의 local minimum
 - Extreme Value Theorem
   - 정의
-    - `f`가 닫힌 구간`[a,b]`에서 연속 => f는 absolute maximum value를 `f(c)`로 갖음 ∧ absolute minimum value를 `f(d)`로 갖음 (단, `c,d ∈ [a,b]`)
+    - `f`가 닫힌 구간`[a,b]`에서 연속 => f는 구간 `[a,b]`에서 absolute maximum value를 `f(c)`로 갖음 ∧ 구간 `[a,b]`에서 absolute minimum value를 `f(d)`로 갖음 (단, `c,d ∈ [a,b]`)
 
 ## 3.2 The Mean Value Theorem
 
