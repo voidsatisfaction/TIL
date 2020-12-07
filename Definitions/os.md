@@ -157,9 +157,11 @@ Bootstrap
   - 컴퓨터에 접속하기 위한 프로그램
 - c.f) `docker run -it ...`
   - `-i`
-    - container가 *현재 쉘(?)의* stdin을 받을 수 있도록 함
+    - container가 stdin을 받을 수 있도록 함
   - `-t`
     - 현재의 쉘을 conatiner의 terminal에 부착
+      - *쉘을 터미널에 부착한다는게 무슨 의미인가?*
+      - 터미널이 실행되면 해당 쉘 프로그램을 실행한다는 의미?
   - case
     - `-i`만 존재하는 경우
       - `-t`가 없으므로, 명령어를 치면 stdout은 나오나, 그것이 다소 이상하게 보임

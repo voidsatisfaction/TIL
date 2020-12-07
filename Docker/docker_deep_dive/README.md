@@ -67,9 +67,10 @@ Docker architecture
       - 개요
         - high-level
         - 모든 컨테이너 라이프 사이클 관리
+          - managing lower level runc instances
+        - 그 외 추가 기능
           - pulling images
           - creating network interfaces
-          - managing lower level runc instances
       - 특징
         - 일반적인 도커의 설치는, 하나의 containerd process(docker-containerd)를 설치하는 것
           - `containered`는 각각의 컨테이너와 연관되는, 여러개의 `runc(docker-runc)`인스턴스를 관리
