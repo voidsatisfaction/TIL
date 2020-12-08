@@ -1,17 +1,25 @@
 # Docker Deep Dive
 
 - 의문
+- 깨달음
 - 1 개요
   - 개요
   - Docker technology
   - OCI(Open Container Initiative)
 - 2 The technical stuff
   - 2.1 The Docker Engine
+  - 2.2 Images
 
 ## 의문
 
 - *OS agnostic을 지원하는 도커의 툴 이름이 뭔가?*
   - `runc?`, `containerd?`, `libcontainer?`
+- `docker exec`을 하면 무슨 일이 일어나는지? 매커니즘?
+
+## 깨달음
+
+- Kubernetes는 container orchestration을 담당하는 기술인데, 이 친구는 어차피 container만 담당하면 되므로, docker daemon과는 완전 별개일 것이다.
+  - 따라서 docker daemon을 패싱하고, 바로 containerd와 통신하는듯?
 
 ## 1. 개요
 
@@ -308,3 +316,101 @@ Docker client server communication
   - default: HTTP
     - 2375/tcp
   - **HTTPS를 기본으로 설정해서 통신하게 할 수 있음**
+
+### 2.2 Images
+
+#### 개요
+
+- 도커 이미지
+  - 정의
+    - application이 실행하기 위해서 필요한 모든것이 들어가있는 패키징
+      - *이거는 너무 추상화된 정의 같은데...*
+      - 멈춰진 container라고 생각해도 됨
+  - 구성
+    - application code
+    - application dependencies
+    - **OS construct**
+      - *정확히 OS construct가 뭐지?*
+  - 특징
+    - 레이어가 stack되는 구조
+- image vs container
+  - image
+    - build-time constructs
+  - container
+    - run-time constructs
+  - image와 container는 서로 dependent함
+
+#### Image는 작다
+
+- shell없이도 구동 가능
+  - 필요없는 것은 없이 동작시키는게 맞음
+- kernel이 포함되지 않음
+  - host의 커널 접근을 공유함
+    - *kernel이 없는 OS는 무엇이 남는것인지?*
+- OS별 도커 이미지
+  - Linux
+    - Alpine Linux 이미지
+      - 5MB
+    - Ubuntu
+      - 40MB
+  - Windows
+    - 수GB
+
+#### Image pulling
+
+- local image repository
+  - OS별 장소
+    - Linux
+      - `/var/lib/docker/<storage-driver>`
+    - Windows
+      - `C:\ProgramData\docker\windowsfilter`
+    - MacOS
+      - VM속에서 일어남
+  - 역할
+    - Docker host의 repository에, docker registry로부터 pull한 이미지를 저장함
+
+#### Image registries
+
+docker image registries
+
+![](./images/docker_image_registry1.png)
+
+- 개요
+  - 중앙 이미지 저장 장소
+- 예시
+  - Docker hub
+    - https://hub.docker.com
+    - docker client는 default로 dockerhub를 이용
+  - 3rd party registries
+  - secure on-premise registries
+- 구성
+  - 하나 이상의 image repositories
+    - image repositories는 하나 이상의 image를 갖음
+- repositories
+  - 종류
+    - official
+      - Docker에 의해서 관리되고 보증되는 리포지토리
+      - high quality
+      - e.g)
+        - https://hub.docker.com/_/nginx/
+    - unofficial
+      - Docker에 의해서 관리되고 보증되지 않음
+      - e.g)
+        - https://hub.docker.com/r/nigelpoulton/pluralsight-docker-ci/
+
+#### Image naming and tagging
+
+- image pulling
+  - official repository
+    - `docker image pull <repository>:<tag>`
+      - e.g)
+        - `docker image pull mongo:4.2.6`
+      - 참고
+        - latest이미지는 그냥 태그 이름이 latest일 뿐이지, 진짜 latest가 아닐 수 있음
+  - unofficial repository
+    - `docker image pull <account_name>/<repository>:<tag>`
+      - e.g)
+        - `docker image pull nigelpoulton/tu-demo:v2`
+  - 3rd party repository
+    - `docker image pull <DNS name of registry>/<repository>:<tag>`
+    - `docker image pull gcr.io/google-containers/git-sync:v3.1.5`
