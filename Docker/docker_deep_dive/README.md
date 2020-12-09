@@ -15,6 +15,7 @@
 - *OS agnostic을 지원하는 도커의 툴 이름이 뭔가?*
   - `runc?`, `containerd?`, `libcontainer?`
 - `docker exec`을 하면 무슨 일이 일어나는지? 매커니즘?
+- `libcontainer`는 정확히 무엇인가? `containerd`나 `runc`와 다른것?
 
 ## 깨달음
 
@@ -76,7 +77,7 @@ Docker architecture
         - high-level
         - 모든 컨테이너 라이프 사이클 관리
           - managing lower level runc instances
-        - 그 외 추가 기능
+        - 그 외 추가 기능(orchestration에 필요한 기능이라고 생각하면 쉬워짐)
           - pulling images
           - creating network interfaces
       - 특징
@@ -414,3 +415,87 @@ docker image registries
   - 3rd party repository
     - `docker image pull <DNS name of registry>/<repository>:<tag>`
     - `docker image pull gcr.io/google-containers/git-sync:v3.1.5`
+
+#### 각종 편리한 커맨드
+
+- `docker images --filter dangling=true`
+  - dangling image만 찾음
+- `docker search alpine --filter "is-official=true" --limit 100`
+  - alpine으로 시작하는 공식 이미지를 최대 100개까지 찾음
+
+#### 도커 이미지와 레이어
+
+도커 이미지와 레이어
+
+![](./images/docker_image_and_layer1.png)
+
+- 이미지
+  - read-only layer의 스택
+- layer
+  - 파일로 이루어져 있음
+  - 캐시됨
+    - *그런데, 레이어캐싱은 어떻게 가능한가? 그냥 단순히 command를 비교하는 것인가?*
+- 이미지 조사
+  - `docker image inspect ubuntu:latest`
+  - `docker history <repository>:<tag>`
+- Docker storage driver
+  - *Union FS*
+    - Linux
+        - AUFS, overlay2, devicemapper, btrfs, zfs
+    - Windows
+      - windowsfilter
+        - NTFS위의 CoW를 가능케하는 fs 구현체
+
+#### Image와 digest
+
+- image digest
+  - image의 컨텐츠의 hash값
+    - 내용이 바뀌면 무조건 해시값이 바뀌게 되어있음
+    - *image id 와 digest의 차이는? 왜 따로 두었는가?*
+      - 이미지 ID는 이미지의 내용물이 변해도 변하면 안됨
+  - digest기반 pull이 가능
+    - `docker image pull alpine@sha256:9a839e63da...9ea4fb9a54`
+- layer
+  - 각 레이어는 독립적
+  - 레이어 마다 content hash가 존재
+    - content에 대한 해시함수의 digest
+  - 복잡해지는 경우
+    - push, pull
+      - 각 레이어를 compress함
+      - compress된 content는 uncompress된 content와 다름
+        - push, pull 연산 뒤에는 content hash가 매칭되지 않음
+        - HMAC으로 내용물의 integrity를 담보하는 로직 적용이 불가능
+    - **distribution hash** 의 도입
+      - compressed된 레이어의 digest를 push, pull할때 같이 보냄
+        - HMAC 매커니즘 사용 가능
+      - ID collision도 막아줌
+
+#### Multi-architecture images
+
+Manifest and manifest list
+
+![](./images/manifest_list_and_manifest1.png)
+
+- 개요
+  - **하나의 이미지 태그 => multiple platform / architecture 서포트**
+- 원리
+  - manifest lists
+    - 개요
+      - 특정 이미지 태그에의해서 지원되는 architecture의 리스트
+  - manifests
+    - 개요
+      - 각 arhictecture가 갖고있는 생성할 layer의 디테일
+      - *위의 설명이 구체적으로 무엇인지?*
+- 예시
+  - Raspberry Pi 에서 도커가 실행되고 있다고 가정
+  - 이미지를 pull
+  - docker cliient가 Dockerhub에 의해서 노출된 Docker registry API로 호출
+    - 자신의 architecture를 알고 있음
+  - ARM entry가 manifest list에 존재 => 해당 이미지의 manifest가 가져와지고 파싱되어, 레이어들의 digest값을 파악
+  - 각 layer가 Docker hub로부터 pull됨
+- 관련 커맨드
+  - `docker manifest inspect golang`
+    - image의 지원하는 manifest를 보여줌
+  - `docker buildx build --platform linux/arm/v7 -t myimage:arm-v7`
+    - 다른 플랫폼이나 아키텍처에 대한 이미지 빌드가 가능
+    - ARMv7 도커 노드가 아니어도 빌드가능
