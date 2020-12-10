@@ -9,18 +9,30 @@
 - 2 The technical stuff
   - 2.1 The Docker Engine
   - 2.2 Images
+  - 2.3 Containers
 
 ## 의문
 
-- *OS agnostic을 지원하는 도커의 툴 이름이 뭔가?*
+- OS agnostic을 지원하는 도커의 툴 이름이 뭔가?
   - `runc?`, `containerd?`, `libcontainer?`
-- `docker exec`을 하면 무슨 일이 일어나는지? 매커니즘?
+    - `libcontainer`를 re-packaging한것이 `runc`
+  - 결국 질문에 대한 답은, `containerd`, `runc`인듯
+- *`docker exec`을 하면 무슨 일이 일어나는지? 매커니즘?*
 - `libcontainer`는 정확히 무엇인가? `containerd`나 `runc`와 다른것?
 
 ## 깨달음
 
 - Kubernetes는 container orchestration을 담당하는 기술인데, 이 친구는 어차피 container만 담당하면 되므로, docker daemon과는 완전 별개일 것이다.
   - 따라서 docker daemon을 패싱하고, 바로 containerd와 통신하는듯?
+- 컨테이너 내부의 파일 시스템은 베이스 이미지들의 파일시스템을 통합해서 보여주는 union mount point이다.
+  - docker storage driver의 핵심 기능은, copy-on-write 방식으로 저장되는 stackable image를 container에 union mount하는 것
+- 컨테이너 가상환경을 만들때 필요한 구성요소를 구성하기 위해서 필요한 소프트웨어
+  - 자원(cgroup, namespaces)
+    - CPU
+    - Memory
+    - GPU
+  - 파일 시스템(fs driver(union))
+  - 커널(호스트 OS와 공유)
 
 ## 1. 개요
 
@@ -499,3 +511,35 @@ Manifest and manifest list
   - `docker buildx build --platform linux/arm/v7 -t myimage:arm-v7`
     - 다른 플랫폼이나 아키텍처에 대한 이미지 빌드가 가능
     - ARMv7 도커 노드가 아니어도 빌드가능
+
+### 2.3 Containers
+
+VM model
+
+![](./images/vm_model1.png)
+
+Container model
+
+![](./images/container_model1.png)
+
+- 개요
+  - 도커 컨테이너는 OCI compliant
+- Containers vs VMs
+  - 공통점
+    - 실행할 host가 필요함
+  - VM
+    - **하드웨어의 가상화**
+      - 물리 하드웨어 자원을 VM이라고 불리는 가상 버전으로 나눔
+    - physical server가 부팅됨
+    - hypervisor 부팅 및 동작
+      - 시스템의 물리적 자원(CPU, RAM, storage, NICs)를 실제자원인 것 처럼 가상으로 나눔
+      - VM이라는 소프트웨어 구성물로 패키징함
+    - 할당받은 하드웨어 자원을 이용하기 위한 OS가 별도로 필요함
+      - OS(VM) tax
+  - Container
+    - **OS 가상화**
+      - OS자원을 container라고 불리는 가상 버전으로 나눔
+    - physical server가 부팅됨
+    - Docker 컨테이너 엔진이 OS 자원을 나눠서 container라는 격리된 구조물에다가 전달
+    - 각 컨테이너는 진짜 OS같이 느껴짐
+    - 보안이 VM모델 보다 덜 안전함
