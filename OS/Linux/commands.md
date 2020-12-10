@@ -119,6 +119,9 @@
     - 결과적으로 commit 하나의 내용을 되돌리는데, 해당 커밋의 역연산의 커밋을 함
   - `git reset <commit>`
     - 결과적으로 commit 하나의 내용을 되돌리는데, 커밋 자체가 없었던 것 처럼 함
+- `git log --all --decorate --oneline --graph`
+  - git log a dog
+    - 이걸로 외우자!
 
 ## awk
 
