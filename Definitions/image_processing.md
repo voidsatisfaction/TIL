@@ -11,10 +11,16 @@
     - 채도
   - viewport
   - window
+- Color spaces
+  - RGB
 - Format
   - SVG(Scalable Vector Graphics)
 - Medical image
   - Hounsfield scale(HU)
+
+## 의문
+
+- channel과 component의 차이는?
 
 ## General
 
@@ -47,7 +53,97 @@
   - display device에 종속된 좌표계에서의 area ∧ 컴퓨터 그래픽스에서 다각형의 viewing region
     - window를 viewport에 매핑하여 사용자가 자신의 디바이스에서 적당한 크기로 해당 내용을 볼 수 있음
     - **world-coordinates window clipping -> window-to-viewport transformation -> viewport rendering**
-  - physical-device-based 좌표계가 portable하지 않으므로, 정규화된 device coordinates로 알려진 소프트웨어 추상 계층이 viewport를 표현하는데에 상요됨
+  - physical-device-based 좌표계가 portable하지 않으므로, 정규화된 device coordinates로 알려진 소프트웨어 추상 계층이 viewport를 표현하는데에 사용됨
+
+## Color spaces
+
+각 Color space사이에는 bijective function이 존재하는가?
+
+### RGB
+
+RGB color space decomposition
+
+![](./images/image_processing/color_space_rgb1.png)
+
+- 의미
+  - Red
+  - Green
+  - Blue
+- 개요
+  - linear combination of Red, Green, Blue values
+  - 세 채널은 포면에 부딪히는 빛의 양과 관련있음
+- 단점
+  - 조명의 세기가 달라지면, 인식하기 어려움
+  - perceptual non-uniformity
+  - chrominance(색과 관련된 정보)와 luminance(정보에 대한 강도)가 섞여있음
+    - 각각의 채널에 복잡적으로 encode되어있음
+
+### Lab
+
+Lab color space decomposition
+
+![](./images/image_processing/color_space_lab1.png)
+
+- 의미
+  - Lightness(intensity)
+  - a(Green에서 Magenta까지의 색 범위)
+  - b(Blue에서 Yellow까지의 색 범위)
+- 개요
+  - L채널은 색과 관계없이 오직 밝기만을 다룸
+  - 나머지 두 채널이 색을 encode함
+- 특징
+  - Perceptually uniform color space
+  - 장치의 독립성
+  - Photoshop에서 많이 사용됨
+- 관찰
+  - illumination의 변화로 L 채널에 영향을 많이 주는 것 확인 가능
+  - 특정 색의 A, B 채널의 값 변화는 그다지 존재하지 않음
+
+### YCrCb
+
+YCrCb color space decomposition
+
+![](./images/image_processing/color_space_ycrcb1.png)
+
+- 의미
+  - Y(RGB로부터의 gamma correction을 거친 후의 Luminance or Luma(밝기) component)
+  - Cr = R - Y (red component가 Luma로부터 얼마나 먼지, chroma)
+  - Cb = B - Y (blue component가 Luma로부터 얼마나 먼지, chroma)
+- 특징
+  - luminance와 chrominance(색조)을 서로 다른 채널로 분리
+  - 주로 TV전송에서 Cr Cb 컴포넌트의 압축을 위해서 사용됨
+  - 장치에 의존적
+- 관찰(위 사진)
+  - illumination의 변화로 Y 채널에 영향을 많이 주는 것 확인 가능
+  - 흰색은 3개의 component(채널)에서 다 변화를 겪은것을 확인 가능
+
+### HSV
+
+HSV color space decomposition
+
+![](./images/image_processing/color_space_hsv1.png)
+
+HSV color space visualization
+
+![](./images/image_processing/color_space_hsv2.png)
+
+- 의미
+  - H(Hue - Dominant Wavelength)
+    - 0 ~ 360
+  - S(Saturation - Purity / shades of the color)
+    - 0 ~ 100
+  - V(Value - Intensity)
+    - 0 ~ 100
+- 특징
+  - 색을 기술하는 채널은 오직 H 하나뿐
+  - 장치에 의존적
+- 관찰
+  - H component는 indoor나 outdoor나 큰 차이가 없음
+    - 대신 빨강색은 큰 차이를 보임
+    - Hue가 원을 이루기 때문
+      - `[300, 360]`사이의 값이 `[0, 60]`값으로 변화
+  - S component도 indoor, outdoor사이에 큰 차이가 없음
+  - V component가 빛의 강도를 나타냄
 
 ## Format
 
