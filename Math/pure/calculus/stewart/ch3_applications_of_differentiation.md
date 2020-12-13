@@ -66,6 +66,20 @@
 
 ## 3.3 How Derivatives Affect the Shape of a Graph
 
+- Increasing / Decreasing Test
+  - `f'(x)>0 on an interval => f is increasing on the interval`
+  - `f'(x)<0 on an interval => f is decreasing on the interval`
+- Derivative Test
+  - `c`가 연속함수 f의 critical number
+    - `f'가 c에서 양에서 음으로 변화 => f는 c에서 local maximum을 갖음`
+    - `f'가 c에서 음에서 양으로 변화 => f는 c에서 local minimum을 갖음`
+    - `f'가 c의 왼쪽 오른쪽 둘다 음이나 양의 값을 갖음 => f는 c에서 local maximum or minimum을 갖지 않음`
+- `f''`와 `f`와의 관계
+  - `f''`가 `f'`의 특정 구간에서의 increasing, decreasing을 나타냄
+  - `f' > 0`
+    - `f'`의 increasing은 f의 순간변화율이 양으로 커지고 있다는 것이므로, 값의 증가폭이 커지는 것을 나타냄
+      - `f'`의 decreasing은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 증가폭이 작아지는 것을 나타냄
+
 ## 3.4 Limits at Infinity; Horizontal Asymptotes
 
 ## 3.5 Summary of Curve Sketching
