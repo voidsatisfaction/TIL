@@ -543,3 +543,31 @@ Container model
     - Docker 컨테이너 엔진이 OS 자원을 나눠서 container라는 격리된 구조물에다가 전달
     - 각 컨테이너는 진짜 OS같이 느껴짐
     - 보안이 VM모델 보다 덜 안전함
+
+#### Container processes
+
+- 개요
+  - 컨테이너 내의 메인 프로세스(PID 1)를 kill => container kill
+- lifecycle
+  - run
+  - stop
+    - configuration, contents still exist on the local filesystem of the Docker host
+    - 언제든지 restart될 수 있음
+  - start
+    - stop된 컨테이너 다시 재시작
+  - stop
+    - `SIGTERM` signal to main application process inside the container (PID 1)
+      - main application process가 10초가 지난뒤에도 exit되지 않으면 `SIGKILL`시그널을 받음
+    - 실행 결과는 `Exited (0)`
+  - rm
+    - `SIGKILL`로 바로 프로세스를 죽여버림
+- restart policy
+  - `always`
+    - 명시적으로 stop을 한 케이스 이외에 모든 경우에 restart
+      - 명시적으로 stop한 이후에 daemon을 restart하면 컨테이너도 restart함
+  - `unless-stopped`
+    - 명시적으로 stop을 한 케이스 이외에 모든 경우에 restart
+      - 명시적으로 stop한 이후에 daemon을 restart해도 컨테이너도 restart하지 않음
+  - `on-failure`
+    - non-zero exit code로 끝나는 경우에 restart
+      - 명시적으로 stop한 이후에 daemon을 restart하면 컨테이너도 restart함
