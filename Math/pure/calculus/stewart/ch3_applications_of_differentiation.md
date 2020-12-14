@@ -77,8 +77,21 @@
 - `f''`와 `f`와의 관계
   - `f''`가 `f'`의 특정 구간에서의 increasing, decreasing을 나타냄
   - `f' > 0`
-    - `f'`의 increasing은 f의 순간변화율이 양으로 커지고 있다는 것이므로, 값의 증가폭이 커지는 것을 나타냄
-      - `f'`의 decreasing은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 증가폭이 작아지는 것을 나타냄
+    - `f'`의 increasing은 f의 순간변화율이 점점 커지고 있다는 것이므로, 값의 증가폭이 커지는 것을 나타냄
+    - `f'`의 decreasing은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 증가폭이 작아지는 것을 나타냄
+  - `f' < 0`
+    - `f'`의 increasing은 f의 순간변화율이 점점 커지고 있다는 것이므로, 값의 감소폭이 작아지는 것을 나타냄
+    - `f'`의 decreasing은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 감소폭이 커지는 것을 나타냄
+  - concave upward
+    - 정의
+      - 그래프 `f`가 특정 구간 `I`에서 모든 접선보다 위에 위치하는 경우
+    - 특징
+      - `f is concave upward on I <=> ∀x∈I, f''(x) > 0`
+  - concave downward
+    - 정의
+      - 그래프 `f`가 특정 구간 `I`에서 모든 접선보다 아래에 위치하는 경우
+    - 특징
+      - `f is concave downward on I <=> ∀x∈I, f''(x) < 0`
 
 ## 3.4 Limits at Infinity; Horizontal Asymptotes
 
