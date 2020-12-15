@@ -15,6 +15,7 @@
   - TCP/IP
   - DHCP
   - In-band control vs Out-of-band control
+  - Throughput vs Bandwidth
 - Hardware
   - 케이블
   - NIC
@@ -204,6 +205,24 @@ network bridging의 high level overview
 - Out-of-band control
   - 정의
     - control data를 main data와 다른 연결(채널)로 보내는 네트워크 프로토콜의 특성
+
+### Throughput vs Bandwidth
+
+Throughput vs Bandwidth
+
+![](./images/network/bandwidth_throughput1.png)
+
+- Throughput
+  - 정의
+    - 단위 시간당 처리량 or 네트워크 전달 가능량
+  - 특징
+    - 현재의 state를 나타내는데에 사용
+      - 값이 시간에 따라 변화하므로 Average throughput 값을 사용
+- Bandwidth
+  - 정의
+    - 단위 시간에 전달할 수 있는 최대 크기의 전달 양
+  - 특징
+    - 현재 state가 아닌, 용량(설비)과 관계가 있음
 
 ## 하드웨어
 
