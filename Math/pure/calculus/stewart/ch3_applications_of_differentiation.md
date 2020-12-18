@@ -69,7 +69,7 @@
 - Increasing / Decreasing Test
   - `f'(x)>0 on an interval => f is increasing on the interval`
   - `f'(x)<0 on an interval => f is decreasing on the interval`
-- Derivative Test
+- First Derivative Test
   - `c`가 연속함수 f의 critical number
     - `f'가 c에서 양에서 음으로 변화 => f는 c에서 local maximum을 갖음`
     - `f'가 c에서 음에서 양으로 변화 => f는 c에서 local minimum을 갖음`
@@ -77,23 +77,36 @@
 - `f''`와 `f`와의 관계
   - `f''`가 `f'`의 특정 구간에서의 increasing, decreasing을 나타냄
   - `f' > 0`
-    - `f'`의 increasing은 f의 순간변화율이 점점 커지고 있다는 것이므로, 값의 증가폭이 커지는 것을 나타냄
-    - `f'`의 decreasing은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 증가폭이 작아지는 것을 나타냄
+    - `f'`의 increasing(`f''>0`)은 f의 순간변화율이 점점 커지고 있다는 것이므로, 값의 증가폭이 커지는 것을 나타냄
+    - `f'`의 decreasing(`f''<0`)은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 증가폭이 작아지는 것을 나타냄
   - `f' < 0`
-    - `f'`의 increasing은 f의 순간변화율이 점점 커지고 있다는 것이므로, 값의 감소폭이 작아지는 것을 나타냄
-    - `f'`의 decreasing은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 감소폭이 커지는 것을 나타냄
+    - `f'`의 increasing(`f''>0`)은 f의 순간변화율이 점점 커지고 있다는 것이므로, 값의 감소폭이 작아지는 것을 나타냄
+    - `f'`의 decreasing(`f''<0`)은 f의 순간변화율이 점점 줄어들고 있다는 것이므로, 값의 감소폭이 커지는 것을 나타냄
   - concave upward
     - 정의
       - 그래프 `f`가 특정 구간 `I`에서 모든 접선보다 위에 위치하는 경우
     - 특징
       - `f is concave upward on I <=> ∀x∈I, f''(x) > 0`
+        - 도함수의 순간변화율이 0보다 큰 경우
+        - 기울기가 양으로 증가하는 경우
   - concave downward
     - 정의
       - 그래프 `f`가 특정 구간 `I`에서 모든 접선보다 아래에 위치하는 경우
     - 특징
       - `f is concave downward on I <=> ∀x∈I, f''(x) < 0`
+- inflection point(변곡점)
+  - 정의
+    - 곡선 `y=f(x)`에서, 특정 점 P에서 concave의 방향이 바뀌면, 그 점P를 inflection point라고 함
+- Second Derivative Test
+  - `f''`가 `c`근처에서 연속일 때
+    - `f'(c)=0 ∧ f''(c)>0 => f는 c에서 local minimum을 갖음`
+    - `f'(c)=0 ∧ f''(c)<0 => f는 c에서 local maximum을 갖음`
 
 ## 3.4 Limits at Infinity; Horizontal Asymptotes
+
+- theorem
+  - `r>0 (r is rational number) => lim(x->∞)(1/x^r)=0`
+  - `r>0 s.t x^r is defined for all x (r is rational number) => lim(x->-∞)(1/x^r)=0`
 
 ## 3.5 Summary of Curve Sketching
 
