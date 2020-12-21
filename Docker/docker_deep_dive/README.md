@@ -32,7 +32,7 @@
     - Memory
     - GPU
   - 파일 시스템(fs driver(union))
-  - 커널(호스트 OS와 공유)
+  - 커널(호스트 OS Kernel 공유)
 
 ## 1. 개요
 
@@ -512,6 +512,38 @@ Manifest and manifest list
     - 다른 플랫폼이나 아키텍처에 대한 이미지 빌드가 가능
     - ARMv7 도커 노드가 아니어도 빌드가능
 
+#### image build 예시
+
+```
+IMAGE    CREATED BY                                        SIZE
+fc6..18e /bin/sh -c #(nop) ENTRYPOINT ["node" "./a...      0B
+334..bf0 /bin/sh -c #(nop) EXPOSE 8080/tcp                 0B
+b27..eae /bin/sh -c npm install                            14.1MB
+932..749 /bin/sh -c #(nop) WORKDIR /src                    0B
+052..2dc /bin/sh -c #(nop) COPY dir:2a6ed1703749e80...     22.5kB
+c1d..81f /bin/sh -c apk add --update nodejs nodejs-npm     46.1MB
+336..b92 /bin/sh -c #(nop) LABEL maintainer=nigelp...      0B
+3fd..f02 /bin/sh -c #(nop) CMD ["/bin/sh"]                 0B
+<missing> /bin/sh -c #(nop) ADD file:093f0723fa46f6c...    4.15MB
+```
+
+- 실제 생성된 레이어는 4개 뿐
+- **build process**
+  - 임시 컨테이너 생성
+  - Docker file instruction을 해당 컨테이너에서 실행
+  - 결과물을 새 이미지 레이어로 저장
+  - 임시 컨테이너 제거
+
+#### 각종 팁
+
+- multi-stage build를 사용하자
+- build cache를 최대한 활용하자
+- image squash
+  - `docker build --squash`를 사용해서 레이어 수를 적게 만들자(베이스 이미지로 사용하기 위함이라던지)
+    - 대신 layer cache는 사용하지 못함
+- `apt-get install --no-install-recommends`
+  - main dependency만 다운로드하게 해서 이미지 사이즈 줄이기
+
 ### 2.3 Containers
 
 VM model
@@ -546,6 +578,8 @@ Container model
 
 #### Container processes
 
+*SIGTERM, SIGKILL의 차이?*
+
 - 개요
   - 컨테이너 내의 메인 프로세스(PID 1)를 kill => container kill
 - lifecycle
@@ -571,3 +605,57 @@ Container model
   - `on-failure`
     - non-zero exit code로 끝나는 경우에 restart
       - 명시적으로 stop한 이후에 daemon을 restart하면 컨테이너도 restart함
+
+### 2.4 Docker compose
+
+docker compose
+
+```yaml
+version: "3.8"
+services:
+  web-fe:
+    build: .
+    command: python app.py
+    ports:
+      - target: 5000
+        published: 5000
+    networks:
+      - counter-net
+    volumes:
+      - type: volume
+        source: counter-vol
+        target: /code  # inside the container
+  redis:
+    image: "redis:alpine"
+    networks:
+      counter-net:
+
+networks:
+  counter-net:
+
+volumes:
+  counter-vol:
+```
+
+위의 configuration에서 volumes의 `counter-vol`의 path는 어디로 지정된 것일까?
+
+- 역사
+  - Orchard라는 회사의 `Fig`라는 툴이 멀티 컨테이너 도커앱을 다루는데에 하나의 YAML 파일로 관리했었음
+  - Docker가 Orchard사를 인수해서 `Docker Compose`라고 리브랜딩 함
+    - Docker daemon(engine)위의 레이어에서 동작
+  - Compose Specification를 제정
+    - 2020년 4월에, 멀티 컨테이너 클라우드 네이티브 앱을 정의하는 open standard
+    - code to cloud 프로세스를 단순화 함
+    - 해당 spec은 `docker-compose`의 구현과는 분리되고, 커뮤니티 주도로 발전함
+- 개요
+  - small microservices(containers)의 연동
+    - declarative config file
+    - 하나의 커맨드
+- compose files
+  - `version`
+    - required
+  - `services`
+    - `volumes`
+      - `type: volume`
+      - `source: counter-vol`
+      - `target: /code`
