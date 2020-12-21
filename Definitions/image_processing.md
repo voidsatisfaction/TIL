@@ -13,6 +13,9 @@
   - window
 - Color spaces
   - RGB
+  - Lab
+  - YCrCb
+  - HSV
 - Format
   - SVG(Scalable Vector Graphics)
 - Medical image
@@ -38,10 +41,10 @@
 - shader
   - 화면에 출력할 픽셀의 위치와 색상을 계산하는 함수
 - 색상 용어
-  - **명도**
+  - **명도(V)**
     - 색의 밝고 어두운 정도
     - 명도가 높으면 흰색에 가깝고, 낮으면 검은색에 가까움
-  - 채도
+  - 채도(S)
     - 색의 강약 / 맑고 탁한 정도
     - 채도가 높으면 본래 색에 가깝고, 낮으면 흰/검 색에 가까움
 
@@ -57,7 +60,10 @@
 
 ## Color spaces
 
-각 Color space사이에는 bijective function이 존재하는가?
+- *각 Color space사이에는 bijective function이 존재하는가?*
+  - 존재하는 경우도 있고, 존재하지 않는 경우도 있다.
+  - RGB와 HSV에는 존재할 수 없다
+    - 두 공간의 원소 수가 다름
 
 ### RGB
 
@@ -71,7 +77,7 @@ RGB color space decomposition
   - Blue
 - 개요
   - linear combination of Red, Green, Blue values
-  - 세 채널은 포면에 부딪히는 빛의 양과 관련있음
+  - 세 채널은 표면에 부딪히는 빛의 양과 모두 관련있음
 - 단점
   - 조명의 세기가 달라지면, 인식하기 어려움
   - perceptual non-uniformity
@@ -94,6 +100,8 @@ Lab color space decomposition
 - 특징
   - Perceptually uniform color space
   - 장치의 독립성
+    - *정확히 장치의 독립성이라는 것이 무엇을 의미하는가?*
+      - *어떠한 장치냐에 의존하지 않고 전부 일정하다는 것인가?*
   - Photoshop에서 많이 사용됨
 - 관찰
   - illumination의 변화로 L 채널에 영향을 많이 주는 것 확인 가능
@@ -128,11 +136,11 @@ HSV color space visualization
 ![](./images/image_processing/color_space_hsv2.png)
 
 - 의미
-  - H(Hue - Dominant Wavelength)
+  - H(Hue 색조 - Dominant Wavelength)
     - 0 ~ 360
-  - S(Saturation - Purity / shades of the color)
+  - S(Saturation 채도 - Purity / shades of the color)
     - 0 ~ 100
-  - V(Value - Intensity)
+  - V(Value 명도 - Intensity)
     - 0 ~ 100
 - 특징
   - 색을 기술하는 채널은 오직 H 하나뿐
