@@ -107,8 +107,39 @@
 - theorem
   - `r>0 (r is rational number) => lim(x->∞)(1/x^r)=0`
   - `r>0 s.t x^r is defined for all x (r is rational number) => lim(x->-∞)(1/x^r)=0`
+- Limit at Infinity
+  - `lim(x->∞)(f(x)) = L <=> ∀e>0, ∃N∈R, x>N => |f(x)-L|<e`
+  - `lim(x->-∞)(f(x)) = L <=> ∀e>0, ∃N∈R, x<N => |f(x)-L|<e`
+- Infinite limit at infinity
+  - `lim(x->∞)(f(x)) = ∞ <=> ∀M>0, ∃N>R, x>N => f(x)>M`
+  - `lim(x->-∞)(f(x)) = -∞ <=> ∀M<0, ∃N>R, x<N => f(x)<M`
 
 ## 3.5 Summary of Curve Sketching
+
+- 그래프의 스케치를 위한 정보
+  - ch1
+    - domain, range, symmetry, limits, continuity, vertical asymptotes
+  - ch2
+    - derivatives, tangents
+  - ch3
+    - extreme value, intervals of increase, decrease, concavity, points of inflection, horizontal asymptotes
+- 그래프를 그리기 위한 가이드라인
+  - Domain
+  - Intercepts
+    - x
+    - y
+  - Symmetry
+    - even
+    - odd
+    - periodic
+  - Asymptotes
+    - horizontal
+    - vertical
+    - *slant*
+  - intervals of increase or decrease
+  - local maximum and minimum values
+  - concavity and points of inflection
+  - sketch the curve
 
 ## 3.6 Graphing with Calculus and Calculators
 
