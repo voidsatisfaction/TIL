@@ -114,6 +114,14 @@
   - `lim(x->∞)(f(x)) = ∞ <=> ∀M>0, ∃N>R, x>N => f(x)>M`
   - `lim(x->-∞)(f(x)) = -∞ <=> ∀M<0, ∃N>R, x<N => f(x)<M`
 
+### c.f) Slant Asymptotes
+
+Example of Slant asymptote
+
+![](./images/ch3/slant_symptote1.png)
+
+`lim(x->∞)(f(x)-(mx+b))=0 (m≠0)`
+
 ## 3.5 Summary of Curve Sketching
 
 - 그래프의 스케치를 위한 정보
@@ -124,27 +132,58 @@
   - ch3
     - extreme value, intervals of increase, decrease, concavity, points of inflection, horizontal asymptotes
 - 그래프를 그리기 위한 가이드라인
-  - Domain
-  - Intercepts
+  - $1 Domain
+  - $2 Intercepts
     - x
     - y
-  - Symmetry
+  - $3 Symmetry
     - even
     - odd
     - periodic
-  - Asymptotes
+  - $4 Asymptotes
     - horizontal
     - vertical
-    - *slant*
-  - intervals of increase or decrease
-  - local maximum and minimum values
-  - concavity and points of inflection
-  - sketch the curve
+    - slant(oblique)
+  - $5 intervals of increase or decrease
+  - $6 local maximum and minimum values
+  - $7 concavity and points of inflection
+  - $8 sketch the curve
 
 ## 3.6 Graphing with Calculus and Calculators
 
 ## 3.7 Optimization Problems
 
+- First Derivatives Test for Absolute Extreme Values
+  - c가 연속함수 f의 한 구간에서의 critical number일 때
+    - `∀x<c, f'(x)>0 ∧ ∀x>c, f'(x)<0 => f(c)는 함수 f의 absolute maximum value`
+    - `∀x<c, f'(x)<0 ∧ ∀x>c, f'(x)>0 => f(c)는 함수 f의 absolute minimum value`
+
 ## 3.8 Newton's Method
 
+Newton's method good example
+
+![](./images/ch3/newton_method_good.png)
+
+Newton's method bad example
+
+![](./images/ch3/newton_method_bad.png)
+
+- 배경
+  - 굉장히 복잡하거나, 해가 존재하지 않는 방정식은 **approximation**을 구함
+- Newton's method
+  - `x(n+1) = x(n) - f(x(n))/f(x(n))`
+  - `lim(n->∞)(xn)=r`
+- 주의
+  - Newton's method는 초기값을 잘 잡아야 함
+    - `f'(x1)`이 0에 가까우면 좋지 않은 값 (기울기의 절댓값이 계속 커져야 함)
+
 ## 3.9 Antiderivatives
+
+- 배경
+  - 물리학자는 대상의 속도로부터 어떠한 시간에 대상의 위치를 알고 싶어함
+  - 공학자는 오염물질이 나오는 탱크의 유출 변화율로부터 특정 기간 동안의 유출된 오염물질의 양을 알고 싶어함
+  - 생물학자는 박테리아 인구의 증식률로부터 특정 시간이 지났을 때의 인구를 추정하고 싶어함
+- antiderivative
+  - `function F s.t ∃I, ∀x∈I, F'(x)=f(x)`
+  - theorem
+    - `F가 I구간에서 f의 antiderivative => F(x) + C 이 유일한 antiderivative (단 C는 상수)`
