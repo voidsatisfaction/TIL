@@ -179,6 +179,12 @@ Newton's method bad example
 
 ## 3.9 Antiderivatives
 
+Particular antiderivatives
+
+![](./images/ch3/particular_antiderivative1.png)
+
+미적분학의 응용에서 순간 변화율에서 실제 양 or 값을 알고 싶은 경우
+
 - 배경
   - 물리학자는 대상의 속도로부터 어떠한 시간에 대상의 위치를 알고 싶어함
   - 공학자는 오염물질이 나오는 탱크의 유출 변화율로부터 특정 기간 동안의 유출된 오염물질의 양을 알고 싶어함
@@ -187,3 +193,5 @@ Newton's method bad example
   - `function F s.t ∃I, ∀x∈I, F'(x)=f(x)`
   - theorem
     - `F가 I구간에서 f의 antiderivative => F(x) + C 이 유일한 antiderivative (단 C는 상수)`
+- c.f) 미분방정식
+  - 함수의 derivatives를 포함하는 방정식
