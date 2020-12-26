@@ -176,6 +176,7 @@ Newton's method bad example
 - 주의
   - Newton's method는 초기값을 잘 잡아야 함
     - `f'(x1)`이 0에 가까우면 좋지 않은 값 (기울기의 절댓값이 계속 커져야 함)
+    - *concavity랑 관련이 있어보인다(?)*
 
 ## 3.9 Antiderivatives
 
