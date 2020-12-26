@@ -71,11 +71,29 @@ Area of curve generalized
   - 리만 합
     - `sigma_(i=1)^n(f(xi*)Δx)`
     - f가 주어진 범위에서 양의 값을 갖을 경우, 리만 합은 직사각형으로 근사시킨 영역의 합을 의미
+    - integral의 approximation
+      - sample point는 approximation이 목적일 경우, 구간의 midpoint로 두는 것이 바람직
   - integrable
     - 모든 함수가 integrable인 것은 아니나 다음 theorem에 의하여 대부분의 함수가 integrable
 - integrable theorem
   - `f가 [a,b]에서 연속 ∨ f가 오직 유한개의 discontinuities를 갖음 => (f는 [a,b]에서 integrable <=> int_a^b(f(x)dt)가 존재)`
     - 증명은 해석학에서
+- properties of the definite integral
+  - `int_b^a(f(x))dx = -int_a^b(f(x))dx`
+    - `Δx`가 `(b-a)/n`에서 `(a-b)/n`으로 변함
+  - `int_a^a(f(x))dx = 0`
+    - `Δx=0`
+  - properties
+    - 1: `int_a^b(c)dx = c(b-a)`
+    - 2: `int_a^b(f(x)+g(x))dx = int_a^b(f(x))dx + int_a^b(g(x))dx`
+    - 3: `int_a^b(cf(x))dx = cint_a^b(f(x))dx`
+    - 4: `int_a^b(f(x)-g(x))dx = int_a^b(f(x))dx - int_a^b(g(x))dx`
+      - 2,3 corollary
+    - 5: `int_a^c(f(x))dx + int_c^b(f(x))dx = int_a^b(f(x))dx`
+  - comparison peroperties
+    - 6: `a≤x≤b, f(x)≥0 => int_a^b(f(x))dx ≥ 0`
+    - 7: `a≤x≤b, f(x)≥g(x) => int_a^b(f(x))dx ≥ int_a^b(g(x))dx`
+    - 8: `a≤x≤b, m≤f(x)≤M => m(b-a) ≤ int_a^b(f(x))dx ≤ M(b-a)`
 
 ## 4.3 The Fundamental Theorem of Calculus
 
