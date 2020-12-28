@@ -100,18 +100,43 @@ Area of curve generalized
 
 - 개요
   - differential calculus과 integral calculus의 연결고리
-- **Fundamental theorem of calculus part1**
+- **Fundamental theorem of calculus part1(FTC1)**
   - `f가 [a,b]에서 연속 ∧ g(x)=int_a^x(f(t))dt (a≤x≤b)이 [a,b]에서 연속 ∧ g가 (a,b)에서 미분가능 => g'(x)=f(x)`
   - `d/dx int_a^x(f(t))dt = f(x)`
     - integrate f한 뒤에 그 결과를 differentiate하면 원래 함수 f를 얻을 수 있음
   - 참고
     - `d/dx int_1^(x^4)(sec(t))dt = 4x^3・sec(x^4)`
-- **Fundamental theorem of calculus part2**
+- **Fundamental theorem of calculus part2(FTC2)**
   - `f가 [a,b]에서 연속 => int_a^b(f(d))dx = F(b)-F(a) (단, F는 f의 antiderivative (F'=f))`
     - differentiate한 뒤에 integrate하면 original function인 `F`로 돌아오나, `F(b)-F(a)`형태
 - 의의
   - Fundamental theoroem of calculus덕분에, 복잡한 합의 극한을 구할 필요가 없게 됨
+    - **antiderivative로 쉽게 구하자**
 
 ## 4.4 Indefinite Integrals and the Net Change Theorem
 
+table of indefinite integrals
+
+![](./images/ch4/table_of_indefinite_integrals1.png)
+
+- **antiderivative(indefinite integral)**
+  - `int(f(x))dx = F(x) <=> F'(x) = f(x)`
+  - 주의
+    - definite integral = number
+    - indefinite integral = function
+- **net change theorem**
+  - `int_a^b(F'(x))dx = F(b)-F(a)`
+      - integral of 변화율 = 순 변화량
+
+Application of FTC
+
+![](./images/ch4/application_of_ftc1.png)
+
 ## 4.5 The Substitution Rule
+
+- **Substitution Rule**
+  - `u=g(x)가 I에서 미분가능 ∧ f가 I에서 연속 => int(f(g(x))g'(x))dx = int(f(u))du`
+    - *`du/dx = g'(x) => du = g'(x) dx` 가 성립하는 이유는 무엇인지?*
+    - integral sign뒤에 있는 `dx`와 `du`를 마치 미분할 수 있는 것 처럼 연산할 수 있음을 의미
+  - 의의
+    - 기존의 복잡한 integral을 쉬운 형태의 integral로 변화
