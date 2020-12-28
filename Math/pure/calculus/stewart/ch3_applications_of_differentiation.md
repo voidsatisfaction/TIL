@@ -171,7 +171,7 @@ Newton's method bad example
 - 배경
   - 굉장히 복잡하거나, 해가 존재하지 않는 방정식은 **approximation**을 구함
 - Newton's method
-  - `x(n+1) = x(n) - f(x(n))/f(x(n))`
+  - `x(n+1) = x(n) - f(x(n))/f'(x(n))`
   - `lim(n->∞)(xn)=r`
 - 주의
   - Newton's method는 초기값을 잘 잡아야 함
@@ -193,6 +193,6 @@ Particular antiderivatives
 - antiderivative
   - `function F s.t ∃I, ∀x∈I, F'(x)=f(x)`
   - theorem
-    - `F가 I구간에서 f의 antiderivative => F(x) + C 이 유일한 antiderivative (단 C는 상수)`
+    - `F가 I구간에서 f의 antiderivative => F(x) + C 이 유일한 antiderivative form (단 C는 상수)`
 - c.f) 미분방정식
   - 함수의 derivatives를 포함하는 방정식

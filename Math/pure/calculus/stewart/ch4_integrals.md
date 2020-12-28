@@ -79,6 +79,7 @@ Area of curve generalized
   - `f가 [a,b]에서 연속 ∨ f가 오직 유한개의 discontinuities를 갖음 => (f는 [a,b]에서 integrable <=> int_a^b(f(x)dt)가 존재)`
     - 증명은 해석학에서
 - properties of the definite integral
+  - `f`, `g`는 연속함수일 때
   - `int_b^a(f(x))dx = -int_a^b(f(x))dx`
     - `Δx`가 `(b-a)/n`에서 `(a-b)/n`으로 변함
   - `int_a^a(f(x))dx = 0`
