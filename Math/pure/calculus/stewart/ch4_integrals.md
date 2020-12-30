@@ -140,3 +140,9 @@ Application of FTC
     - integral sign뒤에 있는 `dx`와 `du`를 마치 미분할 수 있는 것 처럼 연산할 수 있음을 의미
   - 의의
     - 기존의 복잡한 integral을 쉬운 형태의 integral로 변화
+- **Substitution Rule for Definite Integrals**
+  - `g'이 [a,b]에서 연속 ∧ f가 u=g(x)의 범위 내에서 연속 => int_a^b(f(g(x))g'(x))dx = int_g(a)^g(b)(f(u))du`
+- Integrals of Symmetric Functions
+  - `f가 [-a,a]에서 연속`
+    - `f가 even => int_-a^a(f(x))dx = 2int_0^a(f(x))dx`
+    - `f가 odd => int_-a^a(f(x))dx = 0`
