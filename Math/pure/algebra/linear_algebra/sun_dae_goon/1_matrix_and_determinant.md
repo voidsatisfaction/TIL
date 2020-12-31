@@ -86,13 +86,12 @@
       - 합성함수와 마찬가지
         - `f(x,y) = (ax+by, cx+dy), g(x,y) = (px+qy, rx+sy)`
         - `=> f・g = ((ap+br)x+(aq+bs)y, (cp+dr)x+(cq+ds)y)`
-    - 결합법칙, 스칼라곱셈과 교환 및 결합법칙, 행렬 덧셈과 분배법칙
 
 ### 1.3 행렬의 각종 연산
 
 - `tr(A)`
   - 대각 성분의 합
-  - `(aij) = A,B∈Mnxn(F), c∈F`
+  - `A,B∈Mnxn(F), c∈F`
     - `tr(A) = sigma_i=1^n{aii}`
     - `tr(A+B) = tr(A)+tr(B)`
     - `tr(cA) = c・tr(A)`
