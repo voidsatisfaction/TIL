@@ -27,6 +27,21 @@ Volume intuition
 
 ## 5.3 Volumes by Cylindrical Shells
 
+일반적인 방법으로 부피를 구하기 어려운 경우가 존재
+
+![](./images/ch5/hard_to_get_volume_example1.png)
+
+method of cylindrical shells intuition
+
+![](./images/ch5/method_of_cylindrical_shells1.png)
+
+- 일반 방법
+  - outer area에서 inner area를 빼는 식으로 텅 빈 실린더의 부피를 구함
+- method of cylindrical shells
+  - 텅 빈 실린더의 합을 내부에서 외부로 확장시키며 부피를 구함
+    - y에 대응하는 x좌표를 직접 구하기 힘드므로, 실린더의 부피와 integration을 이용해서 전체 부피를 구하게 함
+  - `lim_{n->∞}sigma_{i=1}^n(2π・xi・f(xi)・Δx) = sigma_a^b(2π・xf(x))dx (0≤a<b)`
+
 ## 5.4 Work
 
 ## 5.5 Average Value of a Function
