@@ -474,6 +474,7 @@
       - 대칭성
       - 추이성
 - 특징
+  - **두 공간이 isomorphism => 부여된 구조의 관점으로는 같은 공간**
   - The interest of isomorphisms lies in the fact that **two isomorphic objects cannot be distinguished by using only the properties used to define morphisms;**
   - thus isomorphic objects may be considered the same as long as one considers only these properties and their consequences.
 
