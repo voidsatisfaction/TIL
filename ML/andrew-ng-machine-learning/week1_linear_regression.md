@@ -2,8 +2,12 @@
 
 - 의문
 - Linear Regression with One Variable
+  - Model representation
+  - Cost Function1
+  - Cost Function2
 - Parameter Learning
   - Gradient Descent
+  - Gradient Descent For Linear Regression
 
 ## 의문
 
@@ -32,7 +36,7 @@ supervised learning
     - 이산적인 값
       - classification
 
-### Cost Function
+### Cost Function1
 
 Cost(Loss) function
 
@@ -49,7 +53,7 @@ Cost(Loss) function
       - `J(θ0, θ1) = 1/2m sigma_{i=1}^{m}((hθ(xi) - yi)^2)`
         - `1/2`는 gradient descent계산을 하기 쉽게 만들어주기 위함
 
-### Cost Function
+### Cost Function2
 
 contour plots
 
