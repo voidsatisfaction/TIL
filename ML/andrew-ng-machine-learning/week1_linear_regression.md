@@ -3,8 +3,13 @@
 - 의문
 - Linear Regression with One Variable
 - Parameter Learning
+  - Gradient Descent
 
 ## 의문
+
+- supervised 러닝이란 결국, hypothesis function을 cost function과 데이터셋을 기반으로 찾아내는 것인가?
+- Gradient Descent중에 local minimum에서 못빠져나오면 어떡하나?
+- Gradient Descent는 언제나 local minimum에 도달할 수 있는가?
 
 ## Linear Regression with One Variable
 
@@ -24,7 +29,7 @@ supervised learning
   - y의 타입
     - 연속적인 값
       - regression
-    - 인산적인 값
+    - 이산적인 값
       - classification
 
 ### Cost Function
@@ -74,3 +79,34 @@ cost function and contour plots
 ![](./images/week1/contour_plot3.png)
 
 ## Parameter Learning
+
+### Gradient Descent
+
+Gradient Descent visualization
+
+![](./images/week1/gradient_descent2.png)
+
+Gradient Descent algorithm
+
+![](./images/week1/gradient_descent1.gif)
+
+- 개요
+  - `min J(θ0, ..., θn)을 가능하게 하는 θ0, ..., θn 구하기`
+- 파라미터 설명
+  - `α`
+    - learning rate
+
+### Gradient Descent For Linear Regression
+
+Gradient Descent differential equation
+
+![](./images/week1/gradient_descent3.png)
+
+- cost function of linear regression
+  - convex function(bow-shape function)
+    - global optima만 존재
+- **Batch Gradient Descent**
+  - Batch
+    - gradient descent의 각 스텝이 모든 training example을 사용하는 것
+
+Linear regression말고 다른 수학적인 방식으로 global minimum을 구하는 방법도 존재
