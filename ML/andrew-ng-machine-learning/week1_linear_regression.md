@@ -17,6 +17,11 @@
 
 ## Linear Regression with One Variable
 
+- training dataset으로 hypothesis function을 찾기
+  - cost function을 도출
+  - training dataset에 대하여, cost function을 최소로 하는 파라미터 찾기
+- hypothesis function으로 regression
+
 ### Model representation
 
 supervised learning
