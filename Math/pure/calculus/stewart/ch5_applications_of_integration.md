@@ -54,3 +54,12 @@ method of cylindrical shells intuition
       - Joule단위
 
 ## 5.5 Average Value of a Function
+
+- average value of function
+  - 정의
+    - `f_ave = 1/(b-a) int_a^b(f(x))dx`
+  - 유도
+    - `(f(x1*)+f(x2*)+ ... + f(xn*)/n)` 으로 부터 시작
+    - `Δx = (b-a)/n`
+- Mean Value Theorem for Integrals
+  - `f가 [a,b]에서 연속 => ∃c∈[a,b], f(c) = f_ave = 1/(b-a) int_a^b(f(x))dx`
