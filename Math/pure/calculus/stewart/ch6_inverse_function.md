@@ -62,6 +62,13 @@ Exponential functions
   - 특성
     - `d/dx(e^x) = e^x`
     - `d/dx(e^u) = e^u・du/dx`
+    - domain R
+    - increasing
+    - continuous
+    - range (0, ∞)
+    - `∀x∈R, e^x>0`
+    - `lim_{x->-∞}(e^x)=0, lim_{x->∞}(e^x)=∞`
+    - `int(e^x)dx = e^x + C`
 
 ## 6.3 Logarithmic Functions
 ## 6.4 Derivatives of Logarithmic Functions
