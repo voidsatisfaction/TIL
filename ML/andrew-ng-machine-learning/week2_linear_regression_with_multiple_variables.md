@@ -3,7 +3,6 @@
 - 의문
 - Multivariate Linear Regression
 - Computing Parameters Analytically
-- Submitting Programming Assignments
 
 ## 의문
 
@@ -89,4 +88,42 @@ Polynomial regression example2
 
 ## Computing Parameters Analytically
 
-## Submitting Programming Assignments
+### Normal Equation
+
+Normal equation intuition
+
+![](./images/week2/normal_equation1.png)
+
+Normal equation example
+
+![](./images/week2/normal_equation2.png)
+
+- 개요
+  - θ를 analytically 구하는 방식
+  - https://m.blog.naver.com/sw4r/221250858967
+    - 참고
+
+### Gradient Descent vs Normal Equation
+
+- Gradient Descent
+  - α를 설정해야 함
+  - iteration이 많음
+  - n이 충분히 클때 잘 동작함(`n≥10,000`)
+    - `O(kn^2)`
+- Normal Equation
+  - α를 설정하지 않아도 됨
+  - iteration하지 않아도 됨
+  - n이 크면 `(tX・X)^-1`계산이 느려짐
+    - `O(n^3)`
+
+### Normal Equation Noninvertibility
+
+- 개요
+  - `tX・X`가 non-invertible이면?
+    - non-invertible의 주된 이유
+      - redundant features
+        - feature사이에 linearly depdendent한 관계가 있는 feature가 있는지 살펴봐야 함
+        - Column Reduced Echelonform으로 생각해보면 linearly depdendent하면 절대 안됨
+          - zero-column의 등장
+      - feature가 너무 많은 경우(`m≤n`)
+        - 몇몇 feature를 지우거나, regularization을 행해야 함
