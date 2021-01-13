@@ -98,6 +98,10 @@ Normal equation example
 
 ![](./images/week2/normal_equation2.png)
 
+Design matrix
+
+![](./images/week2/normal_equation3.png)
+
 - 개요
   - θ를 analytically 구하는 방식
   - https://m.blog.naver.com/sw4r/221250858967
@@ -122,8 +126,10 @@ Normal equation example
   - `tX・X`가 non-invertible이면?
     - non-invertible의 주된 이유
       - redundant features
-        - feature사이에 linearly depdendent한 관계가 있는 feature가 있는지 살펴봐야 함
-        - Column Reduced Echelonform으로 생각해보면 linearly depdendent하면 절대 안됨
+        - *feature사이에 linearly depdendent한 관계가 있는 feature가 있는지 살펴봐야 함(이유가 뭐지?)*
+          - e.g)
+            - 미터 단위의 size와 feet단위의 사이즈
+        - *Column Reduced Echelonform으로 생각해보면 자명??* linearly depdendent하면 절대 안됨
           - zero-column의 등장
       - feature가 너무 많은 경우(`m≤n`)
         - 몇몇 feature를 지우거나, regularization을 행해야 함
