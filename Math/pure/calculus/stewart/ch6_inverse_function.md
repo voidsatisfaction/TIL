@@ -85,6 +85,15 @@ Exponential functions
   - `b>1 => lim_{x->∞}(log_{b}(x))=∞ ∧ lim_{x->0+}(log_{b}(x))=-∞`
 
 ## 6.4 Derivatives of Logarithmic Functions
+
+- `d/dx(ln(x)) = 1/x`
+- `d/dx(ln(|x|)) = 1/x`
+  - **`sigma(1/x)dx = ln(|x|)+C`**
+- `sigma(tanx)dx = ln(|sec(x)|)+C`
+- `d/dx(log_b(x)f) = 1/(xlnb)`
+- `d/dx(b^x) = b^x・ln(b)`
+- `sigma(b^x)dx = b^x/ln(b)+C`
+
 ## 6.5 Exponential Growth and Decay
 ## 6.6 Inverse Trigonometric Functions
 ## 6.7 Hyperbolic Functions
