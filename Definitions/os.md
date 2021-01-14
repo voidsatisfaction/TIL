@@ -1019,6 +1019,8 @@ OS-level virtualization
   - containers, Zones, virtual private servers, partitions, virtual environments, virtual kernels, jails
     - 위의 user space instance에서 동작하는 프로그램은 진짜 computer의 user space처럼 보이게 됨
     - 그러나, 컨테이너에 할당된 컨텐츠와 장치만 볼 수 있음
+- 참고) container의 정의
+  - **OS-level virtualization에서의 user space instance**
 - 동작
   - **OS-virtualization(containerization) 에서는 전체 OS의 일부의 자원들만 할당된 컨테이너 에서 프로그램을 동작시킬 수 있음**
   - 각각의 컨테이너는 임의의 개수의 컴퓨터 프로그램을 포함함
