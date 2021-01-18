@@ -15,9 +15,25 @@
 
 ## Logistic Regression
 
-Hypothesis function of classification problems
+- Hypothesis function
+  - 식
+    - `h_θ: X -> R, h_θ(x) = g(tθ・X) (g is sigmoid function)`
+  - 개요
+    - 결과값은 해당 데이터가 어떤 class로 분류되는지 확률을 나타냄
+- Cost function
+  - 식
+    - `J(θ) = 1/m sigma_{i=1}^{m} Cost(h_θ(x(i), y(i)))`
+  - 개요
+    - 결과값은 hypothesis function이 과거의 데이터에 얼마나 잘 fit하는가를 나타냄
+    - 결국에는 좋은 hypothesis function을 만들기 위한 기준
+- Cost function의 global minimum을 찾기 위한 optimization 알고리즘
+  - gradient descent
+  - nogradient descent
+    - conjugate gradient
+    - BFGS
+    - L-BFGS
 
-`h_θ: X -> {0, 1, 2, ...}`
+Hypothesis function of classification problems
 
 - logistic regression
   - 개요
@@ -97,7 +113,52 @@ Gradient descent of logistics regression
     - `Cost(h_θ(x), y) = -ylog(h_θ(x)) - (1-y)log(1-h_θ(x))`
       - *maximum likelyhood estimation(statistics)*
 
+#### Advanced Optimization
+
+- Optimization algorithm
+  - Gradient descent
+  - NoGradient descent
+    - 종류
+      - Conjugate gradient
+      - BFGS
+      - L-BFGS
+    - 장점
+      - alpha를 명시적으로 고를 필요가 없음
+      - gradient descent보다 빠른 경우가 있음
+        - large ML 문제일 경우 유효
+    - 단점
+      - 더 복잡함
+        - 구현하기가 엄청 힘드므로 그냥 라이브러리를 사용하면 됨
+
+```octave
+options = optimset('gradobj', 'on', 'MaxIter', '100');
+
+initialTheta = zeros(2,1);
+
+function [jVal, gradient] = costFunction(theta)
+  jVal = code to compute J(θ)
+
+  gradient(1) = code to compute dJ(θ)/dθ0
+  gradient(2) = code to compute dJ(θ)/dθ1
+  gradient(3) = code to compute dJ(θ)/dθ2
+
+[optTheta, functionVal, exitFlag] = fminunc(@costFUnction, initialTheta, options);
+```
+
 ### Multiclass Classification
+
+#### One vs all
+
+Multiclass classification1
+
+![](./images/week3/multiclass_classification1.png)
+
+Multiclass classification2
+
+![](./images/week3/multiclass_classification2.png)
+
+- hypothesis function의 결과값은 확률
+- 해당 확률이 최댓값인 클래스를 선정하면 됨
 
 ## Regularization
 
