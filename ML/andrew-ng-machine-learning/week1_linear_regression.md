@@ -40,6 +40,9 @@ supervised learning
       - regression
     - 이산적인 값
       - classification
+- 첨언
+  - **Training set이 매우 중요함**
+    - 논문으로 model과 알고리즘이 있어도, data가 존재하지 않거나, 잘 정제되지 않으면 의미가 없음
 
 ### Cost Function1
 
