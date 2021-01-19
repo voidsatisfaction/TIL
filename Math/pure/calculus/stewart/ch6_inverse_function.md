@@ -58,7 +58,7 @@ Exponential functions
   - `0<b<1 => lim_{x->∞}(b^x)=0 ∧ lim_{x->-∞}(b^x)=∞`
 - e
   - 정의
-    - `e is s.t lim_{h->0}((e^h-1)/h) = 1`
+    - `e∈R s.t lim_{h->0}((e^h-1)/h) = 1`
   - 특성
     - `d/dx(e^x) = e^x`
     - `d/dx(e^u) = e^u・du/dx`
@@ -90,11 +90,41 @@ Exponential functions
 - `d/dx(ln(|x|)) = 1/x`
   - **`int(1/x)dx = ln(|x|)+C`**
 - `int(tanx)dx = ln(|sec(x)|)+C`
-- `d/dx(log_b(x)f) = 1/(xlnb)`
+- `d/dx(log_b(x)) = 1/(xlnb)`
 - `d/dx(b^x) = b^x・ln(b)`
 - `int(b^x)dx = b^x/ln(b)+C`
 
 ## 6.5 Exponential Growth and Decay
+
+- Law of natural growth(decay)
+  - `dy/dt = ky`
+    - `k>0`: growth
+    - `k<0`: decay
+    - differential equation
+  - e.g)
+    - 복리
+    - 인구 증가
+    - 방사능 물질의 반감기
+- theorem
+  - 미분방정식 `dy/dt = ky`의 유일한 해집합
+    - `y(t) = y(0)・e^(kt)`
+- Population Growth
+  - `1/P・dP/dt`
+    - relative growth rate
+      - growth rate is proportional to population size
+      - == relative growth rate is constant
+- Radioactive Decay
+- Countinuously Compounded Interest
+
 ## 6.6 Inverse Trigonometric Functions
+
+- arcsine function
+  - `sin^-1(x) = y (-π/2 ≤ y ≤ π/2)`
+- cancellation equations
+  - `sin^-1(sin(x)) = x (-π/2 ≤ x ≤ π/2)`
+  - `sin(sin^-1(x)) = x (-1 ≤ x ≤ 1)`
+- `d/dx(sin^-1(x)) = 1/root2(1-x^2) (-1 < x < 1)`
+
+
 ## 6.7 Hyperbolic Functions
 ## 6.8 Indeterminate Forms and l'Hospital's Rule
