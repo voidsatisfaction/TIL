@@ -15,11 +15,13 @@
 
 ## Logistic Regression
 
-- Hypothesis function
+- Hypothesis function(logistic regression에셔의)
   - 식
-    - `h_θ: X -> R, h_θ(x) = g(tθ・X) (g is sigmoid function)`
+    - `h_θ: X -> (0,1), h_θ(x) = g(tθ・X) (g is sigmoid function)`
   - 개요
     - 결과값은 해당 데이터가 어떤 class로 분류되는지 확률을 나타냄
+  - c.f)
+    - regression 문제에서 hypothesis function의 결과값은 예측값 자체를 나타냄(확률이 아님)
 - Cost function
   - 식
     - `J(θ) = 1/m sigma_{i=1}^{m} Cost(h_θ(x(i), y(i)))`
@@ -163,3 +165,78 @@ Multiclass classification2
 ## Regularization
 
 ### Solving the Problem of Overfitting
+
+Underfitting vs Just right vs Overfitting - Linear Regression
+
+![](./images/week3/overfitting1.png)
+
+- Underfitting(high bias)
+  - 개요
+    - 트레이닝 데이터에 모델이 맞지 않음
+    - high bias
+      - 강한 선입견(pre-conception)즉 강한 bias를 갖고 있음을 의미
+        - e.g) 모든데이터를 선형적으로 끼워맞추려 함
+- Overfitting(high variance)
+  - 개요
+    - 트레이닝 데이터에는 모델이 잘 맞음(`J(θ) ~~ 0`) but 새 예시에 대해서는 일반화에 실패
+    - feature가 너무 많은경우
+    - high variance
+      - 트레이닝 데이터에 과하게 맞추려 하다보니, 너무 변동성이 커짐을 말함
+
+#### Overfitting 대처
+
+*애초에 어떻게 overfitting인지 파악할 수 있는지?*
+
+- 피쳐 개수를 줄임
+  - 수동 조작
+  - model selection algorithm
+- Regularization
+  - 개요
+    - 모든 feature를 살려두지만, 특정 feature의 magnitude/`θj`의 값을 줄임
+  - 특징
+    - `y`를 예측하는데에 있어서, 많은 feature가 존재하고 각각이 조금씩 관련이 있을때
+
+#### Cost Function
+
+Regularization
+
+![](./images/week3/regularization1.png)
+
+- 개요
+  - *파라미터의 값이 작은 경우, `θ1, θ2, θ3, ..., θn` 더 간단한 hypothesis이며, overfitting이 될 가능성이 적어짐*
+    - *수학적으로 증명 가능한가?*
+- regularized cost function
+  - 식
+    - `J(θ) = 1/2m (sigma_{i=1}^{m}(hθ(x(i)) - y(i))^2 + λ・sigma_{j=1}^{n}(θj^2))`
+      - *왜 θj의 제곱을 곱하는 것일까?*
+  - `λ`
+    - regularization parameter
+    - 개요
+      - 트레이닝 데이터를 잘 피팅시켜주기 위함
+      - 파라미터를 작게 해주기 하기 위함
+        - 오버피팅 방지
+    - `λ`가 너무 큰 경우
+      - `θ1, θ2, θ3, ..., θn ~~ 0`이 되므로, underfitting이 됨
+
+#### Regularized Linear Regression
+
+- cost function
+  - `J(θ) = 1/2m (sigma_{i=1}^{m}(hθ(x(i)) - y(i))^2 + λ・sigma_{j=1}^{n}(θj^2))`
+- gradient descent
+  - `θ :=`
+    - `θ - α・1/m・tX・(Xθ - y) (θ0)`
+    - `θ(1 - α・λ/m) - α・1/m・tX・(Xθ - y) (else)`
+      - *`α・λ/m > 1`인 경우는 어떻게 되는가?*
+- normal equation
+  - `θ = (tX・X+λ(I-(1 0 ... ; 0 ... ; ...)))^-1・tX・y`
+    - *`λ>0 => (tX・X+λ(I-(1 0 ... ; 0 ... ; ...)))는 반드시 invertible`*
+      - 왜지?
+
+#### Regularized Logistic Regression
+
+- cost function
+  - `J(θ) = 1/m (sigma_{i=1}^{m}(Cost(hθ(x(i)), y(i)))) + 1/2m λ・sigma_{j=1}^{n}(θj^2)`
+- gradient descent
+  - `θ :=`
+    - `θ - α・1/m・tX・(Xθ - y) (θ0)`
+    - `θ(1 - α・λ/m) - α・1/m・tX・(Xθ - y) (else)`
