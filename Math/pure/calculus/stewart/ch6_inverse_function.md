@@ -119,11 +119,21 @@ Exponential functions
 ## 6.6 Inverse Trigonometric Functions
 
 - arcsine function
-  - `sin^-1(x) = y (-π/2 ≤ y ≤ π/2)`
-- cancellation equations
-  - `sin^-1(sin(x)) = x (-π/2 ≤ x ≤ π/2)`
-  - `sin(sin^-1(x)) = x (-1 ≤ x ≤ 1)`
-- `d/dx(sin^-1(x)) = 1/root2(1-x^2) (-1 < x < 1)`
+  - 식
+    - `sin^-1(x) = y (-π/2 ≤ y ≤ π/2)`
+  - cancellation equations
+    - `sin^-1(sin(x)) = x (-π/2 ≤ x ≤ π/2)`
+    - `sin(sin^-1(x)) = x (-1 ≤ x ≤ 1)`
+  - 미분
+    - `d/dx(sin^-1(x)) = 1/root2(1-x^2) (-1 < x < 1)`
+- arccosine
+  - 식
+    - `cos^-1(x) = y (0 ≤ y ≤ π)`
+  - 미분
+    - `d/dx(cos^-1(x)) = -1/root2(1-x^2) (-1 < x < 1)`
+- arctan
+  - 식
+    - `tan^-1(x) = y (-π/2 ≤ y ≤ π/2)`
 
 
 ## 6.7 Hyperbolic Functions
