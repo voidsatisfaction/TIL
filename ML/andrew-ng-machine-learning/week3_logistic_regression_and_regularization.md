@@ -187,14 +187,16 @@ Underfitting vs Just right vs Overfitting - Linear Regression
 
 *애초에 어떻게 overfitting인지 파악할 수 있는지?*
 
-- 피쳐 개수를 줄임
-  - 수동 조작
-  - model selection algorithm
-- Regularization
-  - 개요
-    - 모든 feature를 살려두지만, 특정 feature의 magnitude/`θj`의 값을 줄임
-  - 특징
-    - `y`를 예측하는데에 있어서, 많은 feature가 존재하고 각각이 조금씩 관련이 있을때
+- Overfitting 방지
+  - Feature 제거
+    - Manual
+    - Automatic
+      - model selection algorithm
+  - Regularization
+    - 개요
+      - 모든 feature를 살려두지만, 특정 feature의 magnitude/`θj`의 값을 줄임
+    - 특징
+      - `y`를 예측하는데에 있어서, 많은 feature가 존재하고 각각이 조금씩 관련이 있을때
 
 #### Cost Function
 
@@ -227,7 +229,9 @@ Regularization
     - `θ - α・1/m・tX・(Xθ - y) (θ0)`
     - `θ(1 - α・λ/m) - α・1/m・tX・(Xθ - y) (else)`
       - *`α・λ/m > 1`인 경우는 어떻게 되는가?*
-      - **크로네커델타를 사용하면 식을 굳이 둘로 케이스를 나눌 필요가 없어보인다.**
+      - **θj를 구하는 경우 크로네커델타를 사용하면 식을 굳이 둘로 케이스를 나눌 필요가 없어보인다.**
+    - 일원화
+      - `θ := (I - α・λ/m・I에서맨위row가zero-row) - α/m・tX(Xθ-y) (g는 sigmoid function)`
 - normal equation
   - `θ = (tX・X+λ(I-(1 0 ... ; 0 ... ; ...)))^-1・tX・y`
     - *`λ>0 => (tX・X+λ(I-(1 0 ... ; 0 ... ; ...)))는 반드시 invertible`*
@@ -239,5 +243,7 @@ Regularization
   - `J(θ) = 1/m (sigma_{i=1}^{m}(Cost(hθ(x(i)), y(i)))) + 1/2m λ・sigma_{j=1}^{n}(θj^2)`
 - gradient descent
   - `θ :=`
-    - `θ - α・1/m・tX・(Xθ - y) (θ0)`
-    - `θ(1 - α・λ/m) - α・1/m・tX・(Xθ - y) (else)`
+    - `θ - α・1/m・tX・(g(Xθ) - y) (j=0)`
+    - `θ(1 - α・λ/m) - α・1/m・tX・(g(Xθ) - y) (else)`
+  - 일원화
+    - `θ := (I - α・λ/m・I에서맨위row가zero-row) - α/m・tX(g(Xθ)-y) (g는 sigmoid function)`
