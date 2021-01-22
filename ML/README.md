@@ -43,6 +43,10 @@
 
 ### Supervised learning
 
+Supervised learning 큰 그림
+
+![](./images/supervised_learning1.jpg)
+
 키워드: 역사 -> 예측
 
 - 대표 문제

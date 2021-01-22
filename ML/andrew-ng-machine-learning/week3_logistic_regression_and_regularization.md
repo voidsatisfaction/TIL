@@ -219,6 +219,8 @@ Regularization
         - 오버피팅 방지
     - `λ`가 너무 큰 경우
       - `θ1, θ2, θ3, ..., θn ~~ 0`이 되므로, underfitting이 됨
+    - 의문
+      - *애초에 이 친구는 어떻게 정해주는가? 노가다?*
 
 #### Regularized Linear Regression
 
@@ -231,7 +233,7 @@ Regularization
       - *`α・λ/m > 1`인 경우는 어떻게 되는가?*
       - **θj를 구하는 경우 크로네커델타를 사용하면 식을 굳이 둘로 케이스를 나눌 필요가 없어보인다.**
     - 일원화
-      - `θ := (I - α・λ/m・I에서맨위row가zero-row) - α/m・tX(Xθ-y) (g는 sigmoid function)`
+      - `θ := (I - α・λ/m・I에서맨위row가zero-row)θ - α/m・tX(Xθ-y) (g는 sigmoid function)`
 - normal equation
   - `θ = (tX・X+λ(I-(1 0 ... ; 0 ... ; ...)))^-1・tX・y`
     - *`λ>0 => (tX・X+λ(I-(1 0 ... ; 0 ... ; ...)))는 반드시 invertible`*
@@ -247,3 +249,17 @@ Regularization
     - `θ(1 - α・λ/m) - α・1/m・tX・(g(Xθ) - y) (else)`
   - 일원화
     - `θ := (I - α・λ/m・I에서맨위row가zero-row) - α/m・tX(g(Xθ)-y) (g는 sigmoid function)`
+
+#### Regularization Examples
+
+Fit
+
+![](./images/week3/regularization_example1.png)
+
+Overfitting
+
+![](./images/week3/regularization_example2.png)
+
+Underfitting
+
+![](./images/week3/regularization_example3.png)
