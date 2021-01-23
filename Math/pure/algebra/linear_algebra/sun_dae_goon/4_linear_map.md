@@ -38,6 +38,10 @@
 - Rank theorem
   - *증명 과정에서 A의 column space와 im LA는 왜 동일한가*
   - *A와 A의 row reduced echelon form(R)이 row space가 동일하다 => AX = 0의 solution space 는 RX = 0의 solution space와 같다는 명제는 어떻게 성립하는가?*
+- **함수의 단사, 전사의 개념이 일차독립과 span=W의 개념과 유사점이 있는 것 같음**
+  - 단사면 함수 값이 같으면 원소는 같다 ~~ 일차독립이면 벡터를 선형결합으로 나타내는 방법은 하나밖에 없다
+  - 전사면 임의의 치역에 대해서, 각 치역에 대응하는 정의역의 원소가 존재 ~~ 임의의 W의 원소는 span으로 표현이 가능
+  - *둘이 정확히 수학적으로 어떤 관계인지*
 
 ## 기존 내용 복습 질문
 
@@ -154,14 +158,18 @@
     - `L이 linear ∧ U≦V => L|U는 linear`
 - zero map
   - 함수 `0: V -> W`을 `0(v) = 0 (v∈V)`로 정의
-- natural embedding
+- **natural embedding**
+  - 개요
+    - 작은 대수구조에서 큰 대수구조로의 편입
   - `U⊆V, ιU = ι: U -> V, ι(u) = u (u∈U)`
     - `U≦V => ιU: U -> V는 monomorphism`
       - **ι를 natural embedding이라고 부름**
       - e.g 정수를 유리수로 natural embedding을 하여 수의 체계를 확장시킴
         - In mathematics, an **embedding** is one instance of some mathematical structure contained within another instance.
           - When some object X is said to be embedded in another object Y, the embedding is given by some injective and structure-preserving map f : X → Y. The precise meaning of "structure-preserving" depends on the kind of mathematical structure of which X and Y are instances. In the terminology of category theory, a structure-preserving map is called a morphism.
-- natural projection
+- **natural projection**
+  - 개요
+    - 큰 대수구조에서 작은 대수구조로의 사영(그림자)
   - `π1: F^3 -> F, π1(t(x,y,z))=x (x,y,z∈F)`
     - `π1`은 epimorphism
     - `π1`은 natural projection
