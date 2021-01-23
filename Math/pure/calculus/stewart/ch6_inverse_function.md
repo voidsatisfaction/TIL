@@ -126,6 +126,8 @@ Exponential functions
     - `sin(sin^-1(x)) = x (-1 ≤ x ≤ 1)`
   - 미분
     - `d/dx(sin^-1(x)) = 1/root2(1-x^2) (-1 < x < 1)`
+  - 적분
+    - `int(1/root2(1-x^2))dx = sin^-1(x)+C`
 - arccosine
   - 식
     - `cos^-1(x) = y (0 ≤ y ≤ π)`
@@ -134,7 +136,23 @@ Exponential functions
 - arctan
   - 식
     - `tan^-1(x) = y (-π/2 ≤ y ≤ π/2)`
-
+  - 미분
+    - `d/dx(tan^-1(x)) = 1/(x^2+1)`
+  - 적분
+    - `int(1/(x^2+1))dx = tan^-1(x)+C`
+- `y = csc^-1(x) (|x| ≥ 1, y∈(0, π/2] U (π, 3π/2]) `
+  - 미분
+    - `d/dx(csc^-1(x)) = -1/(x・root2(x^2-1))`
+    - universally agreed되지 않음(y의 범위가 다를경우 식이 달라짐)
+      - 위의 식은 간단한 버전
+- `y = sec^-1(x) (|x| ≥ 1, y∈[0, π/2) U [π, 3π/2))`
+  - 미분
+    - `d/dx(sec^-1(x)) = 1/(x・root2(x^2-1))`
+    - universally agreed되지 않음(y의 범위가 다를경우 식이 달라짐)
+- `y = cot^-1(x) (x∈R, y∈(0,π))`
+  - 미분
+    - `d/dx(cot^-1(x)) = -1/(1+x^2)`
+- `int(1/(x^2+a^2))dx = 1/a・tan^-1(x/a)+C`
 
 ## 6.7 Hyperbolic Functions
 ## 6.8 Indeterminate Forms and l'Hospital's Rule
