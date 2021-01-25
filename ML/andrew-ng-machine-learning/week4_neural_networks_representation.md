@@ -29,4 +29,48 @@ Neuron in the brain
 
 ![](./images/week4/neuron1.png)
 
+Neuron model1
+
+![](./images/week4/neuron_model1.png)
+
+Neuron model2
+
+![](./images/week4/neuron_model2.png)
+
+- 용어
+  - bias unit
+    - *왜 bias unit이라 불리는가? 왜 필요한가?*
+  - activation function
+  - weights
+    - `θ`
+  - layers
+    - input layer
+    - hidden layers
+    - output layer
+  - activation of unit i in layer j
+    - `a_{i}^{j}`
+  - j에서 j+1레이어로 매핑하는 함수를 제어하는 웨이트의 행렬
+    - `θ^(j)`
+- 참고
+  - Neuron model2에서의 `θ_{ij}`(ij)의 결정
+    - 일반 행렬 표기와 싱크를 맞추기 위함(i행j열)
+  - `g(θ^(j)x)`
+    - j와 j+1레이어 사이의 뉴럴네트워크의 행렬표현
+
 ## Applications
+
+### Examples and Intuitions1
+
+Logical OR function
+
+![](./images/week4/logical_or_function1.png)
+
+Logical Negation function
+
+Logical XNOR function
+
+![](./images/week4/logical_xnor_function1.png)
+
+### Multiclass Classification
+
+![](./images/week4/multiclass_classification1.png)
