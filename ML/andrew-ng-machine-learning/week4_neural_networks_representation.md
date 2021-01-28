@@ -41,6 +41,8 @@ Neuron model2
   - bias unit
     - *왜 bias unit이라 불리는가? 왜 필요한가?*
   - activation function
+    - 개요
+      - 입력 신호의 총합이 활성화를 일으키는지 정하는 역할을 함
   - weights
     - `θ`
   - layers
