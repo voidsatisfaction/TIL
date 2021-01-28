@@ -53,9 +53,11 @@
 - window
   - world coordinate에 속해있는 다각형의 area
 - viewport
+  - 일종의 카메라가 찍고 있는 viewing region
+    - panning, zooming은 카메라가 움직이는 것으로 생각하면 됨(viewport의 변화)
   - display device에 종속된 좌표계에서의 area ∧ 컴퓨터 그래픽스에서 다각형의 viewing region
     - window를 viewport에 매핑하여 사용자가 자신의 디바이스에서 적당한 크기로 해당 내용을 볼 수 있음
-    - **world-coordinates window clipping -> window-to-viewport transformation -> viewport rendering**
+    - **world-coordinates window clipping ---- window-to-viewport transformation ----> viewport rendering**
   - physical-device-based 좌표계가 portable하지 않으므로, 정규화된 device coordinates로 알려진 소프트웨어 추상 계층이 viewport를 표현하는데에 사용됨
 
 ## Color spaces
