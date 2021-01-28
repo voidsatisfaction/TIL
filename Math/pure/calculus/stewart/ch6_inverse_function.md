@@ -155,4 +155,29 @@ Exponential functions
 - `int(1/(x^2+a^2))dx = 1/a・tan^-1(x/a)+C`
 
 ## 6.7 Hyperbolic Functions
+
+- hyperbolic 함수
+  - 개요
+    - 삼각함수와 유사한 성질을 갖음
+  - 종류
+    - `sinh(x) = (e^x - e^(-x))/2`
+    - `cosh(x) = (e^x + e^(-x))/2`
+    - `tanh(x) = sinh(x)/cosh(x)`
+    - `csch(x) = 1/sinh(x)`
+    - `sech(x) = 1/cosh(x)`
+    - `coth(x) = cosh(x)/sinh(x)`
+  - 활용
+    - light
+    - velocity
+    - electricity
+    - radioactivity
+    - shape of a hanging wire
+- hyperbolic Identities
+  - `sinh(-x) = -sinh(x)`
+  - `cosh(-x) = cosh(x)`
+  - `cosh^2(x) - sinh^2(x) = 1`
+  - `1 - tanh^2(x) = sech^2(x)`
+  - `sinh(x+y) = sinh(x)cosh(y) + cosh(x)sinh(y)`
+  - `cosh(x+y) = cosh(x)cosh(y) + sinh(x)sinh(y)`
+
 ## 6.8 Indeterminate Forms and l'Hospital's Rule
