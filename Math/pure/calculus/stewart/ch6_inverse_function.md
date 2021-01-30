@@ -179,5 +179,16 @@ Exponential functions
   - `1 - tanh^2(x) = sech^2(x)`
   - `sinh(x+y) = sinh(x)cosh(y) + cosh(x)sinh(y)`
   - `cosh(x+y) = cosh(x)cosh(y) + sinh(x)sinh(y)`
+- Derivatives of Hyperbolic Functions
+  - `d/dx(sinh(x)) = cosh(x)`
+  - `d/dx(cosh(x)) = sinh(x)`
+  - `d/dx(tanh(x)) = sech^2(x)`
+  - `d/dx(csch(x)) = -csch(x)・coth(x)`
+  - `d/dx(sech(x)) = -sech(x)・tanh(x)`
+  - `d/dx(coth(x)) = -csch^2(x)`
+- Inverse Hyperbolic Functions
+  - `sinh^-1(x) = ln(x+root2(x^2+1)) (x∈R)`
+  - `cosh^-1(x) = ln(x+root2(x^2-1)) x≥1`
+  - `tanh^-1(x) = 1/2・ln(1+x/1-x) (-1<x<1)`
 
 ## 6.8 Indeterminate Forms and l'Hospital's Rule
