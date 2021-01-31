@@ -190,5 +190,53 @@ Exponential functions
   - `sinh^-1(x) = ln(x+root2(x^2+1)) (x∈R)`
   - `cosh^-1(x) = ln(x+root2(x^2-1)) x≥1`
   - `tanh^-1(x) = 1/2・ln(1+x/1-x) (-1<x<1)`
+- Derivatives of Inverse Hyperbolic Functions
+  - `d/dx(sinh^-1(x)) = 1/root2(x^2+1)`
+  - `d/dx(cosh^-1(x)) = 1/root2(x^2-1)`
+  - `d/dx(tanh^-1(x)) = 1/(1-x^2)`
+  - `d/dx(csch^-1(x)) = -1/(|x|root2(x^2+1))`
+  - `d/dx(sech^-1(x)) = -1/(xroot2(1-x^2))`
+  - `d/dx(coth^-1(x)) = 1/(1-x^2)`
 
 ## 6.8 Indeterminate Forms and l'Hospital's Rule
+
+BigO notation과 로피탈의 법칙이 관계가 있어보임
+
+- indeterminate form
+  - indeterminate form of type 0/0
+    - `lim_{x->a}(f(x)/g(x))`에서 `f(x)->0 ∧ g(x)->0`인 경우의 limit의 형태
+  - indeterminate form of type ∞/∞
+    - `lim_{x->a}(f(x)/g(x))`에서 `f(x)->∞(or -∞) ∧ g(x)->∞(or -∞)`인 경우의 limit의 형태
+  - indeterminate form of type 0・∞
+    - `fg = f/(1/g)`로 변형해서 l'Hospital's Rule적용
+  - indeterminate form of type ∞-∞
+    - difference를 quotient로 변경
+  - indeterminate form of powers
+    - `lim_{x->a}((f(x))^g(x))`
+      - `lim_{x->a}(f(x))=0 ∧ lim_{x->a}(g(x))=0 (type 0^0)`
+      - `lim_{x->a}(f(x))=∞ ∧ lim_{x->a}(g(x))=0 (type ∞^0)`
+      - `lim_{x->a}(f(x))=1 ∧ lim_{x->a}(g(x))=∞ (type 1^∞)`
+      - *0^∞는 indeterminate form이 아님*
+    - 구하는 방법
+      - natural logarithm
+        - `ln(y) = g(x)ln(f(x))`
+      - writing the function as exponential
+        - `[f(x)]^g(x) = e^(g(x)ln(f(x)))`
+- l'Hospital's Rule
+  - 개요
+    - indeterminate form을 evaluation하기 위한 방법
+  - 정의
+    - `f`와 `g`가 미분가능 ∧ `g'(x)≠0 on open interval I that contains a`
+      - if `lim_{x->a}(f(x))=0 ∧ lim_{x->a}(g(x))=0` or
+      - if `lim_{x->a}(f(x))=±∞ ∧ lim_{x->a}(g(x))=±∞`
+      - then
+    - `lim_{x->a}(f(x)/g(x)) = lim_{x->a}(f'(x)/g'(x)) (if right side llimit is exist(or ±∞))`
+- c.f) Cauchy's Mean Value Theorem
+  - `f,g가 [a,b]에서 연속 ∧ (a,b)에서 미분가능 ∧ ∀x∈(a,b), g'(x)≠0`
+    - `=> ∃c∈(a,b), f'(x)/g'(x) = (f(b)-f(a))/(g(b)-g(a))`
+  - proof
+    - `h(x) = f(x)-f(a) - (f(b)-f(a))/(g(b)-g(a)) * (g(x)-g(a))`
+
+L'hospital's rule proof
+
+![](./images/ch6/lhospital_rule1.png)
