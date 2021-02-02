@@ -9,6 +9,11 @@
 
 ## Cost Function and Backpropagation
 
+- L
+  - NN의 레이어 수
+- s(l)
+  - layer l에서의 unit의 개수(bias unit은 제외)
+
 ### Cost function
 
 Neural Networks Cost Function(Generalization of logistic regression)
@@ -16,6 +21,10 @@ Neural Networks Cost Function(Generalization of logistic regression)
 ![](./images/week5/neural_networks_cost_function1.png)
 
 ### Backpropagation Algorithm
+
+Gradient computation
+
+![](./images/week5/gradient_computation1.png)
 
 Back propagation algorithm
 
@@ -25,12 +34,12 @@ Back propagation algorithm
   - `δ_j^l`
   - `δ^3 = t(θ^3)δ^4 .* g'(z^3)`
     - 이전 layer의 output을 input으로 대응하는 레이어3의 미분값
+  - `δ^L = a^L - y`
+    - *이건 왜 그런가?*
   - 참고
-    - **에러를 구할 때에는, `dg(WX)/dX`, 즉 이전 layer의 output vector로 미분. 그리고 그 값에다가 현재 레이어의 다음 레이어들의 error를 곱하면 됨**
+    - **에러를 구할 때에는, `dg(W^(l)Z^(l))/dZ^(l)`, 즉 이전 layer의 output vector・weights로 미분. 그리고 그 값에다가 현재 레이어의 다음 레이어의 error를 곱하면 됨**
       - backpropagation을 하기 위해서
-      - 이게 맞는 것인지?
-    - **특정 weight에 대한 미분값을 구할 때에는, `dg(WX)/dW`를 구하고 현재 레이어의 다음 레이어들의 error를 곱하면 됨**
-      - 이게 맞는것인지?
+    - **특정 weight에 대한 미분값을 구할 때에는, `dg(WA)/dW`를 구하고 현재 레이어의 다음 레이어들의 error를 곱하면 됨**
 
 ### Backpropagation Intuition
 
