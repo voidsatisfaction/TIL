@@ -233,7 +233,7 @@ BigO notation과 로피탈의 법칙이 관계가 있어보임
     - `lim_{x->a}(f(x)/g(x)) = lim_{x->a}(f'(x)/g'(x)) (if right side llimit is exist(or ±∞))`
 - c.f) Cauchy's Mean Value Theorem
   - `f,g가 [a,b]에서 연속 ∧ (a,b)에서 미분가능 ∧ ∀x∈(a,b), g'(x)≠0`
-    - `=> ∃c∈(a,b), f'(x)/g'(x) = (f(b)-f(a))/(g(b)-g(a))`
+    - `=> ∃c∈(a,b), f'(c)/g'(c) = (f(b)-f(a))/(g(b)-g(a))`
   - proof
     - `h(x) = f(x)-f(a) - (f(b)-f(a))/(g(b)-g(a)) * (g(x)-g(a))`
 
