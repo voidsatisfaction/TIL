@@ -26,10 +26,16 @@ Gradient computation
 
 ![](./images/week5/gradient_computation1.png)
 
-Back propagation algorithm
+**Back propagation algorithm**
 
 ![](./images/week5/back_propagation1.png)
 
+- 위 알고리즘 부가 설명
+  - `Δ^l = dJ/dW^l = dz^(l+1)/dW^l・dJ/dz^(l+1) = δ^(l+1)・ta^l`
+  - `J(θ)`는 전체 데이터 X에 대해서 minimum값을 찾는것을 목표로 해야함. 따라서, back propagation에서도 모든 데이터에 관해서 gradient descent를 진행해야하는데, J의 `sigma_{i=1}^{m}`의 부분의 내부의 함수들이 전부 미분가능이므로 각 트레이닝 데이터하나마다 미분한 값을 각각 더할 수 있음
+    - 그것이 위 루프의 이유(`For i=1 to m ...`)
+    - 결국 back propagation은 각 트레이닝 데이터셋 하나하나마다 시행해서 더해줌
+      - **vectorization이 가능**
 - error of node j in layer l
   - `δ_j^l`
   - `δ^3 = t(θ^3)δ^4 .* g'(z^3)`
