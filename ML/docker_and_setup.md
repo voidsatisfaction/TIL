@@ -48,3 +48,12 @@ nvidia-docker visualization2
   - docker container에서 실행되는 응용프로그램은 host OS와 분리되어 있으므로, 컨테이너 내에서 gpu를 사용할 수 없음
   - 컨테이너 내부에서 host gpu(driver)를 이용하기 위해서는, host gpu driver와 컨테이너를 연동시켜주는 driver가 필요하고, 그것이 nvidia-docker
     - nvidia-toolkit의 subset
+- 레이어 구조
+  - container layer
+    - mounted nvidia driver
+  - docker layer
+    - nvidia-docker
+  - os layer
+    - nvidia driver
+  - hardware layer
+    - GPU

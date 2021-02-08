@@ -55,7 +55,7 @@ Model selection
   - training set으로 θ를 각각 degree에 따라서 학습시킴
   - test set으로 각 학습시킨 모델의 성능을 degree에 따라서 비교
     - 근데 그냥 여기서 `Jtest(θ(5))`를 가지고 일반적인 성능이 좋다 나쁘다를 따질 수 없음
-    - `Jtest(θ(5))`가 optimistic estimate of generalization error일 수 있기 때문
+    - `Jtest(θ(5))`가 optimistic estMimate of generalization error일 수 있기 때문
       - `d = polynomial의 degree`가 test set에 피팅되어있다고 봄(**다른 degree의 모델을 이겼다는 사실이 추가되니까**)
 
 Train/Validation/Test error expressions
@@ -70,6 +70,66 @@ Train/Validation/Test error expressions
   - hypothesis의 일반적인 성능 측정에 사용
 
 ### Bias vs Variance
+
+bias vs variance
+
+![](./images/week6/diagnosing_bias_vs_variance1.png)
+
+diagnosing high bias vs high variance
+
+![](./images/week6/diagnosing_bias_vs_variance2.png)
+
+- Diagnosing Bias vs Variance
+
+Regularization and Bias/Variance
+
+![](./images/week6/regularization_and_bias_vs_variance1.png)
+
+- Regularization and Bias/Variance
+  - 개요
+    - Regularization이 Bias와 Variance에 미치는 영향은?
+  - d와 λ의 선정 방법(일반적인 여러 파라미터)
+    - `λ=0`, `λ=0.01` 에서 `λ=10`까지 `λ:=λ*2`로 늘려나감 list of λ를 생성
+    - 서로 다른 degree 또는 다른 변수를 가지고 모델을 생성
+    - 각 λ를 iterate하면서, θ학습
+    - 얻어진 θ를 바탕으로 cross validation error를 구함
+      - **대신 이때의 Jcv(θ)는 regularization term을 고려하지 않아야 함**
+    - cross validation error가 가장 낮은 조합을 선택
+    - 선택된 조합으로 `Jtest(θ)`에 적용하여, generalization이 충분히 잘 되었는지 확인
+
+### Learning Curve
+
+Learning curve of high biased model
+
+![](./images/week6/learning_curve1.png)
+
+Learning curve of high variance model
+
+- 개요
+  - x축이 training set size, y축이 error
+  - 현재의 모델이 high variance인지, high biased인지 판단할 수 있도록 도와주는 커브
+    - 항상 그려보자!
+- 케이스 분석
+  - high bias
+    - 모델 자체가 bias가 높을경우에, training data set이 많다고 하더라도 별 도움이 되지 않음
+  - high variance
+    - 모델 자체가 variance가 높을경우는, training data set이 많아지면 도움이 될 가능성이 있음
+
+### Deciding What to Do Next Revisited
+
+![](./images/week6/debugging_a_learning_algorithm1.png)
+
+- 문제
+  - 새로 만든모델이 Large error를 내는 경우 어떻게 할 것인가?
+- 해결
+  - 1 high variance문제인지, high bias문제인지 확인
+  - 2 각각의 문제에 맞는 전략 시행
+
+Neural Network and Overfitting
+
+![](./images/week6/neural_network_and_overfitting1.png)
+
+- NN의 경우, 하나의 hidden layer로 시작한 뒤에, 다수의 hidden layers로 넘어가서 cross validation set으로 검증해보면 좋음
 
 ## Machine learning system design
 
