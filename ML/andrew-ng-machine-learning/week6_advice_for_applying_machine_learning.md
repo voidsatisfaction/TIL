@@ -133,8 +133,68 @@ Neural Network and Overfitting
 
 ## Machine learning system design
 
+- **Recommended approach**
+  - 1 간단한 일고리즘으로 빠르게 구현하고, cross-validation data로 test해보기
+  - 2 learning curve를 그려서 더 많은 데이터 혹은 더 많은 피쳐 등이 도움이 될지 확인
+    - premature optimization을 방지
+  - 3 Error analysis를 해보기
+    - 직접, algorithm이 에러를 낸 것을 확인해서, 에러에서 규칙성을 찾아보기
+
 ### Building a Spam Classifier
+
+Spam classifier: Problem
+
+![](./images/week6/spam_classifier1.png)
+
+- 스팸 메일 분류기
+  - `x = features of email`
+    - spam에서 가장 활발히 사용되는 n개의 단어들을 추출
+      - 등장하면 1 등장하지 않으면 0
+      - discount, discounts는 같은 단어로 취급할것인가?
+      - misspelling을 어떻게 다룰 것인지?
+        - m0rtgage, med1cine
+    - email header로부터의 피쳐 추출
+  - `y = spam(1 or 0)`
+  - 우선순위를 세워서 작업을 하는것이 중요!
+
+Error analysis example
+
+![](./images/week6/error_analysis1.png)
+
+- Error Analysis
+  - 위의 스팸의 예시의 경우 stemming이 도움이 될지 안될지 모름. 직접 해봐야 함
+    - Cross validation error
+  - Upper vs lower case 이 도움이 될지 안될지 모름. 직접 해봐야 함
+  - **중요한 것은 새로운 개선을 시도할 경우, 반드시 수치로 나타내서 비교할 수 있도록 해야 함**
 
 ### Handling Skewed Data
 
+- 예시
+  - Cancer classification을 하는 경우, logistic regression model `hθ(x)`를 학습시켰는데, test set에서 1%의 에러가 나옴
+  - 그런데 원래 0.5%만 암을 갖고 있는 환자였다면
+    - **skewed classes**
+  - `hθ(x)=0`으로 두면, 에러가 더 적은 마술이 일어남
+
+Precision과 recall 사이의 tradeoff
+
+![](./images/week6/trade_off_of_precision_and_recall1.png)
+
+- Precision/Recall
+  - 일반적으로 `y=1`이 rare class를 나타냄
+  - precision
+    - `tp/predict_positive = tp/(tp+fp)`
+  - recall
+    - `tp/actual_positive = tp/(tp+fn)`
+  - f1 score
+    - `2*(PR/P+R)`
+    - *정확히 무슨 의미를 가지는가? 왜 조화평균을 사용하는가?*
+
 ### Using Large Data Sets
+
+- Data for machine learning
+  - It's not who has the best algorithm that wins. It's who has the most data.
+- Large data rationale
+  - Given the input x, can a human expert confidently predict y?
+    - yes: For breakfast I ate ___ eggs.
+    - no: Predict housing price from only size and no other features
+  - Use a learning algorithm with many parameters
