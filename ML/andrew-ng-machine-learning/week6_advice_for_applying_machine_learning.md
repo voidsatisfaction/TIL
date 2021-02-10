@@ -24,6 +24,15 @@
     - precision
     - recall
     - F1-score
+  - c.f) 또 다른 모델 성능 지표
+    - sensitivity(recall)
+      - 질병이 있는 사람을 양성으로 검출하는 능력
+    - specificity
+      - 질병이 없는 사람을 음성으로 검출하는 능력
+    - AUROC
+    - PPV(precision)
+    - NPV
+      - negative라고 판정한 것중에 진짜 negative
 - **모델의 검증 및 평가**
   - 모델의 검증 및 평가
     - training set
