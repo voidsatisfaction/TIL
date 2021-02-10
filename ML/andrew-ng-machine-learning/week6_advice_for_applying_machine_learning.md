@@ -13,6 +13,33 @@
 
 ## Advice for applying machine learning
 
+- **머신러닝으로 문제해결할 시 Recommended approach**
+  - 1 간단한 일고리즘으로 빠르게 구현하고, cross-validation data로 test해보기
+  - 2 learning curve를 그려서 더 많은 데이터 혹은 더 많은 피쳐 등이 도움이 될지 확인
+    - premature optimization을 방지
+  - 3 Error analysis를 해보기
+    - 직접, algorithm이 에러를 낸 케이스를 확인해서, 에러에서 규칙성을 찾아보기
+    - error는 수치로 나타낼 수 있도록
+  - c.f) skewed data를 다루는 경우 고려할 모델 성능 지표
+    - precision
+    - recall
+    - F1-score
+- **모델의 검증 및 평가**
+  - 모델의 검증 및 평가
+    - training set
+      - model의 parameter를 학습시키기 위한 데이터
+    - validation set
+      - 여러가지 모델 중에서 가장 성능이 좋은것을 픽하기 위한 데이터
+      - 모델에 대한 여러 가설을 탐색하는 도중에 좋은 가설을 선택할 때 도움을 주기 위한 데이터
+    - test set
+      - 최종 선택된 모델이 충분히 일반화 되어있는지 판단하기 위한 데이터
+  - Learning Curve
+    - x축이 training set size, y축이 error인 그래프
+    - `Jtrain(θ), Jcv(θ)`를 그려서 모델이 fit, high bias, high variance중 어느쪽인지 확인
+  - Learning Curve로 부터 얻은 결과로 부터 필요한 행위를 한다
+    - overfitting 해결
+    - underfitting 해결
+
 ### Evaluating a Learning Algorithm
 
 - 문제
@@ -132,13 +159,6 @@ Neural Network and Overfitting
 - NN의 경우, 하나의 hidden layer로 시작한 뒤에, 다수의 hidden layers로 넘어가서 cross validation set으로 검증해보면 좋음
 
 ## Machine learning system design
-
-- **Recommended approach**
-  - 1 간단한 일고리즘으로 빠르게 구현하고, cross-validation data로 test해보기
-  - 2 learning curve를 그려서 더 많은 데이터 혹은 더 많은 피쳐 등이 도움이 될지 확인
-    - premature optimization을 방지
-  - 3 Error analysis를 해보기
-    - 직접, algorithm이 에러를 낸 것을 확인해서, 에러에서 규칙성을 찾아보기
 
 ### Building a Spam Classifier
 
