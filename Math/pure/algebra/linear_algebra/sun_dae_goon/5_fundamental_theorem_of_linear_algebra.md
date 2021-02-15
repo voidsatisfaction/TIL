@@ -245,7 +245,8 @@
       - `[L]_Bw'^Bv = [I]_Bw'^Bw・[L]_Bw^Bv`
 - transition matrix
   - 정의
-    - V의 기저 `Bv, Bv'`에 대해, `[I]_Bv^Bv'` 혹은 `[I]_Bv'^Bv`를 transition matrix(추이 행렬) 이라고 부르고, 이 행렬은 기저 변환의 정보를 갖고 있다
+    - V의 기저 `Bv, Bv'`에 대해, `[I]_Bv^Bv'` 혹은 `[I]_Bv'^Bv`
+      - 기저 변환의 정보를 갖음
       - `[I]_Bv^Bv'`는 V의 기저인 `Bv'`들을 Bv의 일차결합의 계수로 표현한 행렬
         - `(Bv)'`의 세계에서 나타내던 좌표(기저의 일차결합 표현)를 `Bv`의 세계의 좌표로 변경하기 위함
   - 성질
@@ -273,6 +274,11 @@
     - 응용
       - `A∈Mmxn(F), Q∈Mmxm(F)`가 가역 => `LQA, LA`는 본질적으로 같은 함수이다. 그러므로 `rank(QA) = rank(A)`
         - **(이해가 안됨) -> `QA = B`라고 두고, ③의 commutative diagram을 그려보면 `LA`와 `LB=LQA`가 겹쳐보인다**
+      - 그냥 특정 행렬 `A`에 trainsition matrix(invertible인 행렬)을 오른쪽이든 왼쪽이든 곱해도 `A`와 isomorphic함
+        - `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재 => `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
+          - 위의 명제가 성립하기 때문에, 선형대수학의 기본정리에 의하여 `LA ~~ B`인데, `A ~~ LA ~~ B=QAP` 이므로, `A`와 `QAP`는 isomorphic
+          - 즉, 특정 행렬에 trainsition matrix를 지지고 볶아도 처음 행렬과 isomorphic
+          - 그래서 `Q, P가 가역일 때, rank(QA)=rank(A), rank(AP)=rank(A)`임은 자명한것
 - 각종 관찰
   - ① `L∈L(V,V)` Bv, Bw가 V의 basis
     - `[L]_Bw^Bw = [I]_Bw^Bv・[L]_Bv^Bv・[I]_Bv^Bw`
