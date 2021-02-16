@@ -297,7 +297,8 @@
       - ② `[LA]_Bv^Bv = B`인 F^n의 basis Bv가 존재
       - ③ ...
   - `A ~ B`의 의미
-    - basis를 (standard basis)에서 Bv로 바꾸면 LA의 행렬표현이(`[LA]_ε^ε = A -> [LA]_Bv^Bv = B`) A에서 B로 바뀜
+    - **basis를 standard basis에서 Bv로 바꾸면 LA의 행렬표현이(`[LA]_ε^ε = A -> [LA]_Bv^Bv = B`) A에서 B로 바뀜**
+      - 기저를 바꾼다는 것은, 선형대수학의 기본정리에서의 ordered basis를 바꾼다는 것을 의미
     - 이 때, LA와 LB는 본질적으로 같은 함수
       - e.g) Bv의 벡터공간에서 90도 회전 선형변환은, standard basis 벡터공간에서 90도 회전 선형변환과 근본적으로 같음(대신 기저변환에 따른 벡터값의 변화도 추적해야 함)
   - 성질
@@ -315,10 +316,10 @@
         - `[L]_Bv^Bv = A ∧ [L]_Bw^Bw = B`인 `L∈L(V,V)`와 V의 basis Bv, Bw가 존재한다
   - 우리의 strategy
     - 기저를 바꾸어서 다루기 쉬운 similar matrix로 만들자
-    - **특히 대각 행렬이 다루기 쉬우므로, 대각행렬로 similar matrix를 만들자**
+      - **특히 대각 행렬이 다루기 쉬우므로, 대각행렬로 similar matrix를 만들자**
   - 주의
-    - 어떤 basis를, 어떤 가역행렬 U를 선택했는지 혼동하면 안됨
-    - 또한, `A ~ B∈Mnxn(F)`라고 해서, `LA, LB`가 본질적으로 같고, A와 B가 본질적으로 같으므로 `det(A) = det(B)`이고 `tr(A) = tr(B)`라고 하는것은 non-sense이다.
+    - **1 어떤 basis를, 어떤 가역행렬 U를 선택했는지 혼동하면 안됨**
+    - **2 또한, `A~B∈Mnxn(F)`라고 해서, `LA, LB`가 본질적으로 같고, A와 B가 본질적으로 같으므로 `det(A) = det(B)`이고 `tr(A) = tr(B)`라고 하는것은 non-sense이다.**
       - determinant와 trace는 행렬의 좌표를 사용하여 정의하기 때문(하지만 실제로는 `A ~ B => det(A)=det(B) ∧ tr(A)=tr(B)`이긴 하나, 우리의 철학과는 무관한 것)
 - **우리의 철학을 자유자재, 적재적소에 사용할 수 있는 능력이 mathematical maturity이다.**
 
