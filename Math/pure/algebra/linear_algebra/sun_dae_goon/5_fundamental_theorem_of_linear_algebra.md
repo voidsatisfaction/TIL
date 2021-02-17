@@ -209,18 +209,24 @@
 
 ![](./images/ch5/our_philosophy2.jpeg)
 
+- 위 그림에 보충 설명을 더해보자면, `[L]_Bw^Bv = A = [LA]_f^ε` 이므로 isomorphism의 성격으로 볼 때, 직관적으로 `Bv와 ε을 대응시키고, Bw와 f를 대응시키는 것`이 자명해보임
+  - 그러므로, 위 그림에서 `a_ε^Bv`과 `a_f^Bw`의 대응도 직관적으로 당연한 수순으로 보임
+  - 직관적이라기 보다는, 선형대수학의 기본정리에서 `L: V -> W`에 대해서는 ordered basis `Bv, Bw`를 대응시켰고, `LA: F^n -> F^m`에 대해서는 ordered basis `ε, f`를 대응시켰으므로 `a_ε^Bv`와 `a_f^Bw`의 배치도 자명해보임
+    - 기저를 기저로 옮길 뿐
+    - `[L]_Bw^Bv = A = [LA]_f^ε`
+
 우리의 철학4 commutative diagram 3
 
 ![](./images/ch5/our_philosophy3.jpeg)
 
-- *우리의 철학4(이 부분부터 아직 완벽히 이해가 안됨, 왜 isomorphic한가? - L과 LA사이의 isomorphism이 존재함을 보여야 하는거 아닌가?)*
+- 우리의 철학4
   - **선형사상 `L: V -> W`는 `LA: F^n -> F^m`과 같은 함수이다**
     - 선형사상 `L: V -> W`은 `LA: F^n -> F^m`과 identify할 수 있음 (`n=dimV, m=dimW`)
       - 왜냐하면, 우리의 철학3에서 행렬과 선형사상은 같은 것이라고 했는데, 어떠한 선형사상 `L: V -> W`에 isomorphic한 `A행렬`이 있으면, 결국 `L`은 `LA`와도 같은 역할을 하기 때문
         - *L의 정의가 완전 LA와 같은 것은 아니나, L의 역할이 LA와 근본적으로 같으므로, `L(v)`를 구할 때에는, `a_ε^Bv(v)` 같은 isomorphism으로 기저 change이후 `LA`의 연산을 적용하고 다시 `a_Bw^F(v)`를 적용하면 `L(v)`와 같다*
-        - `L(v) = (a_Bv^ε◦LA◦a_ε^Bv)(v)`
+        - `L(v) = (a_Bw^f◦LA◦a_ε^Bv)(v)`
       - `A = [L]_Bw^Bv`
-        - *`L ~ A ~ LA`?*
+        - `L ~~ A ~~ LA`
       - 설명
         - `a_ε^Bv(vi) = ei, a_F^Bw(wi) = fi`
           - **a라는 함수는 어떤 벡터의 기저표현에서 기저만 다른 기저로 치환하는 함수**
@@ -229,9 +235,20 @@
 
 ## 5. Change of Bases
 
-*이 부분이 잘 이해가 안됨*
-
 선형대수학의 기본정리에서 기저를 바꾸면 어떻게 되는지
+
+- 기본 논리 흐름
+  - 선형대수학의 기본정리(우리의 철학3)
+    - 본질은 기저의 변환!
+  - `[L]_Bw'^Bv' = [I]_Bw'^Bw・[L]_Bw^Bv・[I]_Bv^Bv'`
+  - `[LA]_Bw^Bv = [I]_Bw^f・[LA]_f^ε・[I]_ε^Bv ([LA]_f^ε = A)`
+    - 특정 행렬 `A`에 trainsition matrix(invertible인 행렬)을 오른쪽이든 왼쪽이든 곱해도 `A`와 isomorphic함
+  - `[LA]_Bv^Bv = [I]_Bv^ε・[LA]_ε^ε・[I]_ε^Bv`
+    - `A ~ B <=> A,B∈Mnxn(F), ∃U∈Mnxn(F)∧U는 invertible s.t. U^-1AU = B`
+    - 복잡한 matrix를 간단한, similar matrix를 가지고 계산하자
+      - 주로 대각행렬
+
+---
 
 - 표기법
   - `V의 기저; Bv' = {v1', ..., vn'}`
@@ -267,18 +284,19 @@
     - `A,B∈Mmxn(F)`일 때, 다음은 동치
       - ① `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재
         - 그런데 그 행렬Q,P는 `Q = [I]_Bw^F`를 만족하고, `P = [I]_ε^Bv`를 만족한다
-        - *이 명제는 항상 만족되는 것이 아니다?*
       - ② `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
         - 위의 정의에서 자명(대수적으로 행렬 B로 치환한것일 뿐임)
       - ③ ...
     - 응용
       - `A∈Mmxn(F), Q∈Mmxm(F)`가 가역 => `LQA, LA`는 본질적으로 같은 함수이다. 그러므로 `rank(QA) = rank(A)`
-        - **(이해가 안됨) -> `QA = B`라고 두고, ③의 commutative diagram을 그려보면 `LA`와 `LB=LQA`가 겹쳐보인다**
-      - 그냥 특정 행렬 `A`에 trainsition matrix(invertible인 행렬)을 오른쪽이든 왼쪽이든 곱해도 `A`와 isomorphic함
-        - `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재 => `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
-          - 위의 명제가 성립하기 때문에, 선형대수학의 기본정리에 의하여 `LA ~~ B`인데, `A ~~ LA ~~ B=QAP` 이므로, `A`와 `QAP`는 isomorphic
-          - 즉, 특정 행렬에 trainsition matrix를 지지고 볶아도 처음 행렬과 isomorphic
-          - 그래서 `Q, P가 가역일 때, rank(QA)=rank(A), rank(AP)=rank(A)`임은 자명한것
+        - `by 2, [LA]_Bw^ε = QA인 F^m의 기저 Bw가 존재`
+        - `=> LA ~~ A ~~ QA (LA ~~ A)`
+        - `=> rank(A) = rank(QA)`
+    - **특정 행렬 `A`에 trainsition matrix(invertible인 행렬)을 오른쪽이든 왼쪽이든 곱해도 `A`와 isomorphic함**
+      - `QAP = B`인 가역행렬 `Q∈Mmxm(F)`와 가역행렬 `P∈Mnxn(F)`가 존재 => `[LA]_Bw^Bv = B`인 `F^n`의 basis Bv와 `F^m`의 basis Bw가 존재
+        - 위의 명제가 성립하기 때문에, 선형대수학의 기본정리에 의하여 `LA ~~ B`인데, `A ~~ LA ~~ B=QAP` 이므로, `A`와 `QAP`는 isomorphic
+        - 즉, 특정 행렬에 trainsition matrix를 지지고 볶아도 처음 행렬과 isomorphic
+        - 그래서 `Q, P가 가역일 때, rank(QA)=rank(A), rank(AP)=rank(A)`임은 자명한것
 - 각종 관찰
   - ① `L∈L(V,V)` Bv, Bw가 V의 basis
     - `[L]_Bw^Bw = [I]_Bw^Bv・[L]_Bv^Bv・[I]_Bv^Bw`
@@ -302,7 +320,7 @@
     - 이 때, LA와 LB는 본질적으로 같은 함수
       - e.g) Bv의 벡터공간에서 90도 회전 선형변환은, standard basis 벡터공간에서 90도 회전 선형변환과 근본적으로 같음(대신 기저변환에 따른 벡터값의 변화도 추적해야 함)
   - 성질
-    - `A ~ B ∈ Mnxn(F)`이면 다음이 성립(같은 것은 같을 뿐)
+    - `A ~ B ∈ Mnxn(F)`이면 다음이 성립(∵ `A ~ B => A ~~ B`)
       - ① `dim kerLA = dim kerLB`
       - ② `dim imLA = dim imLB`
       - ③ `rank(A) = rank(B)`
