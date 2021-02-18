@@ -45,6 +45,8 @@ Kernel이란
 
 ![](./images/week7/kernels1.png)
 
+kernel matrix처럼, landmark를 기준으로 주변 area에 영향을 끼침?
+
 Kernel과 similarity
 
 ![](./images/week7/kernels2.png)
@@ -92,3 +94,29 @@ SVM Hypothesis and Cost function with kernels
     - small `σ` => fi vary less smoothly => higher variance
 
 ## SVMs in Practice
+
+### Using an SVM
+
+![](./images/week7/svm1.png)
+
+- 참고할 점
+  - 그냥 라이브러리 써라
+    - `C`, `kernel(similarity function)`을 정해줘야 함(Gaussian kernel의 경우에는 `σ`도 정해줘야 함)
+  - Gaussian Kernel을 적용하기 전에 feature scaliing을 도입해야 함
+  - 다른 커널
+    - Mercer's Theorem을 만족하는 `similarity(x,l)`함수를 선정해야 함
+      - e.g) polynomial kernel, chi-square kernel, histogram intersection kernel, ...
+- multi-class classification
+  - SVM 패키지에 있는 multi-class classification 기능 사용
+  - one-vs-all method 사용
+- Logistic regression vs SVMs
+  - `n=피쳐의 수, m=트레이닝 데이터셋의 개수`
+    - n이 m에 비해서 클 경우(n=10,000, m=10 ... 1,000)
+      - logistic regression
+      - SVM without kernel
+    - n이 작고, m이 중간정도(n=1-1000, m=10 - 10,000)
+      - SVM with Gaussian kernel
+    - n이 작고, m이 큰 경우(n=1-1000, m=50,000+)
+      - feature를 더 만들고, logistic regression이나, SVM without kernel을 사용
+    - c.f) NN
+      - NN이 대부분의 경우 더 잘 학습할 수 있으나, 학습이 느릴 수 있음
