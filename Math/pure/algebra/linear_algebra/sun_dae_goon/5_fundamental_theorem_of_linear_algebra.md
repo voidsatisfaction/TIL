@@ -243,6 +243,9 @@
   - `[L]_Bw'^Bv' = [I]_Bw'^Bw・[L]_Bw^Bv・[I]_Bv^Bv'`
   - `[LA]_Bw^Bv = [I]_Bw^f・[LA]_f^ε・[I]_ε^Bv ([LA]_f^ε = A)`
     - 특정 행렬 `A`에 trainsition matrix(invertible인 행렬)을 오른쪽이든 왼쪽이든 곱해도 `A`와 isomorphic함
+    - 어라, 근데, 행렬이 그러면 그것과 isomorphic한 선형변환도 같을텐데...?
+      - 특정 선형변환 `LA`에 isomorphism을 오른쪽이든 왼쪽이든 합성해도 `LA`와 isomorphic함
+      - **근데 이걸 commutative diagram으로 표현하면 우리의 철학4!!**
   - `[LA]_Bv^Bv = [I]_Bv^ε・[LA]_ε^ε・[I]_ε^Bv`
     - `A ~ B <=> A,B∈Mnxn(F), ∃U∈Mnxn(F)∧U는 invertible s.t. U^-1AU = B`
     - 복잡한 matrix를 간단한, similar matrix를 가지고 계산하자
