@@ -11,6 +11,7 @@
     - 채도
   - viewport
   - window
+  - Kernel(Image processing)
 - Color spaces
   - RGB
   - Lab
@@ -59,6 +60,36 @@
     - window를 viewport에 매핑하여 사용자가 자신의 디바이스에서 적당한 크기로 해당 내용을 볼 수 있음
     - **world-coordinates window clipping ---- window-to-viewport transformation ----> viewport rendering**
   - physical-device-based 좌표계가 portable하지 않으므로, 정규화된 device coordinates로 알려진 소프트웨어 추상 계층이 viewport를 표현하는데에 사용됨
+
+### Kernel(Image processing)
+
+- 개요
+  - convolution 연산의 인자로서, 다양한 기능을 수행하는 matrix
+    - blurring, sharpening, embossing, edge detection, smoothing 등의 동작 가능
+
+#### Convolution 수식
+
+![](./images/image_processing/kernel_convolution1.png)
+
+위 식에서는 `g(x,y)`가 filtered image, `f(x,y)`가 original image, `w`가 filter kernel
+*dx=0, dy=0 일때, 커널의 중간 원소를 의미?*
+
+#### Kernel별 이미지에 대한 Convolution 연산의 결과
+
+![](./images/image_processing/kernel_convolution2.png)
+
+#### Image processing convolution 계산 예시
+
+![](./images/image_processing/kernel_convolution3.png)
+
+- convolution(중첩)
+  - 개요
+    - 이미지의 각 element(아마 픽셀일듯?)에 커널에 의하여 가중치가 부여된 local neighbors를 더하는 프로세스
+  - 특징
+    - kernel과 convolution연산을 이용하면 이미지를 다양하게 processing가능
+      - convolution연산은 정해진 식이 있으므로, kernel의 원소에 따라서 최종 operation이 무엇을 의미하는지 정해짐
+    - 예시
+      - Identity, Edge detection, Sharpen, Box blur, Gaussian blur, Unsharp masking
 
 ## Color spaces
 
