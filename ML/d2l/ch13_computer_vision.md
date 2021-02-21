@@ -2,6 +2,7 @@
 
 - 의문
 - 13.1. Image Augmentation
+- 13.2. Fine-Tuning
 
 ## 의문
 
@@ -62,3 +63,60 @@ def load_cifar10(is_train, augs, batch_size):
 
 - `torch.utils.data.DataLoader`를 사용해서 데이터 로드
   - 그 전에 데이터셋을 image augmentation object를 이용해서 aug된 상태로 등록
+
+## 13.2. Fine-Tuning
+
+Fine-Tuning
+
+![](./images/ch13/fine-tuning1.png)
+
+### transfer learning
+
+transfer learning 학습 코드 예시
+
+```py
+finetune_net = torchvision.models.resnet18(pretrained=True)
+finetune_net.fc = nn.Linear(finetune_net.fc.in_features, 2)
+nn.init.xavier_uniform_(finetune_net.fc.weight);
+# If `param_group=True`, the model parameters in fc layer will be updated
+# using a learning rate ten times greater, defined in the trainer.
+
+def train_fine_tuning(net, learning_rate, batch_size=128, num_epochs=5,
+                      param_group=True):
+    train_iter = torch.utils.data.DataLoader(torchvision.datasets.ImageFolder(
+        os.path.join(data_dir, 'train'), transform=train_augs),
+        batch_size=batch_size, shuffle=True)
+    test_iter = torch.utils.data.DataLoader(torchvision.datasets.ImageFolder(
+        os.path.join(data_dir, 'test'), transform=test_augs),
+        batch_size=batch_size)
+    devices = d2l.try_all_gpus()
+    loss = nn.CrossEntropyLoss(reduction="none")
+    if param_group:
+        params_1x = [param for name, param in net.named_parameters()
+             if name not in ["fc.weight", "fc.bias"]]
+        trainer = torch.optim.SGD([{'params': params_1x},
+                                   {'params': net.fc.parameters(),
+                                    'lr': learning_rate * 10}],
+                                lr=learning_rate, weight_decay=0.001)
+    else:
+        trainer = torch.optim.SGD(net.parameters(), lr=learning_rate,
+                                  weight_decay=0.001)
+    d2l.train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
+                   devices)
+```
+
+- 개요
+  - source dataset에서 학습된 지식을 target dataset으로 옮김
+  - e.g)
+    - ImageNet의 대부분의 이미지 데이터는 의자와 관계가 없어도, ImageNet으로 학습된 모델은 edge, texture, shapes, object composition과 같은 feature를 판별하는데 도움을 주는 피쳐를 뽑아낼 수 있음
+- 단계
+  - 1 source data를 이용하여 NN모델을 pre-train함
+  - 2 새 NN모델을 생성
+    - 해당 모델은 source model과 구조가 다 같으나, output layer만 다름
+    - source model의 parameter가 source dataset의 knowledge를 갖고 있고, 그것을 target dataset에도 적용 가능하다고 가정
+  - 3 output layer구조를 target dataset categories에 맞춰 수정하고, random initialization을 함
+  - 4 target model을 target dataset으로 학습시킴
+    - output layer는 새로 학습
+      - lr이 상대적으로 높아야 함
+    - 다른 파라미터는 fine-tuned
+      - lr이 상대적으로 낮아야 함
