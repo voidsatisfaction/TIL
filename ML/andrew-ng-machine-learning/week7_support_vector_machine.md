@@ -114,9 +114,11 @@ SVM Hypothesis and Cost function with kernels
     - n이 m에 비해서 클 경우(n=10,000, m=10 ... 1,000)
       - logistic regression
       - SVM without kernel
+      - overfitting 방지
     - n이 작고, m이 중간정도(n=1-1000, m=10 - 10,000)
       - SVM with Gaussian kernel
     - n이 작고, m이 큰 경우(n=1-1000, m=50,000+)
       - feature를 더 만들고, logistic regression이나, SVM without kernel을 사용
+      - underfitting 방지
     - c.f) NN
       - NN이 대부분의 경우 더 잘 학습할 수 있으나, 학습이 느릴 수 있음
