@@ -21,6 +21,9 @@
   - **`det(In) = det(e1, ..., en) = 1`을 만족하는 alternating n-linear form `det: F^n x ... x F^n -> F`는 존재하고 유일하다. `det(A) = |A|`의 표기법도 사용한다**
     - `n=2`인 경우
     - `n=3`인 경우
+- 행렬식의 정의
+  - `det: F^n x ... x F^n -> F ∧ det는 alternating n-linear form ∧ det(In)=1`
+    - 존재하며, 유일함
 - **결국 det가 존재하고 유일하다는 것** 을 보이는 것이 이번 장의 목표이며, 이를 보이기 위해서는 `det(e1, ..., en)` 과 같은 값을 분석할 수 있어야 한다. 여기서 det는 alternating n-linear form이므로, `det(e1, ..., ej, ..., ei, ..., en) = -det(e1, ..., ei, ..., ej, ..., en) = -|In| = -1 (by det의 정의)` 인 것을 효율적으로 보여줄 수 있어야 하며, 이를 가능하게 하는 것이 **symmetric group** 이다.
 
 ## 6.2 Symmetric Group
