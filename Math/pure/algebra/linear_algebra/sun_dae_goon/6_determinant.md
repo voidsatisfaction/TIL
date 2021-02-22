@@ -31,7 +31,8 @@
 ### Symmetric group
 
 - 정의
-  - `σ: {1, ..., n} -> {1, ..., n}`전체의 집합을 Tn으로 표기할 때, `Sn = { σ∈Tn | σ는 bijection }`
+  - `Tn: σ전체의 집합 (σ: {1, ..., n} -> {1, ..., n})`전체의 집합
+  - `Sn = { σ∈Tn | σ는 bijection }`
     - symmetric group의 원소는 permutation이라 부름
 - 특징
   - `|Tn| = n^n, |Sn| = n!`
