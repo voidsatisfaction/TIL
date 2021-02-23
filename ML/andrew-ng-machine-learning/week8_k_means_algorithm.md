@@ -9,6 +9,10 @@
 
 ## Clustering
 
+Clustering의 응용
+
+![](./images/week8/application_of_clustering1.png)
+
 ### K-means Algorithm
 
 #### K-means cluster visualization
@@ -74,6 +78,16 @@ Choosing the number of clusters
 
 ## Principal Component Analysis
 
+#### Dimensionality reduction 2D to 1D
 
+![](./images/week8/dimensionality_reduction2.png)
+
+#### Dimensionality reduction 3D to 2D
+
+![](./images/week8/dimensionality_reduction1.png)
+
+- Motivation1: Data Compression
+- Motivation2: Visualization
+  - feature가 매우 많을 경우, 전체 feature를 반영하는, 새로운 적은 feature를 생성
 
 ## Applying PCA
