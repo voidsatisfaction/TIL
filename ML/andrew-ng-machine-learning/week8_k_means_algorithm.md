@@ -90,4 +90,33 @@ Choosing the number of clusters
 - Motivation2: Visualization
   - feature가 매우 많을 경우, 전체 feature를 반영하는, 새로운 적은 feature를 생성
 
+### Principal Component Analysis Problem Formulation
+
+#### PCA
+
+![](./images/week8/pca1.png)
+
+#### Linear regression vs PCA
+
+![](./images/week8/linear_regression_vs_pca1.png)
+
+- PCA
+  - 개요
+    - 차원감소를 squared projection error를 최소화 하는 식으로 행함
+- PCA vs Linear regression
+  - PCA
+    - 모든 축을 동일하게 생각
+  - Linear regression
+    - y축에 대한 오차를 구함
+
+### Principal Component Analysis Algorithm
+
+#### PCA algorithm1
+
+![](./images/week8/pca_algorithm1.png)
+
+#### PCA algorithm summary
+
+![](./images/week8/pca_algorithm2.png)
+
 ## Applying PCA
