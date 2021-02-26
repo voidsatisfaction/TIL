@@ -106,6 +106,8 @@ Choosing the number of clusters
 - PCA vs Linear regression
   - PCA
     - 모든 축을 동일하게 생각
+    - 차원 축소 전의 점의 위치에서 변환후 기저에 가장 가까운 점을 차원 축호 후의 점의 위치로 두는 것이 바람직
+      - 따라서, 수직인 점으로 근사하는게 옳음
   - Linear regression
     - y축에 대한 오차를 구함
 
@@ -120,3 +122,61 @@ Choosing the number of clusters
 ![](./images/week8/pca_algorithm2.png)
 
 ## Applying PCA
+
+### Reconstruction from Compressed Representation
+
+#### PCA Reconstruction
+
+![](./images/week8/pca_reconstruction1.png)
+
+- reconstruction
+  - `z = tU_reduce・x`
+  - `x_approx = U_reduce・z`
+    - reconstruction
+    - *근데 이것이 왜 성립하는지?*
+
+### Choosing the Number of Principal Components
+
+*variance retain이란?*
+
+#### How to choose k
+
+![](./images/week8/pca_choosing_k1.png)
+
+#### How to choose k - algorithm and octave
+
+![](./images/week8/pca_choosing_k2.png)
+
+- 알고리즘
+  - `k=1`
+  - 다음을 계속 반복
+    - PCA 시도
+    - U_reduce, z(1), ..., z(m), x(1)_approx, ..., x(m)_approx 계산
+    - `(1/m sigma_{i=1}^{m}(||x(i) - x(i)_approx||^2)) / (1/m sigma_{i=1}^{m}(||x(i)||^2)) ≤ 0.01`을 만족하면 해당 k선택, 아니면 `k+=1`
+  - octave에서는 더 간단히 계산 가능
+    - `[U, S, V] = svd(Sigma)`
+
+### Advice for Applying
+
+- Compression
+  - Supervised learning speedup
+    - 주의
+      - overfitting 방지로는 사용하지 마라
+        - regularization을 사용하라
+      - 처음부터 PCA쓰기 전에 일단 그냥 그대로 돌려보라
+        - 그 다음에 잘 되지 않는 경우 PCA시도하라
+  - data store
+- Visualization
+  - k=2, k=3
+
+#### Compression
+
+![](./images/week8/pca_application1.png)
+
+- 개요
+  - 트레이닝셋의 파라미터값을 기준으로 PCA를 진행하여 모델의 파라미터의 차원을 낮춤
+  - 차원을 낮춘 트레이닝 데이터셋과 모델로 학습
+  - 차원을 낮춘 validation 데이터셋과 test 데이터셋으로 검증 / 평가
+    - 여기서 차원을 낮출 때에는, training set기준으로 낮춰야 함
+
+#### Visualization
