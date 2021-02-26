@@ -89,6 +89,8 @@ Choosing the number of clusters
 - Motivation1: Data Compression
 - Motivation2: Visualization
   - feature가 매우 많을 경우, 전체 feature를 반영하는, 새로운 적은 feature를 생성
+- Motivation3: 얼굴 인식
+  - feature는 결국, PCA로 인하여 가장 얼굴을 대표해서 나타내는 벡터
 
 ### Principal Component Analysis Problem Formulation
 
@@ -107,7 +109,9 @@ Choosing the number of clusters
   - PCA
     - 모든 축을 동일하게 생각
     - 차원 축소 전의 점의 위치에서 변환후 기저에 가장 가까운 점을 차원 축호 후의 점의 위치로 두는 것이 바람직
-      - 따라서, 수직인 점으로 근사하는게 옳음
+      - 따라서, 주성분 벡터에 수직인 점으로 근사하는게 옳음
+    - 주성분 벡터는 데이터의 분산이 가장 큰 벡터
+      - 데이터를 가장 잘 대표할 수 있음
   - Linear regression
     - y축에 대한 오차를 구함
 
