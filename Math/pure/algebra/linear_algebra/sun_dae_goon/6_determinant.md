@@ -47,11 +47,14 @@ cycle notation / transposition
 
 ![](./images/ch6/cycle_notation1.jpeg)
 
+- 개인적 관찰
+  - 임의의 permutation은 cycle notation으로 나타낼 수 있다
 - 관찰
   - ① `σ`와 `τ`가 disjoint cycle => `σ◦τ = τ◦σ`
   - ② 임의의 permutation은 disjoint cycle들의 합성으로 나타낼 수 있고, 그 방법은 (합성의 순서를 제외하고) 유일하다
   - ③ `∀permutation`은 transposition들의 합성으로 나타낼 수 있다
     - `(i1, ..., ik) = (i1,ik)◦(i1,ik-1)◦...◦(i1,i3)◦(i1,i2)`
+      - 한번에 `i1, ..., ik`를 한칸식 뒤로 자리바꿈하는 것은, 두 명씩 자리 바꾸기를 여러 번하면 이룰 수 있다.
 - 정의
   - 함수 `sgn: Sn -> {1, -1}, sgn(σ) = (-1)^r (단 σ는 r-개 transposition의 합성)`
     - *well-defined임을 증명*
@@ -73,12 +76,16 @@ cycle notation / transposition
     - 성질
       - `σ=(i,j) => I_σ = I_[i]<->[j]`
         - i열과 j열 자리 바꾸기
-        - *주의: σ가 transposition으로서, 하나만 존재하는 경우는 위의 식이 성립하나, σ가 transposition의 합성으로 이루어 진 경우, 단순히 열을 기준으로 자리를 바꾼다고 생각하면 안되고, 기저의 인덱스의 변화를 기준으로 바꾼다고 생각해야 한다. (e.g σ = (1,3,2) = (1,2)◦(1,3) = I(e1, ..., en)를 e1과 e3을 자리바꿈 후, e1과 e2를 자리바꿈 한다 != I를 1열과 3열 자리바꿈 후 1열과 2열 자리바꿈)*
+        - 주의: σ가 transposition으로서, 하나만 존재하는 경우는 위의 식이 성립하나, σ가 transposition의 합성으로 이루어 진 경우, 단순히 열을 기준으로 자리를 바꾼다고 생각하면 안되고, 기저의 인덱스의 변화를 기준으로 바꾼다고 생각해야 한다. (e.g σ = (1,3,2) = (1,2)◦(1,3) = I(e1, ..., en)를 e1과 e3을 자리바꿈 후, e1과 e2를 자리바꿈 한다 != I를 1열과 3열 자리바꿈 후 1열과 2열 자리바꿈)
+          - 이것은 `I_(1,3,2) = I_(1,2)◦(1,3) = I_(1,2)・I_(1,3) = I・I_(1,2)・I_(1,3) = ((I・I_(1,2))・I_(1,3))`
+          - **위의 식으로 생각해보면, I에서 1,2열을 교환한 뒤 -> 그 결과의 행렬을 1,3 열 교환**
     - 관찰(`σ,τ∈Sn`)
       - ① I_σ의 j-th column은 `e_σ(j)`즉, `I_σ = (e_σ(1), ..., e_σ(n))`
       - ② `A∈Mnxn(F) => A・I_σ = ([A]^σ(1), ..., [A]^σ(n))`
       - ③ `I_σ・I_τ = I_σ◦τ`
+        - 재미있음
       - ④ `(I_σ)^-1 = I_(σ^-1) = t(I_σ)　∴I_σ ∈ O(n) (O(n)은 orthogonal group)`
+        - *`(I_σ)^-1 = t(I_σ)`부분이 이해가 안됨*
       - ⑤ `I_σ = I_τ => σ = τ`
       - ③, ④, ⑤ 는 **symmetric group Sn과 Mnxn(F)의 subset `{I_σ ∈ Mnxn(F) | σ∈Sn}`이 곱셈에 관하여 같은 구조** 를 갖고 있음을 말하고 있음
         - *곱셈에 대한 같은 구조라는게, 곱셈에 대하여 bijection인 isomorphism이 존재한다는 것인가?*
@@ -95,20 +102,16 @@ cycle notation / transposition
       - ③ `(P_σ)^-1 = P_(σ^-1)`
       - ④ `P_σ = P_τ => σ = τ`
   - 결론
-    - *symmetric group `Sn`과 permutation matrix, permutation operator 는 모두 곱셈에 관하여 같은 구조를 갖고 있음을 알 수 있다*
-      - 같은 구조가 뭔데?
+    - **symmetric group `Sn`과 permutation matrix, permutation operator 는 모두 곱셈에 관하여 같은 구조를 갖고 있음을 알 수 있다**
 - `L∈L(V,V)`일 때, `[L]_Bv^Bv`와 `[L]_Bvσ^Bvσ`를 비교해 보자 (`Bv = {v1, ..., vn}`이 V의 ordered basis이고, `σ∈Sn`)
   - ① `[L]_Bvσ^Bvσ = [I]_Bvσ^Bv・[L]_Bv^Bv・[L]_Bv^Bvσ = (I_σ)^-1・[L]_Bv^Bv・I_σ = t(I_σ)・[L]_Bv^Bv・I_σ`
   - ② `σ = (1,2)∈S3, [L]_Bv^Bv = (aij) (aij∈F), [L]_Bvσ^Bvσ = [L]_Bv^Bv`를 첫번째 열과 두번째 열을 바꾸고, 첫번쨰 행과 두번쨰 행을 바꾼 것과 같음 (행과 열의 변환은 순서 상관 없음 - 결합법칙)
     - `= (I_σ)^-1・[L]_Bv^Bv・I_σ = t(I_σ)・[L]_Bv^Bv・I_σ`인데,
     - `t(I_σ)・A' = tt(t(I_σ)・A) = t(tA・I_σ) = tA의 첫번째 열과 두번째 열을 자리바꿈한 뒤에 transpose = A의 첫번째 행과 두번째 행을 자리바꿈`
   - ③ `[L]_Bv^Bv = diag(λ1, λ2, λ3) (λi∈F) => [L]_Bvσ^Bvσ = diag(λ2, λ1, λ3) = diag(λσ(1), λσ(2), λσ(3))`
-    - *`σ=(1,2)`일 때 인가?(중요)*
     - `λi∈F, (i,i)-성분이 λi인 (nxn)-대각행렬을` `diag(λ1, ..., λn)`으로 표기한다
       - `diag(..., λj(i번째), ...) = 대각행렬인데 (i,i)의 값이 λj가 되는 경우`
     - *`ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`임을 증명*
-      - 여기에서 `~`기호는 무엇을 뜻하는가?
-        - `A' = U^-1AU`꼴로 나타낼 수 있다는 것
 
 ## 6.3 Determinant의 정의 1
 
