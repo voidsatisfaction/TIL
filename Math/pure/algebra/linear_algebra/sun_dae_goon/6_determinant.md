@@ -111,7 +111,7 @@ cycle notation / transposition
   - ③ `[L]_Bv^Bv = diag(λ1, λ2, λ3) (λi∈F) => [L]_Bvσ^Bvσ = diag(λ2, λ1, λ3) = diag(λσ(1), λσ(2), λσ(3))`
     - `λi∈F, (i,i)-성분이 λi인 (nxn)-대각행렬을` `diag(λ1, ..., λn)`으로 표기한다
       - `diag(..., λj(i번째), ...) = 대각행렬인데 (i,i)의 값이 λj가 되는 경우`
-    - *`ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`임을 증명*
+    - `ai∈F ∧ σ∈Sn, diag(a1, ..., an) ~ diag(a_σ(1), ..., a_σ(n))`
 
 ## 6.3 Determinant의 정의 1
 
@@ -127,15 +127,26 @@ cycle notation / transposition
     - 따라서 `det(e3, e2, e4, e1) = (-1)^2・det(I) = sgn(σ)・det(I) = 1`
 - 관찰
   - ① `D: Mnxn(F) -> F`가 위의 정리의 조건을 만족한다면, `A∈Mnxn(F)`이고 `σ∈Sn`일 때, 다음이 성립
-    - *`D([A]^σ(1), ..., [A]^σ(n)) = sgn(σ)・D([A]^1, ..., [A]^n) = sgn(σ)・D(A)`*
+    - `D([A]^σ(1), ..., [A]^σ(n)) = sgn(σ)・D([A]^1, ..., [A]^n) = sgn(σ)・D(A)`
       - 자리 바꾸기 문제와 같기 때문(D는 alternating n linear form임을 명심(그것의 성질은 자리를 바꾸면 -1을 곱한 것과 같다))
   - ② `D(e_σ(a), ..., e_σ(n)) = sgn(σ)`
 - 정리
   - `det: Mnxn(F) -> F`는 다음과 같이 주어진다
     - `det(A) = |A| = det(aij) = sigma_{σ∈Sn}{sgn(σ)・a_σ(1),1・a_σ(2),2 ... a_σ(n),n}`
-      - 애초에 이건 어떻게 증명? 특히 *(alternating form 이라는 것을 어떻게 보이지?)*
-        - 그 증명이 바로 옆 페이지에 나옴(꿀잼)
-        - 그러니까 귀납적(혹은 직관적 혹은 천재적?!)으로 미리 `det`의 식을 예측하고 이 식이 `det`의 조건을 만족함을 보인 후에, uniqueness를 보이는 식으로 전개
+      - 증명
+        - det가 k-linear form 임을 보임
+        - det가 alternating form 임을 보임
+        - `det(In) = 1` 임을 보임
+        - det의 성질(`det는 alternating k-linear form ∧ det(In)=1`)로부터 uniqueness를 보임
+- 연습문제
+  - V가 벡터공간일 때, alternating k-linear form on V 전체의 집합은 `Alt^k(V)`라고 표기하면, `dim(Alt^n(F^n)) = 1`이다.
+    - 당연하게도 `det^n`이 유일한 basis가 될 것 같은 직감
+    - 임의의 `let) Alt∈Alt^n(F^n), Alt(B) = Alt([B]^1, ..., [B]^n) = Alt(b11e1+ ... + bn1en, ... , b1ne1+ ... + bnnen) .... (B∈Mnxn(F))`
+      - 임의의 `Alt(B)`를 `det`로 표현하면 됨
+- 중요한 따름정리
+  - `A∈Mnxn(F) => det(A) = det(tA)`
+  - `det: Mnxn(F) -> F를 n개의 row들에 관한 함수로 보더라도, det는 det(I)=1인 유일한 alternating n-linear form이다`
+    - *column기반 증명시, A대신 tA를 생각*
 
 ## 6.4 Determinant의 성질
 
