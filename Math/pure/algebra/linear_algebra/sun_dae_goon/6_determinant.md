@@ -12,6 +12,7 @@
   - 정의
     - `V1, ..., Vk`가 벡터공간일 떄, 함수 `mu: V1 x ... x Vk -> F`가 모든 k개의 좌표에 대하여 linear 일 때, 즉, 임의의 `i = 1, ..., k`에 대하여 `mu(..., aui+bwi, ...) = a・mu(..., ui, ...) + b・mu(..., wi, ...) (ui, wi∈Vi, a,b∈F)`
       - 일반적으로 `V1 = ... = Vk = V`인 경우를 다루고, 이때의 `mu`를 k-linear form on V라 함
+      - `mu(..., aui+bwi, ...) = mu(..., aui, ...) + mu(..., bwi, ...) = a・mu(..., ui, ...) + b・mu(..., wi, ...)`
 - alternating k-linear form
   - 정의
     - `V`가 벡터공간이고 `mu: V x ... x V -> F`가 k-linear form 이라고 하자. `∀v∈V, mu(..., v, ..., v, ...) = 0`를 만족
@@ -48,13 +49,15 @@ cycle notation / transposition
 ![](./images/ch6/cycle_notation1.jpeg)
 
 - 개인적 관찰
-  - 임의의 permutation은 cycle notation으로 나타낼 수 있다
+  - 임의의 permutation은 `id`혹은 cycle notation으로 나타낼 수 있다
 - 관찰
   - ① `σ`와 `τ`가 disjoint cycle => `σ◦τ = τ◦σ`
   - ② 임의의 permutation은 disjoint cycle들의 합성으로 나타낼 수 있고, 그 방법은 (합성의 순서를 제외하고) 유일하다
   - ③ `∀permutation`은 transposition들의 합성으로 나타낼 수 있다
     - `(i1, ..., ik) = (i1,ik)◦(i1,ik-1)◦...◦(i1,i3)◦(i1,i2)`
       - 한번에 `i1, ..., ik`를 한칸식 뒤로 자리바꿈하는 것은, 두 명씩 자리 바꾸기를 여러 번하면 이룰 수 있다.
+      - 여기서 i1, i2는 자리에 있는 '사람'을 의미하는 것이 아니라, '자리'그 자체를 의미함
+        - 즉, `(i1,i3)◦(i1,i2) = 첫째자리와 둘째자리에 있는 사람 교환 후, 첫째자리와 셋쨰자리에 있는 사람 교환`
 - 정의
   - 함수 `sgn: Sn -> {1, -1}, sgn(σ) = (-1)^r (단 σ는 r-개 transposition의 합성)`
     - *well-defined임을 증명*
@@ -127,7 +130,7 @@ cycle notation / transposition
     - 따라서 `det(e3, e2, e4, e1) = (-1)^2・det(I) = sgn(σ)・det(I) = 1`
 - 관찰
   - ① `D: Mnxn(F) -> F`가 위의 정리의 조건을 만족한다면, `A∈Mnxn(F)`이고 `σ∈Sn`일 때, 다음이 성립
-    - `D([A]^σ(1), ..., [A]^σ(n)) = sgn(σ)・D([A]^1, ..., [A]^n) = sgn(σ)・D(A)`
+    - **`D([A]^σ(1), ..., [A]^σ(n)) = sgn(σ)・D([A]^1, ..., [A]^n) = sgn(σ)・D(A)`**
       - 자리 바꾸기 문제와 같기 때문(D는 alternating n linear form임을 명심(그것의 성질은 자리를 바꾸면 -1을 곱한 것과 같다))
   - ② `D(e_σ(a), ..., e_σ(n)) = sgn(σ)`
 - 정리
