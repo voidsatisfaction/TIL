@@ -164,16 +164,16 @@ cycle notation / transposition
   - ① `A`는 invertible
   - ② `det(A)!=0`
     - ② => ①
-      - A의 RREA가 I임을 보임
-      - `A∈Mnxn(F), {[A]^1, ..., [A]^n}가 linearly independent`임을 알고 있으므로 `LA`가 isomorphism임을 보임
+      - `{[A]^1, ..., [A]^n}`이 linearly dependent가 아님을 이용
 - Determinant의 기하학적 의미
   - **volume**
     - `R^n`의 n-개의 vector `{[A]^1, ..., [A]^n}`이 결정하는 n-dimensional parallelogram의 부피는 `Voln([A]^1, ..., [A]^n) = |det(A)|` 이다.
       - 이를 증명하기 위해서는 부호를 무시한 부피 `voln: Mnxn(F) -> R`이 `alternating n-linear map ∧ voln(In) = 1`을 만족하는 것을 보여야 할 것이다.
       - 그러면 alternating n-linear form인 것을 그림으로 보여야 할 것인데... 애초에 부피란 무엇인가?
       - S. Lang의 ch7 pp 202-211을 꼭 참조하세요
-- `A∈Mnxn(F)`일 때, A의 rank를 계산하는 가장 효과적인 방법은 A의 row-reduced echelon form - 즉, Gaussian Elimination - 을 이용하는 것
+- *`A∈Mnxn(F)`일 때, A의 rank를 계산하는 가장 효과적인 방법은 A의 row-reduced echelon form - 즉, Gaussian Elimination - 을 이용하는 것*
   - Determinant와 sub-determinant를 이용하는 계산법도 S.Lang의 7장을 확인하세요.
+    - *sub-determinant*가 무엇일까
 - **Gaussian Elimination과 Determinant 행렬식은 다음 성질을 갖는다**
   - ① 어떤 한 column에 다른 column의 상수배를 더해 주어도, 행렬식은 변하지 않는다. 즉 `i!=j ∧ c∈F, i-th column에 j-th column의 c배 를 더해주면 det(...,[A]^i + c[A]^j, ..., [A]^j, ...) = det(A)`이다.
   - ② 위의 내용에서 column을 row로 바꾸어도 좋다
