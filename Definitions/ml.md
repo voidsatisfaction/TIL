@@ -66,7 +66,9 @@ Autoencoder Architecture and mathematical expressions
 
 Batch Normalization Transform
 
-![](./images/ml/batch_normalization_transform1.png)
+![](./images/ml/batch_normalization_transform1.png)\
+
+training mode에서는 minibatch statistics로 normalizing을 하고, prediction mode에서는 dataset statistics로 normalizing을 행함
 
 - 정의
   - re-centering, re-scaling을 통한 input layer의 normalization을 통하여, 더 빠르고, 안정적인 인공 신경망을 만드는 방법
@@ -80,8 +82,9 @@ Batch Normalization Transform
     - deep network의 경우, shallower hidden layer의 작은 변화가 network의 더 깊은 layer에 그 효과가 증폭됨
 - 특징
   - Optimization을 도와줌(속도 향상)
-    - 정확한 이유는 모름
+    - **정확한 이유는 모름**
       - 내부적 covariate shift를 완화?
+        - not valid explanation
       - *objective function* 을 smooth함?
       - length-direction decoupling?
   - Regularization효과
