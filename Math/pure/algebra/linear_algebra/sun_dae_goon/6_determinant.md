@@ -190,8 +190,9 @@ cycle notation / transposition
 
 ## 6.5 Determinant의 정의 2
 
-- 배경
-  - Determinant의 두번째 construction은 **inductive method** 라고 불리움, `((n-1)x(n-1))-matrix`의 determinant를 이용하여 `(nxn)-matrix`의 determinant를 construct함
+- 개요
+  - Determinant의 두번째 construction은 **inductive method**
+    - `((n-1)x(n-1))-matrix`의 determinant를 이용하여 `(nxn)-matrix`의 determinant를 construct함
 - 표기법
   - `A=(aij)∈Mnxn(F)`일 때, `Mij`를 A에서 i-th row와 j-th column을 제거한 `((n-1)x(n-1))-행렬`이라고 하고, `^Aij(원래는 ^기호가 A의 위에 존재) = det(Mij)`로 표기한다. `^Aij`를 A의 (i,j)-minor라고 부름
     - `(-1)^(i+j) ^Aij`는 (i,j)-cofactor라고 부름
@@ -201,11 +202,10 @@ cycle notation / transposition
   - 위의 2n개의 함수가 모두 `alternating n-linear form ∧ det와 같은 함수` 라는 것을 증명해야 함
     - 예시
       - `D^1(A) = a11^A11 - a21^A21 + a31^A31 - ... + (-1)^(n+1)an1^An1`
-  - 실제로 예를 들어서 det를 구해보자
-  - 여기에 Gaussian Elimination을 적용하면 det값의 변화 없이 행이나 열에 0이 많이 배치되므로, 계산하기 편해짐
-  - 그리고 행렬의 크기가 `nxn -> (n-1)x(n-1) -> ...` 와같은 식으로 점차 작은 det를 계산해나가면 되므로 계산이 편리함
 - **행렬식을 계산하는 strategy**
   - ① 어떤 열에 다른 열의 상수배를 더하거나, 어떤 행에 다른 행의 상수배를 더하는 작업을 반복하여 0이 많이 나타나도록 한다
+    - elementary column, row operation 중에서 어떤 행에 다른 행의 상수배를 더하는 작업을 해도 `det`값은 불변
+    - elementary row opeartion 중 다른 행 상수배 더하기 => `det(A) = det(tA) = det(tA의 column에 다른 column상수배 더하기) = det(t(tA의 column에 다른 column상수배 더하기)) = det(A의 row에 다른 row상수배 더하기)`
   - ② 0이 가장 많은 행이나 열에 관해 전개한다
 - 앞서 정의한 `D^j, D_i: Mnxn(F) -> F`함수는 모두 laternating n-linear form ∧ D^j(In) = 1 = D_i(In) 이며 따라서, 2n개의 함수가 모두 `det: Mnxn(F) -> F`와 같은 함수이다.
   - *증명이 아직 이해가 안간다!*
