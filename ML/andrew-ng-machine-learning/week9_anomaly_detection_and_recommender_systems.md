@@ -106,4 +106,40 @@ Anomaly detection error analysis
 
 ### Multivariate Gaussian Distribution
 
+Multivariate Gaussian Distribution1
+
+![](./images/week9/multivariate_gaussian_distribution1.png)
+
+Multivariate Gaussian Distribution2
+
+![](./images/week9/multivariate_gaussian_distribution2.png)
+
+Multivariate Gaussian Distribution3
+
+![](./images/week9/multivariate_gaussian_distribution3.png)
+
+Multivariate Gaussian Distribution4
+
+![](./images/week9/multivariate_gaussian_distribution4.png)
+
+#### Anomaly Detection using the Multivariate Gaussian Distribution
+
+Multivariate Gaussian Gaussian distribution
+
+![](./images/week9/multivariate_gaussian_distribution5.png)
+
+Anomaly detection with the multivariate Gaussian
+
+![](./images/week9/multivariate_gaussian_distribution6.png)
+
+Anomaly detection with the multivariate Gaussian Relationship to original model
+
+![](./images/week9/multivariate_gaussian_distribution7.png)
+
+- Original model은 Multivariate Gaussian Distribution의 special case
+
+![](./images/week9/multivariate_gaussian_distribution8.png)
+
+- Original model vs Multivariate Gaussian
+
 ## Recommender Systems
