@@ -197,6 +197,8 @@ Collaborative Filtering Optimization Objective
 
 ![](./images/week9/collaborative_filtering3.png)
 
+Collaborative Filtering Algorithm
+
 ![](./images/week9/collaborative_filtering4.png)
 
 - 주의
