@@ -143,3 +143,68 @@ Anomaly detection with the multivariate Gaussian Relationship to original model
 - Original model vs Multivariate Gaussian
 
 ## Recommender Systems
+
+### Predicting Movie Ratings
+
+#### Content Based Recommendations
+
+영화 별점 예측 예시
+
+![](./images/week9/recommendation_system1.png)
+
+- 문제 정의
+  - `r(i,j) = 1 (user j가 movie i를 레이팅 한 경우)`
+  - `y(i,j) = user j가 movie i를 레이팅 했을경우의, 점수`
+  - `θ(j) = user j에 대한 parameter vector`
+  - `x(i) = movie i에 대한 feature vector`
+  - `h_θ(x) = tθ(j)・(x(i)) = user j, movie i에 대해서 predicted rating`
+  - `m(j) = user j에 의하여 rated된 movie의 개수`
+
+Recommendation system optimization objective
+
+![](./images/week9/recommendation_system_optimization_objective1.png)
+
+Recommendation system optimization gradient descent
+
+![](./images/week9/recommendation_system_optimization_objective2.png)
+
+### Collaborative Filtering
+
+#### Collaborative Filtering
+
+![](./images/week9/collaborative_filtering1.png)
+
+- feature 추론 알고리즘
+  - 개요
+    - feature를 모르나, 대신, parameter를 아는 경우 feature를 추정
+
+![](./images/week9/collaborative_filtering2.png)
+
+- **collaborative filtering algorithm**
+  - 개요
+    - rating데이터와 대상 feature를 이용하여 개개 유저의 선호 파라미터 최적화
+    - 개개 유저의 선호 파라미터를 이용하여 대상 feature의 최적화
+    - 위의 두 최적화를 반복하여 보다 정밀한 recommendation system을 만든다
+  - 절차
+    - 1 `처음에는 유저 선호 파라미터를 랜덤하게 initialize`
+    - 2 `rating 데이터 x(1), ..., x(nm)으로 부터 유저 선호 파라미터(θ)를 최적화`
+    - 3 `θ(1), ..., θ(nu)`로 부터 `x(1), ..., x(nm)`을 estimate
+    - 위의 2,3 반복해서 최적화
+
+#### Collaborative Filtering Algorithm
+
+Collaborative Filtering Optimization Objective
+
+![](./images/week9/collaborative_filtering3.png)
+
+![](./images/week9/collaborative_filtering4.png)
+
+- 주의
+  - θ0을 굳이 만들 필요가 없음
+    - 왜냐하면, x, θ를 둘다 학습시킬 것이기 때문
+
+### Low Rank Matrix Factorization
+
+#### Vectorization: Low Rank Matrix Factorization
+
+#### Implementational Detail: Mean Normalization
