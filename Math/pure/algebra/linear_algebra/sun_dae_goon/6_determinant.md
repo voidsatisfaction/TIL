@@ -254,3 +254,24 @@ Vandermonde Matrix and its determinant
   - `=> ∃Xj∈F^n, AXj = ej (j=1, ..., n)`
   - `=> B = (bij) = (X1, ..., Xn)∈Mnxn(F)`
   - `=> AB = I ∧ bij = det([A]^1, ..., ej, ..., [A]^n)/det(A) = (-1)^(i+j)・^Aji/det(A)`
+
+## 6.7 Adjoint Matrix
+
+- Adjoint matrix
+  - `A∈Mnxn(F), adj(A) = t((-1)^(i+j)^Aij)`
+    - `[adj(A)]_i^j = (-1)^(i+j)^Aji`
+  - 가역행렬과 adjoint matrix
+    - `A^-1 = 1/det(A)・adj(A) = (-1)^(i+j)・^Aji/det(A)`
+- **정리**
+  - `A∈Mnxn(F), A・adj(A) = det(A)・In = adj(A)・A (A가 가역일 필요가 없다)`
+    - 좌변 증명 `[A]_i・[adj(A)]^j = [det(A)・In]_i^j` 임을 보이자(매우 재미있음, 우겨넣기식 증명)
+    - 우변 증명
+      - 좌변 증명에서 `tA`를 넣자
+    - `adj(tA) = t(adj(A))`
+      - `adj(A) = (-1)^(i+j)・aij・det(Mij)`
+        - 여기서 `det(Mij)`에서 row를 기준으로 하던, column으로 기준으로하던 det값은 같음
+        - 결국 `adj(tA)`에서의 column기준 det값 산출은 `adj(A)`에서 row기준으로 det값을 산출하는 것과 같음
+- 따름정리
+  - `A = (aij)∈Mnxn(F) => sigma_{k=1}^{n}((-1)^(k+j)aik^Ajk = δij・det(A) = sigma_{k=1}^{n}((-1)^(i+j)・aki・^Akj) (i,j = 1, ..., n))`
+- `A∈Mnxn(F)가 가역 => det(adj(A)) = (det(A))^(n-1)`
+  - *`A∈Mnxn(F)가 가역이 아니라면?`*
