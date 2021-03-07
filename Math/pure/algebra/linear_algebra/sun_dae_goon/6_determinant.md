@@ -74,21 +74,28 @@ cycle notation / transposition
         - `Bv = {v1, ..., vn}`이 V의 ordered basis ∧ `σ∈Sn`, 새로운 ordered basis `Bv_σ = {v_σ(1), ..., v_σ(n)}`을 생각하자.
         - 이 때, (nxn) transition matrix `[I]_Bv^Bv_σ`를 `σ`에 대응하는 permutation matrix라 부름
     - 예시
-      - `σ=(1,3,2), I_σ = 1번째열을 3번쨰 열의 값으로 치환 ∧ 2번째 열을 1번째 열의 값으로 치환 ∧ 3번째 열을 2번째 열의 값으로 치환`
-        - `(t(0,0,1) t(1,0,0) t(0,1,0))`
+      - `σ=(1,3,2), I_σ = (t(0,0,1) t(1,0,0) t(0,1,0))`
     - 성질
       - `σ=(i,j) => I_σ = I_[i]<->[j]`
-        - i열과 j열 자리 바꾸기
-        - 주의: σ가 transposition으로서, 하나만 존재하는 경우는 위의 식이 성립하나, σ가 transposition의 합성으로 이루어 진 경우, 단순히 열을 기준으로 자리를 바꾼다고 생각하면 안되고, 기저의 인덱스의 변화를 기준으로 바꾼다고 생각해야 한다. (e.g σ = (1,3,2) = (1,2)◦(1,3) = I(e1, ..., en)를 e1과 e3을 자리바꿈 후, e1과 e2를 자리바꿈 한다 != I를 1열과 3열 자리바꿈 후 1열과 2열 자리바꿈)
-          - 이것은 `I_(1,3,2) = I_(1,2)◦(1,3) = I_(1,2)・I_(1,3) = I・I_(1,2)・I_(1,3) = ((I・I_(1,2))・I_(1,3))`
-          - **위의 식으로 생각해보면, I에서 1,2열을 교환한 뒤 -> 그 결과의 행렬을 1,3 열 교환**
+        - i열과 j열 or i행과 j행 자리 바꾸기
+          - i열과 j열 자리 바꾸기
+            - `I_(1,3,2) = I_(1,2)◦(1,3) = I_(1,2)・I_(1,3) = I・I_(1,2)・I_(1,3) = ((I・I_(1,2))・I_(1,3))`
+          - i행과 j열 자리 바꾸기
+            - `I_(1,3,2) = I_(1,2)◦(1,3) = I_(1,2)・I_(1,3) = I_(1,2)・I_(1,3)・I = (I_(1,2)・(I_(1,3)・I))`
     - 관찰(`σ,τ∈Sn`)
       - ① I_σ의 j-th column은 `e_σ(j)`즉, `I_σ = (e_σ(1), ..., e_σ(n))`
       - ② `A∈Mnxn(F) => A・I_σ = ([A]^σ(1), ..., [A]^σ(n))`
       - ③ `I_σ・I_τ = I_σ◦τ`
         - 재미있음
       - ④ `(I_σ)^-1 = I_(σ^-1) = t(I_σ)　∴I_σ ∈ O(n) (O(n)은 orthogonal group)`
-        - *`(I_σ)^-1 = t(I_σ)`부분이 이해가 안됨*
+        - `p.f) (I_σ)^-1 = t(I_σ)`
+        - `let) σ^-1(i) = k_i`
+        - `t[I]_σ = t(e_σ(1), ..., e_σ(n))`
+        - `= t(te_σ(1), ..., te_σ(n))`
+        - `= (ek_1, ..., ek_n) (∵ t(te_σ(1), ..., te_σ(n))중에서 i번째 column이 1이 되는 것은 te_σ(k_i)이고, 이는 k_i행의 te_σ(k_i)에 해당하기 때문 by σ^-1(i) = k_i)`
+        - `= (e_σ^-1(1), ..., e_σ^-1(n))`
+        - `= [I]_Bv^Bv_σ^-1`
+        - `= I_σ^-1`
       - ⑤ `I_σ = I_τ => σ = τ`
       - ③, ④, ⑤ 는 **symmetric group Sn과 Mnxn(F)의 subset `{I_σ ∈ Mnxn(F) | σ∈Sn}`이 곱셈에 관하여 같은 구조** 를 갖고 있음을 말하고 있음
         - *곱셈에 대한 같은 구조라는게, 곱셈에 대하여 bijection인 isomorphism이 존재한다는 것인가?*
@@ -202,13 +209,20 @@ cycle notation / transposition
   - 위의 2n개의 함수가 모두 `alternating n-linear form ∧ det와 같은 함수` 라는 것을 증명해야 함
     - 예시
       - `D^1(A) = a11^A11 - a21^A21 + a31^A31 - ... + (-1)^(n+1)an1^An1`
+- `D_i, D^j`가 det와 같다는 것을 증명
+  - `D_i = D^i`임을 증명
+    - `^Aij = det(Mij)`임을 명심
+  - `D_i가 n-linear form`임을 증명
+    - *왜 `[A]^k = [A]^(k+1)`인 경우에만 `D_i(A) = 0`임을 증명하면 되는가?*
+  - `D_i가 alternating form`임을 증명
+  - `D_i(In) = 1`임을 증명
 - **행렬식을 계산하는 strategy**
   - ① 어떤 열에 다른 열의 상수배를 더하거나, 어떤 행에 다른 행의 상수배를 더하는 작업을 반복하여 0이 많이 나타나도록 한다
     - elementary column, row operation 중에서 어떤 행에 다른 행의 상수배를 더하는 작업을 해도 `det`값은 불변
     - elementary row opeartion 중 다른 행 상수배 더하기 => `det(A) = det(tA) = det(tA의 column에 다른 column상수배 더하기) = det(t(tA의 column에 다른 column상수배 더하기)) = det(A의 row에 다른 row상수배 더하기)`
   - ② 0이 가장 많은 행이나 열에 관해 전개한다
 - 앞서 정의한 `D^j, D_i: Mnxn(F) -> F`함수는 모두 laternating n-linear form ∧ D^j(In) = 1 = D_i(In) 이며 따라서, 2n개의 함수가 모두 `det: Mnxn(F) -> F`와 같은 함수이다.
-  - *증명이 아직 이해가 안간다!*
+  - *alternating 증명이 아직 이해가 안간다!*
 - Cartan Matrix
   - `An-1 = (aij) 단, aij = { 2 (if i=j), -1 (if |i-j|=1), 0 (otherwise) }`
 
@@ -216,18 +230,27 @@ cycle notation / transposition
 
 ![](./images/ch6/frequently_used1.jpeg)
 
-자주 이용되는 행렬의 성질2
+Vandermonde Matrix and its determinant
 
 ![](./images/ch6/frequently_used2.jpeg)
 
-- 자주 이용되는 행렬의 성질
-  - `B,B'∈Mmxm(F) ∧ C,C'∈Mnxn(F), A = (B)`
-  - Vandermonde Determinant
-
-*Lagrange Interpolation의 재해석*
+- Vandermonde matrix
+  - 응용
+    - 연속함수 `fi, gi ∈ F(R)`을 다음과 같이 정의하자 `fi(x)=x^i, gi(x)=e^(i・x) (x∈R, i=0,1,...)` `n≥1`일 때, 다음이 성립함을 보여라
+      - `{f0, ..., fn-1}은 일차독립`
+      - `{g0, ..., gn-1}은 일차독립`
+      - `{f0, ..., fn-1, g1, ..., gn-1}은 일차독립`
+    - Lagrange Interpolation
+      - 다항식 보간법
 
 ## 6.6 Cramer's Rule
 
 - Cramer's Rule
-  - `A∈Mnxn(F), X = t(x1, ..., xn)∈F^n`이 연립방정식 `AX = B`의 solution => `xi・det(A) = det([A]^1, ..., B, ..., [A]^n) (i=1, ..., n)` 이어야 한다
-    - *이렇게 되어야 한다는 것이지, 원래의 `AX = B`의 방정식에 대입해서 실제로 solution인지 확인할 수 있다는 뜻이 아니다*
+  - `A∈Mnxn(F), X = t(x1, ..., xn)∈F^n이 연립방정식 AX = B의 solution => xi・det(A) = det([A]^1, ..., B, ..., [A]^n) (i=1, ..., n)` 이어야 한다
+    - 주의
+      - 해가 존재한다면 값이 이렇게 정해져야 한다는 것이지, 해의 존재는 여부는 기본정리로부터 알 수 있음
+- Cramer's Rule에서 역행렬 도출하기
+  - `A가 invertible`
+  - `=> ∃Xj∈F^n, AXj = ej (j=1, ..., n)`
+  - `=> B = (bij) = (X1, ..., Xn)∈Mnxn(F)`
+  - `=> AB = I ∧ bij = det([A]^1, ..., ej, ..., [A]^n)/det(A) = (-1)^(i+j)・^Aji/det(A)`
