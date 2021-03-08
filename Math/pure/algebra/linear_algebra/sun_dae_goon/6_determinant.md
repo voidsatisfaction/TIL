@@ -139,7 +139,7 @@ cycle notation / transposition
   - ① `D: Mnxn(F) -> F`가 위의 정리의 조건을 만족한다면, `A∈Mnxn(F)`이고 `σ∈Sn`일 때, 다음이 성립
     - **`D([A]^σ(1), ..., [A]^σ(n)) = sgn(σ)・D([A]^1, ..., [A]^n) = sgn(σ)・D(A)`**
       - 자리 바꾸기 문제와 같기 때문(D는 alternating n linear form임을 명심(그것의 성질은 자리를 바꾸면 -1을 곱한 것과 같다))
-  - ② `D(e_σ(a), ..., e_σ(n)) = sgn(σ)`
+  - ② `D(e_σ(1), ..., e_σ(n)) = sgn(σ)`
 - 정리
   - `det: Mnxn(F) -> F`는 다음과 같이 주어진다
     - `det(A) = |A| = det(aij) = sigma_{σ∈Sn}{sgn(σ)・a_σ(1),1・a_σ(2),2 ... a_σ(n),n}`
