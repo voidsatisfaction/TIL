@@ -144,6 +144,9 @@ Anomaly detection with the multivariate Gaussian Relationship to original model
 
 ## Recommender Systems
 
+- **hypothesis function에 대상 그 자체 대신, 대상의 feature를 input으로 할 수 있음**
+  - feature들이 해당 대상을 represent하고 있다고 생각하는 것
+
 ### Predicting Movie Ratings
 
 #### Content Based Recommendations
@@ -209,4 +212,18 @@ Collaborative Filtering Algorithm
 
 #### Vectorization: Low Rank Matrix Factorization
 
+![](./images/week9/low_rank_factorization1.png)
+
+- 개요
+  - collaborative filtering으로 영화에대한 feature를 학습한 뒤에 유사한 영화의 묶음을 다양한 거리함수로 파악 가능
+- Low rank matrix factorization
+  - `Xtθ`
+- 유사한 대상 찾기
+  - e.g) 영화i와 유사한 영화j 찾기
+    - `small ||x(i) - x(j)|| -> 영화j와 i는 유사함`
+
 #### Implementational Detail: Mean Normalization
+
+![](./images/week9/mean_normalization1.png)
+
+- `Y(User rating)` 행렬을 그대로 쓰지 말고, mean점수가 0이 되도록 normalization을 행하자
