@@ -165,7 +165,6 @@ cycle notation / transposition
   - 따름정리
     - `det(A^-1) = 1/det(A) = det(A)^-1`
     - `A∈Mnxn(F), det(tA) = det(A)`
-      - *어떻게 증명하지?*
     - `A∈Mnxn(F), {[A]^1, ..., [A]^n}이 linearly dependent => det(A)=0`
 - **다음은 동치이다**
   - ① `A`는 invertible
@@ -213,7 +212,8 @@ cycle notation / transposition
   - `D_i = D^i`임을 증명
     - `^Aij = det(Mij)`임을 명심
   - `D_i가 n-linear form`임을 증명
-    - *왜 `[A]^k = [A]^(k+1)`인 경우에만 `D_i(A) = 0`임을 증명하면 되는가?*
+    - 왜 `[A]^k = [A]^(k+1)`인 경우에만 `D_i(A) = 0`임을 증명하면 되는가?
+      - `D_i([A]^1, ..., [A]^k, ..., [A]^l, ... [A]^n) = -D_i([A]^1, ..., [A]^l, ..., [A]^k, ..., [A]^n)`
   - `D_i가 alternating form`임을 증명
   - `D_i(In) = 1`임을 증명
 - **행렬식을 계산하는 strategy**
@@ -222,7 +222,6 @@ cycle notation / transposition
     - elementary row opeartion 중 다른 행 상수배 더하기 => `det(A) = det(tA) = det(tA의 column에 다른 column상수배 더하기) = det(t(tA의 column에 다른 column상수배 더하기)) = det(A의 row에 다른 row상수배 더하기)`
   - ② 0이 가장 많은 행이나 열에 관해 전개한다
 - 앞서 정의한 `D^j, D_i: Mnxn(F) -> F`함수는 모두 laternating n-linear form ∧ D^j(In) = 1 = D_i(In) 이며 따라서, 2n개의 함수가 모두 `det: Mnxn(F) -> F`와 같은 함수이다.
-  - *alternating 증명이 아직 이해가 안간다!*
 - Cartan Matrix
   - `An-1 = (aij) 단, aij = { 2 (if i=j), -1 (if |i-j|=1), 0 (otherwise) }`
 

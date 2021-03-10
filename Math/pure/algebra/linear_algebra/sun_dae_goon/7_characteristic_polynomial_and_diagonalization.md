@@ -38,16 +38,33 @@
   - `T∈LM ∧ T혹은 [T]_Bv^Bv의 좌표를 aij로 표기할 때, T의 특성다항식 φ_T(t)∈F[t]를 φ_T(t) = det(tI-T) (t는 마치 scalar 인 것으로 생각)`
     - similar matrix의 invariant이므로, `L∈L(V,V)`까지 고려해도 well-defined
   - `T∈LM일 때, λ∈F가 T의 eigen-value <=> φ_T(λ) = 0`
+    - `λI-T가 not invertible => ∃v∈V, v≠0 ∧ (λI-T)v = 0`
+      - dimension theorem을 이용한 증명
+      - RREF를 이용한 증명
 - similar matrix의 invariant
   - isomorphic
     - rank
-    - determinant
   - etc
-    - Trace
+    - determinant
     - characteristic polynomial
     - eigen-value
+    - Trace
+- eigen vector, eigen value 찾기
+  - `F=R, F=C`어느쪽이냐에 따라서, characteristic polynomial의 root 개수가 달라지고, 이는 diagonalization에 큰 영향을 끼침
+- Fundamental Theorem of Algebra
+  - `모든 non-constant polynomial f(t)∈C[t]는 (C에서) 근을 갖는다. (즉, 인수정리에 의해, f(t)∈C[t]는 C-위의 일차식들의 곱으로 인수 분해 된다)`
+- 보기
+  - `φ_I(t) = (t-1)^n 이고, I는 eigen-value 1을 갖는다. 그리고 F^n의 모든 non-zero vector들이 eigen-vector가 된다`
 
 ## 7.2 Diagonalization
+
+- 배경
+  - Diagonalizable matrix를 정의하고, 우리의 철학에 의해서 diagonalizable linear operator도 저절로 정의됨
+- diagonalizable matrix
+  - `A∈Mnxn(F) s.t. ∃D∈Mnxn(F), D는 diagonal ∧ A~D`
+- `A∈Mnxn(F)`일 때, 다음은 동치
+  - `A가 diagonalizable`
+  - `A의 eigen-vector들로 이루어진 F^n의 basis가 존재`
 
 ## 7.3 Caley-Hamilton Theorem
 
