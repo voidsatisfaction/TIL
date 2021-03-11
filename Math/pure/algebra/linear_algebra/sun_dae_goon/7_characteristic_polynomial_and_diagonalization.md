@@ -65,8 +65,42 @@
 - `A∈Mnxn(F)`일 때, 다음은 동치
   - `A가 diagonalizable`
   - `A의 eigen-vector들로 이루어진 F^n의 basis가 존재`
+- diagonalizable linear operator
+  - `L이 diagonalizable <=> ∃Bv∈V, Bv는 V의 기저 ∧ [L]_Bv^Bv가 diagonalizable matrix`
+- diagonalizable
+  - `T∈LM, T가 diagonalizable <=> ∃Bv∈V, Bv는 V의 기저 ∧ [T]_Bv^Bv가 diagonalizable matrix`
+  - diagonalizability의 충분조건 하나
+    - `T∈LM, φ_T(t)가 F에서 서로 다른 n개의 root를 가짐(n개의 eigen-value가 서로 다름) => T는 diagonalizable (dimV = n)`
+    - `<=> T∈LM, v1, ..., vk가 T의 eigen-vector, vi의 eigen-vector λi들이 mutually distinct(λi≠λj if i≠j) => {v1, ..., vk}는 일차독립`
+  - `A = (1 1; 0 1)`은 절대로 diagonalizable하지 않음
+    - 만약, diagonalizable하다면, `A ~ I2`인데, `I2`는 오직 `I2`와만 similar
+    - diagonalizability의 필요충분조건은 무엇일까?
+    - diagonalizability를 말해주는 invariant는 무엇일까?
+  - `T∈LM늬 diagonalizability를 결정해주는 invariant는 무엇인가?`
 
 ## 7.3 Caley-Hamilton Theorem
+
+- 정의
+  - `T∈LM, I_T = {f(t)∈F[t] | f(T) = 0}`
+- `T∈LM => I_T ≠ {0}`
+- Caley-Hamilton Theorem
+  - `T∈LM => φ_T(T) = 0 (φ_T(t)∈I_T)`
+    - 어거지 증명(잘못됨)
+      - `φ_T(t) = det(t・I - T)`
+      - `=> φ_T(T) = det(T・I - T) = det(0) = 0`
+        - **`φ_T(t)의 계산은, det(t・I - T)∈F[t]를 전개해서 t에 대하여 evaluate를 해야함`**
+    - Quotient space와 triangularization을 이용한 증명
+    - T-cyclic subspce를 이용한 증명
+    - Adjoint matrix를 이용한 증명
+- 그 다음 motivation
+  - `g(t)∈F[t], g(t) = φ_A(t)q(t) + r(t)`
+    - `q(t)`는 몫, `r(t)`는 나머지
+    - `g(A) = r(A)`
+  - `A = (1, 0, 1; 0, 3, 0; 0, 0, 3)`
+    - `=> φ_A(t) = (t-1)(t-3I)^2`
+    - `=> φ_A(A) = (A-1)(A-3I)^2 = 0`
+    - `=> (A-1)(A-3I) = 0`
+    - `m(A)=0`인 최소 차수 다항식 `m(t)`찾기
 
 ## 7.4 Minimal Polynomial
 
