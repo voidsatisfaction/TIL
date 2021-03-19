@@ -54,8 +54,6 @@ Character segmentation example
 
 ### Getting Lots of Data and Artificial Data
 
-**지금보다 10배의 데이터를 모으기 위해서는 어떤 노력을 얼마나 기울여야 하는가?**
-
 Getting lots of data: Artifical synthesis
 
 ![](./images/week11/getting_lots_of_data1.png)
@@ -63,6 +61,8 @@ Getting lots of data: Artifical synthesis
 Discussion on getting more data
 
 ![](./images/week11/getting_lots_of_data2.png)
+
+**지금보다 10배의 데이터를 모으기 위해서는 어떤 노력을 얼마나 기울여야 하는가?**
 
 - **Artificial data synthesis**
   - 개요
