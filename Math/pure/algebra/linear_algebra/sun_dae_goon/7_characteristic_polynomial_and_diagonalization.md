@@ -102,17 +102,20 @@
     - *Vandermonde determinant를 이용한 증명*
       - *마지막 vandermonde부분에서 이해가 안됨*
 - `A = (1 1; 0 1)`은 절대로 diagonalizable하지 않음
-  - 만약, diagonalizable하다면, `A ~ I2`인데, `I2`는 오직 `I2`와만 similar
+  - 만약, diagonalizable하다면, `A ~ I2`인데, `I2`는 오직 `I2`와 similar
   - diagonalizability의 필요충분조건은 무엇일까?
   - diagonalizability를 말해주는 invariant는 무엇일까?
 - `T∈LM늬 diagonalizability를 결정해주는 invariant는 무엇인가?`
 
 ## 7.3 Caley-Hamilton Theorem
 
-- 정의
-  - `T∈LM, I_T = {f(t)∈F[t] | f(T) = 0}`
-- `T∈LM => I_T ≠ {0}`
+- 중요한 정리
+  - `T∈LM, f(t)∈F[t], v가 λ에 대응하는 eigen-vector => v는 f(λ)에 대응하는 f(T)의 eigen-vector임을 보여라(f(T)v = f(λ)v)`
 - Caley-Hamilton Theorem
+  - 준비(정의)
+    - `T∈LM, I_T = {f(t)∈F[t] | f(T) = 0}`
+      - `T∈LM => I_T ≠ {0}`
+        - 진짜 똑똑하네...
   - `T∈LM => φ_T(T) = 0 (φ_T(t)∈I_T)`
     - 어거지 증명(잘못됨)
       - `φ_T(t) = det(t・I - T)`

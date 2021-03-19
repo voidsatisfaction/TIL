@@ -69,22 +69,23 @@
     - `!f(t)∈C[t], !f(t) = !αnt^n + ... + !α1t + !α0`으로 정의
   - `A = (aij)∈Mmxn(C)`일 떄
     - `!A = (!aij) ∈ Mmxn(C)`
-- `f(t),g(t)∈C[t], α∈C`
-  - `!(f+g)(t) = !f(t) + !g(t)`
-  - `!(αf)(t) = !α!f(t)`
-  - `!(fg)(t) = !f(t)!g(t)`
-    - 결국 두 다항식의 대응되는 계수끼리만 곱하는걸 생각하면 되므로...
-- `A,B∈Mmxn(C), C∈Mnxr(C), α∈C`
-  - `!(A+B) = !A+!B`
-  - `!(αA) = !α!A`
-  - `!(AC) = !A!C`
-  - `!(tA) = t(!A)`
-  - 위의 다항식에 대한 성질과 얼추 비슷한 느낌
-- `A∈Mnxn(C)`
-  - `det(!A) = !det(A)`
-  - `m∈N => !(A^m) = (!A)^m`
-  - `f(t)∈C[t] => !f(!A) = !f(A)`
-  - `A가 invertible => !A가 invertible ∧ (!A)^-1 = !(A^-1)`
+  - 관련 성질
+    - `f(t),g(t)∈C[t], α∈C`
+      - `!(f+g)(t) = !f(t) + !g(t)`
+      - `!(αf)(t) = !α!f(t)`
+      - `!(fg)(t) = !f(t)!g(t)`
+        - 결국 두 다항식의 대응되는 계수끼리만 곱하는걸 생각하면 되므로...
+    - `A,B∈Mmxn(C), C∈Mnxr(C), α∈C`
+      - `!(A+B) = !A+!B`
+      - `!(αA) = !α!A`
+      - `!(AC) = !A!C`
+      - `!(tA) = t(!A)`
+      - 위의 다항식에 대한 성질과 얼추 비슷한 느낌
+    - `A∈Mnxn(C)`
+      - `det(!A) = !det(A)`
+      - `m∈N => !(A^m) = (!A)^m`
+      - `f(t)∈C[t] => !f(!A) = !f(A)`
+      - `A가 invertible => !A가 invertible ∧ (!A)^-1 = !(A^-1)`
 
 ## 8.2 T-Invariant Subspace
 
