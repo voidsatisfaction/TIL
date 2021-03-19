@@ -89,6 +89,33 @@
 
 ## 8.2 T-Invariant Subspace
 
+- `W가 V의 T-invariant space(W는 T-stable)`
+  - `T∈LM ∧ W≤V, T(W)≤W (즉, T|W: W -> W가 의미가 있는 경우)`
+    - *의미가 있다는게 무슨 의미인지*
+    - `T∈Mnxn(F) => T = L_T, V=F^n으로 이해함`
+- 성질
+  - `T∈LM, U,W가 V의 T-invariant subspace => U∩W 와 U+W도 T-invariant`
+  - `T∈LM, W가 V의 T-invariant subspace, W의 기저 Bw를 V의 기저 Bv로 확장(Basis Extension Theorem)하면, [T]_Bv^Bv = ([T|w]_Bw^Bw *; 0 *)의 형태`
+    - T|w의 characteristic polynomial은 T의 characteristic polynomial에 대한 결정적인 정보 제공
+    - T|w의 minimal polynomial은 T의 minimal polynomial에 대한 큰 정보를 주지 못함
+    - *T-invariant subspace를 생각하는 첫 번쨰 이유는, 무언가 T에 관해 알고 싶은 것이 있을 떄, `dimV`에 관한 귀납법을 사용할 수 있을 것이라는 idea떄문 이라고 할 수 있다*
+      - 이게 정확히 무슨뜻인지?
+- triangularization의 엉터리 귀납법
+  - *이해가 지금은 잘 안된다*
+- 활용
+  - block diagonal matrix로의 decompose(분해)
+    - `T∈LM, U,W가 T-invariant subspace, V=U⊕W, Bu, Bw는 U,W의 basis`
+      - `=> Bv = Bu ∐ Bw`
+      - `=> [T]_Bv^Bv = ([T|u]_Bu^Bu 0; 0 [T|w]_Bw^Bw)`
+        - `[T]_Bv^Bv는 block diagonal matrix`
+      - `=> φ_T(t) = φ_T|u(t)・φ_T|w(t) ∧ m_T(t) = l.c.m(m_T|U(t), m_T|w(t))`
+      - 이 논의를 k-개의 T-invariant subspace들의 direct sum인 경우로 확장하면?
+- 성질2
+  - `T∈LM, f(t)∈F[t]일 떄`
+    - `kerT, imT는 T-invariant`
+      - *`imT`는 어떻게 증명하지? 애초에 맞아?*
+    - `kerf(T), imf(T)는 T-invariant`
+
 ## 8.3 Primary Decomposition Theorem
 
 ## 8.4 Diagonalizability
