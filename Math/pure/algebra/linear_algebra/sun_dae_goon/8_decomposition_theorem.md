@@ -11,11 +11,16 @@
 
 ## 의문
 
+## 참고
+
+- **Fundamental Theorem of Algebra**
+  - `모든 non-constant polynomial f(t)∈C[t]는 (C에서) 근을 갖는다. (즉, 인수정리에 의해, f(t)∈C[t]는 C-위의 일차식들의 곱으로 인수 분해 된다)`
+
 ## 정리
 
 ## 8.1 Polynomial
 
-- 인수분해(factorization)
+- **인수분해(factorization)**
   - 개요
     - **곱이 정의된 집합내의 어떤 원소를 다른 원소들의 곱으로 표현하는 것**
       - 특히, 정수집합에서 어떤 주어진 정수를 소수들의 곱으로 표현하는 것은 소인수 분해라고 부름
@@ -29,13 +34,13 @@
           - LUP factorization
   - 종류
     - integer factorization
-      - multiplication은 쉬운데 역연산인 factorization은 알고리즘의 측면에서 매우 어려움(RSA암호)
+      - multiplication은 쉬운데 역연산인 factorization은 알고리즘의 측면에서 효율적으로 구현하기 매우 어려움(RSA암호)
     - polynomial factorization
       - 개요
         - 인수분해는, polynomial의 root을 찾는 문제를 해당 polynomial의 factor들의 root를 찾는 문제로 환원시킴
         - F를 coefficient로 갖는 polynomial은 unique factorization property를 갖음
           - 이는 소인수 분해의 polynomial 버전
-          - 소수 ~~ irreducible polynomial
+          - 소수 ~ irreducible polynomial
         - C를 coefficient로 갖는 polynomial은 unique factorization into linear polynomial을 갖게 함
     - matrix factorization
   - 필요 지식
@@ -51,6 +56,7 @@
           - `α가 f(t) = a0t^n + an-1t^(n-1) + ... + a1t + a0 (a0, ..., an ∈ R)의 근 => f(!α) = 0 (!α는 α의 켤레복소수(conjugate))`
           - `t^2-(α+!α)t+α!α ∈ R[t]`
             - `α, !α를 근으로 갖는 이차식`
+            - **여기에, 대수학의 기본정리를 적용하면, 임의의 non-constant polynomial은 C에서 근을 갖으므로 계속해서 인수 분해 가능**
     - GCD(Greatest Common Divisor)의 성질
       - *`f1(t), ..., fk(t) ∈ F[t]의 최대공약수를 d(t) => ∃g1(t), ..., gk(t)∈F[t] s.t d(t) = g1(t)f1(t) + g2(t)f2(t) + ... + gk(t)fk(t)`*
         - *이게 무슨 소리인지 사실 이해가 잘 안감*

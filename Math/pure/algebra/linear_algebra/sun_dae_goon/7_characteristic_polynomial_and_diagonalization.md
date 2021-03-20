@@ -188,10 +188,6 @@
   - 쉽게 보일 수 있음
 - (나)
   - `f(t)∈F[t], f(A) = (f(B) f(D) ; 0 f(C))`임을 이용
-  - *증명이 힘들지만 재미있음*
-    - `L_BC(t) = l.c.m(m_A(t), m_B(t))`
-    - `L_BC(A) = ?`
-
 
 다양한 minimal polynomial2
 
@@ -242,7 +238,7 @@
     - 참고
       - `Wi ∩ Wj = 0 <=> Bwi_∩_wj = 0 <=> Bwi ∩ Bwj = 0 (i≠j)`
   - 의미
-    - V를 부분공간들의 direct sum으로 나타냄 = V의 기저에 partition을 둠
+    - **V를 부분공간들의 direct sum으로 나타냄 = V의 기저에 partition을 둠**
   - 주의
     - `U,W1,W2 ≤ V ∧ U⊕W1 = U⊕W2 -> W1 = W2`
       - 거짓
@@ -259,9 +255,9 @@
     - `λ가 T의 eigen-value <=> Vλ≠0`
 - T∈LM, 다음은 동치
   - `T는 diagonalizable`
-  - *`V = Vλ1 ⊕ ... ⊕ Vλk인, 서로 다른 eigen-value λ1, ..., λk가 존재`*
+  - `V = Vλ1 ⊕ ... ⊕ Vλk인, 서로 다른 eigen-value λ1, ..., λk가 존재`
     - **diagonalizable T에 관한 V의 eigen-space decomposition**
-    - *아직 증명이 이해가 안됨*
+  - `<=> Bv = Bvλ1 ∐ ... ∐ Bvλk`
   - 주의
     - **`Vλ≠0 -> dimVλ = 1`은 거짓**
       - 하나의 λ에 여러개의 eigen-vector가 대응될 수 있음
