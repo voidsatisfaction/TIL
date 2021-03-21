@@ -134,6 +134,38 @@
 
 ## 8.3 Primary Decomposition Theorem
 
+임의의 행렬・선형사상의 characteristic polynomial과 minimal polynomial의 각 monic relatively prime polynomial의 항의 커널공간으로 분해가 가능
+
+그러한 분해를 바탕으로 `[L]_Bv^Bv`를 적용하면 block diagonal형태로 만들 수 있음
+
+- 표기법
+  - `T∈LM, φ_T(t) = p1(t)^e1 ... pk(t)^ek, m_T(t) = p1(t)^f1 ... pk(t)^fk`로 F-위에서 인수 분해된다고 하자
+    - `pi(t)들은 F[t]의 relatively prime monic irreducible polynomial ∧ 1≤fi≤ei`
+      - `Wi = kerpi(T)^ei, Ti = T|wi (i=1, ..., k)`
+- Primary Decomposition Theorem
+  - `T∈LM`
+    - `V = kerp1(T)^e1 ⊕ kerp2(T)^e2 ⊕ ... ⊕ kerpk(T)^ek`
+    - `V = kerp1(T)^f1 ⊕ kerp2(T)^f2 ⊕ ... ⊕ kerpk(T)^fk`
+    - 다음이 성립
+      - `Wi = kerpi(T)^ei = kerpi(T)^fi`
+      - `m_Ti(t) = pi(t)^fi`
+      - `φ_Ti(t) = pi(t)^ei (dimWi = ei ・ deg(pi))`
+  - 보조정리
+    - `T∈LM, f(t),g(t)∈F[t]는 monic ∧relatively prime, E(t) = f(t)g(t) ∈ I_T => V = kerf(T) ⊕ kerg(T)`
+      - `E(t) = m_T(t) => m_T|u(t) = f(t) ∧ m_T|w(t) = g(t)`
+      - `E(t) = φ_T(t) => φ_T|u(t) = f(t) ∧ φ_T|w(t) = g(t)`
+  - 주의
+    - similar matrix의 invariant
+      - `φ_T(t), m_T(t) => pi(t), ei, fi => dimWi, m_Ti(t), φ_Ti(t)`
+      - **`Wi`자체는 similar matrix의 invariant가 아님**
+- 연습문제
+  - `A = (0 4 0 -2; 0 2 0 0; 0 -2 1 0; 1 0 1 3)`
+    - `characteristic polynomial = (t-1)^2(t-2)^2`임을 보여라
+    - `m_A(t)를 구하라`
+    - `A`의 diagonalizability를 판정
+    - `F^4`의 A에 관한 primary decomposition을 묘사하라
+    - `primary decomposition`에 관한 `LA`의 행렬표현(block diagonal matrix의 형태)을 구하라
+
 ## 8.4 Diagonalizability
 
 ## 8.5 T-Cyclic Subspace
