@@ -95,10 +95,14 @@
 
 ## 8.2 T-Invariant Subspace
 
+선형변환을 적용하더라도, 변환 후의 벡터 공간의 범위가 기존의 벡터 공간을 넘지 않는 경우
+
+원소의 개수 자체는 변할 수 있으나, 그 외의 '성질'들이 변하지 않는 부분 공간
+
 - `W가 V의 T-invariant space(W는 T-stable)`
-  - `T∈LM ∧ W≤V, T(W)≤W (즉, T|W: W -> W가 의미가 있는 경우)`
+  - `T∈LM ∧ W≤V, T(W)≤W (결국, T(W)≤W≤V) (즉, T|W: W -> W가 의미가 있는 경우)`
     - *의미가 있다는게 무슨 의미인지*
-    - `T∈Mnxn(F) => T = L_T, V=F^n으로 이해함`
+    - `T∈Mnxn(F) => T = L_T, V=F^n으로 이해`
 - 성질
   - `T∈LM, U,W가 V의 T-invariant subspace => U∩W 와 U+W도 T-invariant`
   - `T∈LM, W가 V의 T-invariant subspace, W의 기저 Bw를 V의 기저 Bv로 확장(Basis Extension Theorem)하면, [T]_Bv^Bv = ([T|w]_Bw^Bw *; 0 *)의 형태`
@@ -119,8 +123,14 @@
 - 성질2
   - `T∈LM, f(t)∈F[t]일 떄`
     - `kerT, imT는 T-invariant`
-      - *`imT`는 어떻게 증명하지? 애초에 맞아?*
+      - `∃v∈V, s.t w = Tv`
     - `kerf(T), imf(T)는 T-invariant`
+  - `T∈LM, W가 V의 T-invariant subspace => ∀f(t)∈F[t], W는 f(T)-invariant subspace`
+  - `T∈LM, λ∈F => T의 eigen-space VT,λ는 T-stable`
+  - `T∈LM, W≤V가 T-stable subspace =>`
+    - `∀f(t)∈F[t], f(T|w) = f(T)|w`
+    - `g(t)∈F[t], W=kerg(T) => g(t)는 m_T|w(t)의 배수`
+  - `S,T∈LM, ST = TS => kerS, imS 는 T-stable`
 
 ## 8.3 Primary Decomposition Theorem
 
