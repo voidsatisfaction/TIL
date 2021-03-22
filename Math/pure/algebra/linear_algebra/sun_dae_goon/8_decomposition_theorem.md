@@ -43,12 +43,14 @@
           - 소수 ~ irreducible polynomial
         - C를 coefficient로 갖는 polynomial은 unique factorization into linear polynomial을 갖게 함
     - matrix factorization
+    - ...
   - 필요 지식
     - irreducible polynomial(기약 다항식)
       - 개요
         - degree가 1이상
           - `a∈F`는 기약다항식이라 부르지 않음
           - `~~ 소수에 1을 포함시키지 않는것과 같은 느낌`
+        - 계수의 종류(`C`, `R` 등)에 따라서 기약 다항식의 범위가 달라짐
       - 특징
         - `C[t]`의 irreducible polynomial은 일차식 뿐
         - `R[t]`의 irreducible polynomial은 일차식과 이차식 뿐
@@ -57,7 +59,7 @@
           - `t^2-(α+!α)t+α!α ∈ R[t]`
             - `α, !α를 근으로 갖는 이차식`
             - **여기에, 대수학의 기본정리를 적용하면, 임의의 non-constant polynomial은 C에서 근을 갖으므로 계속해서 인수 분해 가능**
-    - GCD(Greatest Common Divisor)의 성질
+    - *GCD(Greatest Common Divisor)의 성질*
       - *`f1(t), ..., fk(t) ∈ F[t]의 최대공약수를 d(t) => ∃g1(t), ..., gk(t)∈F[t] s.t d(t) = g1(t)f1(t) + g2(t)f2(t) + ... + gk(t)fk(t)`*
         - *이게 무슨 소리인지 사실 이해가 잘 안감*
     - relatively prime(서로 소)
@@ -73,7 +75,7 @@
 - 새로운 표기법
   - `f(t)∈F[t], f(t) = αnt^n + ... + α1t + α0 (α0, ..., αn ∈ C)`일 때
     - `!f(t)∈C[t], !f(t) = !αnt^n + ... + !α1t + !α0`으로 정의
-  - `A = (aij)∈Mmxn(C)`일 떄
+  - `A = (aij)∈Mmxn(C)`일 때
     - `!A = (!aij) ∈ Mmxn(C)`
   - 관련 성질
     - `f(t),g(t)∈C[t], α∈C`
@@ -90,7 +92,7 @@
     - `A∈Mnxn(C)`
       - `det(!A) = !det(A)`
       - `m∈N => !(A^m) = (!A)^m`
-      - `f(t)∈C[t] => !f(!A) = !f(A)`
+      - `f(t)∈C[t] => !(f(A)) = !f(!A)`
       - `A가 invertible => !A가 invertible ∧ (!A)^-1 = !(A^-1)`
 
 ## 8.2 T-Invariant Subspace
@@ -100,7 +102,7 @@
 원소의 개수 자체는 변할 수 있으나, 그 외의 '성질'들이 변하지 않는 부분 공간
 
 - `W가 V의 T-invariant space(W는 T-stable)`
-  - `T∈LM ∧ W≤V, T(W)≤W (결국, T(W)≤W≤V) (즉, T|W: W -> W가 의미가 있는 경우)`
+  - `T∈LM ∧ W≤V, T(W)≤W (결국, T(W)≤W≤V) (즉, T|w: W -> W가 의미가 있는 경우)`
     - *의미가 있다는게 무슨 의미인지*
     - `T∈Mnxn(F) => T = L_T, V=F^n으로 이해`
 - 성질
@@ -108,25 +110,28 @@
   - `T∈LM, W가 V의 T-invariant subspace, W의 기저 Bw를 V의 기저 Bv로 확장(Basis Extension Theorem)하면, [T]_Bv^Bv = ([T|w]_Bw^Bw *; 0 *)의 형태`
     - T|w의 characteristic polynomial은 T의 characteristic polynomial에 대한 결정적인 정보 제공
     - T|w의 minimal polynomial은 T의 minimal polynomial에 대한 큰 정보를 주지 못함
-    - *T-invariant subspace를 생각하는 첫 번쨰 이유는, 무언가 T에 관해 알고 싶은 것이 있을 떄, `dimV`에 관한 귀납법을 사용할 수 있을 것이라는 idea떄문 이라고 할 수 있다*
-      - 이게 정확히 무슨뜻인지?
-- triangularization의 엉터리 귀납법
-  - *이해가 지금은 잘 안된다*
+    - *T-invariant subspace를 생각하는 첫 번쨰 이유는, 무언가 T에 관해 알고 싶은 것이 있을 때, `dimV`에 관한 귀납법을 사용할 수 있을 것이라는 idea때문 이라고 할 수 있다*
+      - 왜지?
+  - *triangularization의 엉터리 귀납법*
+    - *이해가 지금은 잘 안된다*
 - 활용
-  - block diagonal matrix로의 decompose(분해)
+  - **block diagonal matrix로의 decompose(분해)**
     - `T∈LM, U,W가 T-invariant subspace, V=U⊕W, Bu, Bw는 U,W의 basis`
       - `=> Bv = Bu ∐ Bw`
       - `=> [T]_Bv^Bv = ([T|u]_Bu^Bu 0; 0 [T|w]_Bw^Bw)`
         - `[T]_Bv^Bv는 block diagonal matrix`
       - `=> φ_T(t) = φ_T|u(t)・φ_T|w(t) ∧ m_T(t) = l.c.m(m_T|U(t), m_T|w(t))`
       - 이 논의를 k-개의 T-invariant subspace들의 direct sum인 경우로 확장하면?
+    - **그런데, 이 성질을 사용하려면, T-invariant subspace 이면서, direct sum으로 분해 가능한 V의 Subspace를 찾아야 하는데, 이는 어떻게 가능한가?**
+      - primary decomposition theorem
 - 성질2
-  - `T∈LM, f(t)∈F[t]일 떄`
-    - `kerT, imT는 T-invariant`
+  - `T∈LM, f(t)∈F[t]일 때`
+    - **`kerT, imT는 T-invariant`**
       - `∃v∈V, s.t w = Tv`
-    - `kerf(T), imf(T)는 T-invariant`
+    - **`kerf(T), imf(T)는 T-invariant`**
   - `T∈LM, W가 V의 T-invariant subspace => ∀f(t)∈F[t], W는 f(T)-invariant subspace`
   - `T∈LM, λ∈F => T의 eigen-space VT,λ는 T-stable`
+    - primary decomposition theorem의 기반
   - `T∈LM, W≤V가 T-stable subspace =>`
     - `∀f(t)∈F[t], f(T|w) = f(T)|w`
     - `g(t)∈F[t], W=kerg(T) => g(t)는 m_T|w(t)의 배수`
@@ -151,7 +156,7 @@
       - `m_Ti(t) = pi(t)^fi`
       - `φ_Ti(t) = pi(t)^ei (dimWi = ei ・ deg(pi))`
   - 보조정리
-    - `T∈LM, f(t),g(t)∈F[t]는 monic ∧relatively prime, E(t) = f(t)g(t) ∈ I_T => V = kerf(T) ⊕ kerg(T)`
+    - `T∈LM, f(t),g(t)∈F[t]는 monic ∧ relatively prime, E(t) = f(t)g(t) ∈ I_T => V = kerf(T) ⊕ kerg(T)`
       - `E(t) = m_T(t) => m_T|u(t) = f(t) ∧ m_T|w(t) = g(t)`
       - `E(t) = φ_T(t) => φ_T|u(t) = f(t) ∧ φ_T|w(t) = g(t)`
   - 주의
