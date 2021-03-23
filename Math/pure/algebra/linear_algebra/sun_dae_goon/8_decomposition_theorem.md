@@ -181,7 +181,9 @@
 - 정의
   - `T,S∈LM, V의 하나의 기저 Bv에 관해 [T]_Bv^Bv 와 [S]_Bv^Bv가 모두 대각행렬이면 T,S가 simultaneously diagonalizable`
 - 차원에 관한 귀납법을 사용하여 증명하는 명제
-  - `T,S∈LM, TS=ST, T,S는 diagonalizable => T,S는 simultaneously diagonalizable`
+  - *`T,S∈LM, TS=ST, T,S는 diagonalizable => T,S는 simultaneously diagonalizable`*
+  - 연습문제
+    - *`I가 index set ∧ {Ti | i∈I} ⊆ LM, if ∀i≠j∈I, TiTj = TjTi ∧ Ti가 각각 diagonalizable => {Ti | i∈I}는 simultaneously diagonalizable`*
 
 ## 8.5 T-Cyclic Subspace
 
