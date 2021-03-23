@@ -173,6 +173,16 @@
 
 ## 8.4 Diagonalizability
 
+- `T∈LM, 이 diagonalizable <=> T의 minimal polynomial m_T(t)가 F위에서 일차식으로 인수분해됨 ∧ multiple root를 갖지 않음 = ∀i={1, ..., k}, deg(pi)=1 ∧ fi=1`
+  - `T∈LM이 diagonalizable => eigen-space decomposition과 primary decomopsition은 같다`
+  - diagonalizability를 결졍해주는 invariant는 m_T(t)
+  - 따름정리
+    - `T∈LM, T가 diagonalizable ∧ W가T의 invariant subspace => T|w도 diagonalizable`
+- 정의
+  - `T,S∈LM, V의 하나의 기저 Bv에 관해 [T]_Bv^Bv 와 [S]_Bv^Bv가 모두 대각행렬이면 T,S가 simultaneously diagonalizable`
+- 차원에 관한 귀납법을 사용하여 증명하는 명제
+  - `T,S∈LM, TS=ST, T,S는 diagonalizable => T,S는 simultaneously diagonalizable`
+
 ## 8.5 T-Cyclic Subspace
 
 ## 8.6 Cyclic Decomposition Theorem
