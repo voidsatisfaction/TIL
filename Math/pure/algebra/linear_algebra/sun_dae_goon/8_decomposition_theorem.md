@@ -187,4 +187,20 @@
 
 ## 8.5 T-Cyclic Subspace
 
+- T-cyclic space
+ - `V는 T-cyclic space <=> T∈LM, ∃v∈V s.t V = {f(T)v | f(t)∈F[t]}`
+   - `V = F[t]v = F[T] = {f(T)v | f(t)∈F[t]}`
+ - 성질
+   - `Bv = {v, Tv, ..., T^(n-1)v}`
+     - 증명
+     - `V=F[t]v, g(t)∈F[t]가 g(T)v=0 => g(T)=0`
+   - `φ_T = m_T`
+     - `n = dimV = deg(φ_T) = deg(m_T)`
+   - `[T]_Bv^Bv = m_T(t)에 대응하는 companion matrix`
+   - *`T∈LM, T가 companion matrix => V는 T-cyclic`*
+ - 연습문제
+   - `ψ(t)∈F[t] (ψ(t)는 monic ∧ deg(ψ)≥1), ψ(t)를 characteristic polynomial로 가지는 행렬은?`
+     - 존재성
+     - 유일성
+
 ## 8.6 Cyclic Decomposition Theorem
