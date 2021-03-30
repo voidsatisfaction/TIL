@@ -29,6 +29,26 @@
 
 ## 7.2 Trigonometric Integrals
 
+### `sigma(sin^m(x)cos^n(x))dx`
+
+- `sin, cos`함수가 한쪽은 홀수, 한쪽은 짝수번 거듭제곱된 상태로 곱해진 경우
+  - 해결
+    - 한쪽을 거듭제곱을 한번만 행한것으로 남김
+  - e.g
+    - `sigma(cos^3(x))dx`
+- `sin, cos`함수가 둘다 짝수번 거듭제곱된 상태로 곱해진 경우
+  - 해결
+    - 반각공식등을 사용
+      - `sin^2(x) = (1/2)(1-cos(2x))`
+      - `cos^2(x) = (1/2)(1+cos(2x))`
+      - `sin(x)cos(x) = (1/2)(sin(2x))`
+  - e.g
+    - `sigma_{0}^{π}(sin^2(x))dx`
+
+### `sigma(tan^m(x)sec^n(x))dx`
+
+
+
 ## 7.3 Trigonometric Substitution
 
 ## 7.4 Integraion of Rational Functions by Partial Fractions
