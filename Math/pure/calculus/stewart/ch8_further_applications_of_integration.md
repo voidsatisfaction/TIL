@@ -27,6 +27,13 @@ Arc Length Function geometric interpretation
 
 ## 8.2 Area of a Surface of Revolution
 
+Cone surface of revolution
+
+![](./images/ch8/area_of_a_surface_revolution1.png)
+
+- Cone surface of revolution
+  - `A = π(r1l + r2l) = 2πrl (r = (r1+r2)/2)`
+
 ## 8.3 Applications to Physics and Engineering
 
 ## 8.4 Applications to Economics and Biology
