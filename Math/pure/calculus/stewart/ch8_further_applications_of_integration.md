@@ -31,8 +31,22 @@ Cone surface of revolution
 
 ![](./images/ch8/area_of_a_surface_revolution1.png)
 
-- Cone surface of revolution
+- Cone surface area of revolution
   - `A = π(r1l + r2l) = 2πrl (r = (r1+r2)/2)`
+- Surface area of revolution
+  - `S = int_{a}^{b}(2πf(x)·(√1+(f'(x))^2))dx`
+    - `S = int_{a}^{b}(2πy·(√1+((dy/dx)^2))dx`
+    - 함수가 `x = g(y), c≤y≤d`로 묘사된 경우
+      - `S = int_{c}^{d}(2πx·(√1+((dx/dy)^2))dy`
+    - arc length를 이용한 공식 intuition
+      - x-axis rotation `S = int(2πy)ds`
+        - `ds = (√1+(dy/dx)^2)dx`
+      - y-axis rotation `S = int(2πx)ds`
+        - `ds = (√1+(dx/dy)^2)dy`
+
+Arc length를 이용한 공식 intuition
+
+![](./images/ch8/area_of_a_surface_revolution2.png)
 
 ## 8.3 Applications to Physics and Engineering
 
