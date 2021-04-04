@@ -38,6 +38,7 @@ Cone surface of revolution
     - `S = int_{a}^{b}(2πy·(√1+((dy/dx)^2))dx`
     - 함수가 `x = g(y), c≤y≤d`로 묘사된 경우
       - `S = int_{c}^{d}(2πx·(√1+((dx/dy)^2))dy`
+        - 이 경우의 의미는, Arc length를 `x = g(y)`를 이용해서 구할때의 넓이임
     - arc length를 이용한 공식 intuition
       - x-axis rotation `S = int(2πy)ds`
         - `ds = (√1+(dy/dx)^2)dx`
