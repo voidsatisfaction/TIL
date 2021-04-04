@@ -16,7 +16,15 @@
 - **Fundamental Theorem of Algebra**
   - `모든 non-constant polynomial f(t)∈C[t]는 (C에서) 근을 갖는다. (즉, 인수정리에 의해, f(t)∈C[t]는 C-위의 일차식들의 곱으로 인수 분해 된다)`
 
-## 정리
+## 큰 그림 정리
+
+- 임의의 행렬을 분해해보자
+- Primary decomposition theorem으로, 임의의 행렬을 diagonal block matrix와 similar하게 만들 수 있음
+  - diagonalizability의 invariant
+    - `m_T(t)`
+- Cyclic decomposition theorem으로, 해당 diagonal block matrix의 각각의 block matrix를 companion matrix로 similar 하게 만들 수 있음
+  - similar matrix의 invariant
+- *Jordan canonical form?*
 
 ## 8.1 Polynomial
 
@@ -155,6 +163,7 @@
       - `Wi = kerpi(T)^ei = kerpi(T)^fi`
       - `m_Ti(t) = pi(t)^fi`
       - `φ_Ti(t) = pi(t)^ei (dimWi = ei ・ deg(pi))`
+        - *`dimWi = ei ・ deg(pi)`는 왜 성립하는가?*
   - 보조정리
     - `T∈LM, f(t),g(t)∈F[t]는 monic ∧ relatively prime, E(t) = f(t)g(t) ∈ I_T => V = kerf(T) ⊕ kerg(T)`
       - `E(t) = m_T(t) => m_T|u(t) = f(t) ∧ m_T|w(t) = g(t)`
@@ -180,10 +189,12 @@
   - diagonalizability를 결졍해주는 invariant는 m_T(t)
   - 따름정리
     - `T∈LM, T가 diagonalizable ∧ W가T의 invariant subspace => T|w도 diagonalizable`
+      - `m_T|w(t)는 m_T(t)의 divisor이므로, 위의 증명한 명제에 의하여 당연`
 - 정의
   - `T,S∈LM, V의 하나의 기저 Bv에 관해 [T]_Bv^Bv 와 [S]_Bv^Bv가 모두 대각행렬이면 T,S가 simultaneously diagonalizable`
 - 차원에 관한 귀납법을 사용하여 증명하는 명제
-  - *`T,S∈LM, TS=ST, T,S는 diagonalizable => T,S는 simultaneously diagonalizable`*
+  - `T,S∈LM, TS=ST, T,S는 diagonalizable => T,S는 simultaneously diagonalizable`
+    - 위의 따름정리를 이용
   - 연습문제
     - *`I가 index set ∧ {Ti | i∈I} ⊆ LM, if ∀i≠j∈I, TiTj = TjTi ∧ Ti가 각각 diagonalizable => {Ti | i∈I}는 simultaneously diagonalizable`*
 
@@ -197,8 +208,9 @@
      - 증명
        - 애초에 `deg(m_T(t)) = n`임을 어떻게 가정할 수 있는가?
      - `V=F[t]v, g(t)∈F[t]가 g(T)v=0 => g(T)=0`
-   - `φ_T = m_T`
+   - *`φ_T = m_T`*
      - `n = dimV = deg(φ_T) = deg(m_T)`
+     - *이는 어떻게 증명할 수 있는가?*
    - `[T]_Bv^Bv = m_T(t)에 대응하는 companion matrix`
  - 따름정리
    - `T∈LM, T가 companion matrix로 표현됨 => V는 T-cyclic`
@@ -227,7 +239,9 @@
       - `[T|w]_Bw^Bw는 m_w(t)에 대응하는 companion matrix`
       - `m_T(t)는 m_w(t)의 배수`
   - 연습문제
-    - *`T∈LM, {v1, ..., vn} = Bv => m_T(t)=l.c.m. (m_v1(t), ..., m_vn(t))`*
+    - `T∈LM, Bv = {v1, ..., vn} => m_T(t)=l.c.m. (m_v1(t), ..., m_vn(t))`
+      - `l.c.m. (m_v1(t), ..., m_vn(t))은 m_T(t)의 배수`
+      - `m_T(t)는 l.c.m. (m_v1(t), ..., m_vn(t))의 배수`
   - *Caley-Hamilton Theorem의 두번째 증명*
     - `φ_T(t)와 m_T(t)를 정의`
     - `m_w(t)의 정의`
