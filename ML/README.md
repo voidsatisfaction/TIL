@@ -1,6 +1,11 @@
 # Machine Learning
 
 - 의문
+- 참고
+- 명심해야 할 것
+  - `AI system = model(algorithm, function) + data`
+    - Data
+    - Model
 - 기계학습 개요
   - 표의 이해
 - 대표적 종류
@@ -9,6 +14,10 @@
   - Reinforcement learning
 
 ## 의문
+
+## 참고
+
+- [모델 중심에서 데이터 중심의 AI 개발로](https://jiho-ml.com/weekly-nlp-35/)
 
 ## 명심해야 할 것
 
@@ -19,9 +28,57 @@
   - 데이터 사이언티스트나 기계학습 엔지니어의 대부분의 일은 데이터 수집과 전처리에 있다.
     - 모델 짜는데에는 10%의 시간밖에 들이지 않음
 - 깨달음
-  - 모델 그 자체와 테크닉 보다 데이터가 훨씬 더 중요하다
+  - 모델 그 자체와 테크닉 보다 데이터의 quantity와 quality가 훨씬 더 중요하다
     - 데이터의 양과 질을 개선하면 금방 성능이 향상됨
+    - 데이터의 질 향상
   - Overfitting은 생각보다 잘 일어난다
+
+### `AI system = model(algorithm, function) + data`
+
+- model(function)
+  - architecture
+  - hyper parameter
+  - optimizer
+- data
+  - quantity
+  - quality
+    - consistency
+- 참고
+  - MLOps
+    - **AI시스템 개발 사이클의 모든 부분에서 일관성 있고, 질 좋은 model과 data를 유지하는 것**
+
+#### Data
+
+데이터 중심 관점을 갖고 ML 문제의 개선 방법을 찾는 것이 효과적
+
+**질 좋은 데이터를 어떻게 일관성 있게 확보하는가가 key**
+
+- 개요
+  - quantity
+  - quality
+    - consistency
+      - labeling은 정확한 가이드라인이 필요
+        - 데이터 수집 과정을 디자인하는 사람들이 직접 자신들의 라벨링 테스크를 여러 번 해보고 문제를 미리 찾아내는 것이 중요
+        - crowdworker의 품질관리가 어렵고, 품질이 100% 완벽하다고 가정하면 안됨
+          - 1 두 명의 독립적인 labeler에게 데이터 일부분을 레이블링 하도록 함
+          - 2 두 명의 레이블이 얼마나 일치한지 계산
+          - 3 일치하지 않는 레이블에 대하여 가이드라인을 수정하고, 일관적인 레이블링을 얻을 수 있을 때까지 반복
+
+데이터 양과 질의 상관관계
+
+![](./images/data_quntity_and_quality1.png)
+
+clean vs noisy data
+
+![](./images/clean_data_vs_noisy_data1.png)
+
+- 데이터의 양과 질의 상관관계
+  - 데이터가 많은 경우
+    - noisy한 데이터가 있어도, 모델이 올바른 decision curve를 찾을 수 있음
+  - 데이터가 적은 경우
+    - 레이블의 일관성과 질이 모델 퍼포먼스에 큰 영향을 끼침(*Garbage in, Garbage out*)
+
+#### Model
 
 ## 기계학습 개요
 
