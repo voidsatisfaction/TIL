@@ -2,6 +2,7 @@
 
 - General
   - Feature(ML)
+  - Image task
 - Neural Network
   - Autoencoder
 - Technique
@@ -16,6 +17,18 @@
   - informative, discriminating, independent feature를 선택하는 것이, 패턴인식, classification, regression 문제 해결에 매우 중요
   - 일반적으로 수치로 나타나지만, string이나 graph와 같은 structure로 나타나는 경우도 존재
     - syntactic pattern recognition
+
+### Image related tasks
+
+Image 관련 태스크
+
+![](./images/ml/image_task1.png)
+
+- classification
+- segmentation
+  - semantic
+  - instance
+- detection
 
 ## Neural Network
 
