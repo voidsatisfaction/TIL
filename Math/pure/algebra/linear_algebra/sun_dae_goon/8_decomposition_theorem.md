@@ -19,10 +19,10 @@
 ## 큰 그림 정리
 
 - 임의의 행렬을 분해해보자
-- Primary decomposition theorem으로, 임의의 행렬을 diagonal block matrix와 similar하게 만들 수 있음
+- Primary decomposition theorem으로, 임의의 행렬을 diagonal block matrix와 similarize 가능
   - diagonalizability의 invariant
     - `m_T(t)`
-- Cyclic decomposition theorem으로, 해당 diagonal block matrix의 각각의 block matrix를 companion matrix로 similar 하게 만들 수 있음
+- Cyclic decomposition theorem으로, 해당 diagonal block matrix의 각각의 block matrix를 companion matrix들로 similarize 가능
   - similar matrix의 invariant
 - *Jordan canonical form?*
 
@@ -275,6 +275,8 @@
     - `A ~ B`의 invariant들의 부분집합은?
       - `D = {pi(t), hi, rij | 1≤i≤k, 1≤j≤hi}`
         - similar matrix의 invariant
+          - mission
+            - D가 동일한 두 `T1∈LM, T2∈LM`이 결국에는 D의 정보만 가지고 similarize할 수 있음을 보이면 됨
           - `A ~ B => A ~~ B => 임의의 T에서 D는 unique => T를 LA, LB로 둬도 D는 unique => D는 similar matrix의 invariant`
         - *T의 행렬 표현을 완전히 결정해줌 (아직 이해가 안감)*
           - `ei·deg(pi) = dimWi = ∑_{j=1}^{hi}(rij)·deg(pi)`
@@ -282,8 +284,10 @@
           - `=> ei = ∑_{j=1}^{hi}rij, dimWi, dimV = ∑_{i=1}^{k}dimWi`복원
           - Primary Decomposition Theorem
             - `[Ti]_Bi^Bi`들로 이루어진 block diagonal matrix와 similar
+            - 위에서 `ei`를 복원했으니, `V = kerp1(t)^e1 ⊕ ... ⊕ kerpk(t)^ek`로 분해가능
           - Cyclic Decomposition Theorem
-            - `각각의 diagonal matrix [Ti]_Bi^Bi들이 다시 [Ti]_Bi^Bi ~ block matrix of companion matrix`
+            - `각각의 diagonal matrix [Ti]_Bi^Bi들이 다시 [Ti]_Bi^Bi ~ blocks of companion matrix`
+              - 이는 자명(D가 같으므로)
           - 두 squre matrix `A,B∈Mnxn(F), A~B인지 여부를 결정해주는 invariant들의 집합 = {pi(t), hi, rij}`
 - *Jordan canonical form*
   - 일단 이전 내용을 이해하고 공부해야 할 듯
