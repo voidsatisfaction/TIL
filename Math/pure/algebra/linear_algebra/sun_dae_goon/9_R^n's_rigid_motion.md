@@ -55,9 +55,9 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - 코시 슈바르츠 부등식
       - `|<X,Y>| ≤ ||X||·||Y||`
         - 등호가 성립할 필요충분조건은?
-    - *Triangle Inequality*
+    - Triangle Inequality
       - `||X+Y|| ≤ ||X||+||Y||`
-        - *이거 어떻게 증명해?*
+        - 양변을 제곱
   - 거리(metric)
     - `X와 Y사이의 거리 = ||X-Y||`
     - 성질
@@ -72,6 +72,7 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
         - `X⊥Y`
         - `||X+Y||^2 = ||X||^2 + ||Y||^2 (Pythagoras의 정리)`
         - `||X+Y|| = ||X-Y||`
+          - 살짝 신기하다
 
 ## 9.2 R^n공간의 Rigid Motion
 
