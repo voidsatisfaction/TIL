@@ -73,6 +73,38 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
         - `||X+Y||^2 = ||X||^2 + ||Y||^2 (Pythagoras의 정리)`
         - `||X+Y|| = ||X-Y||`
           - 살짝 신기하다
+  - orthogonal subset & orthonormal subset
+    - orthogonal subset
+      - `non-zero vector {X1, ..., Xm}, ∀1≤i≠j≤m, Xi⊥Xj`
+    - orthonormal subset
+      - `orthogonal subset ∧ ∀1≤k≤m, ||Xk||=1`
+    - orthogonal basis
+      - `R^n의 basis Bv가 orthogonal subset`
+    - orthonormal subset
+      - `R^n의 basis Bv가 orthonormal subset`
+      - 주어진 orthogonal basis로부터 언제나 orthonormal basis를 만들 수 있음
+    - 연습문제
+      - `R^n의 orthogonal subset {X1, ..., Xm}은 일차독립`
+      - `Bv = {X1, ..., Xn}이 R^n의 orthonormal basis <=> ∀1≤i,j≤m, <Xi,Xj> = δij`
+  - `S^⊥`(S perp) & orthogonal complement
+    - `S^⊥`
+      - `S⊆R^n, S^⊥ = {X∈R^n | ∀Y∈S, X⊥Y}`
+    - orthogonal complement
+      - `W≤R^n, W^⊥를 W의 orthogonal complement`
+    - 성질
+      - `S^⊥는 R^n의 subspace`
+      - `S^⊥ = <S>^⊥`
+      - `Bw^⊥ = W^⊥`
+        - 임의의 벡터가 W에 수직이기 위해서는 W의 basis Bw에 수직이기만 하면 충분
+    - motivation
+      - `0^⊥ = R^n ∧ (R^n)^⊥ = 0`
+      - `W≤R^n => W ∩ W^⊥ = 0`
+      - `W≤R^n => W ≤ (W^⊥)^⊥`
+        - `W≤R^n => W = (W^⊥)^⊥`인가?
+    - 질문
+      - `∀W≤R^n, dimW^⊥ = n-dimW`인가?
+        - `=> dim(W^⊥)^⊥ = n - (n - dimW) = dimW`
+        - `=> R^n = W ⊕ W^⊥`
 
 ## 9.2 R^n공간의 Rigid Motion
 
