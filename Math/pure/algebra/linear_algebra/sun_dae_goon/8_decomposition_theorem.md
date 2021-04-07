@@ -60,16 +60,16 @@
           - `~~ 소수에 1을 포함시키지 않는것과 같은 느낌`
         - 계수의 종류(`C`, `R` 등)에 따라서 기약 다항식의 범위가 달라짐
       - 특징
-        - `C[t]`의 irreducible polynomial은 일차식 뿐
-        - `R[t]`의 irreducible polynomial은 일차식과 이차식 뿐
+        - `C[t]`를 factorize하면 irreducible polynomial은 일차식 뿐
+        - `R[t]`를 factorize하면 irreducible polynomial은 일차식과 이차식 뿐
           - 그 이유는, factorization의 정의로 부터, polynomial factorization은 `R[t]`의 원소의 곱으로 표현되야 되므로...
           - `α가 f(t) = a0t^n + an-1t^(n-1) + ... + a1t + a0 (a0, ..., an ∈ R)의 근 => f(!α) = 0 (!α는 α의 켤레복소수(conjugate))`
           - `t^2-(α+!α)t+α!α ∈ R[t]`
             - `α, !α를 근으로 갖는 이차식`
             - **여기에, 대수학의 기본정리를 적용하면, 임의의 non-constant polynomial은 C에서 근을 갖으므로 계속해서 인수 분해 가능**
     - *GCD(Greatest Common Divisor)의 성질*
-      - *`f1(t), ..., fk(t) ∈ F[t]의 최대공약수를 d(t) => ∃g1(t), ..., gk(t)∈F[t] s.t d(t) = g1(t)f1(t) + g2(t)f2(t) + ... + gk(t)fk(t)`*
-        - *이게 무슨 소리인지 사실 이해가 잘 안감*
+      - `f1(t), ..., fk(t) ∈ F[t]의 최대공약수를 d(t) => ∃g1(t), ..., gk(t)∈F[t] s.t d(t) = g1(t)f1(t) + g2(t)f2(t) + ... + gk(t)fk(t)`
+        - *어떻게 증명하지?*
     - relatively prime(서로 소)
       - `f1(t), ..., fk(t) ∈ F[t] 의 최대공약수가 1∈F[t] <=> f1(t), ..., fk(t)가 서로 소`
       - **생각해보면, 우리가 평소에 사용하는 소수라는 건 absolutely prime이구나...**
@@ -289,5 +289,6 @@
             - `각각의 diagonal matrix [Ti]_Bi^Bi들이 다시 [Ti]_Bi^Bi ~ blocks of companion matrix`
               - 이는 자명(D가 같으므로)
           - 두 squre matrix `A,B∈Mnxn(F), A~B인지 여부를 결정해주는 invariant들의 집합 = {pi(t), hi, rij}`
+            - *근데, Primary decomposition theorem까지는 이해가 가는데, cyclic decomposition theorem에서의 결과로 similar 하다고 결론지을 수 있는가?*
 - *Jordan canonical form*
   - 일단 이전 내용을 이해하고 공부해야 할 듯
