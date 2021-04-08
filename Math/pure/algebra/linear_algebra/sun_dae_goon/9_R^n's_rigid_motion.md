@@ -17,6 +17,13 @@
 
 Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
 
+- `R^n`공간에 dot product 연산 부여
+  - 기하적 구조 생성
+    - norm
+    - 사이각
+    - 거리
+    - 수직
+
 ## 9.1 R^n공간의 Dot Product와 Euclidean Norm
 
 - `Euclidean space`
@@ -29,6 +36,7 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
   - Euclidean space를 공부하는 것
 - `R^n의 dot product`
   - `X=t(a1, ..., an), Y=t(b1, ..., bn), <X,Y> = tX·Y = ∑_{i=1}^{n}(ai·bi)`
+    - dot product은 bilinear form
   - 성질
     - `R^n x R^n -> R로 가는 함수 (X,Y) -> <X,Y>는 R^n의 bilinear form`
     - `X,Y∈R^n => <X,Y> = <Y,X>`
@@ -39,7 +47,7 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
   - `X∈R^n, ||X|| = √<X,X>`
     - 벡터의 길이(크기)
   - 성질(`X∈R^n, c∈R`)
-    - `||X||≥0 ∧ ||X|| <=> X=0`
+    - `||X||≥0 ∧ ||X||=0 <=> X=0`
     - `||cX|| = |c|·||X||`
     - `||(1/||X||)・X|| = 1`
     - unit vector
@@ -80,7 +88,7 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
       - `orthogonal subset ∧ ∀1≤k≤m, ||Xk||=1`
     - orthogonal basis
       - `R^n의 basis Bv가 orthogonal subset`
-    - orthonormal subset
+    - orthonormal basis
       - `R^n의 basis Bv가 orthonormal subset`
       - 주어진 orthogonal basis로부터 언제나 orthonormal basis를 만들 수 있음
     - 연습문제
@@ -107,6 +115,47 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
         - `=> R^n = W ⊕ W^⊥`
 
 ## 9.2 R^n공간의 Rigid Motion
+
+- Rigid motion
+  - `R^n공간에서 물체의 모습을 변화시키지 않는 운동 = 거리와 크기를 보존하는 운동`
+  - 역으로 rigid motion에 의해 보존되는 성질을 공부하는 것 = Euclidean geometry
+- isometry
+  - 함수 `M: R^n -> R^n`이 조건 `||M(X)-M(Y)|| = ||X-Y|| (X,Y∈R^n)`을 만족
+  - 예시
+    - translation(평행이동)
+      - `T_Y: R^n -> R^n, T_Y(X) = X+Y`
+        - translation by Y
+        - T_Y는 bijection
+        - `(T_Y)^-1 = T_(-Y)`
+    - rotation(회전이동)
+      - `Rθ = (cosθ -sinθ; sinθ cosθ), Rθ = L_Rθ: R^2 -> R^2`
+        - Rθ는 bijection
+        - `(Rθ)^-1 = R-θ`
+    - reflection(대칭이동)
+      - `S = (1 0; 0 -1), Ls = S`
+        - S는 bijection
+        - `S^-1 = S`
+  - 성질(`M: R^n -> R^n이 R^n의 rigid motion`)
+    - `M은 injective`
+    - `M은 연속함수`
+      - *?!*
+    - `R^n의 rigid motion은 항상 bijection`
+      - *`R^n`의 rigid motion은 linear map?*
+        - 어떻게 증명하지?
+  - 성질2
+    - `R^n의 rigid motion의 합성은 rigid motion`
+    - `R^n의 bijective rigid motion의 역함수는 rigid motion`
+    - `L = T_{-M(0)}∘M => L(0)=0 ∧ M = T_M(0)∘L`
+- 우리의 주장
+  - `L(0)=0 인 R^n의 rigid motion L은 linear map`
+    - 이 주장의 증명은 지금까지 공부한 추상적인 언어가 우리의 고향 R^n에서 매우 강력한 툴이 되었음을 보여 줌
+    - 애초에 `L(0)≠0`인 rigid motion이 있다?
+      - translation?!
+  - `L(0)=0인 R^n의 rigid motion L의 성질`
+    - `||L(X)|| = ||X||`
+    - `∀X∈R^n, <L(X),L(X)> = <X,X>`
+    - `∀X,Y∈R^n, <L(X),L(Y)> = <X,Y>`
+    - `Bv가 R^n의 orthonormal basis => L(Bv)도 R^n의 orthonormal basis`
 
 ## 9.3 Orthogonal Operator / Matrix
 
