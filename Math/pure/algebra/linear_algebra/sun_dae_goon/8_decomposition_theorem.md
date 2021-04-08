@@ -289,6 +289,7 @@
             - `각각의 diagonal matrix [Ti]_Bi^Bi들이 다시 [Ti]_Bi^Bi ~ blocks of companion matrix`
               - 이는 자명(D가 같으므로)
           - 두 squre matrix `A,B∈Mnxn(F), A~B인지 여부를 결정해주는 invariant들의 집합 = {pi(t), hi, rij}`
-            - *근데, Primary decomposition theorem까지는 이해가 가는데, cyclic decomposition theorem에서의 결과로 similar 하다고 결론지을 수 있는가?*
+            - 근데, Primary decomposition theorem까지는 이해가 가는데, cyclic decomposition theorem에서의 결과로 similar 하다고 결론지을 수 있는가?
+              - **Wi의 change of basis의 적용은, 맨 처음에 V의 change of basis에서 적용 가능함(Wi ≤ V 이므로)**
 - *Jordan canonical form*
   - 일단 이전 내용을 이해하고 공부해야 할 듯
