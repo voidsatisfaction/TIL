@@ -3,10 +3,15 @@
 - General
   - Feature(ML)
   - Image task
+  - Cosine similarity
 - Neural Network
   - Autoencoder
 - Technique
   - Batch Normalization(BN)
+- Data
+  - Adversarial example
+  - Fast Gradient Sign Method
+  - Negative Data Augmentation(NDA)
 
 ## General
 
@@ -29,6 +34,18 @@ Image 관련 태스크
   - semantic
   - instance
 - detection
+
+### Cosine similarity
+
+Cosine similarity
+
+![](./images/ml/cosine_similarity1.png)
+
+- 개요
+  - 내적공간의 두 벡터간 각도의 코사인값을 이용하여 측정된 벡터간의 유사도
+- 예시
+  - 유사 문서 측정
+    - 텍스트 마이닝에서, 단어 하나하나가 차원을 구성하고, 문서는 각 단어가 나타나는 회수로 표현되는 벡터값으로 두면, 유사한 문서를 측정하기에 매우 유용
 
 ## Neural Network
 
@@ -104,3 +121,38 @@ training mode에서는 minibatch statistics로 normalizing을 하고, prediction
     - 굳이 dropout을 사용할 필요가 없음
   - Learning rate에 크게 영향을 받지 않음
     - gradient exploding / vanishing이 없어짐
+
+## Data
+
+### Adversarial example
+
+- 개요
+  - neural network를 혼란시키기 위해서 생성된 특별한 input
+    - misclassification을 야기시킴
+- 특징
+  - 사람 눈으로 구별 불가
+- 종류
+  - white box attack
+    - Fast Gradient Sign Method
+
+#### Fast Gradient Sign Method
+
+- 개요
+  - neural network의 gradients를 사용해서 adversarial example을 생성 하는 방식
+    - original image에 loss function의 값을 최대로 하는 노이즈를 넣음
+- 특징
+  - chain rule을 사용하면 per image베이스로 각 픽셀이 얼마나 loss값에 기여하는지 빠르게 알 수 있으므로, image베이스로 작동시킬 수 있음
+
+### Negative Data Augmentation(NDA)
+
+NDA와 PDA의 차이
+
+![](./images/ml/nda1.png)
+
+- 개요
+  - Out-Of-Distribution(OOD) 샘플들을 생성
+- 좋은 NDA의 조건
+  - *NDA is informative if its support is close to that of pdata, while being disjoint*
+    - 무슨 소리?
+  - local feature를 보존하면서, global feature는 파괴함
+    - CNN이 global feature를 배울 수 있도록 함
