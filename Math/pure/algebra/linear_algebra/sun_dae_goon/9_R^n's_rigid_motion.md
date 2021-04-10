@@ -156,10 +156,106 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - `∀X∈R^n, <L(X),L(X)> = <X,X>`
     - `∀X,Y∈R^n, <L(X),L(Y)> = <X,Y>`
     - `Bv가 R^n의 orthonormal basis => L(Bv)도 R^n의 orthonormal basis`
+  - 관찰
+    - `A∈Mnxn(R)의 column들 {[A]^1, ..., [A]^n}이 R^n의 orthonormal basis => linear map LA는 rigid motion`
+    - `L(0)=0인 R^n의 rigid motion L이 R^n의 orthonormal basis Bv={Xi}의 원소를 모두 고정하면(∀j=1, ..., n, L(Xj)=Xj) => L은 항등사상`
+  - 우주의 신비
+    - `L(0)=0 인 R^n의 rigid motion L은 linear map`
+      - `그리고 ∃A∈Mnxn(R), L = LA`
+    - `R^n의 rigid motion M은 translation과 linear rigid motion의 합성으로 쓸 수 있다`
+      - **이렇게 되면, 임의의 R^n의 rigid motion을 이해하는것 = translation과 linear rigid motion을 이해하는 것**
+        - 아름답다....
+  - 우주의 신비 따름정리
+    - `R^n의 rigid motion은 항상 bijection`
+- (real) orthogonal operator & orthogonal matrix
+  - orthogonal operator
+    - `R^n의 linear rigid motion`
+  - orthogonal matrix
+    - `L이 R^n의 orthogonal operator ∧ L=LA일 때의 A`
+  - 성질
+    - `A∈Mnxn(R)이 orthogonal matrix ∧ Y∈R^n, T_Y◦LA = LA ◦ T_(A^-1Y)`
 
 ## 9.3 Orthogonal Operator / Matrix
 
+- `O(R^n) & O(n)`
+  - `O(R^n)`
+    - orthogonal group on R^n
+    - `O(R^n) = {L∈L(R^n,R^n) | ∀X,Y∈R^n, ||L(X)-L(Y)|| = ||X-Y||}`
+      - R^n의 linear rigid motion전체
+  - `O(n)`
+    - orthogonal group
+    - `O(n) = {A∈Mnxn(R) | ∀X,Y∈R^n, ||AX-AY|| = ||X-Y||}`
+- 우주의 신비 재정의
+  - `M:R^n -> R^n이 rigid motion => ∃A∈O(n),B∈R^n, M(X)=AX+B (B∈R^n) ∧ A,B는 유일`
+- O(n)의 주요 성질
+  - `A,B∈O(n) => AB∈O(n)`
+  - `A∈O(n) => A^-1∈O(n)`
+    - 위 두 성질을 만족하는 집합이 group
+      - *엥, 그런데, 결합법칙이 성립한다는 것이 어디에 나와있는가?*
+- `O(R^n)`의 성질
+  - `L: R^n -> R^n, 다음은 동치`
+    - 1 `∀X,Y∈R^n, ||LX-LY|| = ||X-Y|| (즉, L∈O(R^n))`
+      - 거리 보존
+    - 2 `∀X∈R^n, ||LX|| = ||X||`
+      - 길이 보존
+    - 3 `∀X∈R^n, <LX,LX> = <X,X>`
+    - 4 `∀X,Y∈R^n, <LX,LY> = <X,Y>`
+      - dot product 보존
+    - 5 `Bv가 R^n의 orthonormal basis => L(Bv)도 R^n의 orthonormal basis`
+      - orthonormal basis 보존
+    - *이 이외에는 없나?*
+      - `||X|| = 1 => ||LX|| = 1`
+        - L은 unit vector를 보존
+      - `L(Bv)가 R^n의 orthonormal basis인 R^n의 orthonormal basis Bv가 존재`
+        - *위의 5와 차이는?*
+- `O(n)`의 성질
+  - `A∈Mnxn(R)일 떄, 다음은 동치`
+    - 1 `||AX-AY|| = ||X-Y||`
+    - 2 `∀X∈R^n, ||AX|| = ||X||`
+    - 3 `∀X∈R^n, <AX,AX> = <X,X>`
+    - 4 `∀X,Y∈R^n, <AX,AY> = <X,Y>`
+    - 5 `A의 column들의 집합 {[A]^1, ..., [A]^n}은 R^n의 orthonormal basis`
+    - 6 `tA・A = I = A・tA (A^-1 = tA)`
+    - 7 `tA∈O(n)`
+    - 8 `A의 row들의 집합 {[A]_1, ..., [A]_n}은 M1xn(R)의 orthonormal basis`
+  - `O(n) = {A∈Mnxn(R) | tA・A = I}`
+    - 6번 성질로 부터
+  - `tL`을 정의하는것이 우리의 중요한 목표
+- `SO(n) & SO(R^n)`
+  - `SO(n) (Special orthogonal group)`
+    - `SO(n) = {A∈O(n) | det(A)=1}`
+    - 기하학에서
+      - `A∈SO(n) => LA는 R^n의 orientation preserving orthogonal operator`
+  - `SO(R^n)`
+    - `SO(R^n) = {L∈O(R^n) | det(L)=1}`
+    - 기하학에서
+      - `A∈O(n)-SO(n) => orientation reversing orthogonal operator`
+
 ## 9.4 Reflection
+
+Reflection
+
+![](./images/ch9/reflection1.jpg)
+
+- `R^n 공간의 reflection`
+  - 배경
+    - X,Y∈R^3 ∧ Y≠0, X를 Y와 평행한 성분과 Y에 수직인 성분으로 나눠보자
+    - Y에 평행한 성분을 `aY`라고 놓으면 `(a∈R)`, Y에 수직인 성분은 `X-aY`
+    - `<X-aY, Y> = 0`
+    - `=> a<Y,Y> = <X,Y>`
+    - `=> a = <X,Y>/<Y,Y>`
+    - `Y에 수직인 평면 <Y>^⊥에 대해서, X를 대칭이동 => X - 2<X,Y>/<Y,Y>・Y`
+- SY는 Y에 관한 reflection(symmetry)
+  - `0≠Y∈R^n, SY: R^n -> R^n, SY(X) = X - 2<X,Y>/<Y,Y>・Y (X∈R^n)`
+    - **X를 X의 Y방향 분해량의 2배만큼 반대방향으로 더한 결과**
+      - 이렇게 생각해낼 수 있는 내가 대견하다
+  - `SY∈O(R^n)`
+  - e.g)
+    - `x축에 관한 대칭이동 = t(0,1)에 관한 relection S_t((0,1))`
+  - 성질
+    - `0≠c∈R => SY = ScY`
+    - `SY(Y) = -Y`
+    - `X⊥Y(X∈<Y>^⊥) => SY(X) = X`
 
 ## 9.5 O(2)와 SO(2)
 
