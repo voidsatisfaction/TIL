@@ -139,9 +139,9 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - `M은 injective`
     - `M은 연속함수`
       - *?!*
+      - *벡터 함수의 연속성?*
     - `R^n의 rigid motion은 항상 bijection`
-      - *`R^n`의 rigid motion은 linear map?*
-        - 어떻게 증명하지?
+      - **임의의 rigid motion은 translation과 linear rigid motion의 합성으로 나타낼 수 있음**
   - 성질2
     - `R^n의 rigid motion의 합성은 rigid motion`
     - `R^n의 bijective rigid motion의 역함수는 rigid motion`
@@ -150,7 +150,7 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
   - `L(0)=0 인 R^n의 rigid motion L은 linear map`
     - 이 주장의 증명은 지금까지 공부한 추상적인 언어가 우리의 고향 R^n에서 매우 강력한 툴이 되었음을 보여 줌
     - 애초에 `L(0)≠0`인 rigid motion이 있다?
-      - translation?!
+      - translation
   - `L(0)=0인 R^n의 rigid motion L의 성질`
     - `||L(X)|| = ||X||`
     - `∀X∈R^n, <L(X),L(X)> = <X,X>`
@@ -176,6 +176,10 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - `A∈Mnxn(R)이 orthogonal matrix ∧ Y∈R^n, T_Y◦LA = LA ◦ T_(A^-1Y)`
 
 ## 9.3 Orthogonal Operator / Matrix
+
+R^n의 rigid motion M은 translation과 linear rigid motion의 합성으로 쓸 수 있다
+
+그러므로, R^n의 linear rigid motion을 이해하는 것이 임의의 rigid motion을 이해하는 key!
 
 - `O(R^n) & O(n)`
   - `O(R^n)`
@@ -253,10 +257,66 @@ Reflection
   - e.g)
     - `x축에 관한 대칭이동 = t(0,1)에 관한 relection S_t((0,1))`
   - 성질
-    - `0≠c∈R => SY = ScY`
-    - `SY(Y) = -Y`
-    - `X⊥Y(X∈<Y>^⊥) => SY(X) = X`
+    - `1. 0≠c∈R => SY = ScY`
+    - `2. SY(Y) = -Y`
+    - `3. X⊥Y(X∈<Y>^⊥) => SY(X) = X`
+- **reflection에서의 우리의 사고방식**
+  - reflection을 만나면 아래와 같이 대수적 사고방식을 갖고 대하자
+  - 위의 2,3 성질이 linear operator SY를 결정해줌
+    - `Y≠0, dim<Y>^⊥ = n - dim<Y> = n-1`
+    - `<Y>∩<Y>^⊥ = 0`
+    - `R^n = <Y> ⊕ <Y>^⊥`
+    - `=> B<Y>^⊥ = {X2, ..., Xn}`
+    - `=> BR^n = {Y, X2, ..., Xn}`
+    - `=> SY(Y) = -Y, SY|<Y>^⊥ = I<Y>^⊥`
+    - `=> Linear Extension Theorem에 의하여, SY는 2,3 두조건에 의하여 uniquely determined`
+    - `=> [SY]_{BR^n}^{BR^n} = diag(-1, 1, ..., 1)`
+  - `SY`의 성질
+    - `(SY)^2 = I, (SY)^-1 = SY`
+    - `0≠Y∈R^n, det(SY)=-1`
+  - `SY = LA`인 `A∈Mnxn(R)`
+    - `A = [SY]_ε^ε = [I]_ε^B・[SY]_B^B・[I]_B^ε = [I]_ε^B・diag(-1,1,...,1)・[I]_B^ε`
+      - `diag(-1,1, ..., 1) ∈ O(n)`
+      - `[I]_ε^B ∈ O(n) 이어야만 할 이유가 없음`
+        - `[I]_ε^B ∈ O(n) <=> B가 orthonormal basis`
+          - `B가 orthonormal basis 이려면 ||Y|| = 1 이어야 함`
+            - `SY = S_{1/||Y||・Y}`
+            - `||Y||=1`로 가정해도 됨
+          - `B가 orthonormal basis <=> {X2, ..., Xn}가 <Y>^⊥의 orthonormal basis`
+      - 결국, `A, [I]_ε^B, diag(-1,1,...,1), [I]_B^ε ∈ O(n)`
+- 질문
+  - `W≤R^n => W의 orthonormal basis를 항상 찾을 수 있는가?`
+    - Gram-Schmidt Orthogonalization Process
+    - Yes!
+
+## 9.5' O(1)와 SO(1)
+
+`O(1) = {1, -1}, SO(1) = {1}`
 
 ## 9.5 O(2)와 SO(2)
+
+- `O(2), SO(2)`
+  - 평면의 rigid motion
+- 정리
+  - `SO(2)의 원소는 2-dimensional rotation뿐이다`
+    - `SO(2) = {(cosθ -sinθ; sinθ cosθ) | 0≤θ≤2π} = {(x -y; y x) | x,y∈R, x^2+y^2=1}`
+      - 고등학생의 증명
+      - Freshman's proof
+      - Sophomore's proof
+  - `O(2)의 구조는 다음과 같다`
+    - `O(2) = SO(2) ∐　{(x y; y -x) | x,y∈R, x^2 + y^2 = 1}`
+      - 증명은 앞에서 이미 증명?
+      - `S∈O(2)-SO(2), O(2)-SO(2) = S・SO(2)`
+- 표기법
+  - `Rθ = (cosθ -sinθ; sinθ cosθ)`
+  - `Sθ = (cosθ sinθ; sinθ -cosθ)`
+- 질문
+  - `θ∈R, Sθ는 R^2의 reflection?`
+  - `det(SY◦SZ) = (-1)・(-1) = 1 => SY◦SZ = Rθ`인데 이때, θ는 어떻게 구할까?
+- 관찰
+  - `θ∈R, Sθ = S_{t(-sinθ/2, cosθ/2)}`
+  - 따라서, R^2의 모든 reflection은 Sθ꼴이다
+- 따름정리
+  - `R^2의 orthogonal operator L은 rotation이거나 reflection둘 중 하나이다. det(L)=1 => L은 rotation　∧ det(L) = -1 => L은 reflection`
 
 ## 9.6 O(3)와 SO(n)
