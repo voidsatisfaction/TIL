@@ -10,6 +10,8 @@
   - Countermeasure / Safeguard
   - Control
   - Session
+- 공격과 방어
+  - Xss, Csrf
 - 암호학
   - Digest
     - Message
@@ -96,6 +98,37 @@
 - 특징
   - 비밀번호와 같은 역할을 하나, 0 ~ 9 까지의 숫자로 적은 개수를 입력하는것이 다름
   - 주로, 손 안에 있는 기기의 잠금 기능에 사용됨
+
+## 공격과 방어
+
+### xss, csrf
+
+- xss(Cross-Site Scripting)
+  - 개요
+    - 공격자가 client-side script를 취약점이 있는 웹 페이지에 삽입하여, 다른 유저들이 해당 스크립트를 실행하도록 하는 공격
+  - 시나리오
+    - localstorage
+      - 다 털려버림
+    - cookie
+      - httponly 속성을 지정하면, js로 cookie접근 불가능
+  - 방어
+    - input과 같은 HTMLElement를 다룰때는, escape가 반드시 되도록 설정
+    - react의 경우는, jsx를 사용하면 됨
+      - 외부 html을 직접 embedding하지 않음
+      - `dangerouslySetInnerHTML`을 되도록이면 사용하지 말자
+- csrf(Cross-Site Request Forgery)
+  - 개요
+    - 공격자가 미리 준비한 웹 사이트에서 사용자가 그 페이지를 열람하는 경우, 해당 사용자가 의도하지 않은 행위를 다른 웹사이트에 동작하게 하도록 함
+      - 비밀번호 변경, 권한 설정 등
+  - 시나리오
+    - localstorage
+      - 사용자가 접속한 사이트는 same origin이 아니므로 내부 내용이 털리지 않음
+    - cookie
+      - 다른 origin의 cookie는 털리지 않으나, 이 사이트에서 강제적으로 http리퀘스트를 사용자가 인증이 되어, 세션이 쿠키에 존재하는 사이트로 보내도록 하면, 쿠쿠키에 있는 session정보가 리퀘스트에 헤더에 자동으로 포함되므로, 원하지 않는 action을 취할 수 있음
+  - 방어
+    - 세션 저장소로 localstorage를 사용
+    - cookie를 사용하되, csrf-token을 병용
+      - 서버에서 referer를 참조해도 되나, 이것은 쉽게 변경이 가능
 
 ## 암호학
 
