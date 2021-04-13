@@ -23,6 +23,14 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - 사이각
     - 거리
     - 수직
+- Rigid motion의 정의 및 성질
+- 임의의 Rigid motion은 translation과 orthogonal operator(linear rigid motion)의 합성으로 나타낼 수 있음
+  - 이제 우리의 관심사는 orthogonal operator & orthogonal matrix
+    - 이것만 이해하면 임의의 Rigid motion을 이해하는것과 같음
+- `O(1), SO(1)`
+- `O(2), SO(2)`
+- `O(3), SO(3)`
+- ...
 
 ## 9.1 R^n공간의 Dot Product와 Euclidean Norm
 
@@ -43,15 +51,14 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - `X∈R^n => <X,X> ≥ 0 ∧ <X,X>=0 <=> X=0`
   - 연습문제
     - `X∈R^n, ∀Y∈R^n, <X,Y>=0 => X=0`
-- `X의 Euclidean norm`
+- X의 Euclidean norm(길이 or 크기)
   - `X∈R^n, ||X|| = √<X,X>`
-    - 벡터의 길이(크기)
-  - 성질(`X∈R^n, c∈R`)
-    - `||X||≥0 ∧ ||X||=0 <=> X=0`
-    - `||cX|| = |c|·||X||`
-    - `||(1/||X||)・X|| = 1`
-    - unit vector
-      - norm이 1인 벡터
+    - 성질(`X∈R^n, c∈R`)
+      - `||X||≥0 ∧ ||X||=0 <=> X=0`
+      - `||cX|| = |c|·||X||`
+      - `||(1/||X||)・X|| = 1`
+      - unit vector
+        - norm이 1인 벡터
   - 사이각
     - `<X,Y> = ||X||·||Y||cosθ`
       - *`R^2`이 아닌경우는?*
@@ -158,7 +165,7 @@ Rigid motion = 길이와 거리가 변하지 않는 '딱딱한' 운동
     - `Bv가 R^n의 orthonormal basis => L(Bv)도 R^n의 orthonormal basis`
   - 관찰
     - `A∈Mnxn(R)의 column들 {[A]^1, ..., [A]^n}이 R^n의 orthonormal basis => linear map LA는 rigid motion`
-    - `L(0)=0인 R^n의 rigid motion L이 R^n의 orthonormal basis Bv={Xi}의 원소를 모두 고정하면(∀j=1, ..., n, L(Xj)=Xj) => L은 항등사상`
+    - `L(0)=0인 R^n의 rigid motion L이 R^n의 orthonormal basis Bv={Xi}의 원소를 모두 고정하면(∀j=1, ..., n, L(Xj)=Xj) => L=I`
   - 우주의 신비
     - `L(0)=0 인 R^n의 rigid motion L은 linear map`
       - `그리고 ∃A∈Mnxn(R), L = LA`
@@ -234,6 +241,15 @@ R^n의 rigid motion M은 translation과 linear rigid motion의 합성으로 쓸 
     - `SO(R^n) = {L∈O(R^n) | det(L)=1}`
     - 기하학에서
       - `A∈O(n)-SO(n) => orientation reversing orthogonal operator`
+  - 성질
+    - `A∈O(n) => det(A) = ±1`
+    - `S∈O(n)-SO(n)`
+      - `O(n)-SO(n)≠φ`
+      - `λs: SO(n) -> S・SO(n) (S・SO(n) = {SA | A∈SO(n)}), λs(A) = SA (A∈SO(n))`
+        - `λs는 bijection`
+      - `O(n)-SO(n) = S・SO(n)`
+        - `S'∈O(n)-SO(n) => S'∈S・SO(n)`
+      - `O(n) = SO(n) ∐ (S・SO(n))`
 
 ## 9.4 Reflection
 
@@ -277,13 +293,14 @@ Reflection
   - `SY = LA`인 `A∈Mnxn(R)`
     - `A = [SY]_ε^ε = [I]_ε^B・[SY]_B^B・[I]_B^ε = [I]_ε^B・diag(-1,1,...,1)・[I]_B^ε`
       - `diag(-1,1, ..., 1) ∈ O(n)`
-      - `[I]_ε^B ∈ O(n) 이어야만 할 이유가 없음`
+      - `but [I]_ε^B ∈ O(n) 이어야만 할 이유가 없음`
         - `[I]_ε^B ∈ O(n) <=> B가 orthonormal basis`
           - `B가 orthonormal basis 이려면 ||Y|| = 1 이어야 함`
             - `SY = S_{1/||Y||・Y}`
             - `||Y||=1`로 가정해도 됨
           - `B가 orthonormal basis <=> {X2, ..., Xn}가 <Y>^⊥의 orthonormal basis`
-      - 결국, `A, [I]_ε^B, diag(-1,1,...,1), [I]_B^ε ∈ O(n)`
+      - Gram-Schmidt Orthogonalization Process로, `{X2, ..., Xn}가 <Y>^⊥의 orthonormal basis를 찾을 수 있음`
+      - 결국, 그러한 B를 찾으면, `A, [I]_ε^B, diag(-1,1,...,1), [I]_B^ε ∈ O(n)`
 - 질문
   - `W≤R^n => W의 orthonormal basis를 항상 찾을 수 있는가?`
     - Gram-Schmidt Orthogonalization Process
@@ -317,6 +334,76 @@ Reflection
   - `θ∈R, Sθ = S_{t(-sinθ/2, cosθ/2)}`
   - 따라서, R^2의 모든 reflection은 Sθ꼴이다
 - 따름정리
-  - `R^2의 orthogonal operator L은 rotation이거나 reflection둘 중 하나이다. det(L)=1 => L은 rotation　∧ det(L) = -1 => L은 reflection`
+  - `R^2의 orthogonal operator L은 rotation이거나 reflection둘 중 하나이다. 즉, det(L)=1 => L은 rotation ∧ det(L) = -1 => L은 reflection`
+  - `R^2의 rotation R과 reflection S의 합성 R◦S와 S◦R은 언제나 R^의 reflection`
+  - `R^2의 reflection S를 하나 고정하면, R^2의 모든 reflection은 S◦R의 꼴로 유일하게 쓸 수 있음`
+- `O(2)`의 연산 규칙 정리(`θ,η∈R`)
+  - `Rθ◦Rη=R_{θ+η}`
+  - `(Rθ)^-1 = R_{-θ}`
+  - `(Sθ)^2 = I, (Sθ)^-1 = Sθ`
+  - `S^-1◦Rθ◦S = (Rθ)^-1`
+    - `Rθ◦S = S◦R_{-θ}`
+    - 뒤집고 돌리고 다시 뒤집음 = 거꾸로 돌린 것
+- `SY◦SZ = Rθ`인 θ구하기
+  - `Sθ◦Sη = (S◦R_{π-θ})◦(S◦R_{π-η}) = R_{θ-η}`
+- 연습문제
+  - `SO(2)의 모든 원소는 두 개의 reflection의 곱 으로 나타낼 수 있음을 보여라. 하지만 unique하지 않음도 설명하라`
 
 ## 9.6 O(3)와 SO(n)
+
+- motivation
+  - 원점을 중심으로 하는 3-dimensional rotation => linear operator
+  - 원점을 중심으로 하는 R^3 rotation에는 회전축 존재
+    - *우리의 상식?*
+  - 회전축은 회전변환에 의해 고정
+  - 회전축에 수직인 2-dimensional subspace인 회전판 위에서 3-차원 회전변환은 2차원 회전변환
+  - 회전축 벡터는 unit vector로 해두는것이 편리함
+- R^3의 rotation
+  - `Z∈R^3가 unit vector, B = {Z,X,Y}가 orthonormal basis인 X,Y를 찾고, det(Z,X,Y) = det(X,Y,Z) = 1 이 되도록 X,Y의 순서를 정하자. 이 떄, 원점을 중심으로 하는 R^3의 rotation R_{Z,θ}: R^3 -> R^3를 [R_{Z,θ}]_B^B = (1 0 0; 0 cosθ -sinθ; 0 sinθ cosθ) 로 정의`
+    - `Z = 회전축`
+    - `<X> ⊕ <Y> = 회전판`
+    - `θ = 회전각`
+  - 정의에 대한 설명
+    - R^3의 orthonormal basis `B = {Z,X,Y}`를 찾으려면, `R^3`의 2-차원 부분공간 `<Z>^⊥`의 orthonormal basis `{X,Y}`를 찾아야 함
+      - 찾을 수 있음(Gram-Schmidt Orthogonalization Process)
+    - `R^3 = <Z> ⊕ <Z>^⊥`
+    - `(Z,X,Y)∈O(3)`
+    - `정의에서 det(Z,X,Y)=1이 되도록 X,Y의 순서를 정하는 것 = {Z,X,Y}가 [z-축, x-축, y-축]의 순서가 되도록 하는것`
+      - *그래야 시계 반대방향이라는 말의 의미가 생긴다*
+        - 가 무슨말인가
+    - `(Z,X,Y)∈SO(3)`
+    - `R_{Z,θ}는 linear extension theorem에 의하여, uniquely determined`
+    - `=> [R_{Z,θ}]_B^B = (1 0 0; 0 . ; 0 Rθ) (여기서 .은 Rθ가 차지함을 의미)`
+    - `[R_{Z,θ}]_ε^ε = [I]_ε^B・[R_{Z,θ}]_B^B・[I]_B^ε`
+    - `=> R_{Z,θ}∈SO(R^3) (∵ [R_{Z,θ}]_B^B, [I]_ε^B ∈ SO(3))`
+- 질문
+  - `R^3`의 두 rotation의 합성도 rotation인가?
+    - 두 rotation의 회전축이 다를때가 문제
+    - 그런데, 우리는 앞에서 `R^3`의 rotation은 `SO(R^3)`의 원소인 것을 살펴보았는데, 만약 역도 성립하면...?
+  - 정리
+    - `SO(R^3)`의 원소는 모두 R^3의 rotation이다
+      - `L (= [L]_ε^ε) = LA ∈ SO(R^3), L이 rotation인 것을 보이려면 일단 회전축 벡터를 찾아야 함`
+        - *대수적 번역: `eigen-value가 1인 L의 eigen-vector를 찾아야 함`*
+          - 직관적으로는 맞는거 같은데 진짜 맞나?
+      - `det(A-I)=0`
+        - *증명?*
+      - `=> AZ = Z인 unit vector Z∈R^3이 존재`
+      - `=> det(Z,X,Y) = 1인 orthonormal basis B = {Z,X,Y}를 찾음`
+      - `=> [L]_B^B ∈ SO(3)`
+      - `=> [L]_B^B = (1 a b; 0 .; 0 B) 가 orthogonal matrix가 되려면 a=b=0 ∧ B∈SO(2)`
+  - 따름정리
+    - `R^3`의 두 rotation의 합성도 rotation이다
+      - 공짜
+      - 그런데 실제로 찾는 문제에는 관심 갖지 말라!
+        - *왜지?*
+- 주의
+  - R^2평면에서는 orthogonal matrix는 rotation or reflection이었는데, R^3공간에서는 더 이상 성립하지 않음
+    - 반례
+      - `(-1 0 0; 0 .; 0 Rθ)`
+        - 이친구의 정체는?!
+- n차원의 세계
+  - R^n의 rotation
+    - `∀n∈N, SO(R^n) or SO(n)의 원소`
+  - 4차원의 rotation 예시
+    - `(cosθ -sinθ 0 0; sinθ cosθ 0 0; 0 0 cosη -sinη; 0 0 sinη cosη) ∈ SO(4)`
+      - 심지어 4-dimensional rotation은 본질적으로 이런 꼴 뿐임을 나중에 보인다?!
