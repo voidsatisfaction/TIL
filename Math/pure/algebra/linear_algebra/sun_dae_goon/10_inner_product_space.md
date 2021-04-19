@@ -12,12 +12,14 @@
 
 ## 큰 그림
 
-- R^n의 dot product의 추상화
+- Euclidean space의 추상화
+- Inner product (가 정의된) space의 정의와 성질
 
 ## 10.1 Inner product space
 
 - 배경
-  - `R^n`공간의 rigid motion의 확장
+  - Euclidean space의 확장
+    - `R^n ∧ dot product가 부여된 공간`
 - `C^n의 (Hermitian) dot product`
   - `X = t(a1, ..., an), Y = t(b1, ..., bn) ∈ C^n, <X,Y> = tX・^Y = ∑_{i=1}^{n}(ai・^bi)`
     - complex conjugate가 필요한 이유는 '길이가' 0이거나, 허수인 `t(1+i, 1-i), t(i,0)`등을 방지하기 위함
@@ -44,11 +46,11 @@
     - `1 <u+v,w> = <u,w> + <v,w>`
     - `2 <cv,w> = c<v,w>`
     - `3 <v,w> = ^<w,v>`
-    - `4 v≠0 => <v,v> > 0 (<v,v>∈R)`
+    - `4 v≠0 => <v,v>∈R ∧ <v,v> > 0 `
       - 이 조건을 강조해서 positive definite inner product라고도 부름
   - **R^n의 dot product, C^n의 dot product는 당연히 inner product**
   - 주의
-    - `F=R일 떄에는, complex conjugate는 없는 것으로 생각하면 됨`
+    - `F=R일 때에는, complex conjugate는 없는 것으로 생각하면 됨`
       - inner product = symmetric bilinear form
     - `F=C일 떄에, <,>의 앞 자리에서는 linear이고, 뒷자리에서는 conjugate linear라고 말함`
     - `Inner product space의 F-subspace는 항상 inner product space`
@@ -118,6 +120,39 @@
     - `||v+w|| ≤ ||v|| + ||w||`
       - 이 증명 역시 신박하다
       - `z = c + id ∈ C, Re(z) = c => z+^z = 2Re(z) ∧ Re(z) ≤ |z|`
+- 거리
+  - v와 w사이의 거리 = `||v-w||`
+  - 성질(`v,w,u∈V`)
+    - `||v-v|| = 0`
+    - `||v-w|| = ||w-v||`
+    - `||v-w|| ≤ ||v-u|| + ||u-w||`
+- **기하학의 생성**
+  - **거리의 개념이 주어진 inner product space마다 기하학이 하나씩 생기는 셈**
+- orthonormal basis
+  - orthogonal subset
+    - `V의 non-zero vector들 {vi| i∈I}가 mutually perpendicular이면(∀i≠j∈I, vi ⊥ vj), {vi| i∈I}를 V의 orthogonal subset이라 부름`
+  - orthonormal subset
+    - `orthogonal subset ∧ vi들이 모두 unit vector`
+  - orthogonal basis
+    - `V의 basis B가 orthogonal subset`
+  - orthonormal basis
+    - `V의 basis B가 orthonormal subset`
+  - 흥미로운 연습문제
+      - Complex-valued function `fn∈C^0[0,2π]를 fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])로 정의하면 {fn | n∈Z}는 C^0[0,2π]의 orthonormal subset`
+- Euclidean space의 경우에는 orthonormal basis의 존재가 자명하였지만, inner product space에서는 전혀 자명하지 않음
+- 질문
+  - `V가 (유한 차원) inner product space, W≤V => W의 orthonormal basis를 항상 찾을 수 있는가?`
+- orthonormal complement
+  - `S⊆V, S^⊥ = {v∈V | ∀w∈S, v ⊥ w}`
+    - 여기서 특히 `W≤V, W^⊥를 W의 orthogonal complement라 함`
+  - 성질(`S⊆V, W≤V ∧ Bw가 W의 기저`)
+    - `S^⊥는 V의 subspace`
+    - `S^⊥ = <S>^⊥`
+    - `Bw^⊥ = W`
+  - 성질2
+    - `0^⊥=V ∧ V^⊥=0`
+    - `W≤V => W∩W^⊥=0`
+    - `W≤V => W≤(W^⊥)^⊥`
 
 ## 10.3 Gram-Schmidt Orthogonalization
 
