@@ -10,6 +10,11 @@
 
 ## 의문
 
+## 참고
+
+- conjugate(anti)-linear
+  - `∀a,b∈C, ∀x,y∈V f: V -> W, f(ax+by) = ^af(x) + ^bf(y)`
+
 ## 큰 그림
 
 - Euclidean space의 추상화
@@ -153,8 +158,29 @@
     - `0^⊥=V ∧ V^⊥=0`
     - `W≤V => W∩W^⊥=0`
     - `W≤V => W≤(W^⊥)^⊥`
+- 질문
+  - `V가 f.d.v.s ∧ W≤V => dimW^⊥ = dimV - dimW ??`
+- rigid motion
+  - `M: V -> V가 조건 ||M(v)-M(w)|| = ||v-w|| (v,w∈V)을 만족하면 M을 V의 rigid motion이라 함`
+    - 이것을 정의로 명명하지 않은 것은 앞으로는 inner product space의 rigid motion이라는 표현을 자주 사용하지 않겠다는 뜻
+      - *왜??*
+  - 우리의 아쉬움
+    - `V가 유한차원 inner product space => V의 rigid motion은 항상 translation과 linear rigid motion의 합성으로 쓸 수 있는가?` or `0을 0으로 보내는 rigid motion은 linear인가?`
+      - `F=C`일 때에는 아니오
+        - `M: V -> V, M은 M(0)=0인 rigid motion일 때, <M(v),M(w)> ≠ <v,w> 이기 때문`
+          - 이 성질이 정해주는 것은 무엇일까?
+        - 아닌 이유는, `F=C일때, inner product가 두번째 좌표에서는 conjugate linear이기 때문`
+  - 주의
+    - 자명한 R-vector space isomorphism `r: R^2 -> C, r(t(a,b)) = a + ib (a,b∈R)`을 사용해 `R^2, C`를 R-vector space로서 identify할 수 있다.
+    - 그러면 complex conjugate는 R^2의 관점에서는 reflection이므로, R-linear이지만, C의 관점에서는 C-linear가 아님
+    - 역으로, C-linear rigid motion on C는 모두 R-linear rigid motion on R^2가 됨
+      - 실제로, C-linear rigid motion on C는 R^2관점에서 보면 모두 rotation
+- F=R일 때는 어떨까?
+  - V의 orthonormal basis의 존재조차 모르고 있는 형편
 
 ## 10.3 Gram-Schmidt Orthogonalization
+
+
 
 ## 10.4 Standard Basis vs Orthonormal Basis
 
