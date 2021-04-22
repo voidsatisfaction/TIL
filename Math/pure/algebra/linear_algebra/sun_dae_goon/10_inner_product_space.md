@@ -19,6 +19,7 @@
 
 - Euclidean space의 추상화
 - Inner product (가 정의된) space의 정의와 성질
+  - 다양한 Inner product space
 
 ## 10.1 Inner product space
 
@@ -133,7 +134,9 @@
     - `||v-w|| ≤ ||v-u|| + ||u-w||`
 - **기하학의 생성**
   - **거리의 개념이 주어진 inner product space마다 기하학이 하나씩 생기는 셈**
-- orthonormal basis
+- orthongonality
+  - 참고
+    - `⊥`는 동치관계가 아니다
   - orthogonal subset
     - `V의 non-zero vector들 {vi| i∈I}가 mutually perpendicular이면(∀i≠j∈I, vi ⊥ vj), {vi| i∈I}를 V의 orthogonal subset이라 부름`
   - orthonormal subset
@@ -143,7 +146,7 @@
   - orthonormal basis
     - `V의 basis B가 orthonormal subset`
   - 흥미로운 연습문제
-      - Complex-valued function `fn∈C^0[0,2π]를 fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])로 정의하면 {fn | n∈Z}는 C^0[0,2π]의 orthonormal subset`
+    - *Complex-valued function `fn∈C^0[0,2π]를 fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])로 정의하면 {fn | n∈Z}는 C^0[0,2π]의 orthonormal subset`*
 - Euclidean space의 경우에는 orthonormal basis의 존재가 자명하였지만, inner product space에서는 전혀 자명하지 않음
 - 질문
   - `V가 (유한 차원) inner product space, W≤V => W의 orthonormal basis를 항상 찾을 수 있는가?`
@@ -172,15 +175,31 @@
         - 아닌 이유는, `F=C일때, inner product가 두번째 좌표에서는 conjugate linear이기 때문`
   - 주의
     - 자명한 R-vector space isomorphism `r: R^2 -> C, r(t(a,b)) = a + ib (a,b∈R)`을 사용해 `R^2, C`를 R-vector space로서 identify할 수 있다.
-    - 그러면 complex conjugate는 R^2의 관점에서는 reflection이므로, R-linear이지만, C의 관점에서는 C-linear가 아님
-    - 역으로, C-linear rigid motion on C는 모두 R-linear rigid motion on R^2가 됨
-      - 실제로, C-linear rigid motion on C는 R^2관점에서 보면 모두 rotation
+    - *그러면 complex conjugate는 R^2의 관점에서는 reflection이므로, R-linear이지만, C의 관점에서는 C-linear가 아님*
+      - *정확히 무엇이 말하고 싶은 것일까?*
+    - *역으로, C-linear rigid motion on C는 모두 R-linear rigid motion on R^2가 됨*
+      - *실제로, C-linear rigid motion on C는 R^2관점에서 보면 모두 rotation*
 - F=R일 때는 어떨까?
   - V의 orthonormal basis의 존재조차 모르고 있는 형편
 
 ## 10.3 Gram-Schmidt Orthogonalization
 
-
+- Gram-Schmidt Orthogonalization
+  - `V가 inner product space이고 {v1, ..., vr}을 V의 linearly independent subset이라고 하자.`
+    - `1. w1=v1으로, 그리고 2≤i≤r, wi = vi - (<vi,wi-1>/<wi-1,wi-1>)・wi-1 - ... - (<vi,w1>/<w1,w1>)・w1 으로 inductively 정의하면 <v1, .., vr> = <w1, ..., wr> ∧ {w1, ..., wr}은 V의 orthogonal subset`
+    - `2. 따라서, {(1/||w1||)・w1, ..., (1/||wr||)・wr}은 orthonormal subset`
+    - `3. 특별히 r = dimV => {(1/||w1||)・w1, ..., (1/||wr||)・wr}은 orthonormal basis`
+  - 의미
+    - 유한 차원 inner product space의 orthonormal basis의 existence가 보장됨
+- 따름정리
+  - `V가 유한차원 inner product space ∧ W≤V => W자신이 inner product space이므로, W도 orthonormal basis를 갖음 => V = W ⊕ W^⊥ ∧ dimV = dimW + dimW^⊥`
+- 연습문제(`V가 유한 차원 inner product space ∧ U,W ≤ V`)
+  - `W = (W^⊥)^⊥`
+  - *`(U+W)^⊥ = U^⊥ ∩ W^⊥`*
+  - *`(U ∩ W)^⊥ = U^⊥ + W^⊥`*
+- `F=R일 때의 rank theorem의 증명`
+  - `AX=0`의 solution space에 대한 새로운 해석 필요
+  - `A∈Mmxn(R)의 row space <t[A]_1, ..., t[A]_m>은 연립방정식 AX＝0의 solution space의 orthogonal complement 즉, ker(LA) = {X∈R^n | AX=0} = <t[A]_1, ..., t[A]_m>^⊥이고 따름정리에 의해 dimker(LA) = n - row rank of A`
 
 ## 10.4 Standard Basis vs Orthonormal Basis
 
