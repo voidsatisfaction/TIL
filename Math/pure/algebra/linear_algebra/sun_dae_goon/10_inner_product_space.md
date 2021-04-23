@@ -184,6 +184,8 @@
 
 ## 10.3 Gram-Schmidt Orthogonalization
 
+임의의 finite dimensional inner product space에서 orthonormal basis를 찾을 수 있다
+
 - Gram-Schmidt Orthogonalization
   - `V가 inner product space이고 {v1, ..., vr}을 V의 linearly independent subset이라고 하자.`
     - `1. w1=v1으로, 그리고 2≤i≤r, wi = vi - (<vi,wi-1>/<wi-1,wi-1>)・wi-1 - ... - (<vi,w1>/<w1,w1>)・w1 으로 inductively 정의하면 <v1, .., vr> = <w1, ..., wr> ∧ {w1, ..., wr}은 V의 orthogonal subset`
@@ -192,7 +194,9 @@
   - 의미
     - 유한 차원 inner product space의 orthonormal basis의 existence가 보장됨
 - 따름정리
-  - `V가 유한차원 inner product space ∧ W≤V => W자신이 inner product space이므로, W도 orthonormal basis를 갖음 => V = W ⊕ W^⊥ ∧ dimV = dimW + dimW^⊥`
+  - `V가 유한차원 inner product space ∧ W≤V => W자신이 inner product space이므로, W도 orthonormal basis를 갖음`
+    - `V = W ⊕ W^⊥`
+    - `dimV = dimW + dimW^⊥`
 - 연습문제(`V가 유한 차원 inner product space ∧ U,W ≤ V`)
   - `W = (W^⊥)^⊥`
   - *`(U+W)^⊥ = U^⊥ ∩ W^⊥`*
@@ -200,8 +204,54 @@
 - `F=R일 때의 rank theorem의 증명`
   - `AX=0`의 solution space에 대한 새로운 해석 필요
   - `A∈Mmxn(R)의 row space <t[A]_1, ..., t[A]_m>은 연립방정식 AX＝0의 solution space의 orthogonal complement 즉, ker(LA) = {X∈R^n | AX=0} = <t[A]_1, ..., t[A]_m>^⊥이고 따름정리에 의해 dimker(LA) = n - row rank of A`
+- `F=C일 때의 rank theorem의 증명`
+  - 표기
+    - `W^conj = {^X∈C^n | X∈W}`
+      - `W^conj ≤ C^n`
+      - `dim(W^conj) = dim(W)`
+  - *`연립방정식 A^X=0의 solution space를 W = {X∈C^n | A^X=0} ≤ C^n 으로 표기하면...`*
+    - *증명이 아직 이해가 잘 안됨*
 
 ## 10.4 Standard Basis vs Orthonormal Basis
+
+- 배경
+  - Euclidean space의 standard basis역할을 대신할 inner product space의 기저는?
+- `F^n의 dot product와 standard basis의 특징`
+  - `X∈F^n => Z = ∑_{i=1}^{n}(<X,ei>・ei) (즉, [X]_ε의 i번째 좌표는 <X,ei>)`
+  - `X,Y∈F^n => <X,Y> = t[X]_ε・^[Y]_ε`
+    - standard basis가 그토록 결정적인 역할을 할 수 있었던 이유는 위 특징들 때문
+- V의 inner product는 사실상 dot product와 다름이 없다
+  - `Bv = {v1, ..., vn}이 inner product space V의 orthogonal basis면 다음이 성립`
+    - `v∈V => v = ∑_{i=1}^{n}((<v,vi>/<vi,vi>)・vi) (즉, [v]_Bv의 i-번째 좌표는 <v,vi>/<vi,vi>)`
+  - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal basis면 다음이 성립`
+    - `v∈V => v = ∑_{i=1}^{n}(<v,vi>・vi) (즉, [v]_Bv의 i-번째 좌표는 <v,vi>)`
+    - `v,w∈V => <v,w> = t[v]_Bv・^[w]_Bv`
+- Fourier coefficient
+  - `Bv = {vi | i∈I}가 inner product space V의 orthonormal subset`
+    - `v의 i-th Fourier coefficient = <v,vi> (v∈V)`
+      - 이를 Bv에 관한 v의 i-번째 좌표로 생각
+    - 만약, Bv가 V의 orthogonal subset => `<v,vi>/<vi>`를 Bv에 관한 v의 i-th Fourier coefficient라 부름
+- Closest Vector Problem
+  - `W≤V, v∈V`, v에 가장 가까운 W의 vector찾기
+    - e.g) PCA
+  - 논의
+    - `v∈V, v의 W-성분(W에 내린 수선의 발)은 무엇일까?`
+    - `V = W ⊕ W^⊥ ∧ w∈W와 w'∈W^⊥가 유일하게 결정되는데 w, w'는 어떻게 구할 수 있을까?`
+      - Gram-Schmidt Orthogonalization Process를 이용하여, subspace W의 orthonormal basis `{v1, ..., vm}`을 찾음
+      - v의 W-성분 w는 다름아닌 `w = <v,v1>v1 + ... + <v,vm>vm (w' = v-w)`
+  - `W가 inner product space V의 finite dimensional subspace ∧ {v1, ..., vm}을 W의 orthonormal basis라 하자. v∈V => ∃w∈W, ∃w'∈W^⊥ s.t v=w+w' ∧ w, w'는 유일 ∧ w = <v,v1>v1 + ... + <v,vm>vm`
+    - *증명?*
+  - Closest Vector Problem의 해답
+    - 위 관찰의 w는 v에 가장 가까운 W의 vector가 된다
+    - *증명?*
+  - 따름정리
+    - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal basis, v = ∑_{i=1}^{n}(aivi) (ai∈F) => ||v||^2 = ∑_{i=1}^{n}(|ai|^2) = ∑_{i=1}^{n}(|<v,vi>|^2)`
+  - Bassel's Inequality
+    - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal subset => ∀v∈V, ∑_{i=1}^{n}(|<v,vi>|) ≤ ||v||^2`
+  - `∑_{n=1}^{n}(1/(n^2)) ≤ π^2/6`의 증명
+    - `fn∈C^0[0,2π], fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])`
+    - `{fn | n∈Z}는 C^0[0,2π]는 orthonormal subset`
+    - `f∈C^0[0,2π]`로 두면
 
 ## 10.5 Inner Product Space의 Isomorphism
 
