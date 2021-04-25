@@ -255,6 +255,67 @@
 
 ## 10.5 Inner Product Space의 Isomorphism
 
+유한차원 inner product space는 본질적으로 하나뿐
+
+- inner product를 보존하는 isomorphism
+  - Gram-Schmidt Orthogonalization => f.d.v.s inner product space V의 orthonormal basis = `Bv = {v1, ..., vn}`
+  - `α_ε^Bv: V -> F^n, α_ε^Bv(vi) = ei`
+    - `<α_ε^Bv(vi), α_ε^Bv(vj)> = δ_ij = <vi, vj> (1≤i,j≤n)`
+    - `<α_ε^Bv(v), α_ε^Bv(w)> = <v,w>`
+  - α_ε^B는 inner product를 보존하는 isomorphism
+    - `α_ε^Bv`는 vector space의 isomorphism이면서 동시에 inner product의 구조도 그대로 옮겨줌
+- inner product space isomorphism
+  - V와 V'이 F-위의 inner product space, `φ: V -> V', φ는 vector space isomorphism ∧ <φ(v),φ(w)> = <v,w> (v,w∈V)`
+    - `φ`는 혼동이 없는 이름바꾸기
+  - `φ`가 inner product isomorphism일 필요충분조건
+    - `φ`는 F-vector space isomorphism
+    - 그냥 inner product를 취한 것이나, φ로 이름을 바꾸어 inner product를 취한 것이나 같다
+  - 결론
+    - 이름만 다르고 사실상 같은 inner product space는 그 성질이 같다
+      - 성질
+        - inner product space로서의 성질로, {덧셈 상수곱 inner product}에 의해서 묘사되는 성질
+        - `{논리 기호, 함수 등의 집합 기호, 덧셈, 상수곱, inner product}`로 묘사된 성질은 isomorphic한 inner product space들이 공유
+- R위의 유한차원 inner product의 rigid motion(`V가 R-위의 유한 차원 inner product space`)
+  - `L(0)=0인 V의 rigid motion L은 linear map`
+  - `=> V의 rigid motion M은 translation과 linear rigid motion의 합성으로 쓸 수 있음`
+  - `=> V의 rigid motion은 항상 bijection`
+
 ## 10.6 Orthogonal Group과 Unitary Group
+
+orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner product space로 일반화
+
+- orthogonal group & unitary group
+  - orthogonal group(`F=R인 경우`)
+    - `V가 inner product <,>가 주어진 R-위의 inner product space일 때`
+    - `O(V) = O(V,<,>) = {L∈L(V,V) | ∀v,w∈V, ||Lv - Lw|| = ||v-w||}`
+      - orthogonal group on V with respect to `<,>`
+  - orthogonal operator
+    - O(V)의 원소
+  - unitary group(`F=C인 경우`)
+    - *왜 unitary라고 부르는 걸까?*
+    - `V가 Hermitian product <,>가 주어진 R-위의 inner product space일 때`
+    - `U(V) = U(V,<,>) = {L∈L(V,V) | ∀v,w∈V, ||Lv - Lw|| = ||v-w||}`
+      - unitary group on V with respect to `<,>`
+  - unitary operator
+    - U(V)의 원소
+  - 주의
+    - `<,>1, <,>2가 V의 inner product일 때, O(V,<,>1)과 O(V,<,>2)가 같을 필요가 없다`
+    - L은 가역
+- orthogonal matrix & unitary matrix
+  - `C^n의 경우`
+    - (complex) unitary group
+      - `C^n에 (Hermitian) dot product가 주어졌을 때`
+      - `U(n) = {A∈Mnxn(C) | LA ∈ U(C^n, dot product)} = {[L]_ε^ε∈Mnxn(C) | L∈U(C^n, dot product)}`
+    - (complex) unitary matrix
+      - U(n)의 원소
+  - `V와 <,>로부터 얻어진 orthogonal group(F=R)`
+    - `On(R,<,>) = {[L]_Bv^Bv∈Mnxn(R) | L∈O(V,<,>)}`
+  - `V와 <,>로부터 얻어진 unitary group(F=C)`
+    - `Un(C,<,>) = {[L]_Bv^Bv∈Mnxn(C) | L∈U(V,<,>)}`
+    - **위와 같은 표기법을 사용하려면, 먼저 위 표기법이 orthonormal basis와는 무관함을 보여야 함**
+      - 즉, **`Bv와 Bw가 각각 F=R,C일 떄, {[L]_Bv^Bv∈Mnxn(R) | L∈O(V,<,>)} = {[L]_Bw^Bw∈Mnxn(R) | L∈O(V,<,>)}`가 성립하는 것을 먼저 증명해야 함**
+- `On(R,<,>)과 Un(C,<,>)의 정의는 V의 orthonormal basis의 선택과는 무관하다`
+  - 따름 명제
+    - `B가 dot product가 주어진 Euclidean space R^n의 임의의 orthonormal basis => O(n) = {[L]_B^B ∈ Mnxn(R) | L∈O(R^n)}`
 
 ## 10.7 Adjoint Matrix와 그 응용
