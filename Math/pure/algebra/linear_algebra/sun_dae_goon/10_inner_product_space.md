@@ -114,7 +114,7 @@
     - *왜?*
 - orthogonal(perpendicular)
   - `v,w∈V, <v,w>=0 <=> v⊥w <=> v와 w는 서로 수직(perpendicular or orthogonal)`
-  - `S,T⊆V, ∀v∈S, w∈T, <v,w>=0 <=> S⊥T <=> S와 T는 서로 수직`
+  - `S,T⊆V, ∀v∈S,∀w∈T, <v,w>=0 <=> S⊥T <=> S와 T는 서로 수직`
   - 성질(`(v⊥w)`)
     - `||v+w||^2 = ||v||^2 + ||w||^2 (Pythagoras의 정리)`
     - `||v+w|| = ||v-w||`
@@ -132,8 +132,8 @@
     - `||v-v|| = 0`
     - `||v-w|| = ||w-v||`
     - `||v-w|| ≤ ||v-u|| + ||u-w||`
-- **기하학의 생성**
-  - **거리의 개념이 주어진 inner product space마다 기하학이 하나씩 생기는 셈**
+  - **기하학의 생성**
+    - **거리의 개념이 주어진 inner product space마다 기하학이 하나씩 생기는 셈**
 - orthongonality
   - 참고
     - `⊥`는 동치관계가 아니다
@@ -147,9 +147,10 @@
     - `V의 basis B가 orthonormal subset`
   - 흥미로운 연습문제
     - *Complex-valued function `fn∈C^0[0,2π]를 fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])로 정의하면 {fn | n∈Z}는 C^0[0,2π]의 orthonormal subset`*
-- Euclidean space의 경우에는 orthonormal basis의 존재가 자명하였지만, inner product space에서는 전혀 자명하지 않음
-- 질문
-  - `V가 (유한 차원) inner product space, W≤V => W의 orthonormal basis를 항상 찾을 수 있는가?`
+      - *어떻게 증명하지?*
+  - Euclidean space의 경우에는 orthonormal basis의 존재가 자명하였지만, inner product space에서는 전혀 자명하지 않음
+  - 질문
+    - `V가 (유한 차원) inner product space, W≤V => W의 orthonormal basis를 항상 찾을 수 있는가?`
 - orthonormal complement
   - `S⊆V, S^⊥ = {v∈V | ∀w∈S, v ⊥ w}`
     - 여기서 특히 `W≤V, W^⊥를 W의 orthogonal complement라 함`
@@ -161,8 +162,8 @@
     - `0^⊥=V ∧ V^⊥=0`
     - `W≤V => W∩W^⊥=0`
     - `W≤V => W≤(W^⊥)^⊥`
-- 질문
-  - `V가 f.d.v.s ∧ W≤V => dimW^⊥ = dimV - dimW ??`
+  - 질문
+    - `V가 f.d.v.s ∧ W≤V => dimW^⊥ = dimV - dimW ??`
 - rigid motion
   - `M: V -> V가 조건 ||M(v)-M(w)|| = ||v-w|| (v,w∈V)을 만족하면 M을 V의 rigid motion이라 함`
     - 이것을 정의로 명명하지 않은 것은 앞으로는 inner product space의 rigid motion이라는 표현을 자주 사용하지 않겠다는 뜻
@@ -172,8 +173,9 @@
       - `F=C`일 때에는 아니오
         - `M: V -> V, M은 M(0)=0인 rigid motion일 때, <M(v),M(w)> ≠ <v,w> 이기 때문`
           - 이 성질이 정해주는 것은 무엇일까?
-        - 아닌 이유는, `F=C일때, inner product가 두번째 좌표에서는 conjugate linear이기 때문`
-  - 주의
+        - *아닌 이유는, `F=C일때, inner product가 두번째 좌표에서는 conjugate linear이기 때문`*
+          - *정확히 왜일까 한 번 증명을 고대로 해보자*
+  - *주의* (이 부분 다시 읽기)
     - 자명한 R-vector space isomorphism `r: R^2 -> C, r(t(a,b)) = a + ib (a,b∈R)`을 사용해 `R^2, C`를 R-vector space로서 identify할 수 있다.
     - *그러면 complex conjugate는 R^2의 관점에서는 reflection이므로, R-linear이지만, C의 관점에서는 C-linear가 아님*
       - *정확히 무엇이 말하고 싶은 것일까?*
@@ -195,22 +197,23 @@
     - 유한 차원 inner product space의 orthonormal basis의 existence가 보장됨
 - 따름정리
   - `V가 유한차원 inner product space ∧ W≤V => W자신이 inner product space이므로, W도 orthonormal basis를 갖음`
-    - `V = W ⊕ W^⊥`
+    - **`V = W ⊕ W^⊥`**
     - `dimV = dimW + dimW^⊥`
 - 연습문제(`V가 유한 차원 inner product space ∧ U,W ≤ V`)
   - `W = (W^⊥)^⊥`
-  - *`(U+W)^⊥ = U^⊥ ∩ W^⊥`*
-  - *`(U ∩ W)^⊥ = U^⊥ + W^⊥`*
-- `F=R일 때의 rank theorem의 증명`
-  - `AX=0`의 solution space에 대한 새로운 해석 필요
-  - `A∈Mmxn(R)의 row space <t[A]_1, ..., t[A]_m>은 연립방정식 AX＝0의 solution space의 orthogonal complement 즉, ker(LA) = {X∈R^n | AX=0} = <t[A]_1, ..., t[A]_m>^⊥이고 따름정리에 의해 dimker(LA) = n - row rank of A`
-- `F=C일 때의 rank theorem의 증명`
-  - 표기
-    - `W^conj = {^X∈C^n | X∈W}`
-      - `W^conj ≤ C^n`
-      - `dim(W^conj) = dim(W)`
-  - *`연립방정식 A^X=0의 solution space를 W = {X∈C^n | A^X=0} ≤ C^n 으로 표기하면...`*
-    - *증명이 아직 이해가 잘 안됨*
+  - `(U+W)^⊥ = U^⊥ ∩ W^⊥`
+  - `(U ∩ W)^⊥ = U^⊥ + W^⊥`
+- rank theorem의 증명
+  - `F=R일 때의 rank theorem의 증명`
+    - `AX=0`의 solution space에 대한 새로운 해석 필요
+    - `A∈Mmxn(R)의 row space <t[A]_1, ..., t[A]_m>은 연립방정식 AX＝0의 solution space의 orthogonal complement 즉, ker(LA) = {X∈R^n | AX=0} = <t[A]_1, ..., t[A]_m>^⊥이고 따름정리에 의해 dimker(LA) = n - row rank of A`
+  - `F=C일 때의 rank theorem의 증명`
+    - 표기
+      - `W^conj = {^X∈C^n | X∈W}`
+        - `W^conj ≤ C^n`
+        - `dim(W^conj) = dim(W)`
+    - *`연립방정식 A^X=0의 solution space를 W = {X∈C^n | A^X=0} ≤ C^n 으로 표기하면...`*
+      - *증명이 아직 이해가 잘 안됨*
 
 ## 10.4 Standard Basis vs Orthonormal Basis
 
@@ -314,8 +317,21 @@ orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner prod
     - `Un(C,<,>) = {[L]_Bv^Bv∈Mnxn(C) | L∈U(V,<,>)}`
     - **위와 같은 표기법을 사용하려면, 먼저 위 표기법이 orthonormal basis와는 무관함을 보여야 함**
       - 즉, **`Bv와 Bw가 각각 F=R,C일 떄, {[L]_Bv^Bv∈Mnxn(R) | L∈O(V,<,>)} = {[L]_Bw^Bw∈Mnxn(R) | L∈O(V,<,>)}`가 성립하는 것을 먼저 증명해야 함**
-- `On(R,<,>)과 Un(C,<,>)의 정의는 V의 orthonormal basis의 선택과는 무관하다`
+- **`On(R,<,>)과 Un(C,<,>)의 정의는 V의 orthonormal basis의 선택과는 무관하다`**
   - 따름 명제
     - `B가 dot product가 주어진 Euclidean space R^n의 임의의 orthonormal basis => O(n) = {[L]_B^B ∈ Mnxn(R) | L∈O(R^n)}`
+      - R^n의 표준기저가 아닌 새로운 orthonormal basis를 생각 = 새로운 직교좌표계를 생각한다는 뜻
+      - 그런데, R^2의 rotation은 직교좌표계를 바꾸어도 여전히 R^2의 rotation
+        - *무슨 의미?*
+  - *증명?*
+- `V가 inner product <,>가 주어진 n-dimensional inner product space ∧ L∈L(V,V)일 때, 다음이 동치`
+  - `1 ∀v,w∈V, ||Lv - Lw|| = ||v-w||`
+  - `2 ∀v∈V, ||Lv|| = ||v||`
+    - `2' ||v|| = 1 => ||Lv|| = 1 (L은 unit vector를 보존)`
+  - `3 ∀v∈V, <Lv,Lv> = <v,v>`
+  - `4 ∀v,w∈V, <Lv,Lw> = <v,w>`
+  - `5 Bv가 V의 orthonormal basis => L(Bv)도 V의 orthonormal basis`
+    - `5' ∃Bv⊆V인 orthonormal basis s.t L(Bv)가 V의 orthonormal basis`
+-
 
 ## 10.7 Adjoint Matrix와 그 응용
