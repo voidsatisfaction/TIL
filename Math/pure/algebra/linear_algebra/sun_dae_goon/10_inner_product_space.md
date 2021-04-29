@@ -332,6 +332,30 @@ orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner prod
   - `4 ∀v,w∈V, <Lv,Lw> = <v,w>`
   - `5 Bv가 V의 orthonormal basis => L(Bv)도 V의 orthonormal basis`
     - `5' ∃Bv⊆V인 orthonormal basis s.t L(Bv)가 V의 orthonormal basis`
--
+  - 연습문제
+    - `G`를 `O(V), U(V), On(R,<,>), Un(C,<,>)혹은 U(n)`이라고 놓을 때, 다음이 성립
+      - `Iv∈G ∨ In∈G`
+      - `L,M∈G => LM∈G (linear operator의 곱셈은 합성)`
+      - `L∈G => L^-1∈G`
+- adjoint matrix(`A∈Mmxn(C)`)
+  - `A* = ^tA = t^A`
+    - `A∈Mmxn(R), A* = tA`
+  - 주의
+    - classical adjoint와는 관계가 없음
+- `A∈Mnxn(C)일때 다음 조건들이 동치임을 보여라`
+  - `1 ∀v,w∈C^n, ||Av - Aw|| = ||v-w|| (A∈U(n))`
+  - `2 ∀v∈C^n, ||Av|| = ||v||`
+  - `3 ∀v∈C^n, <Av,Av> = <v,v>`
+  - `4 ∀v,w∈C^n, <Av,Aw> = <v,w>`
+  - `5 A의 column들의 집합 {[A]^1, ..., [A]^n}은 C^n의 orthonormal basis`
+  - `6 tA・^A = I = ^A・tA 즉, A*・A = I = A・A* (A^-1 = A*)`
+  - `7 tA∈U(n), 7' ^A∈U(n), 7'' A*∈U(n)`
+  - `8 A의 row들의 집합 {[A]_1, ..., [A]_n}은 M1xn(C)의 orthonormal basis`
+- `A∈U(n) => |det(A)| = 1`
+- special unitary group
+  - `SU(n) = {A∈U(n) | det(A) = 1}`
+- 질문
+  - 10분만 투자하여 9.5에서 `SO(2)`와 `O(2)`의 구조를 설명했던 것 처럼 `SU(2)`와 `U(2)`의 구조를 설명할 수 있는지 시도해보라
+- *inner product를 행렬로 볼 수 있다?*
 
 ## 10.7 Adjoint Matrix와 그 응용
