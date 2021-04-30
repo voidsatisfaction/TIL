@@ -285,32 +285,34 @@
 
 ## 10.6 Orthogonal Group과 Unitary Group
 
+- 개념 정확히 파악하기
+  - `O(V), U(V)`
+  - `O(n), U(n), On(R,<,>), Un(C,<,>)`
+
+---
+
 orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner product space로 일반화
 
 - orthogonal group & unitary group
-  - orthogonal group(`F=R인 경우`)
-    - `V가 inner product <,>가 주어진 R-위의 inner product space일 때`
+  - orthogonal group(`F=R인 경우, V가 inner product <,>가 주어진 R-위의 inner product space일 때`)
     - `O(V) = O(V,<,>) = {L∈L(V,V) | ∀v,w∈V, ||Lv - Lw|| = ||v-w||}`
       - orthogonal group on V with respect to `<,>`
   - orthogonal operator
     - O(V)의 원소
-  - unitary group(`F=C인 경우`)
-    - *왜 unitary라고 부르는 걸까?*
-    - `V가 Hermitian product <,>가 주어진 R-위의 inner product space일 때`
+  - unitary group(`F=C인 경우, V가 Hermitian product <,>가 주어진 C-위의 inner product space일 때`)
     - `U(V) = U(V,<,>) = {L∈L(V,V) | ∀v,w∈V, ||Lv - Lw|| = ||v-w||}`
       - unitary group on V with respect to `<,>`
+        - *왜 unitary라고 부르는 걸까?*
   - unitary operator
     - U(V)의 원소
   - 주의
     - `<,>1, <,>2가 V의 inner product일 때, O(V,<,>1)과 O(V,<,>2)가 같을 필요가 없다`
     - L은 가역
 - orthogonal matrix & unitary matrix
-  - `C^n의 경우`
-    - (complex) unitary group
-      - `C^n에 (Hermitian) dot product가 주어졌을 때`
-      - `U(n) = {A∈Mnxn(C) | LA ∈ U(C^n, dot product)} = {[L]_ε^ε∈Mnxn(C) | L∈U(C^n, dot product)}`
-    - (complex) unitary matrix
-      - U(n)의 원소
+  - C^n, (complex) unitary group(`C^n에 (Hermitian) dot product가 주어졌을 때`)
+    - `U(n) = {A∈Mnxn(C) | LA ∈ U(C^n, dot product)} = {[L]_ε^ε∈Mnxn(C) | L∈U(C^n, dot product)}`
+  - (complex) unitary matrix
+    - U(n)의 원소
   - `V와 <,>로부터 얻어진 orthogonal group(F=R)`
     - `On(R,<,>) = {[L]_Bv^Bv∈Mnxn(R) | L∈O(V,<,>)}`
   - `V와 <,>로부터 얻어진 unitary group(F=C)`
@@ -350,12 +352,14 @@ orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner prod
   - `5 A의 column들의 집합 {[A]^1, ..., [A]^n}은 C^n의 orthonormal basis`
   - `6 tA・^A = I = ^A・tA 즉, A*・A = I = A・A* (A^-1 = A*)`
   - `7 tA∈U(n), 7' ^A∈U(n), 7'' A*∈U(n)`
+    - `tA의 column의 집합은 C^n의 basis(우리의 철학)`
+    - `tA의 column의 집합은 orthonormal subset`
   - `8 A의 row들의 집합 {[A]_1, ..., [A]_n}은 M1xn(C)의 orthonormal basis`
-- `A∈U(n) => |det(A)| = 1`
+  - `A∈U(n) => |det(A)| = 1`
 - special unitary group
   - `SU(n) = {A∈U(n) | det(A) = 1}`
 - 질문
-  - 10분만 투자하여 9.5에서 `SO(2)`와 `O(2)`의 구조를 설명했던 것 처럼 `SU(2)`와 `U(2)`의 구조를 설명할 수 있는지 시도해보라
+  - *10분만 투자하여 9.5에서 `SO(2)`와 `O(2)`의 구조를 설명했던 것 처럼 `SU(2)`와 `U(2)`의 구조를 설명할 수 있는지 시도해보라*
 - *inner product를 행렬로 볼 수 있다?*
 
 ## 10.7 Adjoint Matrix와 그 응용
