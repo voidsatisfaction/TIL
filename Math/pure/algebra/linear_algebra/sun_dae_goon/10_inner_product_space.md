@@ -200,6 +200,7 @@
     - **`V = W ⊕ W^⊥`**
     - `dimV = dimW + dimW^⊥`
 - 연습문제(`V가 유한 차원 inner product space ∧ U,W ≤ V`)
+  - **이 연습문제 꽤나 재미있다!**
   - `W = (W^⊥)^⊥`
   - `(U+W)^⊥ = U^⊥ ∩ W^⊥`
   - `(U ∩ W)^⊥ = U^⊥ + W^⊥`
@@ -207,9 +208,9 @@
   - `F=R일 때의 rank theorem의 증명`
     - `AX=0`의 solution space에 대한 새로운 해석 필요
     - `A∈Mmxn(R)의 row space <t[A]_1, ..., t[A]_m>은 연립방정식 AX＝0의 solution space의 orthogonal complement 즉, ker(LA) = {X∈R^n | AX=0} = <t[A]_1, ..., t[A]_m>^⊥이고 따름정리에 의해 dimker(LA) = n - row rank of A`
-  - `F=C일 때의 rank theorem의 증명`
+  - *`F=C일 때의 rank theorem의 증명`*
     - 표기
-      - `W^conj = {^X∈C^n | X∈W}`
+      - `W^conj = {^X∈C^n | X∈W} (W가 C-vecor space C^n의 subspace)`
         - `W^conj ≤ C^n`
         - `dim(W^conj) = dim(W)`
     - *`연립방정식 A^X=0의 solution space를 W = {X∈C^n | A^X=0} ≤ C^n 으로 표기하면...`*
@@ -220,15 +221,17 @@
 - 배경
   - Euclidean space의 standard basis역할을 대신할 inner product space의 기저는?
 - `F^n의 dot product와 standard basis의 특징`
-  - `X∈F^n => Z = ∑_{i=1}^{n}(<X,ei>・ei) (즉, [X]_ε의 i번째 좌표는 <X,ei>)`
+  - `X∈F^n => X = ∑_{i=1}^{n}(<X,ei>・ei) (즉, [X]_ε의 i번째 좌표는 <X,ei>)`
   - `X,Y∈F^n => <X,Y> = t[X]_ε・^[Y]_ε`
     - standard basis가 그토록 결정적인 역할을 할 수 있었던 이유는 위 특징들 때문
-- V의 inner product는 사실상 dot product와 다름이 없다
+- V의 inner product의 성질
   - `Bv = {v1, ..., vn}이 inner product space V의 orthogonal basis면 다음이 성립`
     - `v∈V => v = ∑_{i=1}^{n}((<v,vi>/<vi,vi>)・vi) (즉, [v]_Bv의 i-번째 좌표는 <v,vi>/<vi,vi>)`
   - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal basis면 다음이 성립`
     - `v∈V => v = ∑_{i=1}^{n}(<v,vi>・vi) (즉, [v]_Bv의 i-번째 좌표는 <v,vi>)`
+      - **`v∈V, 의 i번째 좌표는 <v,vi>`**
     - `v,w∈V => <v,w> = t[v]_Bv・^[w]_Bv`
+      - **V의 inner product는 사실상 dot product와 다름이 없다**
 - Fourier coefficient
   - `Bv = {vi | i∈I}가 inner product space V의 orthonormal subset`
     - `v의 i-th Fourier coefficient = <v,vi> (v∈V)`
@@ -242,19 +245,18 @@
     - `V = W ⊕ W^⊥ ∧ w∈W와 w'∈W^⊥가 유일하게 결정되는데 w, w'는 어떻게 구할 수 있을까?`
       - Gram-Schmidt Orthogonalization Process를 이용하여, subspace W의 orthonormal basis `{v1, ..., vm}`을 찾음
       - v의 W-성분 w는 다름아닌 `w = <v,v1>v1 + ... + <v,vm>vm (w' = v-w)`
-  - `W가 inner product space V의 finite dimensional subspace ∧ {v1, ..., vm}을 W의 orthonormal basis라 하자. v∈V => ∃w∈W, ∃w'∈W^⊥ s.t v=w+w' ∧ w, w'는 유일 ∧ w = <v,v1>v1 + ... + <v,vm>vm`
-    - *증명?*
-  - Closest Vector Problem의 해답
-    - 위 관찰의 w는 v에 가장 가까운 W의 vector가 된다
-    - *증명?*
+  - 정리
+    - `W가 inner product space V의 finite dimensional subspace ∧ {v1, ..., vm}을 W의 orthonormal basis라 하자. v∈V => ∃w∈W, ∃w'∈W^⊥ s.t v=w+w' ∧ w, w'는 유일 ∧ w = <v,v1>v1 + ... + <v,vm>vm`
+      - 위 관찰의 w는 v에 가장 가까운 W의 vector가 된다
   - 따름정리
     - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal basis, v = ∑_{i=1}^{n}(aivi) (ai∈F) => ||v||^2 = ∑_{i=1}^{n}(|ai|^2) = ∑_{i=1}^{n}(|<v,vi>|^2)`
-  - Bassel's Inequality
-    - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal subset => ∀v∈V, ∑_{i=1}^{n}(|<v,vi>|) ≤ ||v||^2`
-  - `∑_{n=1}^{n}(1/(n^2)) ≤ π^2/6`의 증명
-    - `fn∈C^0[0,2π], fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])`
-    - `{fn | n∈Z}는 C^0[0,2π]는 orthonormal subset`
-    - `f∈C^0[0,2π]`로 두면
+- Bassel's Inequality
+  - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal subset => ∀v∈V, ∑_{i=1}^{n}(|<v,vi>|) ≤ ||v||^2`
+  - 응용
+    - `∑_{n=1}^{n}(1/(n^2)) ≤ (π^2)/6`의 증명
+      - `fn∈C^0[0,2π], fn(x) = e^inx = cos(nx) + i・sin(nx) (n∈Z, x∈[0,2π])`
+      - `{fn | n∈Z}는 C^0[0,2π]는 orthonormal subset`
+      - `f∈C^0[0,2π]`로 두면
 
 ## 10.5 Inner Product Space의 Isomorphism
 
@@ -278,6 +280,10 @@
       - 성질
         - inner product space로서의 성질로, {덧셈 상수곱 inner product}에 의해서 묘사되는 성질
         - `{논리 기호, 함수 등의 집합 기호, 덧셈, 상수곱, inner product}`로 묘사된 성질은 isomorphic한 inner product space들이 공유
+- Classification of finite dimensional inner product space
+  - `V,W가 F-위의 유한 차원 inner product space일 때, 다음은 동치`
+    - `V,W는 inner product space로서 isomorphic`
+    - `dimV = dimW`
 - R위의 유한차원 inner product의 rigid motion(`V가 R-위의 유한 차원 inner product space`)
   - `L(0)=0인 V의 rigid motion L은 linear map`
   - `=> V의 rigid motion M은 translation과 linear rigid motion의 합성으로 쓸 수 있음`
@@ -291,15 +297,17 @@
 
 ---
 
-orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner product space로 일반화
+orthogonal group, orthogonal operator, orthogonal matrix의 개념을 inner product space로 일반화
+
+group에서 with respect to가 언급되지 않는 경우, matrix
 
 - orthogonal group & unitary group
-  - orthogonal group(`F=R인 경우, V가 inner product <,>가 주어진 R-위의 inner product space일 때`)
+  - orthogonal group on V with respect to `<,>`(`F=R인 경우, V가 inner product <,>가 주어진 R-위의 inner product space일 때`)
     - `O(V) = O(V,<,>) = {L∈L(V,V) | ∀v,w∈V, ||Lv - Lw|| = ||v-w||}`
       - orthogonal group on V with respect to `<,>`
   - orthogonal operator
     - O(V)의 원소
-  - unitary group(`F=C인 경우, V가 Hermitian product <,>가 주어진 C-위의 inner product space일 때`)
+  - unitary group on V with respect to `<,>`(`F=C인 경우, V가 Hermitian product <,>가 주어진 C-위의 inner product space일 때`)
     - `U(V) = U(V,<,>) = {L∈L(V,V) | ∀v,w∈V, ||Lv - Lw|| = ||v-w||}`
       - unitary group on V with respect to `<,>`
         - *왜 unitary라고 부르는 걸까?*
@@ -309,10 +317,11 @@ orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner prod
     - `<,>1, <,>2가 V의 inner product일 때, O(V,<,>1)과 O(V,<,>2)가 같을 필요가 없다`
     - L은 가역
 - orthogonal matrix & unitary matrix
-  - C^n, (complex) unitary group(`C^n에 (Hermitian) dot product가 주어졌을 때`)
+  - (complex) unitary group(`C^n에 (Hermitian) dot product가 주어졌을 때`)
     - `U(n) = {A∈Mnxn(C) | LA ∈ U(C^n, dot product)} = {[L]_ε^ε∈Mnxn(C) | L∈U(C^n, dot product)}`
   - (complex) unitary matrix
     - U(n)의 원소
+- V와 <,>로부터 얻어진 orthogonal group(F=R or F=C)
   - `V와 <,>로부터 얻어진 orthogonal group(F=R)`
     - `On(R,<,>) = {[L]_Bv^Bv∈Mnxn(R) | L∈O(V,<,>)}`
   - `V와 <,>로부터 얻어진 unitary group(F=C)`
@@ -320,11 +329,12 @@ orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner prod
     - **위와 같은 표기법을 사용하려면, 먼저 위 표기법이 orthonormal basis와는 무관함을 보여야 함**
       - 즉, **`Bv와 Bw가 각각 F=R,C일 떄, {[L]_Bv^Bv∈Mnxn(R) | L∈O(V,<,>)} = {[L]_Bw^Bw∈Mnxn(R) | L∈O(V,<,>)}`가 성립하는 것을 먼저 증명해야 함**
 - **`On(R,<,>)과 Un(C,<,>)의 정의는 V의 orthonormal basis의 선택과는 무관하다`**
-  - 따름 명제
-    - `B가 dot product가 주어진 Euclidean space R^n의 임의의 orthonormal basis => O(n) = {[L]_B^B ∈ Mnxn(R) | L∈O(R^n)}`
+  - 따름 명제(우리의 최대 관심사)
+    - `B가 dot product가 주어진 Euclidean space R^n의 임의의 orthonormal basis => O(n) = {[L]_B^B ∈ Mnxn(R) | L∈O(R^n)} (단, O(R^n) = O(R^n, dot product))`
       - R^n의 표준기저가 아닌 새로운 orthonormal basis를 생각 = 새로운 직교좌표계를 생각한다는 뜻
       - 그런데, R^2의 rotation은 직교좌표계를 바꾸어도 여전히 R^2의 rotation
         - *무슨 의미?*
+    - `B가 (Hermitian) dot product가 주어진 C^n의 임의의 orthonormal basis => U(n) = {[L]_B^B ∈ Mnxn(C) | L∈U(C^n)} (단, U(R^n) = U(R^n, dot product))`
   - *증명?*
 - `V가 inner product <,>가 주어진 n-dimensional inner product space ∧ L∈L(V,V)일 때, 다음이 동치`
   - `1 ∀v,w∈V, ||Lv - Lw|| = ||v-w||`
@@ -363,3 +373,36 @@ orthogonal operator, orthogonal matrix, orthogonal group의 개념을 inner prod
 - *inner product를 행렬로 볼 수 있다?*
 
 ## 10.7 Adjoint Matrix와 그 응용
+
+- 준비
+  - `F^n, F^m에 각각 dot product <,>가 주어져있다고 하자. 이때, A∈Mmxn(F)이면`
+    - `<AX,Y> = <X,A*Y> (X∈F^n, Y∈F^m)`
+    - `<Y,AX> = <A*Y,X>`
+  - 질문
+    - `유한차원 벡터공간 V, W에 각각 inner product <,>가 주어져 있다고 하자. 이때, L(V,W)이면 <Lv,w> = <v,L*w> (v∈V, w∈W)인 L*를 찾을 수 있을까? L*의 의미는 무엇일까?`
+      - 이 질문에 답하는것이 이 책의 목표중 하나
+- LSA(Least Squares Approximation)
+  - `n=m (A = Mmxn(F)) - 데이터와 파라미터의 개수가 같을 경우`
+    - Lagrange interpolation
+  - `m>n or m<n (A = Mmxn(F))`
+    - `AX=B가 solution을 갖지 않는 경우에 ||AX0-B||가 최소인 X0을 구하는 문제(방법)`
+      - 데이터에서 리버싱을하여, 데이터에서 가장 가까운 함수를 찾는 방식
+        - 그 역은 방정식을 '푼다'라고 함
+    - 명제
+      - 답의 존재성
+        - `LSA-문제의 solution - 즉, ∃X0∈F^n, ∀X∈F^n, ||AX0-B|| ≤ ||AX-B||`
+      - 답의 유일성
+        - `LA가 injective => LSA문제의 solution X0은 유일하게 결정`
+    - 답의 도출
+      - `A∈Mmxn(F), B∈F^m일 때, 다음은 동치`
+        - `X0는 LSA문제의 solution - 즉, ∀X∈F^n, ||AX0-B|| ≤ ||AX-B||`
+        - `(A*・A)X0 = A*・B`
+          - 따라서, `X0`는 `A*・A`를 coefficient matrix로 갖는 일차 연립방정식의 solution
+    - 수학과 응용의 차이
+      - 응용문제의 가장 큰 관심사는 solution의 existence와 uniqueness가 아니라, 구체적으로 어떻게 그리고 얼마나 빨리 계산할 수 있느냐 하는 것
+  - `m>n의 경우(A = Mmxn(F)) - 데이터의 개수가 파라미터의 개수보다 많을 경우`
+    - `A∈Mmxn(F), B∈F^m, m≥n ∧ rank(A)=n (A가 full rank를 가지면) => LSA문제의 solution X0는 존재하고 하나뿐이다`
+  - 관찰
+    - `A∈Mmxn(F), rank(A*・A) = rank(A)`
+      - 따라서, `m≥n, A가 full rank => (A*・A)는 가역행렬`
+    - `A∈Mmxn(F), rank(A) = rank(tA) = rank(^A) = rank(A*)`
