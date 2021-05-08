@@ -382,6 +382,9 @@ group에서 with respect to가 언급되지 않는 경우, matrix
     - `유한차원 벡터공간 V, W에 각각 inner product <,>가 주어져 있다고 하자. 이때, L(V,W)이면 <Lv,w> = <v,L*w> (v∈V, w∈W)인 L*를 찾을 수 있을까? L*의 의미는 무엇일까?`
       - 이 질문에 답하는것이 이 책의 목표중 하나
 - LSA(Least Squares Approximation)
+  - 개요
+    - `a0, a1, ..., am∈F 가 서로다른 scalar ∧ b0, b1, ..., bm∈F 는 임의의 scalar, g(t)∈Pn(F) s.t ∀i∈{0, ..., m}, g(ai)=bi`의 조건을 가진 g(t)를 구해보자.
+      - 특히, 해가 없는경우에, 가장 가까운 g(t)는 무엇일까
   - `n=m (A = Mmxn(F)) - 데이터와 파라미터의 개수가 같을 경우`
     - Lagrange interpolation
   - `m>n or m<n (A = Mmxn(F))`
@@ -400,9 +403,23 @@ group에서 with respect to가 언급되지 않는 경우, matrix
           - 따라서, `X0`는 `A*・A`를 coefficient matrix로 갖는 일차 연립방정식의 solution
     - 수학과 응용의 차이
       - 응용문제의 가장 큰 관심사는 solution의 existence와 uniqueness가 아니라, 구체적으로 어떻게 그리고 얼마나 빨리 계산할 수 있느냐 하는 것
-  - `m>n의 경우(A = Mmxn(F)) - 데이터의 개수가 파라미터의 개수보다 많을 경우`
+  - 특히 `m>n의 경우(A = Mmxn(F)) - 데이터의 개수가 파라미터의 개수보다 많을 경우`
     - `A∈Mmxn(F), B∈F^m, m≥n ∧ rank(A)=n (A가 full rank를 가지면) => LSA문제의 solution X0는 존재하고 하나뿐이다`
+      - `A*・A`가 invertible이므로 `X0 = (A*・A)^-1・A*・B`
   - 관찰
     - `A∈Mmxn(F), rank(A*・A) = rank(A)`
       - 따라서, `m≥n, A가 full rank => (A*・A)는 가역행렬`
     - `A∈Mmxn(F), rank(A) = rank(tA) = rank(^A) = rank(A*)`
+    - `A∈Mmxn(F), im(A*) = (kerA)^⊥ (즉, im(A*)^⊥ = kerA) <=> imA = ker(A*)^⊥ (즉, ker(A*) = (imA)^⊥)`
+- MSP(Minimum Solution Problem)
+  - 개요
+    - 연립 방정식 `AX = B`가 solution을 가질 때, 크기가 가장 작은 solution은?
+      - 원점에서 `AX = B`의 해집합에 내린 수선의 발은?
+  - 명제
+    - `A∈Mmxn(F), B∈F^m, AX=B가 solution을 갖는다고 가정하자, 그러면`
+      - `1. ∃X0∈F^n 그리고 유일 s.t AX0=B ∧ (X∈F^n, AX=B => ||X0|| ≤ ||X||)`
+        - `F^n = kerA ⊕ (kerA)^⊥ = kerA ⊕ imA*`
+        - `AX=B의 solution space = X0 + kerA`
+      - `2. {X0} = AX=B의 해집합 ∩ im(A*)`
+  - 답의 도출
+    - `(AA*)Y0 = B`를 만족하는 `Y0∈F^m`을 아무거나 하나 구하면 `X0 = A*・Y0`이 `AX = B`의 유일한 minimal solution이 됨
