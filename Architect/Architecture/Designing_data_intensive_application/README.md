@@ -64,23 +64,28 @@
 
 ### Reliability
 
-- 용어 정리
-  - faults
+- faults
+  - 정의
+    - 잘못될 수 있는 것들
+  - 종류
+    - Hardware faults
+    - Software faults
+    - Human errors
+  - c.f) fault-tolerant / resilient
     - 정의
-      - 잘못될 수 있는 것들
-    - c.f) fault-tolerant / resilient
-      - 정의
-        - faults를 예측하고, 그것들을 잘 다룰 수 있는 것
-          - predict가 아닌 tolerant
-          - 단, security는 predict가 바람직
-        - faults를 다 막을수는 없으나, failure는 막자
-  - failure
-    - 정의
-      - 전체적인 시스템이 유저에게 필요한 모든 서비스들을 제공할 수 없을 때
+      - faults를 예측하고, 그것들을 잘 다룰 수 있는 것
+        - predict가 아닌 tolerant
+        - 단, security는 predict가 바람직
+      - faults를 다 막을수는 없으나, failure는 막자
+- failure
+  - 정의
+    - 전체적인 시스템이 유저에게 필요한 모든 서비스들을 제공할 수 없는 경우
 - fault-tolerant system 만들기 위한 전략
   - 일부러 fault를 많이 만들어보자
 - faults의 종류
   - **Hardware faults**
+    - 개요
+      - 하드웨어 에러의 경우 일반적으로, 독립적이고 서로 약한 상관관계를 갖음
     - 예시
       - Hard disks crash
         - 평균적으로 10 to 50 years에 망가짐
@@ -97,7 +102,6 @@
         - 머신을 리부팅해야할 때, *rolling upgrade*를 사용하여 하나의 노드를 한 타이밍에 리부팅 할 수 있음
   - **Software Errors**
     - 개요
-      - 하드웨어 에러의 경우 일반적으로, 독립적이고 서로 약한 상관관계를 갖음
       - 소프트웨어 에러는 예측하기 더 어렵고, 노드에 걸쳐서 서로 상관관계가 있으므로, 상관관계가 옅은 하드웨어 faults보다 더 많은 시스템 faults를 일으킬 가능성이 큼
     - 예시
       - 특정 bad input을 넣으면 application server가 크래시 되는 경우
@@ -298,4 +302,5 @@ backend response time bottleneck
     - Refactoring
   - Simplicity / Abstractions
     - 쉽게 이해할 수 있으면 쉽게 수정이 가능하다
-- 데이터 시스템에서는 Agility대신에 evolvability라는 용어를 사용
+- 참고
+  - 데이터 시스템에서는 Agility대신에 evolvability라는 용어를 사용
