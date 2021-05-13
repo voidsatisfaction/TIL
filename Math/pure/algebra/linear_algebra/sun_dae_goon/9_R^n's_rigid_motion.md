@@ -255,10 +255,11 @@ R^n의 rigid motion M은 translation과 linear rigid motion의 합성으로 쓸 
     - `A∈O(n) => det(A) = ±1`
     - `S∈O(n)-SO(n)`
       - `O(n)-SO(n)≠φ`
-      - `λs: SO(n) -> S・SO(n) (S・SO(n) = {SA | A∈SO(n)}), λs(A) = SA (A∈SO(n))`
+      - `λs: SO(n) -> S・SO(n) (S・SO(n) = {S・A | A∈SO(n)}), λs(A) = S・A (A∈SO(n))`
         - `λs는 bijection`
       - `O(n)-SO(n) = S・SO(n)`
         - `S'∈O(n)-SO(n) => S'∈S・SO(n)`
+          - `S`가 invertible임을 이용
       - `O(n) = SO(n) ∐ (S・SO(n))`
 
 ## 9.4 Reflection
@@ -341,11 +342,12 @@ Reflection
   - `θ∈R, Sθ는 R^2의 reflection?`
   - `det(SY◦SZ) = (-1)・(-1) = 1 => SY◦SZ = Rθ`인데 이때, θ는 어떻게 구할까?
 - 관찰
-  - `θ∈R, Sθ = S_{t(-sinθ/2, cosθ/2)}`
+  - *`θ∈R, Sθ = S_{t(-sin(θ/2), cos(θ/2))}`*
+    - 이거 그림으로 이해하는게 이해가 잘 안됨
   - 따라서, R^2의 모든 reflection은 Sθ꼴이다
 - 따름정리
   - `R^2의 orthogonal operator L은 rotation이거나 reflection둘 중 하나이다. 즉, det(L)=1 => L은 rotation ∧ det(L) = -1 => L은 reflection`
-  - `R^2의 rotation R과 reflection S의 합성 R◦S와 S◦R은 언제나 R^의 reflection`
+  - `R^2의 rotation R과 reflection S의 합성 R◦S와 S◦R은 언제나 R^2의 reflection`
   - `R^2의 reflection S를 하나 고정하면, R^2의 모든 reflection은 S◦R의 꼴로 유일하게 쓸 수 있음`
 - `O(2)`의 연산 규칙 정리(`θ,η∈R`)
   - `Rθ◦Rη=R_{θ+η}`
@@ -355,7 +357,8 @@ Reflection
     - `Rθ◦S = S◦R_{-θ}`
     - 뒤집고 돌리고 다시 뒤집음 = 거꾸로 돌린 것
 - `SY◦SZ = Rθ`인 θ구하기
-  - `Sθ◦Sη = (S◦R_{π-θ})◦(S◦R_{π-η}) = R_{θ-η}`
+  - *`Sθ◦Sη = (S◦R_{π-θ})◦(S◦R_{π-η}) = R_{θ-η}`*
+    - `S◦R_{π-θ} = Sθ`
 - 연습문제
   - `SO(2)의 모든 원소는 두 개의 reflection의 곱 으로 나타낼 수 있음을 보여라. 하지만 unique하지 않음도 설명하라`
 
@@ -366,7 +369,7 @@ Reflection
   - 원점을 중심으로 하는 R^3 rotation에는 회전축 존재
     - *우리의 상식?*
   - 회전축은 회전변환에 의해 고정
-  - 회전축에 수직인 2-dimensional subspace인 회전판 위에서 3-차원 회전변환은 2차원 회전변환
+  - **회전축에 수직인 2-dimensional subspace인 회전판 위에서 3-차원 회전변환은 2차원 회전변환**
   - 회전축 벡터는 unit vector로 해두는것이 편리함
 - R^3의 rotation
   - `Z∈R^3가 unit vector, B = {Z,X,Y}가 orthonormal basis인 X,Y를 찾고, det(Z,X,Y) = det(X,Y,Z) = 1 이 되도록 X,Y의 순서를 정하자. 이 떄, 원점을 중심으로 하는 R^3의 rotation R_{Z,θ}: R^3 -> R^3를 [R_{Z,θ}]_B^B = (1 0 0; 0 cosθ -sinθ; 0 sinθ cosθ) 로 정의`
