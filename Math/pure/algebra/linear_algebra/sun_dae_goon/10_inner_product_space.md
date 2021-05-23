@@ -199,22 +199,24 @@
   - `V가 유한차원 inner product space ∧ W≤V => W자신이 inner product space이므로, W도 orthonormal basis를 갖음`
     - **`V = W ⊕ W^⊥`**
     - `dimV = dimW + dimW^⊥`
-- 연습문제(`V가 유한 차원 inner product space ∧ U,W ≤ V`)
-  - **이 연습문제 꽤나 재미있다!**
-  - `W = (W^⊥)^⊥`
-  - `(U+W)^⊥ = U^⊥ ∩ W^⊥`
-  - `(U ∩ W)^⊥ = U^⊥ + W^⊥`
-- rank theorem의 증명
-  - `F=R일 때의 rank theorem의 증명`
-    - `AX=0`의 solution space에 대한 새로운 해석 필요
+  - 연습문제(`V가 유한 차원 inner product space ∧ U,W ≤ V`)
+    - **이 연습문제 꽤나 재미있다!**
+    - `W = (W^⊥)^⊥`
+    - `(U+W)^⊥ = U^⊥ ∩ W^⊥`
+    - `(U ∩ W)^⊥ = U^⊥ + W^⊥`
+- `AX=0`의 solution space에 대한 새로운 해석
+  - 개요
     - `A∈Mmxn(R)의 row space <t[A]_1, ..., t[A]_m>은 연립방정식 AX＝0의 solution space의 orthogonal complement 즉, ker(LA) = {X∈R^n | AX=0} = <t[A]_1, ..., t[A]_m>^⊥이고 따름정리에 의해 dimker(LA) = n - row rank of A`
-  - *`F=C일 때의 rank theorem의 증명`*
-    - 표기
-      - `W^conj = {^X∈C^n | X∈W} (W가 C-vecor space C^n의 subspace)`
-        - `W^conj ≤ C^n`
-        - `dim(W^conj) = dim(W)`
-    - *`연립방정식 A^X=0의 solution space를 W = {X∈C^n | A^X=0} ≤ C^n 으로 표기하면...`*
-      - *증명이 아직 이해가 잘 안됨*
+  - rank theorem의 증명
+    - `F=R일 때의 rank theorem의 증명`
+      - `AX=0`의 solution space에 대한 새로운 해석 필요
+    - *`F=C일 때의 rank theorem의 증명`*
+      - 표기
+        - `W^conj = {^X∈C^n | X∈W} (W가 C-vecor space C^n의 subspace)`
+          - `W^conj ≤ C^n`
+          - `dim(W^conj) = dim(W)`
+      - *`연립방정식 A^X=0의 solution space를 W = {X∈C^n | A^X=0} ≤ C^n 으로 표기하면...`*
+        - *증명이 아직 이해가 잘 안됨*
 
 ## 10.4 Standard Basis vs Orthonormal Basis
 

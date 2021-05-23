@@ -83,8 +83,40 @@
     - `G가 abelian => ng + nh = n(g+h)`
     - 위의 Multiplicative Notation과 완전 동일
     - Z-module?
+- Cancellation Law
+  - `x,y,z∈G, (xy=xz => y=z) ∧ (xz=yz => x=y)`
+- 연산표
+- Group classification
+  - `|G|=1`
+  - `|G|=2`
+    - `G = {1, x}`
+      - `=> x^2 ≠ x => x^2 = 1`
+    - `고정된 x∈G, λx: G -> G, λx(y) = xy (y∈G) => λx: G -> G는 bijection`
+      - `= λx는 집합 G를 permute한다`
+  - `|G|=3`
+    - `G = {1, x, y}`
+    - 연산표로 확인
+    - 근데, associativity를 어떻게 확인할 수 있을까?
+      - 이미(a priori) associativity가 보장되어있는 group의 존재를 안다면 아무 문제가 없다
+        - 어차피 isomorphic하므로
+      - 따라서, `μn = {α∈C | α^n = 1}`은 finite commutative group임은 매우 powerful한 결과
+        - 이는, 복소수 집합 C의 존재라는 어마어마한 background가 필요함
+- direct product
+  - `G1, G2가 group, Cartesian product G1 x G2에 다음과 같이 componentwise binary operation을 정의하자 (g1, g2)・(h1, h2) = (g1h1, g2h2) (gi, hi∈Gi)`
+    - `G1xG2`는 group
+- *이 부분의 내용이 어려워서 일단 넘어감*
+  - *복소수의 극형식?*
 
 ## 11.3 Subgroup
+
+Group의 story와 vector space의 story를 비교하면서 읽자
+
+- subgroup
+  - `H ≤ G <=> H가 group G의 subset(H ⊆ G), G로부터 물려받은 binary operation에 관하여, H자신 group이 되는경우`
+  - 다음 확인이 반드시 필요
+    - `G의 identity element eG로, H의 identity element를 eH로 표기하면, eH = eG`
+    - `h∈H, h의 G에서의 inverse를 h^-1로, H에서의 inverse를 h'로 표기하면, h'=h^-1 이다`
+  - *근데, 왜, 벡터공간의 부분공간 W≤V에서는 0w = 0v를 확인할 필요가 없었는가?*
 
 ## 11.4 학부 대수학의 반
 
