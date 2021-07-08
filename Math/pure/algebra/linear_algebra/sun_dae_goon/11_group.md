@@ -143,12 +143,14 @@ Group의 story와 vector space의 story를 비교하면서 읽자
     - 구체적으로 `<S>`는 어떤 공간?
       - `<φ> = {e}`
         - 오호라...
+        - 정의로부터
       - `x∈G => <x> = {x^i | i∈Z}`
         - 단, `<x>`가 무한집합일 필요는 없다
         - `i≠j, x^i = x^j일 수 있음`
 - x가 generate하는 G의 cyclic subgroup
   - `x∈G, <x>`
   - *왜 cyclic이라는 말이 들어갔을까?*
+    - `i≠j, x^i = x^j`인 경우 때문
 - x를 generator로 갖는 cyclic group
   - `x∈G, <x> s.t. <x>=G`
 - alphabet & word
@@ -160,7 +162,6 @@ Group의 story와 vector space의 story를 비교하면서 읽자
       - spelling이 다른 word도 얼마든지 같은 원소일 수 있음
   - `S⊆G, alphabet S∪S^-1로 만들어진 word 전체의 집합은 G의 subgroup이 된다`
   - **`S⊆G, <S> = alphabet S∪S^-1로 만들어진 word 전체의 집합`**
--
 
 ## 11.4 학부 대수학의 반
 

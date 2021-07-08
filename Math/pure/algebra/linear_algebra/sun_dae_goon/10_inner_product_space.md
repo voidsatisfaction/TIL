@@ -250,6 +250,7 @@
   - 정리
     - `W가 inner product space V의 finite dimensional subspace ∧ {v1, ..., vm}을 W의 orthonormal basis라 하자. v∈V => ∃w∈W, ∃w'∈W^⊥ s.t v=w+w' ∧ w, w'는 유일 ∧ w = <v,v1>v1 + ... + <v,vm>vm`
       - 위 관찰의 w는 v에 가장 가까운 W의 vector가 된다
+        - by pythagoras theorem...
   - 따름정리
     - `Bv = {v1, ..., vn}이 inner product space V의 orthonormal basis, v = ∑_{i=1}^{n}(aivi) (ai∈F) => ||v||^2 = ∑_{i=1}^{n}(|ai|^2) = ∑_{i=1}^{n}(|<v,vi>|^2)`
 - Bassel's Inequality
@@ -294,7 +295,7 @@
 ## 10.6 Orthogonal Group과 Unitary Group
 
 - 개념 정확히 파악하기
-  - `O(V), U(V)`
+  - `O(V) = O(V, <,>), U(V) = U(V, <,>)`
   - `O(n), U(n), On(R,<,>), Un(C,<,>)`
 
 ---
