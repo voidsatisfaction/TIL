@@ -55,7 +55,9 @@
           - COMMIT이 완료된 데이터만 SELECT시에 보이는 수준을 보장하는 Level
         - 문제
           - 하나의 트랜잭션 안에서, SELECT를 수행 할 때마다 데이터가 동일하다는 보장을 해주지 못함(다른 트랜젝션에서 해당 데이터를 COMMIT했을 경우, COMMIT된 데이터를 반환하므로)
-            - Non-repeatable Read
+          - Non-repeatable Read
+            - A non-repeatable read occurs when, during the course of a transaction, a row is retrieved twice and **the values within the row** differ between reads.
+              - **행의 값이 변경되는 경우**
           - Phantom Read
       - `3. REPEATABLE READ`
         - 개요
@@ -65,8 +67,9 @@
             - UPDATE한 데이터 정합성 보장
               - INSERT/DELETE는 보장하지 않음(중간에 시행 된 경우)
         - 문제
-          - *Phantom Read*
-            - COMMIT후 다시 조회 했을 때, 예상과는 다른 값이 보이거나 데이터가 유실된 경우
+          - Phantom Read
+            - A phantom read occurs when, in the course of a transaction, **new rows are added or removed by another transaction** to the records being read.
+              - **행 자체가 추가 / 제거**
             - e.g) 하나의 트랜잭션안에서 두 range query중간에 다른 트랜잭션의 insert가 존재하는 경우
       - `4. SERIALIZABLE`
         - 개요
