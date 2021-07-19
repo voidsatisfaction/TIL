@@ -11,28 +11,15 @@
 ### Transaction
 
 - 정의
-  - **information processing s.t indivisible individual operation**
+  - **information processing s.t. indivisible individual operation**
+  - information processing s.t. ACID조건을 만족
 - 특징
-  - 각 transaction은 success or fail
+  - 각 transaction은 success or fail(Atomicity)
     - partially complete는 없음
-  - data-oriented resources는 transactional unit속의 모든 operation이 성공적으로 끝나야만, 영구적으로 변경 사항이 반영됨
+  - data-oriented resources는 transactional unit속의 모든 operation이 성공적으로 끝나야만, 영구적으로 변경 사항이 반영됨(Durability)
   - 애플리케이션을 reliable하게 만드는 효과가 있음
   - programming model을 simplify하기 위해서 사용됨
     - ignore partial error
-- 방법론
-  - **Rollback**
-    - db integrity를 중간 상태를 저장하면서 확보함
-    - 이러한 중간 상태를 활용해서 원래 상태로 복원
-    - 수정 이전의 데이터 이미지의 상태를 저장
-    - transaction 도중에 실패하는 경우, 원래 이미지를 이용하여 롤백함
-  - **Rollforward**
-    - DB는 transaction log(journal)를 저장 -> DBMS의 failure -> Rollback을 사용한 기존 이미지 복원 -> transaction log(journal)에 기록된 최신 transaction을 기반으로 해당 연산 다시 실행 -> DBMS failure당시 실행되었던 transaction까지 반영된 consistent db 생성
-  - **Deadlocks**
-    - 두 transaction이 DB의 같은 부분에 접근 할 경우, 발생할 가능성
-    - Transaction processing system에서는 이러한 deadlock을 탐지하고, 두 transaction을 cancel후 rollback후 다시 진행시킴
-      - 혹은, 하나만 cancel시키고 나머지는 잠시 뒤에 다시 시작하도록 함
-  - **Compensating transaction**
-    - commit and rollback 매커니즘이 사용불가능하거나, 좋지 못한 선택지일 경우, 실패한 transaction을 undo하고 시스템을 이전 상태로 restore하는 것
 - ACID 기준
   - **Atomicity**
     - transaction은 더 이상 분리가 불가능(원자)
@@ -52,11 +39,56 @@
   - **Isolation**
     - 하나의 transaction은 다른 transaction에 영향을 주지 않음
       - transaction은 내부 구현적으로는 concurrent하지만, 논리적으로는 순차적으로(serial) 실행되는 것 처럼 보임(**serializability**)
+      - 성능이슈로 인하여 이 부분의 조건을 유연하게 설정 가능함
     - 다수의 DB client들이 하나의 row에 접근할 때 문제가 생기는 것을 방지(논리적으로 순차적으로 실행되는 것 처럼 보이므로)
       - race conditions
       - e.g)
         - 게시판 글의 뷰 수를 증가시키는 경우
     - DB는 isolation level을 갖음
+      - `1. READ UNCOMMITED`
+        - 개요
+          - 다른 transaction에서 COMMIT 되지 않은 데이터를 읽어올 수 있음(dirty read)
+        - 문제
+          - INSERT만 진행되고, ROLLBACK될 수 있는, 한 번도 COMMIT되지 않은 데이터를 읽을 수 있음
+      - `2. READ COMMITTED`
+        - 개요
+          - COMMIT이 완료된 데이터만 SELECT시에 보이는 수준을 보장하는 Level
+        - 문제
+          - 하나의 트랜잭션 안에서, SELECT를 수행 할 때마다 데이터가 동일하다는 보장을 해주지 못함(다른 트랜젝션에서 해당 데이터를 COMMIT했을 경우, COMMIT된 데이터를 반환하므로)
+            - Non-repeatable Read
+          - Phantom Read
+      - `3. REPEATABLE READ`
+        - 개요
+          - 한 트랜잭션 안에서 반복해서 SELECT를 수행해도 읽어 들이는 값이 변화하지 않음
+            - 처음으로 SELECT를 수행한 시간을 기록한 뒤, 그 이후에는 모든 SELECT마다 해당 시점을 기준으로 Consistent Read를 수행(스냅샷을 읽음)
+              - 나중에 SELECT했을 때, 정합성 보장
+            - UPDATE한 데이터 정합성 보장
+              - INSERT/DELETE는 보장하지 않음(중간에 시행 된 경우)
+        - 문제
+          - *Phantom Read*
+            - COMMIT후 다시 조회 했을 때, 예상과는 다른 값이 보이거나 데이터가 유실된 경우
+            - e.g) 하나의 트랜잭션안에서 두 range query중간에 다른 트랜잭션의 insert가 존재하는 경우
+      - `4. SERIALIZABLE`
+        - 개요
+          - 가장 높은 고립수준
+          - Phantom read 방지
+          - 성능 이슈로 거의 사용 안됨
+        - 문제
+          - DEADLOCK이 생길 수 있음
+    - c.f) Consistent Read
+      - 개요
+        - SELECT 연산을 수행할 때, 현재의 DB의 값이 아닌, 특정 시점의 DB snapshot을 읽어오는 것
+    - c.f) Lock
+      - S(Shared) Lock
+        - 개요
+          - 자원을 다른 사용자가 동시에 읽을 수 있지만, 변경은 불가능하게 함
+        - SQL
+          - `SELECT ... FOR SHARE`
+      - X(Exclusive) Lock
+        - 개요
+          - 해당 락이 걸리면, 해당 트랜잭션이 완료될 때 까지 해당 테이블 혹은 레코드를 다른 트랜잭션에서 읽거나 쓰지 못하게 함
+        - SQL
+          - `SELECT ... FOR UPDATE/DELTE`
   - **Durability**
     - transaction이 성공적으로 commit되면, 해당 변화는 DBMS failure에도 변함이 없음
       - hardware fault, database crash가 발생해도
@@ -77,3 +109,17 @@
         - 디스크에 있는 데이터가 점진적으로 아무런 detecting없이 corrupt되는 경우가 존재함
           - historical backup으로 다시 회복시켜야 함
         - SSD의 경우에는 30% ~ 80%의 드라이브가 첫 사용 4년동안 적어도 하나의 bad block을 생성한다고 함. 하드디스크는 bad sector의 비율은 낮으나, 전체적인 failure가 발생할 확률이 높음
+- 방법론
+  - **Rollback**
+    - db integrity를 중간 상태를 저장하면서 확보함
+    - 이러한 중간 상태를 활용해서 원래 상태로 복원
+    - 수정 이전의 데이터 이미지의 상태를 저장
+    - transaction 도중에 실패하는 경우, 원래 이미지를 이용하여 롤백함
+  - **Rollforward**
+    - DB는 transaction log(journal)를 저장 -> DBMS의 failure -> Rollback을 사용한 기존 이미지 복원 -> transaction log(journal)에 기록된 최신 transaction을 기반으로 해당 연산 다시 실행 -> DBMS failure당시 실행되었던 transaction까지 반영된 consistent db 생성
+  - **Deadlocks**
+    - 두 transaction이 DB의 같은 부분에 접근 할 경우, 발생할 가능성
+    - Transaction processing system에서는 이러한 deadlock을 탐지하고, 두 transaction을 cancel후 rollback후 다시 진행시킴
+      - 혹은, 하나만 cancel시키고 나머지는 잠시 뒤에 다시 시작하도록 함
+  - **Compensating transaction**
+    - commit and rollback 매커니즘이 사용불가능하거나, 좋지 못한 선택지일 경우, 실패한 transaction을 undo하고 시스템을 이전 상태로 restore하는 것
