@@ -1,5 +1,10 @@
 # Event loop
 
+- 의문
+- 개요
+- Event loop 설명
+- Event loop 관련 주의 사항
+
 ## 의문
 
 ## 개요
@@ -9,7 +14,7 @@
   - 현대 커널들은 multi-threaded
     - 백그라운드에서 실행하고 끝나면 Node.js에 알려줘서 callback을 poll queue에 추가함
 
-## 설명
+## Event loop 설명
 
 Nodejs event loop overview diagram(each box is a phase of the event loop)
 
@@ -127,7 +132,63 @@ someAsyncOperation(() => {
 
 ### Check phase
 
+- 개요
+  - poll phase가 끝난 다음에 즉시 callback을 실행하도록 함
+  - poll phase가 idle이 되고, `setImmediate()`로 큐잉된 콜백이 있으면, event loop은 대기하지 않고 check phase로 진행
+
 ### Close callbacks phase
 
 - 개요
   - 소켓이나 handle이 갑자기 close되는 경우, 'close'이벤트가 이 phase에 발생되며, 그렇지 않은 경우에 `process.nextTick()`으로 발생됨
+
+## Event loop 관련 주의 사항
+
+### `setImmediate()` vs `setTimeout()`
+
+- `setImmediate()`
+  - current poll phase가 끝나면 콜백을 실행하도록 함
+  - I/O cycle에서(poll phase) 스케쥴링 되는경우, 현재 얼마나 많은 타이머가 존재하던지 간에, 독립적으로 해당 타이머 콜백 이전에 실행됨
+- `setTimeout()`
+  - minimum threshold in ms가 지나면 콜백을 실행하도록 함
+
+예시코드1
+
+```js
+setTimeout(() => {
+  console.log('timeout');
+}, 0);
+
+setImmediate(() => {
+  console.log('immediate');
+});
+```
+
+- main 모듈에서 코드가 실행되는 경우, 타이머의 실행은 non-deterministic
+
+예시코드2
+
+```js
+// timeout_vs_immediate.js
+const fs = require('fs');
+
+fs.readFile(__filename, () => {
+  setTimeout(() => {
+    console.log('timeout');
+  }, 0);
+  setImmediate(() => {
+    console.log('immediate');
+  });
+});
+```
+
+- I/O cycle에서 두 코드가 실행되는 경우, poll phase에서 실행되고, setImmediate의 콜백등록으로 인하여, 바로 그다음 phase인 check phase로 진행됨
+
+### `process.nextTick()`
+
+- 개요
+  - event loop에서 기술적으로 다루지 않음
+  - 현재 어떤 phase인지 상관없이 `nextTickQueue`가 현재의 operation이 끝나고 나서 처리됨
+  - `process.nextTick()`에 등록된 콜백들은 event loop이 진행하기 전에 전부 해결됨
+    - 이는 recursive `process.nextTick()`콜을 할 경우, event loop가 poll phase에 도달하지 못하게 막음
+- 응용
+  - ...
