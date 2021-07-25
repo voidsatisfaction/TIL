@@ -7,6 +7,13 @@
 
 ## 의문
 
+- Node.js, 자바스크립트 엔진, 이벤트 루프의 관계?
+  - Node.js
+    - 이벤트 루프가 동작하도록 함
+  - 이벤트 루프(`uv__loop`)
+    - kernel에 일을 던져줘서 non-blocing I/O operation을 할 수 있도록 해줌
+    - v8 엔진을 사용해서 자바스크립트 코드 실행
+
 ## 개요
 
 - Node.js 플랫폼이 kernel에 일감을 던져줘서 non-blocking I/O operation을 할 수 있도록 하게 해주는 것
@@ -130,7 +137,7 @@ someAsyncOperation(() => {
         - callback이 queue에 추가될 때 까지 대기하고, 즉각 실행
   - poll queue가 다 비어지면, timer를 체크해서, time threshold가 도달했는지 확인하고, 준비된 callback은 event loop가 timers phase로 진행하여 콜백을 실행
 
-### Check phase
+  ### Check phase
 
 - 개요
   - poll phase가 끝난 다음에 즉시 callback을 실행하도록 함
@@ -186,9 +193,68 @@ fs.readFile(__filename, () => {
 ### `process.nextTick()`
 
 - 개요
-  - event loop에서 기술적으로 다루지 않음
+  - **event loop에서 기술적으로 다루지 않음**
   - 현재 어떤 phase인지 상관없이 `nextTickQueue`가 현재의 operation이 끝나고 나서 처리됨
-  - `process.nextTick()`에 등록된 콜백들은 event loop이 진행하기 전에 전부 해결됨
+  - `process.nextTick()`에 등록된 콜백들은 event loop이 *진행하기 전에* 전부 해결됨
+    - *진행하기 전이라는 것은 정확히 언제?*
     - 이는 recursive `process.nextTick()`콜을 할 경우, event loop가 poll phase에 도달하지 못하게 막음
-- 응용
-  - ...
+
+왜 `process.nextTick()`이 허용되는가의 예시 코드
+
+```js
+// 예시1
+function apiCall(arg, callback) {
+  if (typeof arg !== 'string') {
+    return process.nextTick(
+      callback,
+      new TypeError('argument should be string')
+    )
+  }
+}
+
+// 예시2
+const server = net.createServer();
+server.on('connection', (conn) => { });
+
+server.listen(8080);
+server.on('listening', () => { });
+
+// 예시3
+const EventEmitter = require('events');
+const util = require('util');
+
+function MyEmitter() {
+  EventEmitter.call(this);
+
+  // use nextTick to emit the event once a handler is assigned
+  // 'event' 이벤트 핸들러가 등록되고 나서, emit됨
+  process.nextTick(() => {
+    this.emit('event');
+  });
+}
+util.inherits(MyEmitter, EventEmitter);
+
+const myEmitter = new MyEmitter();
+myEmitter.on('event', () => {
+  console.log('an event occurred!');
+});
+```
+
+- 왜 `process.nextTick()`이 허용되는가?
+  - 디자인 철학으로, API가 async여야만 해야하는 경우
+    - e.g)
+      - 예시1 나머지 유저의 코드가 실행되고 나서, 그리고 event loop이 진행하기 전에, error를 callback으로 넘겨주기 위함
+      - 예시2 'listening'컬백을 `nextTick()`에 큐잉해두고, 일단 런타임에 실행중인 코드를 먼저 다 실행시켜서, 유저가 event handler를 등록할 수 있도록 함
+
+### `process.nextTick()` vs `setImmediate()`
+
+- 비교
+  - `process.nextTick()`
+    - 콜백 함수가 같은 페이즈에서 즉시 실행됨
+  - `setImmediate()`
+    - 콜백 함수가 이벤트루프의 다음 tick이나 다음 iteration에서 실행됨
+  - 주의
+    - 따라서 이름이 바뀌어야 함
+      - 그런데, 이건 이미 존재하는 많은 소프트웨어의 변경을 가져오므로, 바뀌지 않을것임
+    - 기본적으로 개발자는 `setImmediate()`를 사용하는것을 권장
+      - 더 사고하기 쉬움
