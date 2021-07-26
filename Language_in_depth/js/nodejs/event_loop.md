@@ -30,8 +30,8 @@ Nodejs event loop overview diagram(each box is a phase of the event loop)
 - Node.js가 시작
   - event loop를 initialize
   - async API call이나 schedule timer나 `process.nextTick()`과 같은 것을 호출하는 input script를 처리하고, event loop처리를 시작함
-- c.f) libuv는 무슨 일을 하는가?
-  - **Node.js의 event loop와 비동기 동작을 구현할 때 사용되는 C라이브러리**
+  - c.f) libuv는 무슨 일을 하는가?
+    - **Node.js의 event loop와 비동기 동작을 구현할 때 사용되는 C라이브러리**
 - Event loop의 구조
   - 개요
     - phase로 이루어져 있음
@@ -137,7 +137,7 @@ someAsyncOperation(() => {
         - callback이 queue에 추가될 때 까지 대기하고, 즉각 실행
   - poll queue가 다 비어지면, timer를 체크해서, time threshold가 도달했는지 확인하고, 준비된 callback은 event loop가 timers phase로 진행하여 콜백을 실행
 
-  ### Check phase
+### Check phase
 
 - 개요
   - poll phase가 끝난 다음에 즉시 callback을 실행하도록 함
@@ -217,6 +217,7 @@ const server = net.createServer();
 server.on('connection', (conn) => { });
 
 server.listen(8080);
+// listen은 내부적으로 process.nextTick()을 사용하여 바인딩하기 때문에, 다음 listening에 관련된 콜백도 등록
 server.on('listening', () => { });
 
 // 예시3
@@ -250,9 +251,9 @@ myEmitter.on('event', () => {
 
 - 비교
   - `process.nextTick()`
-    - 콜백 함수가 같은 페이즈에서 즉시 실행됨
+    - 해당 콜백 함수가 같은 페이즈에서 현재 실행되고 있는 자바스크립트 태스크가 끝나마자마 즉시 실행됨
   - `setImmediate()`
-    - 콜백 함수가 이벤트루프의 다음 tick이나 다음 iteration에서 실행됨
+    - 해당 콜백 함수가 이벤트루프의 다음 tick이나 다음 iteration에서 실행됨
   - 주의
     - 따라서 이름이 바뀌어야 함
       - 그런데, 이건 이미 존재하는 많은 소프트웨어의 변경을 가져오므로, 바뀌지 않을것임
