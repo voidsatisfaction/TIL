@@ -53,8 +53,9 @@
   - 우리가 그럼 commandline에서 보는 디렉터리 구조들과 같은 것들은 결국 정체가 무엇인가?
     - 하드 디스크 내부의 파일들의 메타 데이터
       - 우리는 데이터 저장장치의 Meta Area속에 존재하는 인덱싱된 파일 혹은 디렉터리의 메타 데이터를 보고 있는 것임
-  - *파일 시스템의 부팅 영역이란*
-    - *무엇에 대한 부팅을 의미하는가? 컴퓨터? 아니면 저장장치? 애초에 부팅이 뭐지?*
+  - 파일 시스템의 부팅 영역이란
+    - 무엇에 대한 부팅을 의미하는가? 컴퓨터? 아니면 저장장치? 애초에 부팅이 뭐지?
+      - 컴퓨터의 부팅
   - *애초에 파일 시스템의 파일과 드리아브 크기 제한을 빵빵하게 만들면 될텐데 왜 제한이 빡빡하게 만들어서 계속 확장하게 되었는가?*
   - *구체적으로 Inode란 무엇인가?*
     - 무엇을 저장하는가?
@@ -133,7 +134,7 @@ Bootstrap
   - Cygwin
   - WSL(Windows Subsystem for Linux)
 
-### Everything is a file
+### *Everything is a file*
 
 - 정의
   - Unix의 특징 중 하나
@@ -152,17 +153,18 @@ Bootstrap
 ### Shell vs Terminal
 
 - Shell
-  - 터미널에 부착되어, shell 관련 명령어를 해석해서 실행해주는 프로그램
+  - 터미널에 부착된, shell 인터프리터
 - Terminal
-  - 컴퓨터에 접속하기 위한 프로그램
+  - 컴퓨터에 접속하기 위한 장치(프로그램)
 - c.f) `docker run -it ...`
   - `-i`
     - container가 stdin을 받을 수 있도록 함
   - `-t`
     - 현재의 쉘을 conatiner의 terminal에 부착
-      - *쉘을 터미널에 부착한다는게 무슨 의미인가?*
+      - 쉘을 터미널에 부착한다는게 무슨 의미인가?
+        - 쉘은 쉘 스크립트를 실행하는 인터프리터. 그것을 터미널에 부착한다는 것
       - 터미널이 실행되면 해당 쉘 프로그램을 실행한다는 의미?
-  - case
+  - 예시
     - `-i`만 존재하는 경우
       - `-t`가 없으므로, 명령어를 치면 stdout은 나오나, 그것이 다소 이상하게 보임
     - `-t`만 있는 경우
@@ -192,7 +194,7 @@ File descriptor, File table, Inode table3
   - 정의
     - Unix계열의 OS에서(POSIX), file이나 input/output 자원을 접근하기 위해서 사용하는 abstract handler(indicator)
     - file descriptor는 **per-process file descriptor table** 이라는 곳으로 인덱싱 되며, 각각의 file descriptor는 **(open)file table** 이라고 불리는 시스템 전체의 scope인 모든 프로세스에 의하여 open된 파일들을 담는 테이블과 연결이 됨
-    - inode table과도 인덱싱되어서, 실제 파일이 어디있는지와도 대응이됨
+    - file table은 inode table과도 인덱싱되어서, 실제 파일이 어디있는지와도 대응이됨
     - e.g)
       - `pipe`, `network socket`
   - 특징
@@ -200,7 +202,7 @@ File descriptor, File table, Inode table3
     - 음이 아닌 정수
       - `C File*`로 open된 file descriptor를 `int fileno(FILE* fp);` 함수로 가져올 수 있음
     - 유닉스 계열의 시스템에서는, 유닉스 파일 타입이라고 명명된 모든 것을 참조할 수 있음
-      - regulart files, directories, block, character device, unix domain sockets, named pipe 등
+      - regular files, directories, block, character device, unix domain sockets, named pipe 등
         - 그래서 `lsof`커맨드로 소켓등도 확인할 수 있는것임
     - 유닉스 계열 시스템에서의 fd에의 operations
       - fd의 생성
@@ -794,8 +796,8 @@ virtual address space and physical address space
   - OS 내부의 소프트웨어는 실제 메모리의 크기보다 더 큰 virtual address space를 사용할 수 있도록 하는 기능도 있음
 - 장점
   - 프로그램이 다른 프로그램과 공유가 되는 메모리공간을 다루는 복잡도로부터 해방
-    - 실제 메모리의 fragmentation을 숨김
     - kernel이 다루도록 함
+  - 실제 메모리의 fragmentation을 숨김
   - memory isolation
     - 보안 강화
   - paging
@@ -803,7 +805,7 @@ virtual address space and physical address space
 - 단점
   - Embedded system과 같은 특수 목적의 컴퓨터 시스템은, 반응속도가 느린 등의 단점이 생김
   - MMU와 같은 하드웨어를 내장해야 하므로, 비용 문제
-- 사용
+- 역사
   - 과거의 컴퓨터 메인프레임은 Virtual memory 기능이 없었음
   - 1960, 1970 년대에는 메모리가 매우 비쌌음
     - virtual memory가 널리 퍼진 계기
