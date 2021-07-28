@@ -11,13 +11,13 @@
   - Node.js
     - 이벤트 루프가 동작하도록 함
   - 이벤트 루프(`uv__loop`)
-    - kernel에 일을 던져줘서 non-blocing I/O operation을 할 수 있도록 해줌
+    - kernel에 일을 던져줘서 non-blocking I/O operation을 할 수 있도록 해줌
     - v8 엔진을 사용해서 자바스크립트 코드 실행
 
 ## 개요
 
 - Node.js 플랫폼이 kernel에 일감을 던져줘서 non-blocking I/O operation을 할 수 있도록 하게 해주는 것
-  - JavaScript가 싱글스레드임에도 non-blocing으로 하게 해줌
+  - JavaScript가 싱글스레드임에도 non-blocking으로 하게 해줌
   - 현대 커널들은 multi-threaded
     - 백그라운드에서 실행하고 끝나면 Node.js에 알려줘서 callback을 poll queue에 추가함
 
@@ -170,7 +170,8 @@ setImmediate(() => {
 });
 ```
 
-- main 모듈에서 코드가 실행되는 경우, 타이머의 실행은 non-deterministic
+- *main 모듈에서 코드가 실행되는 경우, 타이머의 실행은 non-deterministic*
+  - *이건 왜 그러지?*
 
 예시코드2
 
