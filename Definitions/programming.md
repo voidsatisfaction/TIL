@@ -45,8 +45,8 @@ Generator, Iterator relation diagram
 
 - 정의
   - *루프의 iteration 행위를 컨트롤하는데에 사용될 수 있는 (서브)루틴*
-    - 정확히 이게 무슨 뜻일까?
-    - lazy value producer
+    - *정확히 이게 무슨 뜻일까?*
+  - **lazy value producer**
     - iterator를 generate한다는 것 보다는, 값을 lazy하게 generate한다고 해석하는것이 바람직해 보임
 - 특징
   - 값의 수열을 생성하나, 모든 값을 전부 포함하는 array를 생성해서 한번에 반환하는 대신, 한 번에 하나의 값을 반환
@@ -63,7 +63,7 @@ Generator, Iterator relation diagram
 ### iterator
 
 - 정의
-  - 프로그래머가 container(특히 리스트)를 traverse할 수 있게 하는 object
+  - container(특히 리스트)를 traverse할 수 있게 하는 object
     - `next()`를 호출할 때 다음값을 생성해내는 상태를 가진 헬퍼 객체
 - 종류
   - **Internal Iterators**
@@ -118,10 +118,12 @@ https://en.wikipedia.org/wiki/Futures_and_promises
   - concurrent programming languages에서 동기적으로 프로그램을 실행하는데에 사용되는 구조물
   - future의 값을 설정하는 것의 명칭
     - `resolving` or `fulfilling` or `binding`
-- future vs promise
+- *future vs promise*
+  - *이해가 잘 안됨*
   - future
     - read-only placeholder view of a variable
     - 어떤 promise가 해당 future의 값을 정할지는 정해지지 않고, 서로 다른 promise가 값을 설정할 수 있으나, 그것은 오직 한번만 가능함
+      - *???*
   - promise
     - writable
       - single assignment container which sets the value of the future
@@ -136,6 +138,7 @@ https://en.wikipedia.org/wiki/Futures_and_promises
   - explicit(stinging, forcing)
     - user가 값을 갖기 위해서 `get`과 같은 메서드를 사용해야 하는 경우
     - 일반적으로 라이브러리로 구현
+      - e.g) celery future 오브젝트, 파이썬 내장 future 오브젝트
 - Blocking vs non-blocking semantics
   - future의 값을 즉시 혹은 동기적으로 접근하려고 하는 경우 디자인
     - future가 resolve될 떄 까지 thread나 process를 blocking
