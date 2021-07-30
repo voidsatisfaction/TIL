@@ -435,6 +435,7 @@ docker stats 예시
     - Network IO
 
 |Column|Description|
+|---|---|
 |NET I/O|해당 컨테이너가 네트워크 인터페이스를 통해서 보내고 받은 데이터의 총량|
 |BLOCK I/O|해당 컨테이너가 host의 block device로부터 쓰여지거나, block device를 읽은 데이터의 양|
 |PIDS|컨테이너가 생성한 process 혹은 thread의 수|
