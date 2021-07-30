@@ -58,3 +58,38 @@
     - 플레이어 데이터
     - 세션 기록
     - 순위표
+
+#### Core Components
+
+- Tables, Items, Attributes
+  - table
+    - item의 collection
+  - item
+    - attribute의 collection
+    - 한 테이블의 item개수 제한 없음
+  - attribute
+- Keys
+  - Primary key
+    - 개요
+      - 테이블에서 하나의 아이템을 특정하기 위한 키
+        - 이것은 반드시 미리 정해줘야 함(schema)
+    - 종류
+      - Partition key
+        - 하나의 attribute로 구성
+        - 내부 해시 함수에 해당 키의 값을 넣어서, 물리 저장장치의 파티션을 결정
+      - Partition key and sort key(composite primary key)
+        - 두개의 attribute로 구성
+        - 파티션 키의 값을 해시 함수에 넣어서 파티션을 결정 + 소트키 값으로 정렬
+  - secondary indexes
+    - 개요
+      - alternate key를 이용하여, query할 수 있도록 함
+    - 종류
+      - Global secondary index
+        - table의 partition key, sort key와는 다른 인덱스
+      - Local secondary index
+        - table의 partition key와는 같으나, sort key와는 다른 인덱스
+- DynamoDB Streams
+  - 개요
+    - table의 data modification event를 수집하는 스트림
+      - order, in near-real time
+    - aws lambda와 연결 가능
