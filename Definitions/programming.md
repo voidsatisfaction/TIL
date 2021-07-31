@@ -196,15 +196,25 @@ end function
     - 그렇지 않으면 memory leak이 발생
     - weak reference를 사용하는 경우에는 unregister가 필요 없게 됨
       - *근데, 언제든지 gc에 의하여 회수될 수 있는 것 또한 위험한것 아닌가?*
-  - 언제든지 다시 생성될 수 있는 cached data를 갖고 있을 때, weak reference는 cache가 reclaimed 되도록 도와줌. 효과적으로 discardable memory를 만들면서
+  - *언제든지 다시 생성될 수 있는 cached data를 갖고 있을 때, weak reference는 cache가 reclaimed 되도록 도와줌. 효과적으로 discardable memory를 만들면서*
+    - 무슨 소리인지..
 - 예시
   - DOM에서는 parent-to-child reference는 strong, child-to-parent reference는 weak
 
-### mutex(lock)
+### mutex(lock - mutual exclusion)
 
 - 정의
   - 다수의 스레드가 실행되는 환경에서, 자원에 접근하는데에 제한을 강제하는 synchronization mechanism
     - mutual exclusion concurrency control policy를 강제함
+- c.f) vs semaphore
+  - mutex
+    - locking 매커니즘
+      - 오직 하나의 쓰레드만이 동일한 시점에 뮤텍스를 얻어 임계 영역에 들어올 수 있음
+      - 쓰레드만 뮤텍스 해제 가능
+  - semaphore
+    - wait을 호출하면 세마포어 카운트 1줄임
+    - 세마포어 카운트가 0보다 작거나 같아질 경우 락이 실행
+    - signal을 호출하면 세마포어 카운트 1늘림
 
 ### scope
 
@@ -213,6 +223,8 @@ end function
 *namespace는 scope의 구체적인 구현?(e.g python에서는 이름과 대응되는 값의 dictionary `__dict__`)*
 
 - 정의
+  - 특정 name(identifier)-entity binding이 적용되는 범위
+  - e.g) 이 name은 이 블록의 스콥을 가진다
   - 정책적 정의
     - 변수와 같은 이름이 해당 엔티티를 참조할 때, 그러한 바인딩이 valid한 프로그램상의 region(부분)
       - scope block이라고도 불림
@@ -220,9 +232,6 @@ end function
         - 다만, **프로그램상의 부분** 을 어떻게 두느냐가 다름
     - e.g)
       - 파이썬은 블록 스코프를 채택하고 있으므로, 지금의 컨텍스트에서는 해당 name은 어떠한 entity에 대응되고 있다
-  - 국소적 정의
-    - 특정 name(identifier)-entity binding이 적용되는 범위
-    - e.g) 이 name은 이 블록의 스콥을 가진다
 - 특징
   - 프로그램의 다른 부분에서는, 해당 이름이 다른 엔티티(different binding)나 아무것도 참조하지 않을(unbinding) 수 있음
 - scope of binding
