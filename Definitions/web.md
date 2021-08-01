@@ -5,12 +5,15 @@
   - Web Browser
   - Web Resource
     - URI
-  - HTTP
+    - Encoding
   - Origin
   - Same-origin policy
   - CORS
   - Iframe(HTML Inline Frame Element)
   - Referer
+- Protocol
+  - HTTP
+  - gRPC
 - Architecture
   - REST
   - GraphQL
@@ -117,45 +120,6 @@ URI 구성 요소
         - `> = &gt; = &#x3E`
   - c.f) 한글 인코딩
     - ?
-
-### HTTP
-
-- Request
-  - 개요
-    - 각각의 줄은 `CRLF`로 줄 바꿈이 이루어져야 함
-  - 구조
-    - Method
-      - PATCH
-        - 특정 리소스의 내용 중 보낸 값의 key만 변경(e.g 게시글 업데이트 등)
-    - Header
-      - HOST
-      - Cookie
-      - User-Agent
-        - 사용자가 사용하는 프로그램 정보
-      - Referer
-        - 페이지 이동시 이전 URI의 정보를 나타냄
-      - Content-Type
-        - 사용자가 전달하는 데이터의 처리 방식과 형식을 나타냄
-          - 사용자와 서버간의 데이터 처리 방식 일치되어야 정상적으로 데이터 통신이 이루어짐
-- Response
-  - 개요
-    - 각각의 줄은 `CRLF`로 줄 바꿈이 이루어져야 함
-  - 구조
-    - Status code
-    - Header
-      - Content-Type
-        - 서버의 응답 데이터를 웹 브라우저에서 처리할 방식과 형식을 나타냄
-      - Content-Length
-        - 서버가 사용자에게 응답해주는 데이터의 길이를 나타냄
-      - Server
-        - 서버가 사용하는 소프트웨어 정보
-      - Allow
-        - 허용되는 method 목록을 사용자에게 알려줄 때 사용
-      - Location
-        - 300번 영역의 응답 코드 사용시, 변경된 웹 리소스의 주소를 나타냄
-      - Set-Cookie
-        - 사용자에게 쿠키를 발급할 때 사용
-          - 해당 헤더를 받은 웹 브라우저는 쿠키를 저장
 
 ### Origin
 
@@ -428,30 +392,154 @@ Content-Type: text/plain
 - e.g)
   - `Referer: https://developer.mozilla.org/en-US/docs/Web/JavaScript`
 
+## Protocol
+
+### HTTP
+
+- Request
+  - 개요
+    - 각각의 줄은 `CRLF`로 줄 바꿈이 이루어져야 함
+  - 구조
+    - Method
+      - PATCH
+        - 특정 리소스의 내용 중 보낸 값의 key만 변경(e.g 게시글 업데이트 등)
+    - Header
+      - HOST
+      - Cookie
+      - User-Agent
+        - 사용자가 사용하는 프로그램 정보
+      - Referer
+        - 페이지 이동시 이전 URI의 정보를 나타냄
+      - Content-Type
+        - 사용자가 전달하는 데이터의 처리 방식과 형식을 나타냄
+          - 사용자와 서버간의 데이터 처리 방식 일치되어야 정상적으로 데이터 통신이 이루어짐
+    - Body
+- Response
+  - 개요
+    - 각각의 줄은 `CRLF`로 줄 바꿈이 이루어져야 함
+  - 구조
+    - Status code
+    - Header
+      - Content-Type
+        - 서버의 응답 데이터를 웹 브라우저에서 처리할 방식과 형식을 나타냄
+      - Content-Length
+        - 서버가 사용자에게 응답해주는 데이터의 길이를 나타냄
+      - Server
+        - 서버가 사용하는 소프트웨어 정보
+      - Allow
+        - 허용되는 method 목록을 사용자에게 알려줄 때 사용
+      - Location
+        - 300번 영역의 응답 코드 사용시, 변경된 웹 리소스의 주소를 나타냄
+      - Set-Cookie
+        - 사용자에게 쿠키를 발급할 때 사용
+          - 해당 헤더를 받은 웹 브라우저는 쿠키를 저장
+    - Body
+
+### WebSocket
+
+- 정의
+  - 하나의 TCP 커넥션에서 full-duplex communication 채널을 제공하는 컴퓨터 커뮤니케이션 프로토콜
+- 특징
+  - OSI model에서 7layer protocol ∧ 4레이어에(TCP) 의존
+  - 443, 80포트에서 동작
+  - HTTP proxy와 같은 중개자도 서포트
+  - HTTP Upgrade header를 사용하여 HTTP 프로토콜에서 WebSocket 프로토콜로 변환
+
+핸드셰이킹
+
+```
+/* HTTP Request */
+
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw== /* 프록시가 캐싱하지 못하게 하는 역할만 함(보안과 관련 없음) */
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+Origin: http://example.com
+
+/* HTTP Response */
+
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
+Sec-WebSocket-Protocol: chat
+```
+
+- 동작 방식
+  - 1 핸드 셰이킹
+    - 위의 HTTP request/response로 핸드 셰이킹
+    - 커넥션이 확립되면, 그 뒤로부터는 양방향 binary protocol을 따르고, HTTP protocol을 따르지 않음
+  - 2 통신
+    - 작은 헤더와 payload로 full-duplex 송수신
+      - 주고받는 데이터는 '메시지'라고 함
+      - 여러개의 데이터 프레임으로 분리 가능
+        - 메시지의 길이가 알려지지 않은 경우에도 데이터 송수신 가능(FIN bit올떄까지)
+
+### gRPC
+
+vs HTTP
+
+![](./images/web/grpc_vs_http1.png)
+
 ## Architecture
 
 ### REST(REpresentational State Transfer)
 
 - 정의
-  - **web service를 만드는데에 사용되는 제한사항의 집합을 정의한 소프트웨어 아키텍처**
+  - **Web API 만드는데에 사용되는 제한사항의 집합을 정의한 소프트웨어 아키텍처**
   - c.f) RESTful web service
     - REST 아키텍처 스타일을 따르는 웹 서비스
 - 특징
-  - **stateless protocol & standard operation**
-    - 일정한, 사전에 정의된 stateless operation을 사용해서, 텍스트로 표현된 웹 자원을 access할 수 있도록 하는 웹 서비스
-      - c.f) SOAP
-        - 각 서비스마다 자신만의 임의의 operation들의 집합을 노출함
-    - HTTP가 사용되는 경우, `GET`, `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`등이 사용됨
-    - 빠른 퍼포먼스, reliability, scalability
+  - 빠른 퍼포먼스, reliability, scalability
 - 아키텍처적 제한사항
   - **Client-server architecture**
     - 역할 분담
     - 서버 컴포넌트 단순화
+  - **Uniform interface**
+    - 서버는 일정한 인터페이스를 제공
+      - URI로 리소스 지정, 조작 통일, 한정된 인터페이스
   - **Statelessness**
     - 어떠한 클라이언트로부터의 리퀘스트던, request를 serve하기 위해서 필요한 정보가 전부 들어있음
-      - 클라이언트는 새로운 state로 이행될 때, requ`est를 날림
-  - **Cacheability** PI가 다양한 웹 애플리케이션 프레임워크가 servlet를 지원하는 다양한 웹 서버에서 동작할 수 있었음
-  - 그래서 WSGI라는 implementation-agnostic interface가 생겨남
+      - 클라이언트는 새로운 state로 이행될 때, request를 날림
+  - **Layered system**
+    - 로드 밸런서, PROXY, 게이트웨이 같은 네트워크 기반의 중간매체 사용 가능
+  - **Cacheability**
+    - 서버로부터 받은 데이터는 클라이언트 또는 서버에서 캐시 가능해야 함
+  - **code on demand(optional)**
+    - 자바스크립트의 제공을 통해 서버가 클라이언트가 실행시킬 수 있는 로직 전송하여 기능 확장 가능
+- 디자인 가이드
+  - 자원 표현
+    - URI
+      - 오직 자원만 표현, 행위 들어가지 말자
+  - 자원에 대한 행위
+    - HTTP Method
+- URI의 설계
+  - 1 슬래시 구분자는 계층 관계를 나타내는 데에 사용
+  - 2 URI 마지막 문자로 슬래시를 포함하지 않음
+  - 3 하이픈(-)은 URI 가독성을 높이는데 사용
+  - 4 밑줄(_)은 사용하지 않음
+  - 5 URI 경로에는 소문자가 적합
+    - 대소문자에 따라 다른 리소스로 구분
+  - 6 파일 확장자는 URI에 포함시키지 않음
+    - Accept header를 사용
+  - 7 리소스 간의 관계 표시
+    - `/리소스명/리소스ID/관계가있는 다른 리소스명`
+    - e.g)
+      - `GET: /users/{userid}/devices (일반적으로 소유 관계를 표현)`
+  - 8 자원을 표현하는 collection과 document
+    - collection
+      - 리소스들의 집합
+      - 복수로 표현
+    - document
+      - 하나의 리소스
+      - 단수로 표현
+    - e.g)
+      - `http://restapi.example.com/sports/soccer`
+        - collection: sports
+        - document: soccer
 - 구성
   - server <-> \[WSGI middleware\] <-> application
 
