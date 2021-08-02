@@ -32,6 +32,8 @@
   - ARP
 - Network Layer
   - URI
+- Transport Layer
+  - TLS
 - Application Layer
   - LDAP
 - KT-Wifi 공유기 뜯어보기
@@ -465,6 +467,43 @@ Throughput vs Bandwidth
   - 인터넷 프로토콜에서 인터넷에 있는 자원을 나타내는 유일한 주소
 - 문법
   - `scheme:[//[user[:password]@]host[:port]][/path][?query][#fragment]`
+
+## Transport Layer
+
+### TLS(Transport Layer Security)
+
+TLS handshake
+
+![](./images/network/tls_handshake1.png)
+
+- 정의
+  - Transport layer에서 정보를 암호화해서 송수신하는 프로토콜
+- 순서
+  - 1 서버가 CA로부터 인증서 발급받음
+    - 사이트 정보(도메인), 공개키 제출
+  - 2 클라이언트와 TLS 핸드셰이크
+  - 3 생성된 세션키(대칭키)를 이용한 암호화 통신
+- 장점
+  - 기밀성
+  - 데이터 무결성
+  - 서버 인증
+    - 인증서 이용
+- 참고 개념
+  - 인증서
+    - 구조
+      - 서비스 정보
+      - 서버 측 공개키
+      - 서명
+        - 핑거 프린트를 CA의 비밀키로 암호화한 것
+        - 핑거프린트(지문)
+          - 서버 측 공개키를 SHA-256으로 해시하여 인증서에 등록한 것
+    - self-signed
+      - 자신의 공개키를 해시한 후, CA가 아닌 자신의 비밀키로 암호화하여 서명으로 등록하는 것
+        - '신뢰할 수 없는 사이트입니다'
+  - SNI(Server Name Indication)
+    - IP 주소 하나에 여러개의 도메인이 연결되는 경우, 어떤 도메인에 접속하는지 명시하는 부분
+    - 평문
+      - 보안상 문제
 
 ## Application Layer
 
