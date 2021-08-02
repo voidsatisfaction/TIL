@@ -17,8 +17,10 @@
   - stream
   - lookup table
 - Program
-  - Library
+  - *Library*
+    - *DLL*
   - Manifest file
+  - Magic number
 
 ## General
 
@@ -232,8 +234,6 @@ end function
         - 다만, **프로그램상의 부분** 을 어떻게 두느냐가 다름
     - e.g)
       - 파이썬은 블록 스코프를 채택하고 있으므로, 지금의 컨텍스트에서는 해당 name은 어떠한 entity에 대응되고 있다
-- 특징
-  - 프로그램의 다른 부분에서는, 해당 이름이 다른 엔티티(different binding)나 아무것도 참조하지 않을(unbinding) 수 있음
 - scope of binding
   - visibility of an entity
     - 이름으로부터의 관점이 아니라, entity로부터의 관점
@@ -552,7 +552,7 @@ React는 Immutability가 기본.
 따라서, useEffect에 인자로 넘겨주는 create함수인 closure는 일반적으로 stale closure가 됨
 (변수의 entity 갱신이 아니라, 변수 자체가 다른 것으로 갱신 되므로)
 
-이러한 stale closure를 막기 위하여, `useEffect()`는 매 렌더링마다 다시 호출되어, `useEffect()`의 `create()`함수 속에서 free variable의 entity(값)를 맞춰줌. 그리고 그 맞춰진 entity를 기준으로,  `useEffect()` 의 두번째 인자인 배열속의 내용이 변경되었을 때에만 `create()`함수를 호출.
+이러한 stale closure를 막기 위하여, `useEffect()`는 deps(`useEffect`의 두번째 인자)가 빈 배열이 아닌 경우 매 렌더링마다 다시 호출되어, `useEffect()`의 `create()`함수 속에서 free variable의 entity(값)를 맞춰줌. 그리고 그 맞춰진 entity를 기준으로,  `useEffect()` 의 두번째 인자인 배열속의 내용이 변경되었을 때에만 `create()`함수를 호출.
 (`create()` 함수는 `useEffect()`의 첫번쨰 인자)
 
 포인트
@@ -835,7 +835,6 @@ export default SlideItem
 - 정의
   - runtime computation을 보다 간단한 array indexing operation으로 치환한 배열
     - runtime computation 뿐 아니라, I/O 작업 등도 해당됨
-  - 수학적으로는, 관점에 따라서 '함수' 혹은 '전사 함수' 라고 생각할 수 있겠다.
 - 특징
   - 테이블은 precalculated 되어, static program storage에 저장되는 경우도 있음
     - 프로그램의 initialization phase에 계산되기도 함
@@ -865,6 +864,8 @@ export default SlideItem
 ## Program
 
 ### Library
+
+이 부분 내용이 어렵다
 
 - 정의
   - 컴퓨터 프로그램에 의해서 사용되는 non-volatile 자원의 collection
@@ -919,6 +920,8 @@ export default SlideItem
       - PE
 
 #### DLL(Dynamic-link library) file
+
+*DLL은 어떤 언어의 라이브러리인것인가?*
 
 - 정의
   - Windows와 OS/2 운영체제에서 shared library 개념의 마이크로소프트의 구현체
