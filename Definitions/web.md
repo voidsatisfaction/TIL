@@ -543,6 +543,41 @@ vs HTTP
 - 구성
   - server <-> \[WSGI middleware\] <-> application
 
+### GraphQL
+
+GraphQL pipeline
+
+![](./images/web/graphql1.png)
+
+GraphQL and business logic layer
+
+![](./images/web/graphql2.png)
+
+- 정의
+  - 언어
+    - 웹 API를 위한 데이터 쿼리, 조작 언어
+  - 런타임
+    - 쿼리를 수행하는 런타임
+- 특징
+  - 클라이언트가 필요한 데이터를 구조를 정의
+  - 일반적으로 L7의 HTTP POST / web socket 프로토콜을 활용
+- 구성
+  - type system
+  - query language
+  - execution semantics
+  - static validation
+  - resolver
+  - type introspection
+    - 서버에서 정의하는 스키마 정보 공유
+- 허용 메서드
+  - query(reading)
+  - mutation(writing)
+  - subscribtion(realtime updates - commonly implemented using websocket)
+
+## Server
+
+### WSGI
+
 Example1: WSGI-compatible "Hello, World" application
 
 ```py
@@ -588,37 +623,6 @@ def call_application(app, environ):
 environ = {...} # environ dict
 status, headers, body = call_application(app, environ)
 ```
-
-### GraphQL
-
-GraphQL pipeline
-
-![](./images/web/graphql1.png)
-
-GraphQL and business logic layer
-
-![](./images/web/graphql2.png)
-
-- 정의
-  - 언어
-    - 웹 API를 위한 데이터 쿼리, 조작 언어
-  - 런타임
-    - 쿼리를 수행하는 런타임
-- 특징
-  - 클라이언트가 필요한 데이터를 구조를 정의
-  - 일반적으로 L7의 HTTP POST / web socket 프로토콜을 활용
-- 구성
-  - type system
-  - query language
-  - execution semantics
-  - static validation
-  - resolver
-  - type introspection
-    - 서버에서 정의하는 스키마 정보 공유
-- 허용 메서드
-  - query(reading)
-  - mutation(writing)
-  - subscribtion(realtime updates - commonly implemented using websocket)
 
 ## JS
 
