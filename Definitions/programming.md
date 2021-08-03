@@ -13,8 +13,9 @@
   - mutex(lock)
   - scope
   - closure
-- Data
+- Data structure
   - stream
+  - buffer
   - lookup table
 - Program
   - *Library*
@@ -793,7 +794,7 @@ export default SlideItem
 
 ```
 
-## Data
+## Data structure
 
 ### stream
 
@@ -815,10 +816,16 @@ export default SlideItem
       - 커맨드라인으로부터 디렉터리에 들어있는 모든 파일을 찾아서 바꾸는 작업
   - **Unix와 C언어 기반의 시스템에서, 개별적인 바이트 혹은 문자인 데이터의 source 혹은 sink**
     - **파일을 읽거나 쓰거나 network socket위에서 상호작용 할 때 사용되는 추상화**
-    - **standard stream은 모든 프로그램이 사용 가능한 3가지 스트림**
-      - stdin
-      - stdout
-      - stderr
+  - **standard stream은 운영 체제에서 기본적으로 제공하는 추상화된 입출력 장치**
+    - stdin
+      - fd는 0
+      - 키보드
+    - stdout
+      - fd는 1
+      - 쉘을 실행한 콘솔이나 터미널
+    - stderr
+      - fd는 2
+      - 쉘을 실행한 콘솔이나 터미널
   - I/O 장비
     - 시간의 경과에 따라서 잠재적으로 끝 없는 데이터를 produce하거나 consume할 수 있기 때문
   - OOP에서는 input stream을 iterator로 구현함
@@ -829,6 +836,16 @@ export default SlideItem
   - Stream processing
     - 병렬 프로세싱, 특히 그래픽 프로세싱에서는 stream이라는 말이 소프트웨어 뿐 아니라 하드웨어에도 적용됨
     - There it defines the quasi-continuous flow of data that is processed in a dataflow programming language as soon as the program state meets the starting condition of the stream.
+
+### buffer
+
+- 정의
+  - 데이터를 한 곳에서 다른 한 곳으로 전송하는 동안 일시적으로 그 데이터를 보관하는 메모리영역
+- c.f) 버퍼링
+  - 버퍼를 채우는 동작
+  - 처리 속도의 차이를 흡수하는 방법
+    - 음성, 영상, 애니메이션 등이 구현될 때 끊김현상이 생기는데, 이런 경우 버퍼링을 통해 이미 수신된 정보를 일시적으로 기억해냄으로써 다음 정보와 부드럽게 연결
+    - 미리 영상을 어느정도 다운로드 받아놓기
 
 ### lookup table
 
@@ -990,41 +1007,40 @@ export default SlideItem
 - 정의(다음 중 하나 혹은 그 이상)
   - 1 이름이 부여된 상수와 대체될 수 있는 여러번 나타날 수 있는 unexplained 고유 값
   - 2 file format 혹은 protocol을 구별하기 위해 사용되는 텍스트 값 혹은 숫자 상수
-    - file signatures
-      - e.g)
-        - JAVA
-          - hex `CAFEBABE`
-        - GIF
-          - ASCII code `GIF89a(47 49 46 38 39 61)` or `GIF87a`
-        - JPEG
-          - 일반
-            - 시작 `FF D8`
-            - 끝 `FF D9`
-          - JPEG/JFIF
-            - null terminated string으로 `JFIF(4A 46 49 46)`코드가 포함됨
-          - JPEG/Exif
-            - null terminated string으로 `Exif(45 78 69 66)`코드가 포함됨
-            - 그 다음은 metadata
-        - PNG
-          - `\211 P N G \r \n \032 \n (89 50 4E 47 0D 0A 1A 0A)`
-        - MIDI
-          - `MThd (4D 54 68 64)`
-        - Unix, Linux scripts
-          - shebang `#! (23 21)`
-        - PDF
-          - `%PDF (25 50 44 46)`
-        - MBR(Master Boot Record)
-          - `55 AA`
-        - TIFF
-          - `II*NUL (49 49 2A 00)`
-            - Intel
-            - little endian
-          - `MM*NUL (4D 4D 00 2A)`
-            - Motorola
-            - big endian
-    - protocol
-      - SSL transaction
-        - `client hello`
-      - DHCP
-        - `0x63 0x82 0x53 0x63`
+    - file signatures e.g)
+      - JAVA
+        - hex `CAFEBABE`
+      - GIF
+        - ASCII code `GIF89a(47 49 46 38 39 61)` or `GIF87a`
+      - JPEG
+        - 일반
+          - 시작 `FF D8`
+          - 끝 `FF D9`
+        - JPEG/JFIF
+          - null terminated string으로 `JFIF(4A 46 49 46)`코드가 포함됨
+        - JPEG/Exif
+          - null terminated string으로 `Exif(45 78 69 66)`코드가 포함됨
+          - 그 다음은 metadata
+      - PNG
+        - `\211 P N G \r \n \032 \n (89 50 4E 47 0D 0A 1A 0A)`
+      - MIDI
+        - `MThd (4D 54 68 64)`
+      - Unix, Linux scripts
+        - shebang `#! (23 21)`
+      - PDF
+        - `%PDF (25 50 44 46)`
+      - MBR(Master Boot Record)
+        - `55 AA`
+      - TIFF
+        - `II*NUL (49 49 2A 00)`
+          - Intel
+          - little endian
+        - `MM*NUL (4D 4D 00 2A)`
+          - Motorola
+          - big endian
+  - protocol
+    - SSL transaction
+      - `client hello`
+    - DHCP
+      - `0x63 0x82 0x53 0x63`
   - 3 GUID
