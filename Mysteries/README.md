@@ -6,6 +6,7 @@
   - WSGI에서는 어떻게 web socket연결을 할 수 있었던 것일까?
   - 웹 서버에, 웹 소켓 기능을 붙인다는 얘기는, 웹 소켓 서버를 붙인다는 것과 동치인가?
   - gunicorn의 역할과, eventlet등의 효과?
+  - 웹어셈블리가 뭐지?
 
 ## Network
 
@@ -16,6 +17,8 @@ https://d2.naver.com/helloworld/47667
 ## Web
 
 ### WSGI에서는 어떻게 web socket연결을 할 수 있었던 것일까?
+
+- 애초에 web socket은 WSGI에는 붙일 수 없는건가?
 
 ### 웹 서버에, 웹 소켓 기능을 붙인다는 얘기는, 웹 소켓 서버를 붙인다는 것과 동치인가?
 
@@ -35,3 +38,5 @@ https://d2.naver.com/helloworld/47667
     - async workers
       - eventlet or gevent에 기반하여 사용가능
         - coroutine기반
+
+### 웹 어셈블리가 뭐지?
