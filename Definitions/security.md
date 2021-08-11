@@ -13,8 +13,7 @@
 - 공격과 방어
   - Xss, Csrf
 - 암호학
-  - Digest
-    - Message
+  - 해시 함수
   - MAC
   - E2EE
 - 접근 통제
@@ -132,12 +131,34 @@
 
 ## 암호학
 
-### Digest
+### 해시 함수
 
-- 정의
-  - 해시 함수의 output
-- 참고
-  - 원본 데이터는 message
+- 개요
+  - 임의의 길이의 데이터를 고정된 길이의 데이터로 매핑하는 함수
+    - `f: message -> digest`
+      - message
+        - 해시 함수의 input
+      - digest
+        - 해시 함수의 output
+- 기능
+  - 가변 길이의 키를 고정 길이 값으로 변환
+  - 결과 값이 균일하게 분포되도록 키의 비트를 스크램블함
+  - 결과 값을 테이블 크기보다 작거나 같은 값으로 매핑
+- 좋은 해시 함수의 조건
+  - 계산이 빨라야 함
+  - 충돌이 적어야 함
+- 응용
+  - 해시 자료구조
+  - HMAC
+  - 암호화
+    - 패스워드 등
+- 종류
+  - *MD5*
+    - 왜 안쓰게 되었나?
+  - SHA256
+  - siphash
+    - 파이썬 dict의 내장 해시로 사용
+    - random seed값을 넣어줘서 dynamic하게 해시 값 생성
 
 ### MAC(Message Authentication Code)
 
