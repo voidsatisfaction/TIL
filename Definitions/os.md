@@ -12,6 +12,9 @@
 - File system
   - File descriptor vs System open-file table vs Vnode Table
   - I/O multiplexing
+    - select
+    - poll
+    - epoll
   - Partition
   - File system
   - Mount
@@ -273,10 +276,10 @@ three standard POSIX file descriptors
 
 *만약 파일을 close하지 않은 상태로 프로세스가 종료된다면 무슨 일이 벌어지는가? 그냥 system open-file table에 대응하는 entry를 process종료 전에 dereference시켜주는가?*
 
-### I/O multiplexing
+### **I/O multiplexing**
 
 - 정의
-  - 하나 이상의 I/O대상(file descriptor)이 준비가 될 때 kernel로부터 notification을 받는 것
+  - **하나 이상의 I/O대상(file descriptor)이 준비가 될 때 kernel로부터 notification을 받는 것**
     - file descriptor의 이벤트 감지
     - *결국 내부적으로는 무한 루프를 도는 것인지*
 - 예시
@@ -748,11 +751,17 @@ Pipeline
   - interrupt와 유사
     - 차이점
       - signal
-        - kernel에 의해서 mediated(중재? 매개?)되며(아마도 via systemcall), process에 의해서 다뤄짐
+        - kernel에 의해서 mediated(중재? 매개?)되며(via system call), process에 의해서 다뤄짐
           - 커널은 interrupt를 프로세스에 signal로써 넘겨줄 수 있음
           - e.g) `SIGSEGV`, `SIGBUS`, `SIGILL`, `SIGFPE`
+        - OS커널과 process와의 커뮤니케이션
       - interrupt
         - processor에 의해서 mediated되며, 커널에 의해서 다뤄짐
+        - CPU와 OS커널과의 커뮤니케이션
+- c.f) 코어 덤프
+  - 컴퓨터 프로그램이 특정 시점에 작업 중이던 메모리 상태를 기록한 것
+  - CPU레지스터, 메모리 관리 정보 포함
+    - 오류 진단과 디버깅에 쓰임
 
 ### System call(syscall)
 
@@ -772,6 +781,7 @@ Pipeline
   - 3 커널에서 시스템 호출을 처리하면 커널 모드에서 사용자 모드로 돌아가 작업을 계속 함
 - 종류
   - 1 프로세스 제어
+    - Signal
   - 2 파일 조작
   - 3 장치 관리
   - 4 정보 유지(Information maintenance)
@@ -813,6 +823,8 @@ int main(int argc, char *argv[])
 
 *인터럽트가 감지되면 무조건 그것부터 실행하는가? 그럼, 인터럽트를 엄청나게 발생시키는 악성코드가 심어져있으면 어떻게 하는가?*
 
+*kernel모드일 때에는 컨텍스트 스위칭이 일어나지 않는가? 즉, 다른 프로세스의 실행 흐름으로 넘어가지 않는 것인가?*
+
 - 개요
   - CPU가 프로그램을 실행하고 있을 때, 입출력 하드웨어 등의 장치에 예외상황이 발생하여 처리가 필요할 경우, CPU에게 알려 처리할 수 있도록 하는 것
     - 어떤 대상이 CPU에게 일을 처리해 달라고 요청하는 수단
@@ -826,13 +838,15 @@ int main(int argc, char *argv[])
   - Machine check interrupt
 - 절차
   - 현재 진행 중인 기계어 코드를 완료함
-  - CPU 특수레지스터 중, 하이로인터럽트 마스크 비트를 보고 마스크 되면 인터럽트 무시
+  - CPU 특수레지스터 중, *하이로인터럽트 마스크 비트* 를 보고 마스크 되면 인터럽트 무시
   - 인터럽트 벡터 읽기
+    - *이 인터럽트 벡터는 어디서 나는 것인가?*
   - ISR 주소값 얻기
   - ISR로 점프 & PC(Program Counter) 자동 대피 저장
   - 현재 진행중인 프로그램의 레지스터 대피
     - 스택이나 *레지스터 블럭* 에 대피
       - *스택으로 대피시키면, 스택이 오염되는거 아닌가?*
+    - *컨텍스트 스위칭은 아니라는데..?*
   - ISR 코드 실행
   - 일을 다 처리하면, 대피시킨 레지스터 복원
   - ISR 끝에 IRET 명령어에 의해 인터럽트가 해제
@@ -847,6 +861,10 @@ int main(int argc, char *argv[])
     - *??? 어떻게 결정되는것임?*
   - 리눅스 커널과 같은 운영체제에서는, 응용 프로그램의 저수준 입출력 함수가 실행 => 라이브러리 함수에 의해서 소프트웨어 인터럽트 실행 - system call
     - 시스템 콜 호출 -> 인터럽트 실행으로 ISR이 커널 레벨 작업 수행 -> 다시 유저 스페이스로 데이터 및 스레드 반환
+      - *어라, 그런데 nodejs에서는 fileRead하면 그것이 non-blocking이라 다른 작업할 수 있지 않았나? 그런데 `open` system call을 호출하면 interrupt가 발생하여 동기적으로 CPU가 처리하는 것 아닌가?*
+      - *아, 그래서 i/o multiplexing의 방법중 하나인 select, kqueue, epoll 이런게 필요한건가?*
+        - *파이썬과 자바스크립트의 open함수 구현을 보자*
+        - 정확히 순서 정리를 해보자
   - ISR은 C언어의 함수와는 다른 표현이 되어야 함
   - c.f) vs polling
     - CPU가 대상을 주기적으로 감시하여 상황이 발생하면 해당 처리 루틴을 실행해 처리
