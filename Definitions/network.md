@@ -19,6 +19,7 @@
 - Hardware
   - 케이블
   - NIC
+- 네트워크 스택
 - Physical Layer
   - 장비
     - 허브
@@ -33,6 +34,7 @@
 - Network Layer
   - URI
 - Transport Layer
+  - TCP
   - TLS
 - Application Layer
   - LDAP
@@ -290,6 +292,153 @@ Throughput vs Bandwidth
     - TP 포트
     - 광케이블
 
+## TCP/IP 네트워크 스택
+
+### 데이터 전송
+
+네트워크 스택과 레이어(데이터 전송시 설명)
+
+![](./images/network/network_stack1.png)
+
+*각 레이어는, 독립적인 프로그램인가? 아니면 그냥 OS kernel하나에서 동작하는 것인가? 후자일것같긴 하다만...*
+
+- User 영역
+  - 애플리케이션의 데이터의 생성
+  - `write`시스템 콜 호출
+  - 커널 영역으로 전환
+- Kernel 영역
+  - File layer
+    - 단순 검사 후 파일 구조체에 연결된 소켓 구조체를 사용해서 소켓 함수 호출
+      - POSIX계열 운영체제는 소켓을 file descriptor로 애플리케이션에 노출
+  - Sockets layer
+    - 과정
+      - write 시스템 콜을 호출하면, 유저 영역의 데이터가 커널 메모리로 복사되고, send socket buffer 뒤에 추가됨
+      - TCP 호출
+        - *정확히 TCP를 호출한다는 것은 무슨의미인가?*
+    - 데이터 구조
+      - 두개의 버퍼 존재
+        - send socket buffer
+        - receive socket buffer
+  - TCP layer
+    - 과정
+      - TCP 상태가 데이터 전송을 허용하는 경우(*핸드셰이크가 잘 되었다는 뜻인가?*)
+        - TCP segment를 생성
+          - TCP segment
+            - TCP 헤더와 payload가 있음
+            - payload에는 ACK를 받지 않은, send socket buffer에 있는 데이터가 담겨져 있음
+            - 최대 길이는 max(receive window, congestion window, MSS(Maximum Segment Size))중 최댓값
+        - 만약, Flow control같은 이유로 데이터 전송이 불가능하면 시스템 콜은 여기서 끝나고, 유저모드로 돌아감
+          - 애플리케이션으로 제어권이 넘어감
+      - TCP 체크섬 계산(헤더 정보도 포함)
+        - 사실, 요즘 네트워크 스택에서는 *checksum offload*기술을 사용하기 때문에, 커널이 직접 하지 않고, NIC가 함
+      - IP layer로 데이터 보냄
+    - 데이터 구조
+      - TCP Control Block(TCB) 구조체
+        - TCP 연결처리에 필요한 정보 존재
+          - connection state(LISTEN, ESTABLISHED, TIME_WAIT)
+          - receive window
+          - congestion window
+          - sequence 번호
+          - 재전송 타이머
+  - IP layer
+    - 과정
+      - TCP segment에 IP헤더 추가
+      - IP routing
+        - destination IP로 가기 위한 다음 장비의 주소(next hop IP)를 찾는 과정
+      - IP 헤더 체크섬을 덧붙임
+      - Ethernet layer로 데이터를 보냄
+  - Ethernet layer
+    - 과정
+      - ARP(Address Resolution Protocol)을 사용해서 next hop의 IP의 MAC 주소를 찾음
+      - Ethernet 헤더를 패킷에 추가
+      - 패킷 완성
+      - transmit NIC의 드라이버 호출
+      - *만약 tcpdump나 Wireshark 같은 패킷 캡처 프로그램이 작동 중이면 커널은 패킷 데이터를 프로그램이 사용하는 메모리 버퍼에 복사한다. 수신도 마찬가지로 드라이버 바로 위에서 패킷을 캡처한다. 대개 traffic shaper 기능도 이 레이어에서 동작하도록 구현되어있다.*
+  - Driver layer
+    - driver-NIC 통신 규약에 따라 패킷 전송을 요청
+- Device 영역(NIC)
+  - 패킷 전송 요청 받음
+  - 메인 메모리에 있는 패킷을 자신의 메모리로 복사
+    - *자신의 메모리가 뭐지?*
+  - Ethernet 표준에 따라, IFG(Inter-Frame Gap), preamble, CRC를 패킷에 추가
+    - IFG, preamble
+      - 패킷의 시작을 판단(framing)
+    - CRC
+      - 데이터 보호를 위해 사용(checksum과 같은 용도)
+  - 네트워크 선으로 전송
+    - Ethernet의 물리적 속도, Ethernet flow control에 따라 전송할 수 있는 상황일 때 시작
+  - 패킷 전송
+    - 호스트 CPU에 interrupt 발생 시킴
+    - OS의 적합한 드라이버 찾기
+    - 드라이버가 인터럽트 핸들러를 드라이브가 가동되었을 때 미리 등록
+    - 운영체제가 핸들러 호출
+    - 핸들러는 전송된 패킷을 운영체제에 반환
+
+### 데이터 수신
+
+네트워크 스택과 레이어(데이터 수신시 설명)
+
+![](./images/network/network_stack2.png)
+
+- Device 영역(NIC)
+  - 패킷을 자신의 메모리 영역에 기록
+  - CRC로 패킷이 올바른지 검사
+  - 호스트의 메모리버퍼로 전송
+    - 드라이버가 커널에 요청하여 수신용으로 미리 할당해 놓은 메모리를 할당 받은 후 드라이버는 NIC에 메모리 주소와 크기를 알려줌
+      - NIC가 패킷을 받았는데, 미리 할당해 놓은 호스트 메모리 버퍼가 없음 => NIC가 패킷을 버릴 수 있음(packet drop)
+  - NIC가 호스트 운영체제에 인터럽트를 보냄
+    - *인터럽트를 보내고나서 어떤 핸들러가 실행되어서 결국 드라이버가 동작하는지?*
+    - *드라이버는 결국 또 다른 소프트웨어인가?*
+- Kernel 영역
+  - Driver layer
+    - 패킷을 보고 처리가능한지 검사
+      - 드라이버 - NIC 통신 규약 사용
+    - 운영체제가 이해할 수 있도록, 받은 패킷을 운영체제가 사용하는 패킷 구조체로 포장
+      - e.g)
+        - Linux: `sk_buff`
+        - BSD: `mbuf`
+        - MS: `NET_BUFFER_LIST`
+    - 포장한 패킷을 상위 레이어로 전달
+  - Ethernet layer
+    - 패킷이 올바른지 검사
+    - 상위 프로토콜(네트워크 프로토콜)을 찾음
+    - Ethernet 헤더를 제거하고 IP레이어로 패킷 전달
+  - IP layer
+    - 패킷이 올바른지 검사
+    - IP routing을 해서 패킷을 로컬 장비가 처리해야하는지, 다른 장비로 전달해야 하는지 판단
+    - if) 로컬 장비 처리
+      - 헤더의 proto값을 보고, 상위 프로토콜(transport 프로토콜)을 찾음
+    - IP 헤더를 제거
+    - TCP 레이어로 패킷 전달
+  - TCP layer
+    - TCP control block(연결)을 찾음
+      - 패킷의 소스IP, 소스 port, 타깃 IP, 타깃 port를 식별자로 사용
+    - 연결을 찾으면 프로토콜을 수행해서 받은 패킷을 처리
+    - 새로운 데이터를 받았다면, 데이터를 receive socket buffer에 추가
+    - TCP 상태에 따라 새로운 TCP 패킷(e.g ACK패킷) 전송 가능
+  - Socket layer
+    - read 시스템 콜을 호출하면 커널 영역으로 전환
+    - socket buffer에 있는 데이터를 유저 공간의 메모리로 복사
+    - 복사한 데이터는 socket buffer에서 제거
+    - TCP 호출
+      - receive window증가
+      - 상황에 따라 패킷 전송
+    - 시스템 콜 종료
+  - File layer
+- User 영역
+
+#### 스택 내부 제어 흐름
+
+스택 내부 제어 흐름 간단 도식
+
+![](./images/network/network_inner_stack_control_flow1.png)
+
+- 개요
+  - 네트워크 스택은 기본적으로 이벤트 발생에 반응하는 event-driven 방식으로 작동
+    - 스택 수행을 위한 별도 스레드가 없음
+- 위 그림 해설
+  - (1) 애플리케이션이 시스템 콜을 호출하여 TCP
+
 ## Physical Layer
 
 - 장비
@@ -495,149 +644,6 @@ Throughput vs Bandwidth
     - 네트워크 정체를 방지하기 위해서 congestion window를 사용
     - 송신자가 단독으로 구현
       - *TCP Vegas, Westwood, BIC, CUBIC 등 다양한 알고리즘 존재*
-
-#### 데이터 전송
-
-네트워크 스택과 레이어(데이터 전송시 설명)
-
-![](./images/network/network_stack1.png)
-
-*각 레이어는, 독립적인 프로그램인가? 아니면 그냥 OS kernel하나에서 동작하는 것인가? 후자일것같긴 하다만...*
-
-- User 영역
-  - 애플리케이션의 데이터의 생성
-  - `write`시스템 콜 호출
-  - 커널 영역으로 전환
-- Kernel 영역
-  - File layer
-    - 단순 검사 후 파일 구조체에 연결된 소켓 구조체를 사용해서 소켓 함수 호출
-      - POSIX계열 운영체제는 소켓을 file descriptor로 애플리케이션에 노출
-  - Sockets layer
-    - 과정
-      - write 시스템 콜을 호출하면, 유저 영역의 데이터가 커널 메모리로 복사되고, send socket buffer 뒤에 추가됨
-      - TCP 호출
-        - *정확히 TCP를 호출한다는 것은 무슨의미인가?*
-    - 데이터 구조
-      - 두개의 버퍼 존재
-        - send socket buffer
-        - receive socket buffer
-  - TCP layer
-    - 과정
-      - TCP 상태가 데이터 전송을 허용하는 경우(*핸드셰이크가 잘 되었다는 뜻인가?*)
-        - TCP segment를 생성
-          - TCP segment
-            - TCP 헤더와 payload가 있음
-            - payload에는 ACK를 받지 않은, send socket buffer에 있는 데이터가 담겨져 있음
-            - 최대 길이는 max(receive window, congestion window, MSS(Maximum Segment Size))중 최댓값
-        - 만약, Flow control같은 이유로 데이터 전송이 불가능하면 시스템 콜은 여기서 끝나고, 유저모드로 돌아감
-          - 애플리케이션으로 제어권이 넘어감
-      - TCP 체크섬 계산(헤더 정보도 포함)
-        - 사실, 요즘 네트워크 스택에서는 *checksum offload*기술을 사용하기 때문에, 커널이 직접 하지 않고, NIC가 함
-      - IP layer로 데이터 보냄
-    - 데이터 구조
-      - TCP Control Block(TCB) 구조체
-        - TCP 연결처리에 필요한 정보 존재
-          - connection state(LISTEN, ESTABLISHED, TIME_WAIT)
-          - receive window
-          - congestion window
-          - sequence 번호
-          - 재전송 타이머
-  - IP layer
-    - 과정
-      - TCP segment에 IP헤더 추가
-      - IP routing
-        - destination IP로 가기 위한 다음 장비의 주소(next hop IP)를 찾는 과정
-      - IP 헤더 체크섬을 덧붙임
-      - Ethernet layer로 데이터를 보냄
-  - Ethernet layer
-    - 과정
-      - ARP(Address Resolution Protocol)을 사용해서 next hop의 IP의 MAC 주소를 찾음
-      - Ethernet 헤더를 패킷에 추가
-      - 패킷 완성
-      - transmit NIC의 드라이버 호출
-      - *만약 tcpdump나 Wireshark 같은 패킷 캡처 프로그램이 작동 중이면 커널은 패킷 데이터를 프로그램이 사용하는 메모리 버퍼에 복사한다. 수신도 마찬가지로 드라이버 바로 위에서 패킷을 캡처한다. 대개 traffic shaper 기능도 이 레이어에서 동작하도록 구현되어있다.*
-  - Driver layer
-    - driver-NIC 통신 규약에 따라 패킷 전송을 요청
-- Device 영역(NIC)
-  - 패킷 전송 요청 받음
-  - 메인 메모리에 있는 패킷을 자신의 메모리로 복사
-    - *자신의 메모리가 뭐지?*
-  - Ethernet 표준에 따라, IFG(Inter-Frame Gap), preamble, CRC를 패킷에 추가
-    - IFG, preamble
-      - 패킷의 시작을 판단(framing)
-    - CRC
-      - 데이터 보호를 위해 사용(checksum과 같은 용도)
-  - 네트워크 선으로 전송
-    - Ethernet의 물리적 속도, Ethernet flow control에 따라 전송할 수 있는 상황일 때 시작
-  - 패킷 전송
-    - 호스트 CPU에 interrupt 발생 시킴
-    - OS의 적합한 드라이버 찾기
-    - 드라이버가 인터럽트 핸들러를 드라이브가 가동되었을 때 미리 등록
-    - 운영체제가 핸들러 호출
-    - 핸들러는 전송된 패킷을 운영체제에 반환
-
-#### 데이터 수신
-
-네트워크 스택과 레이어(데이터 수신시 설명)
-
-![](./images/network/network_stack2.png)
-
-- Device 영역(NIC)
-  - 패킷을 자신의 메모리 영역에 기록
-  - CRC로 패킷이 올바른지 검사
-  - 호스트의 메모리버퍼로 전송
-    - 드라이버가 커널에 요청하여 수신용으로 미리 할당해 놓은 메모리를 할당 받은 후 드라이버는 NIC에 메모리 주소와 크기를 알려줌
-      - NIC가 패킷을 받았는데, 미리 할당해 놓은 호스트 메모리 버퍼가 없음 => NIC가 패킷을 버릴 수 있음(packet drop)
-  - NIC가 호스트 운영체제에 인터럽트를 보냄
-- Kernel 영역
-  - Driver layer
-    - 패킷을 보고 처리가능한지 검사
-      - 드라이버 - NIC 통신 규약 사용
-    - 운영체제가 이해할 수 있도록, 받은 패킷을 운영체제가 사용하는 패킷 구조체로 포장
-      - e.g)
-        - Linux: `sk_buff`
-        - BSD: `mbuf`
-        - MS: `NET_BUFFER_LIST`
-    - 포장한 패킷을 상위 레이어로 전달
-  - Ethernet layer
-    - 패킷이 올바른지 검사
-    - 상위 프로토콜(네트워크 프로토콜)을 찾음
-    - Ethernet 헤더를 제거하고 IP레이어로 패킷 전달
-  - IP layer
-    - 패킷이 올바른지 검사
-    - IP routing을 해서 패킷을 로컬 장비가 처리해야하는지, 다른 장비로 전달해야 하는지 판단
-    - if) 로컬 장비 처리
-      - 헤더의 proto값을 보고, 상위 프로토콜(transport 프로토콜)을 찾음
-    - IP 헤더를 제거
-    - TCP 레이어로 패킷 전달
-  - TCP layer
-    - TCP control block(연결)을 찾음
-      - 패킷의 소스IP, 소스 port, 타깃 IP, 타깃 port를 식별자로 사용
-    - 연결을 찾으면 프로토콜을 수행해서 받은 패킷을 처리
-    - 새로운 데이터를 받았다면, 데이터를 receive socket buffer에 추가
-    - TCP 상태에 따라 새로운 TCP 패킷(e.g ACK패킷) 전송 가능
-  - Socket layer
-    - read 시스템 콜을 호출하면 커널 영역으로 전환
-    - socket buffer에 있는 데이터를 유저 공간의 메모리로 복사
-    - 복사한 데이터는 socket buffer에서 제거
-    - TCP 호출
-      - receive window증가
-      - 상황에 따라 패킷 전송
-    - 시스템 콜 종료
-  - File layer
-- User 영역
-
-#### 스택 내부 제어 흐름
-
-스택 내부 제어 흐름 간단 도식
-
-![](./images/network/network_inner_stack_control_flow1.png)
-
-- 개요
-  - 네트워크 스택은 기본적으로 이벤트 발생에 반응하는 event-driven 방식으로 작동
-    - 스택 수행을 위한 별도 스레드가 없음
-- 위 그림 해설
-  - (1) 애플리케이션이 시스템 콜을 호출하여 TCP
 
 ### TLS(Transport Layer Security)
 
