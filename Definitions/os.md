@@ -1,5 +1,6 @@
 # OS 관련 정의
 
+- 참고하면 좋은 자료
 - 의문
 - General
   - Booting
@@ -49,6 +50,10 @@
   - Server Virtualization
 - Application Layer
   - deb
+
+## 참고하면 좋은 자료
+
+- [1. linux inside](https://0xax.gitbooks.io/linux-insides/content/SysCall/linux-syscall-2.html)
 
 ## 의문
 
@@ -285,7 +290,7 @@ three standard POSIX file descriptors
 - 정의
   - **하나 이상의 I/O대상(file descriptor)이 준비가 될 때 kernel로부터 notification을 받는 것**
     - file descriptor의 이벤트 감지
-    - *결국 내부적으로는 무한 루프를 도는 것인지*
+    - *결국 커널 내부적으로는 무한 루프를 도는 것인지*
 - 예시
   - I/O대상은 Unix의 경우에는 파일로 나타나는 모든 것으로 이해가 가능하겠다
     - client가 다수의 file descriptor들을 다룰 때(stdin, stdout, network socket) - file
@@ -766,20 +771,22 @@ Pipeline
 - 동작
   - 1 signal을 보냄
   - 2 OS가 타겟 프로세스의 일반적인 실행 흐름을 interrupt해서 signal 전달
+    - *이 이야기는, 타겟 프로세스가 실행하고 있을때만 signal이 처리가 된다는 것인지? 아니면, signal이 있을때마다, interrupt가 발생해서, 해당 시그널을 해당 프로세스에서 처리하게 한다는 것인지?*
   - 3 프로세스가 signal handler를 등록했었으면, 해당 루틴이 실행되며, 그렇지 않은 경우에는 default signal handler가 실행됨
 - 특징
   - 임베디드 프로그램은 IPC에 있어서 유용하게 사용함
     - 오버헤드가 적음
-  - interrupt와 유사
-    - 차이점
-      - signal
-        - kernel에 의해서 mediated(중재? 매개?)되며(via system call), process에 의해서 다뤄짐
-          - 커널은 interrupt를 프로세스에 signal로써 넘겨줄 수 있음
-          - e.g) `SIGSEGV`, `SIGBUS`, `SIGILL`, `SIGFPE`
-        - OS커널과 process와의 커뮤니케이션
-      - interrupt
-        - processor에 의해서 mediated되며, 커널에 의해서 다뤄짐
-        - CPU와 OS커널과의 커뮤니케이션
+  - interrupt를 이용한 구현
+- vs interrupt
+  - 차이점
+    - signal
+      - kernel에 의해서 mediated(중재? 매개?)되며(via system call), process에 의해서 다뤄짐
+        - 커널은 interrupt를 프로세스에 signal로써 넘겨줄 수 있음
+        - e.g) `SIGSEGV`, `SIGBUS`, `SIGILL`, `SIGFPE`
+      - OS커널과 process와의 커뮤니케이션
+    - interrupt
+      - CPU에 의해서 mediated되며, 커널에 의해서 다뤄짐
+      - CPU와 OS커널과의 커뮤니케이션
 - c.f) 코어 덤프
   - 컴퓨터 프로그램이 특정 시점에 작업 중이던 메모리 상태를 기록한 것
   - CPU레지스터, 메모리 관리 정보 포함
@@ -796,6 +803,9 @@ Pipeline
       - 응용 프로그램이 직접 제어할 수 없음
       - 데이터를 가져오거나 쓰려면 커널 장치 드라이버와 연동이 되어야 함
       - 시스템 호출 방법을 사용해야 함
+  - software interrupt로 구현되어 있음
+    - interrupt(exception) handler가 system call의 타입별 동작을 수행
+  - *동기적으로 실행?*
 - 기능
   - 1 사용자 모드에 있는 응용 프로그램이 커널의 기능을 사용할 수 있도록 함
   - 2 시스템 호출을 하면 사용자 모드에서 커널 모드로 바뀜
@@ -860,6 +870,7 @@ int main(int argc, char *argv[])
   - Machine check interrupt
 - 절차
   - 현재 진행 중인 기계어 코드를 완료함
+    - *인터럽트는 완료하기 전까지 큐에 보관되는 것인가?*
   - CPU 특수레지스터 중, *하이로인터럽트 마스크 비트* 를 보고 마스크 되면 인터럽트 무시
   - 인터럽트 벡터 읽기
     - *이 인터럽트 벡터는 어디서 나는 것인가?*
