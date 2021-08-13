@@ -32,6 +32,7 @@
       - Signal
   - System Call
   - c.f) Interrupt
+  - c.f) c.f) Green threads
 - Memory
   - Address space
   - Virtual memory
@@ -205,6 +206,7 @@ File descriptor, File table, Inode table3
   - 정의
     - Unix계열의 OS에서(POSIX), file이나 input/output 자원을 접근하기 위해서 사용하는 abstract handler(indicator)
     - file descriptor는 **per-process file descriptor table** 이라는 곳으로 인덱싱 되며, 각각의 file descriptor는 **(open)file table** 이라고 불리는 시스템 전체의 scope인 모든 프로세스에 의하여 open된 파일들을 담는 테이블과 연결이 됨
+      - file table은 file의 mode를 기록(reading, writing, appending, other modes)
     - file table은 inode table과도 인덱싱되어서, 실제 파일이 어디있는지와도 대응이됨
     - e.g)
       - `pipe`, `network socket`
@@ -294,6 +296,24 @@ three standard POSIX file descriptors
   - `select`
   - `poll`
   - `epoll`
+
+### File descriptor
+
+- 정의
+  - **file을 포함한 input/output 자원을 위한 고유의 식별자**
+    - e.g) file, directory, pipe, network socket, block(device driver)
+- 구조
+  - file descriptor <-> file table <-> inode table
+- 특징
+  - non-negative integer values
+  - POSIX API에 포함
+  - 각 Unix process는 3가지 file descriptor를 반드시 갖음(daemon빼고)
+    - 0: standard input
+    - 1: standard output
+    - 2: standard error
+  - **input, output을 행하기 위해서, system call을 사용하고, kernel이 process대신 접근함**
+    - 유저 프로세스가 직접 file이나 inode table에 접근 불가
+  - Linux에서는, 한 프로세스에서 열린 fd를 `/proc/PID/fd`에서 확인 가능
 
 ### Partition
 
@@ -876,6 +896,56 @@ int main(int argc, char *argv[])
   - ISR 주소값 찾기
     - 정해진 주소값으로 무조건 점프
     - 인터럽트 벡터 테이블에 주소값을 얻어서 점프
+
+### c.f) Green threads(virtual threads)
+
+- 정의
+  - 런타임 라이브러리나, VM에 의해서 스케쥴링 되는 스레드
+    - OS가 아님
+  - 예시
+    - golang의 goroutine
+    - cpython의 greenlet
+      - *cpython의 greenlet은 어떻게, I/O타임에 실행 흐름을 yield하는 타이밍을 알까?*
+- 특징
+  - OS의 능력에 의존하지 않고, 멀티스레드 환경을 emulate
+  - user space에서 관리됨
+    - kernel space가 아님
+    - 그렇기 때문에, native thread support가 없는 환경에서도 사용 가능
+  - green thread가 blocking system call을 하는경우, 모든 green thread를 블로킹함
+    - asynchronous I/O를 해야만 함
+
+### Context switch
+
+- 정의
+  - process나 thread의 상태를 저장해서 나중에 복원하고 실행을 재개할 수 있도록 하는 프로세스
+    - 다수의 프로세스가 하나의 CPU를 사용할 수 있도록 하여 multitasking을 가능하게 함
+- 특징
+  - computationally intensive
+  - 프로세스를 스위칭 하는데에는 특정 시간이 필요함
+    - 레지스터(SP, PC), 메모리맵 저장 및 로딩
+    - 페이지 테이블
+    - *green thread에서도 일어남 최소한의 context를 저장하고 로딩함*
+      - e.g) goroutine
+  - pre-emptive multitasking 시스템에서는, 실행중인 process가 time slice를 초과하면 interrupt를 해서, context switch를 행함
+- process context switch vs thread context switch
+  - process context switch
+    - 개요
+      - 같은 OS안에서 프로세스를 컨텍스트 스위칭 하는 것
+    - PCB(Process Control Block)
+      - 프로세스의 작업 상태를 저장할 수 있는 공간
+      - 프로세스가 context switch되는 경우, PCB에 해당 Thread 정보들도 저장됨
+      - 저장 대상
+        - 레지스터, memory map, page tables, kernel 자원, cpu cache들 등
+  - thread context switch
+    - 개요
+      - 하나의 같은 프로세스안에서 스레드를 컨텍스트 스위칭 하는 것
+    - 특징
+      - process context switch보다 효율적
+    - TCB(Thread Control Block)
+      - 스레드의 작업 상태를 저장할 수 있는 공간
+        - OS가 관리 or 라이브러리에 의해 관리
+      - 저장 대상
+        - PC, SP, registers만 스위칭하면 됨
 
 ## Memory
 
