@@ -159,6 +159,22 @@
   - siphash
     - 파이썬 dict의 내장 해시로 사용
     - random seed값을 넣어줘서 dynamic하게 해시 값 생성
+- 고정 범위 해시 함수 vs 변동 범위 해시 함수
+  - 고정 범위 해시 함수
+    - 특징
+      - 만일, output이 32비트 정수로 고정 => array의 index로 매핑가능
+      - 데이터 찾기에 사용되는 해시 함수들은 input의 chunk를 반복적으로 가공하여 해시 값을 생성
+  - 변동 범위 해시 함수
+    - 특징
+      - 해시 테이블이 확장될 수 있도록 함
+        - 정확히는 `hash_function(message, range: int)`
+- 왜, 해시함수의 output은 고정된 길이로 할까?
+  - hash 자료구조
+    - 해시값을 고정된 array의 index로 둘 수 있음
+  - 해시 값을 사용하는 알고리즘이 다루기 쉬움(길이가 고정되어있으므로)
+    - data structure
+    - file format
+    - network protocl field
 
 ### MAC(Message Authentication Code)
 
