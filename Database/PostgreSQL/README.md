@@ -1,6 +1,7 @@
 # Overview of PostgreSQL Internals
 
 - 의문
+- Connection pool
 - The Path of a Query
   - Connection
   - Parser
@@ -11,6 +12,54 @@
 ## 의문
 
 - *왜 tree의 형태롤 파싱의 결과물을 제공 하는 것일까?*
+
+## Connection pool
+
+### PostgreSQL architecture
+
+![](./images/postgresql_architecture1.png)
+
+- 개요
+  - 기본적으로 PostgreSQL에서는 클라이언트와의 연결마다 하나의 process를 fork함
+- 장점
+  - fault tolerant
+    - 일부의 실패로 인한 데이터베이스의 크러시를 막음
+  - 현대 Lunix system에서는 process fork와 thread 생성의 오버헤드 차이가 기존보다 많이 차가 좁혀짐
+  - 지금부터 multithreaded 아키텍처로 가려면 많은 코드를 다시 작성해야 함
+
+### Connection pool
+
+- 개요
+  - 라이브러리에서 물리적 커넥션풀을 유지하고, 그러한 풀을 사용해서 데이터베이스에 접근하는 방식
+    - PostgreSQL에서는 새로 forking하지 않음
+- 단점
+  - 결국 풀의 사이즈가 작아도, 많은 서버 프로세스가 남게되고, 그것들 사이의 컨텍스트스위칭은 비쌈
+    - *이 서버는 데이터베이스 서버? 아니면, 웹 서버?*
+  - 풀링 서포트는 라이브러리와 언어마다 다양해서, 잘못된 풀은 모든 자원을 소진시켜버림
+  - 중앙화된 access control 불가
+    - client-specific access limit같은것을 설정 불가
+
+### Connection pooler
+
+- 개요
+  - 데이터베이스와 클라이언트 사이에있는 미들웨어로, library에 의한 connection pool의 단점을 해결하기 위해 등장
+- 장점
+  - PostgreSQL에 최적화 되어있음
+  - 중앙화된 access control 가능
+  - client-side pool의 기능 뿐 아니라, 여러가지 더 많은 기능 수행 가능
+- 단점
+  - latency
+    - DB서버와 같은 호스트에 설치할 경우 거의 무시가능
+    - TCP socket으로 통신 localhost bounding
+  - SPoF(Single Point of Failure)
+    - cluster사용이 강제됨
+    - 추가적인 복잡도
+  - 추가적인 비용 발생
+  - 서로다른 모듈에서 접근할 경우, 보안적인 취약점 생길 수 있음
+    - pool에 반환하기 전에 clean작업이 필요
+  - 인증 역할이 DBMS에서 connection pooler로 넘어감
+  - 결국 유지보수 해야함
+    - 보안 패치, 업그레이드
 
 ## The Path of a Query
 
