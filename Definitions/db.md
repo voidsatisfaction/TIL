@@ -3,6 +3,7 @@
 - 의문
 - General
   - Transaction
+  - Connection pool
 
 ## 의문
 
@@ -126,3 +127,11 @@
       - 혹은, 하나만 cancel시키고 나머지는 잠시 뒤에 다시 시작하도록 함
   - **Compensating transaction**
     - commit and rollback 매커니즘이 사용불가능하거나, 좋지 못한 선택지일 경우, 실패한 transaction을 undo하고 시스템을 이전 상태로 restore하는 것
+
+### Connection pool
+
+- 정의
+  - 데이터 베이스와의 연결을 유지하여, 재활용할 수 있게 한 데이터베이스 연결의 캐시
+    - 성능향상(커넥션 재활용)
+    - 그런데 커넥션을 매번 생성하는게 그렇게 까지 비싼 연산인가?
+      - PostgreSQL의 경우, 매 커넥션마다 process를 fork하므로 나름 비싸다고 할 수 있겠다
