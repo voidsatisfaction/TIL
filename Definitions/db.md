@@ -4,6 +4,7 @@
 - General
   - Transaction
   - Connection pool
+  - MySQL vs PostgreSQL
 
 ## 의문
 
@@ -135,3 +136,49 @@
     - 성능향상(커넥션 재활용)
     - 그런데 커넥션을 매번 생성하는게 그렇게 까지 비싼 연산인가?
       - PostgreSQL의 경우, 매 커넥션마다 process를 fork하므로 나름 비싸다고 할 수 있겠다
+      - 단순히 fork뿐 아니라, TCP커넥션과 TLS와 login을 매번 해야하므로, 레이턴시가 발생한다
+
+### MySQL vs PostgreSQL
+
+- MySQL
+  - 모토
+    - The most popular Open Source SQL DBMS supported by Oracle Corporation
+  - 서버
+    - 멀티 스레드
+  - 기능
+    - JOIN
+      - optimized nested-loop join
+    - Isolation level
+      - repeatable read
+    - Case insensitive
+  - 장점
+    - read가 많은 경우에 빠름
+  - 단점
+    - 데이터 write와 concurrency문제가 중요한 경우에는 좋지 못함
+- PostgreSQL
+  - 모토
+    - The world's most advanced open source relational database
+  - 서버
+    - 멀티 프로세스
+  - 기능
+    - JOIN
+      - nested-loop join, sort merge join, hash join
+        - *각 JOIN 방식은 query optimizer가 알아서 선택해주는것인가?*
+    - Isolation level
+      - read committed
+    - Case sensitive
+  - 장점
+    - 데이터 무결성이 중요할 경우 적절함
+    - SQL표준을 최대한 준수하려 함
+    - 지도, 기하 관련 데이터 타입
+    - complex query에 빠름
+  - 단점
+    - 속도를 희생하여 확장성과 호환성을 염두함(읽기 작업)
+- 공통점
+  - RDB
+    - physical files
+    - logical model
+      - databases, tables, views, rows, columns
+  - Open Source
+  - Client/Server 기반
+    - TCP/IP sockets
