@@ -2,6 +2,10 @@
 
 - 의문
 - Connection pool
+  - PostgreSQL architecture
+  - Connection pool
+  - Connection pooler
+- MVCC
 - The Path of a Query
   - Connection
   - Parser
@@ -64,6 +68,31 @@
   - 인증 역할이 DBMS에서 connection pooler로 넘어감
   - 결국 유지보수 해야함
     - 보안 패치, 업그레이드
+
+## MVCC(Multi-Version Concurrency Control)
+
+- 개요
+  - snapshot isolation(not read-write lock)
+    - *snapshot으로 isolation을 구현하면, 테이블이 커지면 커질수록 오버헤드 관리는 어떻게 하는가?*
+  - concurrency control을 multiversion model을 사용하여 보장
+    - query를 할 때, 각 트랜젝션은 데이터의 스냅샷을 봄
+      - 다른 concurrent transaction update로 인한 데이터 inconsistency를 해결
+  - READ UNCOMMITED, READ COMMITED, REPEATABLE READ, SERIALIZABLE 과 같은 네가지 DB isolation level을 lock을 사용하지 않고 구현하는 방법
+    - SQL standard에서는 what, 즉 무엇을 구현해야하는지만 나와있음
+- concurrent transaction과 undesirable phenomena
+  - dirty reads
+    - concurrent 커밋되지 않은 트랜잭션에 의하여 작성된 데이터를 트랜잭션이 읽는 경우
+  - non-repeatable reads
+    - 한 트랜잭션이 이전에 읽은 데이터를 다시 읽고, 데이터가 다른 트랜잭션에 의해서 변경되었다는것을 알게되는 경우
+      - 하나의 row
+  - phantom read
+    - 한 트랜잭션이 행들의 집합을 반환하는 쿼리를 재실행해서, 또 다른 트랜젝션에의해 같은 조건을 만족하는 행들의 집합이 변했다는 것을 알게 되는 것
+      - 여러개의 rows
+- locks
+  - *Table level locks*
+  - Row level locks
+    - 같은 행에 write할때만 lock
+- *lock과 index들*
 
 ## The Path of a Query
 
