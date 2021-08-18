@@ -2,6 +2,13 @@
 
 https://rinthel.github.io/rust-lang-book-ko/ch00-00-introduction.html
 
+- 1 시작하기
+  - 소개
+  - Cargo
+- 3 보편적인 프로그래밍 개념
+- 4 소유권 이해하기
+- 5 연관된 데이터들을 구조체로 다루기
+
 ## 의문
 
 - *링커가 뭐지?*
@@ -246,3 +253,60 @@ let world = &s[6..11];
     - 컬렉션 전체가 아닌, 컬렉션의 연속된 일련의 요소들을 참조할 수 있게 함
 - 주의
   - `String` type과 `&str` 타입은 엄연히 다름
+
+## 5. 연관된 데이터들을 구조체로 다루기
+
+### 5.1 구조체를 정의하고 생성하기
+
+```rust
+struct User {
+  username: String,
+  email: String,
+  sign_in_count: u64,
+  active: bool,
+}
+
+let mut user1 = User {
+    email: String::from("someone@example.com"),
+    username: String::from("someusername123"),
+    active: true,
+    sign_in_count: 1,
+};
+
+user1.email = String::from("anotheremail@example.com");
+
+fn build_user(email: String, username: String) -> User {
+    User {
+        email,
+        username,
+        active: true,
+        sign_in_count: 1,
+    }
+};
+
+// 기존 구조체 데이터로 새로운 구조체 생성
+let user2 = User {
+    email: String::from("another@example.com"),
+    username: String::from("anotherusername567"),
+    ..user1
+};
+
+// tuple structs
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+let black = Color(0, 0, 0);
+let origin = Point(0, 0, 0);
+
+// unit-like structs
+어떤 필드도 없는 구조체
+특정 타입의 trait을 구현해야하지만, 타입 자체에 데이터를 저장하지 않는 경우에 유용
+```
+
+- 구조체 데이터의 소유권
+  - 기본적으로 구조체가 데이터를 소유함
+  - 구조체가 소유권이 없는 데이터의 참조를 저장할 수 있지만, 라이프 타임의 사용을 전제로 함
+
+### 5.2 구조체를 이용한 예제 프로그램
+
+### 5.3 메소드 문법
