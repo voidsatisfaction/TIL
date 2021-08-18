@@ -204,13 +204,14 @@
       - projection
         - *scalar expression의 평가*
 
-### ⑤ \[WIP\]Executor
-
-https://www.postgresql.org/docs/12/executor.html
+### ⑤ Executor
 
 - 개요
-  - planner, optimizer가 생성한 plan을 받고, 재귀적으로 필요한 rows의 집합을 추출하기 위해서 작업
+  - planner, optimizer가 생성한 plan tree를 받고, 재귀적으로 필요한 rows의 집합을 추출함
     - *demand-pull pipeline mechanism*
-      - plan node가 호출되면, one more row를 조달하던지, delivering rows 작업이 끝났다고 report해야 함
+  - plan tree의 각 plan node가 호출될 때 마다 next output row를 반환하거나 계산
+    - 각 node는 selection이나 projection을 적용할 수 있음
 - 구체적인 설명(예시)
   - top node가 `MergeJoin` node라고 가정하면, merge가 실행되기 전에, 두 rows가 fetched 되어야 함
+  - *아직은 이 부분의 설명이 이해가 잘 안됨*
+    - https://www.postgresql.org/docs/12/executor.html
