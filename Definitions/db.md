@@ -4,7 +4,8 @@
 - General
   - Transaction
   - Connection pool
-  - MySQL vs PostgreSQL
+  - MySQL vs PostgreSQL vs SQLite
+  - MVCC
 
 ## 의문
 
@@ -138,7 +139,7 @@
       - PostgreSQL의 경우, 매 커넥션마다 process를 fork하므로 나름 비싸다고 할 수 있겠다
       - 단순히 fork뿐 아니라, TCP커넥션과 TLS와 login을 매번 해야하므로, 레이턴시가 발생한다
 
-### MySQL vs PostgreSQL
+### MySQL vs PostgreSQL vs SQLite
 
 - MySQL
   - 모토
@@ -169,16 +170,62 @@
     - Case sensitive
   - 장점
     - 데이터 무결성이 중요할 경우 적절함
+      - MVCC(Multi Version Concurrency Control)
     - SQL표준을 최대한 준수하려 함
     - 지도, 기하 관련 데이터 타입
     - complex query에 빠름
   - 단점
     - 속도를 희생하여 확장성과 호환성을 염두함(읽기 작업)
+- SQLite
+  - 모토
+    - Most widely deployed and used (embedded) database engine
+      - mobile DB
+  - 서버
+    - in-process (client-server 모델이 아님)
+  - 기능
+    - self-contained
+      - 외부 라이브러리 사용하지 않음
+      - 다양한 OS에서 동작
+    - serverless
+      - 직접 파일을 읽고 씀
+    - zero-configuration
+    - transactional
+    - SQLite의 가용 메모리가 많을수록 더 빠름
+      - 작은 메모리 환경에서도 꽤나 괜찮음
+      - direct file I/O보다 빠를 수 있음
+  - 장점
+    - 크로스 플랫폼 하나의 디스크 파일
+      - `fopen()`의 대체재
+    - reliable
+      - millions of test cases
+        - 100% 커버리지
+    - 시스템 크래시나, 파워가 갑자기 나가도 트랜잭션 ACID유지
+      - *어떻게?*
+    - 오픈소스지만, SQLite만 풀타임으로 전담하는 팀이 존재
+    - 2050년까지 서비스할 계획
+  - 단점
 - 공통점
   - RDB
     - physical files
     - logical model
       - databases, tables, views, rows, columns
   - Open Source
-  - Client/Server 기반
-    - TCP/IP sockets
+
+### MVCC
+
+- 정의
+  - 동시성을 제어하기 위해 사용하는 방법 중 하나
+- 동작 순서
+  - 데이터에 접근하는 사용자는 접근한 시점에서 데이터베이스의 Snapshot을 읽음
+  - commit될 때 까지 변경사항은 다른 데이터베이스 사용자가 볼 수 없음
+    - READ COMMITTED?
+  - 사용자가 데이터를 업데이트하면, 새로운 버전의 데이터를 UNDO 영역에 생성
+  - 이전 버전의 데이터와 비교해서 변경된 내용 기록
+- 장점
+  - lock을 사용하지 않으므로, 일반적인 RDBMS보다 매우 빠르게 동작
+  - 데이터를 읽기 시작할 때, 다른 사람이 그 데이터를 삭제하거나 수정하더라도 영향을 받지 않음
+- 단점
+  - *하나의 데이터에 대해 여러 버전의 데이터를 허용하므로, 데이터 정리 시스템 필요*
+    - *undo 영역 말하는건가? 왜 연산 끝나고 안지움?*
+  - 데이터 버전이 충돌될 수 있음
+    - *예시?*
