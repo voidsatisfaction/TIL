@@ -19,6 +19,7 @@
   - GraphQL
 - Server
   - WSGI
+  - OpenAPI Specification
 - JS
   - Document Object Model(DOM)
     - Virtual DOM
@@ -623,6 +624,13 @@ def call_application(app, environ):
 environ = {...} # environ dict
 status, headers, body = call_application(app, environ)
 ```
+
+### OpenAPI Specification
+
+- 정의
+  - RESTful 웹 서비스를 가시화하고 기술하고 생성하기 위한 machine-readable interface 파일들을 위한 명세
+    - 이전에는 Swagger Specification으로 불렸음
+    - 2016년에 독립
 
 ## JS
 
