@@ -29,7 +29,7 @@
 
 - 개요
   - 기본적으로 PostgreSQL에서는 클라이언트와의 연결마다 하나의 process를 fork함
-- 장점
+- 특징
   - fault tolerant
     - 일부의 실패로 인한 데이터베이스의 크러시를 막음
   - 현대 Lunix system에서는 process fork와 thread 생성의 오버헤드 차이가 기존보다 많이 차가 좁혀짐
@@ -39,13 +39,14 @@
 
 - 개요
   - 라이브러리에서 물리적 커넥션풀을 유지하고, 그러한 풀을 사용해서 데이터베이스에 접근하는 방식
-    - PostgreSQL에서는 새로 forking하지 않음
+    - PostgreSQL에서는 매 request시 마다 새로 forking하지 않음
 - 단점
   - 결국 풀의 사이즈가 작아도, 많은 서버 프로세스가 남게되고, 그것들 사이의 컨텍스트스위칭은 비쌈
-    - *이 서버는 데이터베이스 서버? 아니면, 웹 서버?*
+    - 이 서버는 데이터베이스 서버? 아니면, 웹 서버?
+      - 프로세스라고 단정지은것을 보니, 데이터베이스 서버를 이야기하는 듯
   - 풀링 서포트는 라이브러리와 언어마다 다양해서, 잘못된 풀은 모든 자원을 소진시켜버림
   - 중앙화된 access control 불가
-    - client-specific access limit같은것을 설정 불가
+    - client-specific access limit같은 것은 설정 불가
 
 ### Connection pooler
 
@@ -73,25 +74,27 @@
 
 - 개요
   - snapshot isolation(not read-write lock)
-    - *snapshot으로 isolation을 구현하면, 테이블이 커지면 커질수록 오버헤드 관리는 어떻게 하는가?*
+    - snapshot으로 isolation을 구현하면, 테이블이 커지면 커질수록 오버헤드 관리는 어떻게 하는가?
+      - 테이블 전체에 대한 오버헤드가 아님
   - concurrency control을 multiversion model을 사용하여 보장
     - query를 할 때, 각 트랜젝션은 데이터의 스냅샷을 봄
       - 다른 concurrent transaction update로 인한 데이터 inconsistency를 해결
   - READ UNCOMMITED, READ COMMITED, REPEATABLE READ, SERIALIZABLE 과 같은 네가지 DB isolation level을 lock을 사용하지 않고 구현하는 방법
-    - SQL standard에서는 what, 즉 무엇을 구현해야하는지만 나와있음
+    - SQL standard에서는 what, 즉 무엇을 구현해야하는지만 나와있고, MVCC는 그 구체적인 구현법임(how)
 - concurrent transaction과 undesirable phenomena
   - dirty reads
-    - concurrent 커밋되지 않은 트랜잭션에 의하여 작성된 데이터를 트랜잭션이 읽는 경우
+    - 한 트랜잭션이 concurrent의 커밋되지 않은 트랜잭션에 의하여 작성된 데이터를 읽게 되는 경우
   - non-repeatable reads
     - 한 트랜잭션이 이전에 읽은 데이터를 다시 읽고, 데이터가 다른 트랜잭션에 의해서 변경되었다는것을 알게되는 경우
-      - 하나의 row
+      - 하나의 row 대상
   - phantom read
     - 한 트랜잭션이 행들의 집합을 반환하는 쿼리를 재실행해서, 또 다른 트랜젝션에의해 같은 조건을 만족하는 행들의 집합이 변했다는 것을 알게 되는 것
-      - 여러개의 rows
+      - 여러개의 rows 대상
 - locks
   - *Table level locks*
   - Row level locks
-    - 같은 행에 write할때만 lock
+    - SLock
+    - XLock
 - *lock과 index들*
 
 ## The Path of a Query
