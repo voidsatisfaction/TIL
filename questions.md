@@ -9,6 +9,8 @@
   - 웹 서버에, 웹 소켓 기능을 붙인다는 얘기는, 웹 소켓 서버를 붙인다는 것과 동치인가?
   - gunicorn의 역할과, eventlet등의 효과?
   - 웹어셈블리가 뭐지?
+- Programming
+  - python의 list는 어떤 매커니즘으로 구현되어있는가?
 
 ## DB
 
@@ -40,3 +42,7 @@
         - eventlet or gevent에 기반하여 사용가능
           - coroutine기반
 - 웹 어셈블리가 뭐지?
+
+## Programming
+
+- python의 list는 어떤 매커니즘으로 구현되어있는가?
