@@ -5,6 +5,7 @@
 - DICOM 개요
 - DICOM 데이터 포맷
 - DICOM 네트워크
+- 다양한 DICOM 종류
 
 ## 의문
 
@@ -181,3 +182,15 @@ File Meta elements
 - 단점
   - optional fields가 너무 많아서 잘못 입력되거나, 입력되지 않는 경우가 많음
   - 파일 포맷이 executable code나 malware를 포함할 가능성이 있음
+
+## 다양한 DICOM 종류
+
+- GSPS(Grayscale Softcopy Presentation State)
+  - 개요
+    - dicom 영상의 상태를 표시하는 dicom
+- SC(Secondary Capture)
+  - 개요
+    - non-DICOM format을 modality independent DICOM format으로 변환한 이미지
+- Encapsulated DICOM
+  - 개요
+    - dicom오브젝트 안에 pdf파일을 encapsulate함
