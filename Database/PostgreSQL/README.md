@@ -81,9 +81,10 @@
       - 다른 concurrent transaction update로 인한 데이터 inconsistency를 해결
   - READ UNCOMMITED, READ COMMITED, REPEATABLE READ, SERIALIZABLE 과 같은 네가지 DB isolation level을 lock을 사용하지 않고 구현하는 방법
     - SQL standard에서는 what, 즉 무엇을 구현해야하는지만 나와있고, MVCC는 그 구체적인 구현법임(how)
+  - MGA(Multi Generation Architecture)로 구현
 - concurrent transaction과 undesirable phenomena
   - dirty reads
-    - 한 트랜잭션이 concurrent의 커밋되지 않은 트랜잭션에 의하여 작성된 데이터를 읽게 되는 경우
+    - 한 트랜잭션이 concurrent한 커밋되지 않은 트랜잭션에 의하여 작성된 데이터를 읽게 되는 경우
   - non-repeatable reads
     - 한 트랜잭션이 이전에 읽은 데이터를 다시 읽고, 데이터가 다른 트랜잭션에 의해서 변경되었다는것을 알게되는 경우
       - 하나의 row 대상
