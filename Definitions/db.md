@@ -223,9 +223,12 @@ MVCC, Rollback Segment example
 
 - 정의
   - 동시성을 제어하기 위해 사용하는 핵심적인 방법 중 하나
+    - readers never block writers, and writers never block readers
 - 구현 방식
   - MGA(Multi Generation Architecture)
     - 튜플을 업데이트 할 때, 동일한 데이터 페이지 내에서 새로운 튜플을 추가하고, 이전 튜플은 유효범위를 마킹해 처리
+    - e.g)
+      - PostgreSQL
   - Rollback(Undo) segment
     - 튜플을 업데이트 할 때, 새로운 버전의 데이터를 기존 데이터 블록에서 변경하고, 이전 버전을 별도의 롤백 세그먼트에 보관
       - select SCN(System Change Number(데이터베이스 내부의 타임스탬프 같은것))과 데이터 블록의 SCN을 비교해 Consistent Read가 필요하다고 판단되면, 롤백 세그먼트의 이전 버전을 읽어서 버퍼 캐시에 CR(Consistent Read)블록을 생성
@@ -240,9 +243,12 @@ MVCC, Rollback Segment example
         - 트랜잭션을 롤백되는 경우에 다시 데이터값을 행으로 옮겨서 원래의 값으로 복원
       - 트랜잭션 복구
         - 트랜잭션이 수행되고 있을 때, 인스턴스가 비정상적으로 종료하면, 커밋되지 않은 변경사항을 롤백해야 함
+    - e.g)
+      - MSSQL
 - 장점
   - lock을 사용하지 않으므로, 일반적인 RDBMS보다 매우 빠르게 동작
   - 데이터를 읽기 시작할 때, 다른 사람이 그 데이터를 삭제하거나 수정하더라도 영향을 받지 않음
+  - READ COMMITTED, REPEATABLE READ 둘다 가능하게 함
 - 단점
   - *하나의 데이터에 대해 여러 버전의 데이터를 허용하므로, 데이터 정리 시스템 필요*
     - *undo 영역 말하는건가? 왜 연산 끝나고 안지움?*
