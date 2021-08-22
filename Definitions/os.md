@@ -10,6 +10,7 @@
   - POSIX
   - Everything is a file
   - Shell vs Terminal
+  - Turing machine vs Modern computer
 - File system
   - File descriptor vs System open-file table vs Vnode Table
   - I/O multiplexing
@@ -24,6 +25,7 @@
   - file system types
     - UnionFS
 - Process
+  - Program
   - Process
     - Daemon
     - Processor affinity
@@ -186,6 +188,15 @@ Bootstrap
       - `-t`가 없으므로, 명령어를 치면 stdout은 나오나, 그것이 다소 이상하게 보임
     - `-t`만 있는 경우
       - `-i`가 없으므로, 명령어를 쳐도 container에 반영되지 않음
+
+### Turing machine vs Modern computer
+
+![](./images/os/turing_machine_vs_modern_computer1.png)
+
+- 이론상의 컴퓨터
+  - 튜링 머신
+- 컴퓨터의 실제
+  - 현대 컴퓨터
 
 ## File system
 
@@ -622,6 +633,11 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
 
 ## Process
 
+### Program
+
+- 정의
+  - 컴퓨터가 태스크를 수행하도록 하는 set of instructions
+
 ### Process
 
 - 정의
@@ -632,7 +648,7 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
   - bg
     - 사용자가 직접적으로 제어 하지 않는 프로세스
 
-### Daemon
+#### Daemon
 
 - 정의
   - 사용자가 직접적으로 제어하지 않고, 부팅 때 자동으로 initialize되어, 백그라운드에서 동작하면서 여러 작업을 수행하는 프로그램
@@ -646,7 +662,7 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
   - Service
     - `sc.exe`와 같은 프로그램으로 윈도우 API 함수를 이용해 등록해야 함
 
-### Processor affinity
+#### Processor affinity
 
 - 동의어
   - CPU pinning, cache affinity
@@ -658,7 +674,7 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
 - 단점
   - 로드 밸런싱을 해야함
 
-### Process group
+#### Process group
 
 - 정의
   - POSIX 준수 OS에서의 하나 혹은 하나이상의 프로세스들을 의미
@@ -671,7 +687,7 @@ The vast majority of POSIX-compliant implementations use fast symlinks. However,
   - 특징
     - 프로세스는 하나의 세션에서 다른 세션으로 migration불가
 
-### Pipeline
+#### Pipeline
 
 - *pipe는 왜, 어떻게 파일로 관리되는것인지?*
 - *pipeline은 socket과 어떤 차이가 있는지?*
@@ -712,7 +728,7 @@ Pipeline
       - 받는 쪽은 buffer로 부터 데이터를 받음
   - `netcat`, `socat`을 이용해서 socket과 연결도 가능
 
-### IPC(Inter-Process Communication)
+#### IPC(Inter-Process Communication)
 
 - 정의
   - **OS가** 프로세스들이 데이터를 공유하는 방법을 제공하는 매커니즘
