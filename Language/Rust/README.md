@@ -359,6 +359,7 @@ let origin = Point(0, 0, 0);
   - 개요
     - 타입들이 공통적으로 갖는 동작에 대하여 추상화
     - 제네릭 타입과 결합되어, 제네릭 타입에 대해 아무 타입이나 허용하지 않고, 특정 동작을 하는 타입으로 제한
+      - 우리가 사용하길 원하는 동작을 갖도록 하기 위해 trait bounds를 사용할 수 있음
 - 라이프타임
   - 개요
     - 제네릭의 일종으로서, 컴파일러에게 참조자들이 서로에게 어떤 연관이 있는지에 대한 정보를 줄 수 있도록 해줌
@@ -393,5 +394,70 @@ fn main() {
 - 런타임 코드 실행 속도는 컴파일타임 monomorphization(구체적 타입으로 된 코드로 변형) 덕분에, 그대로
 
 ### 10.2 트레잇: 공유 동작을 정의하기
+
+```rust
+// 시그니처만
+
+pub trait Summarizable {
+    fn summary(&self) -> String;
+}
+
+// 기본 구현
+
+pub trait Summarizable {
+    fn summary(&self) -> String {
+        String::from("(Read more...)")
+    }
+}
+
+pub struct NewsArticle {
+    pub headline: String,
+    pub location: String,
+    pub author: String,
+    pub content: String,
+}
+
+impl Summarizable for NewsArticle {
+    fn summary(&self) -> String {
+        format!("{}, by {} ({})", self.headline, self.author, self.location)
+    }
+}
+
+pub struct Tweet {
+    pub username: String,
+    pub content: String,
+    pub reply: bool,
+    pub retweet: bool,
+}
+
+impl Summarizable for Tweet {
+    fn summary(&self) -> String {
+        format!("{}: {}", self.username, self.content)
+    }
+}
+```
+
+- 트레잇 바운드
+  - 제네릭 타입에 제약을 가할 수 있음
+  - 제네릭 타입이 특정한 트레잇을 구현하여 이 타입들이 가지고 있을 필요가 있는 동작을 갖고 있도록 제한
+    - *그런데, 그냥 trait으로 type annotation하지 왜 뭐하러 generic까지 씀?*
+- 런타임 에러를 컴파일 에러로
+
+```rust
+pub fn notify<T: Summarizable>(item: T) {
+    println!("Breaking news! {}", item.summary());
+}
+
+fn some_function<T: Display + Clone, U: Clone + Debug>(t: T, u: U) -> i32 {
+  ...
+}
+
+fn some_function<T, U>(t: T, u: U) -> i32
+    where T: Display + Clone,
+          U: Clone + Debug
+{
+  ...
+}
+```
 
 ### 10.3 라이프타임을 이용한 참조자 유효화
