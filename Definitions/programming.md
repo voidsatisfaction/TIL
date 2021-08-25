@@ -13,6 +13,8 @@
   - mutex(lock)
   - scope
   - closure
+  - call stack
+  - stack trace(stack backtrace, stack traceback)
 - Data structure
   - stream
   - buffer
@@ -793,6 +795,51 @@ export default SlideItem
 
 
 ```
+
+### \[WIP\] call stack
+
+Call stack diagram
+
+![](./images/programming/call_stack1.png)
+
+- 정의
+  - 컴퓨터 프로그램에서 현재실행중인 서브루틴에 관한 정보를 저장하는 스택 자료구조
+- 동의어
+  - execution stack, control stack, run-time stack, machine stack, the stack
+- 특징
+  - 현재 실행 중인 서브루틴의 실행이 끝났을 때, 제어를 반환할 지점을 보관하기 위함
+    - caller는 stack에 return address를 푸시함
+    - 해당 서브루틴이 다 끝나면 return address로 돌아가서, 제어권을 넘겨줌
+      - *여기서 말하는 return address는 PC의 address를 말하는건가?*
+  - 하나의 스레드에 하나의 call stack이 존재
+  - 고차원 언어 vs 저차원 언어
+    - 고차원 언어
+      - 추상화 되어있어서 프로그래머가 스택을 직접 조작하지 않음
+    - 어셈블리어
+      - 프로그래머가 직접 스택을 조작
+  - 정적 타입 언어 vs 동적 타입 언어
+    - 정적 타입 언어
+      - 서브루틴내의 local variable의 메모리 크기를 이미 알고 있으므로, 로컬 변수 자체를 stack에 저장가능
+    - 동적 타입 언어
+      - 서브루틴내의 local variable의 메모리 크기가 런타임에 변경되므로, 로컬 변수 자체가 stack에 저장 불가능
+- 기능
+  - 서브루틴의 return address를 저장
+  - local data 저장
+  - parameter passing
+  - evaluation stack
+    - 특정한 경우, 레지스터에서 연산이 힘든 경우가 존재
+    - e.g) CPython thread's stack
+  - pointer to current instance
+    - e.g) C++ this
+- c.f)
+  - CPython에서는 return address저장(frame object)과 evaluation stack으로서만 동작하는듯?
+
+### stack trace(stack backtrace, stack traceback)
+
+- 정의
+  - 프로그램 실행 중 특정한 시점에서의 스택 프레임에 대한 리포트
+- 기능
+  - 사후 분석 디버깅
 
 ## Data structure
 
