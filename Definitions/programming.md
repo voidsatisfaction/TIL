@@ -15,6 +15,7 @@
   - closure
   - call stack
   - stack trace(stack backtrace, stack traceback)
+  - prototype
 - Data structure
   - stream
   - buffer
@@ -840,6 +841,87 @@ Call stack diagram
   - 프로그램 실행 중 특정한 시점에서의 스택 프레임에 대한 리포트
 - 기능
   - 사후 분석 디버깅
+
+### prototype
+
+prototype 디자인 패턴 예시 코드
+
+```js
+// 이건 너무 객체 생성 비용이 높으니까...
+Player evan = new Player();
+Player john = new Player();
+Player wilson = new Player();
+
+// 이런 방법으로 접근해보는 것은 어떨까?
+Player player = new Player();
+Player evan = player.clone();
+Player john = player.clone();
+Player wilson = player.clone();
+```
+
+prototype example1
+
+![](./images/programming/js_prototype1.png)
+
+prototype example2
+
+![](./images/programming/js_prototype2.png)
+
+`console.log(User.prototype.constructor === User); >> true`
+
+String 함수의 prototype chain
+
+![](./images/programming/js_prototype3.png)
+
+프로토타입 룩업 예시
+
+![](./images/programming/js_prototype_lookup1.png)
+
+- 개요
+  - 새로운 객체를 생성할 때, 원본 객체를 복제해서 생성하는 디자인 패턴
+    - 객체의 생성의 비용이 큰 경우에 사용하는 디자인 패턴
+  - 레퍼런스의 경우, deep copy가 아닌경우에,주의할 필요가 있음
+- 요약
+  - 객체는 함수를 사용해서 만들어지고, 객체는 함수의 프로토타입 객체를 복제하여 생성된다.
+  - 모든 객체는 자신이 어떤 원본 객체를 복제하여 생성된 것인지에 대한 정보를 가지고 있다.
+- 배경
+  - js는 생성자(constructor)가 함수임
+  - 자바스크립트는 함수가 생성될 때, 자동으로 그 함수의 프로토타입 객체(prototype object)도 함께 생성하고 해당 함수의 `prototype`프로퍼티에 연결해 둠
+    - 이 프로토타입 객체가 `new` 키워드로 새로 오브젝트를 생성할때, 복사되는 대상임
+    - 즉, 자바스크립트에서는 함수를 생성할때, 프로토타입 객체도 함께 생성되어 `prototype`프로퍼티에 연결해 둠
+- property
+  - `constructor`
+    - prototype에서 원 생성자 함수를 참조 가능
+  - `__proto__`
+    - 생성된 instance에서 원본 prototype 객체 참조할때 사용하는 prototype link
+- 프로토타입 체인
+  - 개요
+    - 연결된 프로토타입 링크의 집합
+    - 자바스크립트내의 모든 객체가 프로토타입 기반 방식으로 정의되고 생성됨
+      - e.g) `String`, `Boolean`, `Array`
+    - 자바스크립트 내에 존재하는 모든 것들은 `Object`함수의 프로토타입인 `Object.prototype`을 시작으로 해서 복제
+- 프로토타입 룩업
+  - 개요
+    - 임의의 오브젝트는 자신의 프로토타입 체인 내에 있는 모든 원본 오브젝트들의 프로퍼티나 메소드에 접근할 수 있음
+
+```js
+function SuperClass (name) {
+  this.name = name;
+}
+SuperClass.prototype.say = function () {
+  console.log(`I am ${this.name}`);
+}
+
+// 상속 구현
+function SubClass (name) {
+  SuperClass.call(this, name);
+}
+SubClass.prototype = Object.create(SuperClass.prototype);
+SubClass.prototype.constructor = SubClass;
+SubClass.prototype.run = function () {
+  console.log(`${this.name} is running`);
+}
+```
 
 ## Data structure
 
