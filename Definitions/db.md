@@ -3,6 +3,11 @@
 - 의문
 - General
   - Transaction
+  - Isolation level
+    - Read uncommitted
+    - Read committed
+    - Repeatable read
+    - Serializable
   - Connection pool
   - MySQL vs PostgreSQL vs SQLite
   - MVCC
@@ -129,6 +134,126 @@
       - 혹은, 하나만 cancel시키고 나머지는 잠시 뒤에 다시 시작하도록 함
   - **Compensating transaction**
     - commit and rollback 매커니즘이 사용불가능하거나, 좋지 못한 선택지일 경우, 실패한 transaction을 undo하고 시스템을 이전 상태로 restore하는 것
+
+### Isolation level
+
+PostgreSQL 기반
+
+#### Read uncommitted
+
+#### Read committed
+
+- 개요
+  - 한 transaction에서의 SELECT 쿼리는, **쿼리가 시작하기 전** 의 데이터만 볼 수 있음
+    - uncommitted data / concurrent transaction에 의해 **쿼리 실행중** 에 commit된 변화는 결코 볼 수 없음
+      - MVCC의 MGA를 생각해보면 자명
+  - 자신의 transaction에서 커밋되지 않은 update의 결과는 볼 수 있음
+  - 한 transaction에서의 연속된 select 쿼리는 서로 다른 결과를 볼 수 있음
+    - 두번째 select전에 다른 transaction에서 변화를 commit하는 경우
+- 케이스 스터디
+  - `SELECT`이외의 경우
+    - `UPDATE`, `DELETE`, `SELECT FOR UPDATE`, `SELECT FOR SHARE` 커맨드도 타겟 행을 찾을때, SELECT와 같은 동작을 함
+      - concurrent한 transaction에 의해서, 삭제되거나 수정되는 경우가 있음
+        - 그러한 경우, 해당 transaction을 기다림
+      - 시나리오
+        - concurrent한 transaction이 롤백되는 경우
+          - 처음 찾은 row로 자신의 transaction을 실행
+        - concurrent한 transaction이 커밋되는 경우
+          - row가 삭제된 경우
+            - 자신의 transaction 무시
+          - 그 외
+            - **처음 찾은 row중에서** , 서치 조건(WHERE)이 재평가되어서 이전 transaction의 커밋 후에도 서치 조건이 만족하는지 확인하여 그렇다면 진행
+  - `INSERT ... ON CONFLICT DO UPDATE`
+    - insert 혹은 update는 보장
+    - concurrent한 transaction에 의해서 insert에서 conflict가 나면, update가 동작함
+      - MGA에서 해당 version이 보이지 않아도 시행됨(내부적으로 그렇게 구현했나 봄)
+- 장점
+  - 빠르고 사용하기 간편함
+- 단점
+  - 모든 케이스를 다 제대로 다룰 수 있는것은 아님
+
+문제가 생기는 경우
+
+```sql
+-- website 테이블에 website.hits의 값이 9 or 10인 데이터가 들어있다고 가정
+
+BEGIN;
+UPDATE website SET hits = hits + 1;
+-- run from another session:  DELETE FROM website WHERE hits = 10;
+COMMIT;
+```
+
+- 문제
+  - 위의 경우, concurrent transaction의 DELETE가 동작하지 않을 수 있음
+- 원인
+  - pre-update hits값 9인 row는 스킵됨
+  - 대상은 update이전에 hits값 10인 row는 delete의 대상이 되었다가, update쿼리가 끝나고나서, where조건을 다시 평가받을때, 이미 값이 11이 되므로 대상에서 제외
+
+#### Repeatable read
+
+- 개요
+  - **한 트랜젝션이 시작하기 전** 의 커밋된 데이터만 볼 수 있음
+    - 커밋 되지 않은 데이터나, concurrent transaction에 의한 커밋의 수정도 볼 수 없음
+  - 자신의 transaction에서 커밋되지 않은 update의 결과는 볼 수 있음
+  - serialization failure에 의한, retry transaction에 준비되어야만 함
+- 케이스 스터디
+  - `UPDATE`, `DELETE`, `SELECT FOR UPDATE`, `SELECT FOR SHARE`역시 행을 찾을 때, `SELECT`와 같은 동작을 함
+    - 트랜젝션 시작하기전까지 커밋된 데이터를 탐색
+    - 다른 concurrent transaction에 의해서 이미 업데이트 되었거나, 삭제되었을 수 있음
+  - 시나리오
+    - concurrent transaction이 rollback된 경우
+      - 처음 찾은 row로 update 수행
+    - concurrent transaction이 commit된 경우
+      - 현재 transaction이 serialization failure 에러와 함께 롤백
+- 특징
+  - updating 트랜젝션만 재시도 되고, read-only 트랜젝션은 충돌이 일어나지 않음
+  - 각 트랜젝션은 데이터베이스의 stable view를 항상 보지만, concurrent transaction들이 순차적으로 실행되는것과는 다름
+- 구현
+  - 스냅샷 isolation
+    - 전통적인 locking방식보다 성능이 더 좋음
+
+#### Serializable
+
+- 개요
+  - 가장 엄격한 transaction isolation
+  - transaction이 실제로는 concurrent하지만, 전부 serial하게 실행되는 것 처럼 에뮬레이트 함
+  - 반드시 serialization failure에 대비해야 함
+  - repeatable read와 동일하나, serializable transaction의 concurrent set의 inconsistency를 모니터링 해야함
+    - 모니터링은 블로킹은 하지 않으나, 오버헤드가 존재
+    - serialization anomaly의 조건 탐색
+- 구현
+  - predicate locking
+    - concurrent transaction으로부터 이전의 읽은 결과에 쓰기가 영향을 끼치는지 확인하기 위한 lock
+    - blocking하지 않으므로, deadlock을 일으키지 않음
+      - *그럼 어떻게 구현된거길래?*
+
+```sql
+-- initial state
+-- class | value
+-- -------+-------
+--     1 |    10
+--     1 |    20
+--     2 |   100
+--     2 |   200
+
+-- A
+BEGIN
+SELECT SUM(value) FROM mytab WHERE class = 1;
+-- 그 다음에 class = 2인 row를 insert
+END
+
+-- B
+BEGIN
+SELECT SUM(value) FROM mytab WHERE class = 2;
+-- 그 다음에 class = 1인 row를 insert
+END
+```
+
+- 문제
+  - 위의 경우, 둘중의 하나의 transaction만 commit되고 나머지는 rollback됨
+- 원인
+  - concurrent 하게 A, B transaction이 실행되는 경우, SELECT의 sum에서 서로 각각 30, 300이라는 inconsistent한 결과가 나오게 됨
+    - REPEATABLE READ의 구현을 그대로 따르기 때문에(snapshot)
 
 ### Connection pool
 
