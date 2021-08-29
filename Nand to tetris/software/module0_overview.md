@@ -2,6 +2,8 @@
 
 - Nand-to-Tetris2에서 배울 수 있는 것들
 - 0.2 Machine Language Elements
+- 0.3 The Hack Computer and Machine Language
+- 0.5 Handling Input and Output
 
 ## Nand-to-Tetris2에서 배울 수 있는 것들
 
@@ -130,3 +132,9 @@ Hack computer: hardware
     - If (D-1==0) jump to execute the instruction stored in ROM\[56\]
       - `@56`
       - `D-1; JEQ`
+
+## 0.5 Handling Input and Output
+
+- Hack computer의 경우, memory map을 이용
+  - 특정 메모리 주소군이 screen
+  - 특정 메모리 주소가 keyboard
