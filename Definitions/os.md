@@ -122,10 +122,15 @@ Device controller와 device driver의 관계
 
 ![](./images/os/device_controller_device_driver1.png)
 
+OS <-> Device driver <---(bus)---> Device controller <--(socket)-(plug)--> Device
+
+- 정의
+  - CPU의 incoming, outcoming 시그널을 이해하는 하드웨어 유닛
 - 개요
   - 하나의 디바이스는 플러그와 소켓으로 컴퓨터와 연결되어 있고, 소켓은 device controller와 연결되어있음
     - 즉, 컴퓨터에 붙은 하드웨어임
   - 시스템 내부의 bus와도 연결되어 있음
+    - 이 bus는 결국 device driver와 연결되어 있음
   - local buffer가 존재
   - device를 담당함
 - 장치 - OS 커뮤니케이션
@@ -133,10 +138,15 @@ Device controller와 device driver의 관계
   - 2 device driver와 통신
   - 3 각각의 device controller마다, 대응하는 device driver가 있고, device controller는 device driver를 이용하여 특히, interrupt를 통해 OS와 통신
 - 역할
+  - OS로부터 커맨드를 받음
+    - read, write 등
+    - 각 device controller는 자신의 커맨드의 집합을 갖고 있음
   - 연속된 bit stream을 바이트 블록으로 변환
   - 에러 교정
 
 ### Device driver
+
+결국, 드라이버를 만드는 제작사는, OS가 정한 인터페이스에 맞춰서 기능을 설계해야하는 것인가? - 그렇다
 
 - 정의
   - 특정 하드웨어를 제어하기 위한 커널의 일부분으로 동작하는 프로그램
@@ -145,7 +155,7 @@ Device controller와 device driver의 관계
   - 커널의 일부분이긴 하지만, 커널과 통합되는 경우에 여러 시나리오가 존재
     - 해당 드라이버 프로그램 자체가 커널 소스에 포함되어 컴파일
     - 별도로 컴파일된 파일(*.sys, *.o)형태로 존재하고, 부팅시 또는 필요시 해당 파일이 로드되어, 커널과 통합
-  - 장치 컨트롤러의 작동을 잘 알고 있고, 나머지 운영체제에 장치에 대한 일관된 인터페이스 제공
+  - 장치 컨트롤러의 작동을 잘 알고 있고, 나머지 운영체제에 장치에 대한 **일관된 인터페이스 제공**
     - 프로그램이 드라이버의 명령어 호출 -> 드라이버는 장치에 명령어를 전달 -> 장치가 드라이버에게 데이터를 되돌려 줌 -> 드라이버는 원래 요청한 프로그램의 명령어로 데이터를 다시 전달
   - 장치 드라이버는 장치 칩의 레지스터에 접근하여 하드웨어를 제어
 
