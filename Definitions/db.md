@@ -194,7 +194,7 @@ COMMIT;
 - 개요
   - **한 트랜젝션이 시작하기 전** 의 커밋된 데이터만 볼 수 있음
     - 커밋 되지 않은 데이터나, concurrent transaction에 의한 커밋의 수정도 볼 수 없음
-  - 자신의 transaction에서 커밋되지 않은 update의 결과는 볼 수 있음
+  - 자신의 transaction에서 transaction내의 커밋되지 않은 update의 결과는 볼 수 있음
   - serialization failure에 의한, retry transaction에 준비되어야만 함
 - 케이스 스터디
   - `UPDATE`, `DELETE`, `SELECT FOR UPDATE`, `SELECT FOR SHARE`역시 행을 찾을 때, `SELECT`와 같은 동작을 함
@@ -216,7 +216,7 @@ COMMIT;
 
 - 개요
   - 가장 엄격한 transaction isolation
-  - transaction이 실제로는 concurrent하지만, 전부 serial하게 실행되는 것 처럼 에뮬레이트 함
+  - **transaction이 실제로는 concurrent하지만, 전부 serial하게 실행되는 것 처럼 에뮬레이트 함**
   - 반드시 serialization failure에 대비해야 함
   - repeatable read와 동일하나, serializable transaction의 concurrent set의 inconsistency를 모니터링 해야함
     - 모니터링은 블로킹은 하지 않으나, 오버헤드가 존재
