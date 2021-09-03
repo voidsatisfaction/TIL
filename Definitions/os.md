@@ -15,6 +15,8 @@
   - Shell vs Terminal
   - Turing machine vs Modern computer
 - Storage structure
+- CPU
+  - Computer System Architecture
 - File system
   - File descriptor vs System open-file table vs Vnode Table
   - I/O multiplexing
@@ -99,8 +101,8 @@
     - c.f) 하드웨어
       - CPU, 메모리, 입출력 장치, 저장장치
   - 운영체제의 책임은 이러한 자원들을 프로그램에 할당하는 것
-  - 일반적으로, 컴퓨터 시스템은 사용자의 문제 해결을 위한 도구인데, 자원 할당, 입출력 장치 제어와 같은 것은 OS에 위임
-    - 응용 프로그램은 오직 문제 해결에만 집중
+  - **일반적으로, 컴퓨터 시스템은 사용자의 문제 해결을 위한 도구인데, 자원 할당, 입출력 장치 제어와 같은 것은 OS에 위임**
+    - **응용 프로그램은 오직 문제 해결에만 집중**
 - 구성 요소
   - 커널
     - 항상 실행 중인 프로그램
@@ -108,6 +110,7 @@
     - 응용 프로그램 개발을 쉽게 하고 기능을 제공
   - 시스템 프로그램
     - 시스템 실행 중에 시스템을 관리하는 데 도움이 되는 프로그램
+    - *예시로 무엇이 있을까?*
 - c.f) 컴퓨터 시스템의 구성
   - CPU, 구성요소, 공유 메모리 사이의 액세스를 제공하는 공통 버스, 장치 컨트롤러
   - 장치 컨트롤러 마다 장치 드라이버가 존재
@@ -279,6 +282,61 @@ Bootstrap
 저장장치 계층 구조
 
 ![](./images/os/storage_hierarchy_structure1.png)
+
+## CPU
+
+- Processor
+  - CPU를 포함하는 물리적 칩
+- CPU
+  - 명령을 실행하는 하드웨어
+- Core
+  - 명령을 실행
+  - 레지스터를 포함
+- c.f) 특수목적 processor
+  - 장치별 프로세서
+    - 디스크, 키보드, 그래픽 컨트롤러
+  - e.g) 디스크 컨트롤러 마이크로프로세서
+    - 주 CPU로부터 연속된 요청을 받아들여 자기 고유의 디스크 큐와 스케줄링 알고리즘 구현
+  - e.g) PC의 키보드
+    - 키스트로크를 CPU에 전송할 코드로 변환하는 마이크로세서를 가지고 있음
+
+### Computer System Architecture
+
+- Single-Processor Systems
+  - 개요
+    - 1CPU - 1Core
+- Multiprocessor Systems
+  - Multiprocessor
+    - 개요
+      - NProcessor - 1CPU
+    - 특징
+      - N프로세서의 속도 향상의 비율은 N이 아님
+      - 프로세서는 시스템 버스를 통해 물리 메모리 공유
+  - Multicore
+    - 개요
+      - 1Processor - NCPU
+    - 특징
+      - 칩 내 통신이 칩 간 통신보다 빠름(효율적)
+      - 적은 전력 사용
+      - 칩 내 CPU간 캐시 공유 가능
+      - N개의 다중코어 프로세서는 운영체제에게는 N개의 CPU로 보임
+  - NUMA(Non-Uniform Memory Access)
+    - 배경
+      - CPU를 너무 많이 추가하면, 시스템 버스에 대한 경합이 병목이 되어 성능 저하 발생
+    - 개요
+      - 각 CPU에 작고 빠른 로컬 버스를 통해 액세스 되는 자체 로컬 메모리 제공
+        - 버스에의한 경합이 발생하지 않음
+      - 모든 CPU가 공유 시스템 연결로 연결되어, 모든 CPU가 하나의 물리 주소 공간을 공유
+    - 장점
+      - CPU추가에 따른 버스 경합 발생하지 않음
+    - 단점
+      - 한 CPU가 원격 메모리에 엑세스할때 오버헤드 발생
+        - 운영체제가 CPU스케줄링, 메모리관리를 통해 단점 최소화
+- Clustered Systems
+  - 개요
+    - 둘 이상의 독자적 시스템 또는 노드(머신)들을 연결하여 구성
+  - 구조
+    - 저장장치 공유
 
 ## I/O structure
 
@@ -1017,11 +1075,13 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
         - open시스템 콜을 호출하면 파일 시스템 디바이스 드라이버에게 명령
           - 파일 시스템 디바이스 드라이버는 컨트롤러에게 읽으라고 명령
         - 그리고 CPU는 자신이 해야할 동작 함
+        - 파일 시스템 컨트롤러가 DMA를 이용하여 메모리에 데이터 저장
         - 파일 시스템 컨트롤러가 인터럽트 raise
         - CPU는 인터럽트 catch
-        - CPU는 dispatch
+        - CPU는 ISR실행 (dispatch)
         - 다시 원래 실행하던 흐름으로 되돌아감 즉, 스케쥴링으로 인하여 다른 작업을 하고 있는 것임
           - 인터럽트 핸들링만 CPU가 처리
+      - nodejs 자체는 libuv 이벤트루프 기반이기 때문에, 이를 application level에서 파일을 open했을 때, non-blocking하게 실행
       - *아, 그래서 i/o multiplexing의 방법중 하나인 select, kqueue, epoll 이런게 필요한건가?*
         - *파이썬과 자바스크립트의 open함수 구현을 보자*
         - 정확히 순서 정리를 해보자
@@ -1084,6 +1144,7 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
         - OS가 관리 or 라이브러리에 의해 관리
       - 저장 대상
         - PC, SP, registers만 스위칭하면 됨
+    - *cpython의 경우 어떤식으로 context switch가 되는것일까?*
 
 ## Memory
 
