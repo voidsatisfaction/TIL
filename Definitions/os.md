@@ -94,6 +94,10 @@
 
 ### OS(Operating System)
 
+OS와 하드웨어의 도식
+
+![](./images/os/os_and_hardwares1.png)
+
 - 정의
   - 컴퓨터 하드웨어(자원)를 관리하는 소프트웨어
     - 컴퓨터 사용자와 컴퓨터 하드웨어 사이에서 중개자 역할을 함
@@ -109,12 +113,13 @@
   - 커널
     - 항상 실행 중인 프로그램
   - 미들웨어 프레임워크
-    - 응용 프로그램 개발을 쉽게 하고 기능을 제공
+    - 응용 프로그램 개발을 쉽게 하는 기능을 제공
   - 시스템 프로그램
     - 시스템 실행 중에 시스템을 관리하는 데 도움이 되는 프로그램
     - *예시로 무엇이 있을까?*
 - c.f) 컴퓨터 시스템의 구성
   - CPU, 구성요소, 공유 메모리 사이의 액세스를 제공하는 공통 버스, 장치 컨트롤러
+    - *메인 메모리는 컨트롤러, 드라이버가 필요 없는건가?*
   - 장치 컨트롤러 마다 장치 드라이버가 존재
     - 장치 드라이버는 장치 컨트롤러의 작동을 잘 알고, 나머지 운영체제에 장치에 대한 일관된 인터페이스 제공
     - CPU와 장치 컨트롤러는 병렬로 실행
@@ -522,15 +527,18 @@ three standard POSIX file descriptors
     - file descriptor의 이벤트 감지
     - *결국 커널 내부적으로는 무한 루프를 도는 것인지*
 - 예시
-  - I/O대상은 Unix의 경우에는 파일로 나타나는 모든 것으로 이해가 가능하겠다
+  - I/O대상은 Unix의 경우에는 파일로 나타나는 모든 것
     - client가 다수의 file descriptor들을 다룰 때(stdin, stdout, network socket) - file
     - client가 다수의 socket을 다룰 때 - file
     - TCP server가 연결 listen과 생성된 client socket을 다룰 때 - file
     - 서버가 TCP, UDP를 동시에 다룰 때 - file
 - 방식
   - `select`
+    - `O(n)`
   - `poll`
+    - `O(n)`
   - `epoll`
+    - `O(1)`
 
 ### File descriptor
 
@@ -1110,6 +1118,8 @@ int main(int argc, char *argv[])
 
 *인터럽트가 감지되면 무조건 그것부터 실행하는가? 그럼, 인터럽트를 엄청나게 발생시키는 악성코드가 심어져있으면 어떻게 하는가?*
 
+*인터럽트 처리중에 인터럽트가 발생하면 어떻게 되는가?*
+
 Q) kernel모드일 때에는 컨텍스트 스위칭이 일어나지 않는가? 즉, 다른 프로세스의 실행 흐름으로 넘어가지 않는 것인가?
 A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU가 수행할 뿐
 
@@ -1130,7 +1140,8 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
     - 프로그램 실행중 보호된 기억 공간 내에 접근하거나, 불법적인 명령 수행과 같은 프로그램의 문제가 발생한 경우 호출되는 인터럽트
   - Machine check interrupt
 - 절차(raise - catch - dispatch - clear)
-  - 장치가 인터럽트 발생(raise)
+  - 하드웨어 이벤트 감지
+  - 디바이스 컨트롤러가 인터럽트 발생(raise)
   - 현재 진행 중인 기계어 코드를 완료함
   - CPU가 인터럽트 요청 라인 선 감지(catch)
     - *이 선은 큐 형식인가?*
@@ -1146,7 +1157,7 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
       - 스택이나 *레지스터 블럭* 에 대피
         - *스택으로 대피시키면, 스택이 오염되는거 아닌가?*
       - *컨텍스트 스위칭은 아니라는데..?*
-      - 일반적인 process의 context스위치 보다
+      - 일반적인 process의 context스위치 보다 값이 싼 동작
   - ISR 코드 실행(dispatch)
   - 일을 다 처리하면, 대피시킨 레지스터 복원
   - ISR 끝에 IRET 명령어에 의해 인터럽트가 해제(clear)
@@ -1161,6 +1172,11 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
   - 리눅스 커널과 같은 운영체제에서는, 응용 프로그램의 저수준 입출력 함수가 실행 => 라이브러리 함수에 의해서 소프트웨어 인터럽트 실행 - system call
     - 시스템 콜 호출 -> 인터럽트 실행으로 ISR이 커널 레벨 작업 수행 -> 다시 유저 스페이스로 데이터 및 스레드 반환
       - 어라, 그런데 nodejs에서는 fileRead하면 그것이 non-blocking이라 다른 작업할 수 있지 않았나? 그런데 `open` system call을 호출하면 interrupt가 발생하여 동기적으로 CPU가 처리하는 것 아닌가?
+        - **그 레벨까지 생각할 것이 아님**
+          - non-blocking operation on I/O API(sockets, file manipulation)
+          - selecting(O(n)) / polling(O(n)) / epoll(O(1))
+        - fileRead -> libuv가 kernel에 fd를 epoll로 넘겨줌 -> kernel이 epoll을 이용하여 나중에 I/O poll phase에서 파일 읽기 이벤트가 끝남 통지 -> callback task 실행
+          - 스레드풀을 되도록 사용하지 않고 fd를 이용한 non-blocking API를 사용하는 것이 포인트!
         - 사용자 모드
           - 사용자 앱에서 fileRead 함수 호출
             - open시스템 콜을 호출
@@ -1175,10 +1191,8 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
           - CPU는 ISR실행 (dispatch)
           - 다시 원래 실행하던 흐름으로 되돌아감 즉, 스케쥴링으로 인하여 다른 작업을 하고 있는 것임
             - 인터럽트 핸들링만 CPU가 처리
-      - nodejs 자체는 libuv 이벤트루프 기반이기 때문에, 이를 application level에서 파일을 open했을 때, non-blocking하게 실행
-      - *아, 그래서 i/o multiplexing의 방법중 하나인 select, kqueue, epoll 이런게 필요한건가?*
-        - *파이썬과 자바스크립트의 open함수 구현을 보자*
-        - 정확히 순서 정리를 해보자
+      - nodejs 자체는 libuv 이벤트루프 기반이고, 내부적으로 파일의 경우 thread pool과, 나머지 동작의 경우 kernel의 API(syscall) 등을 사용하므로, non-blocking하게 실행
+        - I/O multiplexing의 방법들인 select, kqueue, epoll은 kernel작업을 nonblocking으로 실행했을경우, 이벤트 루프가 해당 동작이 완료했음을 통지받기 위해서 사용
   - ISR은 C언어의 함수와는 다른 표현이 되어야 함
   - c.f) vs polling
     - CPU가 대상을 주기적으로 감시하여 상황이 발생하면 해당 처리 루틴을 실행해 처리
@@ -1203,7 +1217,7 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
   - user space에서 관리됨
     - kernel space가 아님
     - 그렇기 때문에, native thread support가 없는 환경에서도 사용 가능
-  - green thread가 blocking system call을 하는경우, 모든 green thread를 블로킹함
+  - *green thread가 blocking system call을 하는경우, 모든 green thread를 블로킹함*
     - asynchronous I/O를 해야만 함
 
 ### Context switch
