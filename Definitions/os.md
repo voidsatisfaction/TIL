@@ -32,7 +32,7 @@
   - file system types
     - UnionFS
 - Process
-  - multiprogramming vs multiprocessing
+  - Multiprogramming vs Multitasking
   - Program
   - Process
     - Daemon
@@ -67,6 +67,14 @@
 
 ## 의문
 
+- General
+  - OS는 CPU architecture에 종속적인가?
+    - 종속적이다
+    - high level language가 아닌, 어셈블코드를 작성하는 부분이 존재
+      - 인터럽트 관련이라던지
+    - 모든 CPU 아키텍처가 Windows, Unix같은 general purpose OS를 서포팅 하는 것은 아님
+  - linux 코드참조
+    - https://github.com/torvalds/linux/tree/master/arch
 - File system
   - *다음 설명은 참인가?*
     - 각 저장장치는 어떤 File system에 형식에 따라 데이터를 저장하는지 지정 가능(포맷)
@@ -407,7 +415,7 @@ Bootstrap
       - MapReduce
         - 클로스터의 노드에서 데이터를 병렬 처리할 수 있게 함
 
-## I/O structure
+## I/O structure(Interrupt)
 
 - 종류
   - 인터럽트 구동 I/O의 형태
@@ -539,6 +547,7 @@ three standard POSIX file descriptors
     - `O(n)`
   - `epoll`
     - `O(1)`
+  - *세 방식의 구체적인 차이는 무엇인가?*
 
 ### File descriptor
 
@@ -1103,6 +1112,7 @@ int main(int argc, char *argv[])
 
 - 실행
   - 응용 프로그램에서 `open(...)`함수를 실행하면 libc에서 제공한 `open`함수 속에서 인수 데이터를 레지스터에 넣고 소프트웨어 인터럽트(로 취급되어) 실행
+    - 즉, `open(...)`함수는 시스템콜을 래핑한 c라이브러리
   - 소프트웨어 인터럽트에 의해, 인터럽트 벡터 숫자를 이용해 ISR이 있는 커널의 인터럽트 처리 위치를 찾아 해당 주소로 실행을 옮김
     - 모드 변경(커널 모드)
   - ISR 실행
@@ -1175,7 +1185,7 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
         - **그 레벨까지 생각할 것이 아님**
           - non-blocking operation on I/O API(sockets, file manipulation)
           - selecting(O(n)) / polling(O(n)) / epoll(O(1))
-        - fileRead -> libuv가 kernel에 fd를 epoll로 넘겨줌 -> kernel이 epoll을 이용하여 나중에 I/O poll phase에서 파일 읽기 이벤트가 끝남 통지 -> callback task 실행
+        - fileRead -> libuv가 kernel에 해당 파일의 fd를 epoll시스템 콜의 인자로 넘겨줌 -> kernel이 epoll을 이용하여 작업이 끝났음을 알림 -> I/O poll phase에서 파일 읽기 이벤트가 끝났음을 감지 -> callback task 실행
           - 스레드풀을 되도록 사용하지 않고 fd를 이용한 non-blocking API를 사용하는 것이 포인트!
         - 사용자 모드
           - 사용자 앱에서 fileRead 함수 호출
@@ -1191,7 +1201,7 @@ A) 커널모드일 경우, 커널모드에서 수행되어야 할 작업을 CPU�
           - CPU는 ISR실행 (dispatch)
           - 다시 원래 실행하던 흐름으로 되돌아감 즉, 스케쥴링으로 인하여 다른 작업을 하고 있는 것임
             - 인터럽트 핸들링만 CPU가 처리
-      - nodejs 자체는 libuv 이벤트루프 기반이고, 내부적으로 파일의 경우 thread pool과, 나머지 동작의 경우 kernel의 API(syscall) 등을 사용하므로, non-blocking하게 실행
+      - nodejs 자체는 libuv 이벤트루프 기반이고, 내부적으로 파일 조작, encryption이나 compression의 경우 thread pool을 사용하고, 나머지 동작(socket 등)의 경우 kernel의 API(syscall) 등을 사용하므로, non-blocking하게 실행
         - I/O multiplexing의 방법들인 select, kqueue, epoll은 kernel작업을 nonblocking으로 실행했을경우, 이벤트 루프가 해당 동작이 완료했음을 통지받기 위해서 사용
   - ISR은 C언어의 함수와는 다른 표현이 되어야 함
   - c.f) vs polling
