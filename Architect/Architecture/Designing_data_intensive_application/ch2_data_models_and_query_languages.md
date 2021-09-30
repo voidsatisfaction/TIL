@@ -22,8 +22,8 @@ Data model과 추상레이어
 ![](./images/ch2/data_model_abstraction_layer1.png)
 
 - 데이터 모델이 소프트웨어 개발에 가장 중요한 요소중 하나
-  - 작성되는 소프트웨어의 관점에서 중요할 뿐 아니라
-  - 문제 해결의 생각적 기반이 됨
+  - 작성되는 소프트웨어의 관점
+  - **문제 해결의 생각적 기반이 됨**
 - 대부분의 애플리케이션은 데이터모델의 추상화 계층으로 구현됨
   - 핵심
     - **각 레이어는 깔끔한 데이터 모델을 제공하므로써, 아래 레이어의 복잡도를 감춤**
@@ -35,6 +35,12 @@ Data model과 추상레이어
     - JSON/XML/RDB/Graph 데이터를 메모리나 디스크나 네트워크상의 바이트로 환원
   - 4 hardware level
     - 바이트를 전자 전류, 빛의 pulse, 자기장 등으로 나타내도록 환원
+- 대표적 데이터 모델 종류
+  - Relational data model
+  - document data model
+  - graph-based data model
+- 데이터 모델의 구현
+  - DB engine
 
 ## Relational Model vs Document Model
 
@@ -58,9 +64,9 @@ Data model category
 
 - 배경
   - RDB보다 매우 높은 **scalability를** 갖고, 매우 높은 **write throughput**을 갖는 데이터 베이스의 필요성
-  - 상업 DB 제품 보다 오픈소스에 대한 선호의 확산
   - 관계 모델에 의해서 잘 서포트되지 않는 특별한 쿼리의 지원 필요성
   - 관계 스키마의 제약에 대한 실망과, **보다 다이나믹하고 표현적인 데이터 모델의 필요성**
+  - 상업 DB 제품 보다 오픈소스에 대한 선호의 확산
 
 ### Object-Relational Mismatch
 
