@@ -242,3 +242,133 @@ public class Start {
         - main() 메서드
         - 클래스의 인스턴스를 만들지 않고 사용하게 되는 유틸리티성 메서드
           - e.g) Math
+
+### 상속: 재사용 + 확장
+
+- 상속(확장)
+  - 개요
+    - **상위 클래스의 특성 재사용 + 확장 + is a kind of 관계 만족**
+    - 분류의 세분화
+      - 계층도나 조직도가 아닌, 분류도
+    - 상위 클래스의 특성을 재사용하고, 거기에 더해 필요한 특성을 확장
+      - 그래서 자바에서 inherit이 아닌, extends키워드를 사용
+  - 필요 충분 조건
+    - 하위 클래스는 상위 클래스다(LSP)
+      - 이 명제를 반드시 만족해야함
+      - e.g) 포유류는 동물이다, 고래는 포유류다, 고래는 동물이다
+  - 상속받는 클래스 사이의 관계
+    - A is a B
+      - 오해의 소지가 생김
+      - A는 하나의 B다
+        - 하나의 B는 인스턴스?
+    - A is a kind of B
+      - 정확한 의미
+      - A는 B의 한 분류다
+  - 예시
+    - 동물
+      - 포유류(포유류는 동물의 특성을 확장하였다)
+        - 고래, 박쥐
+      - 조류
+        - 참새, 펭귄
+  - c.f) 이름짓기
+    - 클래스
+      - 분류스럽게
+    - 객체 참조 변수명
+      - 유일무이한 사물처럼 작명
+        - `조류 bird = new 조류();`
+          - x
+        - `조류 aBird = new 조류();`
+          - o
+- 인터페이스
+  - 개요
+    - 구현 클래스 is able to 인터페이스
+      - 구현 클래스는 인터페이스 할 수 있다
+      - 고래는 헤엄칠 수 있다
+  - e.g)
+    - Serializable, Clonable, Comparable, Runnable
+- 참고
+  - 상위 클래스는 하위 클래스에게 물려줄 특서이 많을 수록 좋음(LSP)
+  - 인터페이스는 구현을 강제할 메서드가 적을 수록 좋음(ISP)
+
+상속과 T 메모리 예제 코드
+
+```java
+package inheritance03;
+
+public class Animal {
+  public String name;
+
+  public void showName() {
+    System.out.printf("hello %s", name);
+  }
+}
+
+public class Penguin extends Animal {
+  public String habitat;
+
+  public void showHabitat() {
+    System.out.printf("%s lives at %s", name, habitat);
+  }
+}
+
+public class Driver {
+  public static void main(String[] args) {
+    // stack프레임에, pororo라는 포인터 변수가 할당되고,
+    // 해당 포인터는 Penguin클래스의 인스턴스의 시작주소를 가리킴
+    // 힙 영역에는 Penguin클래스의 인스턴스와 Animal클래스의 인스턴스, Object클래스의 인스턴스도 생성됨
+    Penguin pororo = new Penguin();
+    // 펭귄 한 마리가 태어나니 펭귄 역할을 하는 pororo라 이름 지었다
+
+    pororo.name = "pororo";
+    // pororo의 name을 pororo라 하자
+    pororo.habitat = "south pole";
+    // ...
+
+    pororo.showName();
+    // pororo야 네 이름을 보여다오
+    pororo.showHabitat();
+    // ...
+
+    // stack프레임에, pingu라는 포인터 변수가 할당되고,
+    // 해당 포인터는 **Animal클래스** 의 인스턴스의 시작주소를 가리킴
+    // 힙 영역에는 Penguin클래스의 인스턴스와 Animal클래스의 인스턴스, Object클래스의 인스턴스도 생성됨
+    Animal pingu = new Penguin();
+
+    pingu.name = "pingu";
+    // pingu.habitat = "EBS";
+
+    pingu.showName();
+    // pingu.showHabitat();
+
+    //
+    // Penguin happyfeet = new Animal();
+  }
+}
+```
+
+### 다형성: 사용편의성
+
+- 다형성
+  - 기본
+    - 오버라이딩, 오버로딩
+- 오버라이딩
+  - 개요
+    - 메서드 재정의
+- 오버로딩
+  - 개요
+    - 메서드 중복 정의
+
+### 캡슐화: 정보 은닉
+
+- 접근 제어자
+  - `private`, `default`, `protected`, `public`
+    - 각 제어자의 은닉 범위를 정확히 파악하자
+
+### 참조 변수의 복사
+
+- Call By Value
+  - 개요
+    - 기본 자료형의 경우, 값이 복사되며, 두 변수는 서로에게 영향을 주지 않음
+- Call By Reference
+  - 개요
+    - 참조 자료형의 경우, 포인터의 값(주소)이 복사, 두 변수는 별개이나, 같은 주소의 인스턴스를 참조하고 있다는 것이 같음
