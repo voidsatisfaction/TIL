@@ -10,6 +10,21 @@
   - 객체 지향은 인간 지향
   - 객체 지향의 4대 특성
   - 추상화: 모델링
+  - 상속: 재사용 + 확장
+  - 다형성: 사용편의성
+  - 캡슐화: 정보 은닉
+  - 참조 변수의 복사
+- Ch4. 자바가 확장한 객체 지향
+  - abstract
+  - constructor
+  - static 블록
+  - final
+  - instanceof
+  - package
+  - interface, implements
+  - this, super
+  - c.f) JVM에서의 객체 메서드의 호출과 메모리
+- Ch5. 객체 지향 설계 5원칙
 
 ## 의문
 
@@ -98,6 +113,7 @@ public class Start {
   - Data
     - Static
       - 클래스 멤버 변수
+      - 해당 패키지 또는 클래스가 처음으로 사용될 때 로드 됨
     - Stack
       - 지역 변수
     - Heap
@@ -372,3 +388,252 @@ public class Driver {
 - Call By Reference
   - 개요
     - 참조 자료형의 경우, 포인터의 값(주소)이 복사, 두 변수는 별개이나, 같은 주소의 인스턴스를 참조하고 있다는 것이 같음
+
+## Ch4. 자바가 확장한 객체 지향
+
+- abstract
+- constructor
+- static 블록
+- final
+- instanceof
+- package
+- interface, implements
+- this, super
+- c.f) JVM에서의 객체 메서드의 호출과 메모리
+
+### abstract
+
+- 추상 클래스
+  - 개요
+    - 추상 메서드를 하나라도 갖고 있는 클래스
+  - e.g)
+    - 동물은 어떻게 울어야 하는것일까?
+      - 울다의 메서드는 반드시 존재해야 하나, 구현하면 이상함
+
+### constructor
+
+- 생성자
+  - 개요
+    - 반환값이 없고, 클래스명과 같은 이름을 가진 메서드를 객체를 생성하는 메서드라 함
+    - 오버로딩 가능
+
+### 클래스 생성 시의 실행 블록 static 블록
+
+예제 코드
+
+```java
+package staticBlock;
+
+public class Driver05 {
+  public static void main(String[] args) {
+    System.out.println("main 메서드 시작!");
+    System.out.println(Animal.age);
+
+    // main 메서드 시작!
+    // Animal class ready on!
+    // 0
+  }
+}
+
+class Animal {
+  static int age = 0;
+
+  static {
+    System.out.println("Animal class ready on!");
+  }
+}
+```
+
+- static 블록
+  - 개요
+    - 클래스가 스태틱 영역에 배치될 때 실행되는 코드 블록
+    - 오직 static 멤버만 접근 가능
+      - 힙에 아무것도 없으므로 객체 멤버에 접근 불가능
+  - 활용
+    - *JUnit의 @BeforeClass annotation*
+
+### final
+
+- final
+  - 개요
+    - 클래스에 붙는 경우
+      - 상속을 허락하지 않음
+    - 변수에 붙는 경우
+      - 변경 불가능한 상수
+        - 정적 상수
+          - 선언 시, static 블록 내부에서
+        - 객체 상수
+          - 선언 시, 객체 생성자, 인스턴스 블록에서
+        - 지역 상수
+          - 선언 시
+    - 메서드에 붙는 경우
+      - 오버라이딩 금지
+
+### instanceof
+
+- instanceof 연산자
+  - 개요
+    - 객체가 특정 클래스의 인스턴스인지 물어보는 연산자
+      - 실제 객체의 타입에 의해 처리
+    - 객체가 특정 인터페이스를 만족하는지도 물어봄
+  - 특징
+    - LSP를 어기는 코드에서 많이 나옴
+      - 리팩토링을 고려해야할 수 있음
+
+### package
+
+- package
+  - 개요
+    - 이름공간을 만들어주는 역할을 함
+  - e.g)
+    - 마케팅에서의 customer, 개발팀에서의 customer를 구별하기 위함
+      - 이름 충돌 방지
+
+### interface, implements
+
+```java
+interface Speakable {
+  double PI = 3.14159;
+  final double absoluteZeroPoint = -275.15;
+
+  void sayYes();
+}
+
+// 위의 Speakable과 같음
+interface Speakable2 {
+  public static final double PI = 3.14159;
+  public static final double absoluteZeroPoint = -275.15;
+
+  public abstract void sayYes();
+}
+```
+
+- interface
+  - 개요
+    - public 추상 메서드와 public 정적 상수만 가질 수 있음
+      - static final을 안붙여도 됨
+      - *자바 8에서는 람다의 도입으로 변화가 생김*
+- implements
+
+### this, super
+
+- this
+  - 개요
+    - 객체 멤버 메서드 내부에서 객체 자신을 지칭하는 키워드
+  - 특징
+    - 지역 변수와 속성(객체 변수, 정적 변수)의 이름이 같음 => 지역 변수 우선
+    - 객체 변수와 이름이 같은 지역 변수가 있음 => 객체 변수를 사용하려면 this를 접두사로 사용
+    - 정적 변수와 이름이 같은 지역 변수가 있음 => 정적 변수를 사용하려면 클래스명을 접두사로 사용
+- super
+  - 개요
+    - 바로 위 상위 클래스의 인스턴스를 지칭
+
+### c.f) JVM에서의 객체 메서드의 호출과 메모리
+
+```java
+package stack;
+
+class 펭귄 {
+  void test() {
+    System.out.println("Test");
+  }
+}
+
+public class Driver {
+  public static void main(String[] args) {
+    펭귄 뽀로로 = new 펭귄();
+
+    뽀로로.test();
+    // 사실은, JVM이 펭귄.test(뽀로로)와 같이 변경
+    // 그 이유는, 모든 인스턴스가 힙 메모리에 메서드를 갖고 있으면 메모리 낭비가 너무 심함
+  }
+}
+```
+
+## Ch5. 객체 지향 설계 5원칙
+
+- SOLID
+  - 개요
+    - 객체 지향 언어를 이용해 객체 지향 프로그램을 올바르게 설계해 나가는 방법이나 원칙
+    - **응집도(cohesion)는 높이고 결합도(coupling)는 낮추자**
+      - 응집도
+        - 하나의 모듈 내부에 존재하는 구성 요소들의 기능적 관련성
+        - 하나의 역할, 독립성 높이기
+          - 재활용, 기능의 수정, 유지보수 용이
+      - 결합도
+        - 모듈간의 상호 의존 정도
+  - 내용
+    - SRP(Single Responsibility Principle)
+    - OCP(Open Closed Principle)
+    - LSP(Liskov Substitution Principle)
+    - ISP(Interface Segregation Principle)
+    - DIP(Dependency Inversion Principle)
+
+### SRP
+
+- 개요
+  - 어떤 클래스를 변경해야 하는 이유는 오직 하나뿐이어야 함
+
+```java
+// no
+class 강아지 {
+  final static Boolean 수컷 = true;
+  final static Boolean 암컷 = false;
+  Boolean 성별;
+
+  void 소변보다() {
+    if (this.성별 == 수컷) {
+      // 한쪽 다리르 들고 소변을 본다
+    } else {
+      // 뒷다리 두 개를 굽혀 앉은 자세로 소변을 본다
+    }
+  }
+}
+
+// ok
+abstract class 강아지 {
+  abstract void 소변보다()
+}
+
+class 수컷강아지 extends 강아지 {
+  void 소변보다() {
+    // 한쪽 다리를 들고 소변을 본다
+  }
+}
+
+class 암컷강아지 extends 강아지 {
+  void 소변보다() {
+    // 뒷다리 두 개로 앉은 자세로 소변을 본다
+  }
+}}
+```
+
+### OCP
+
+- 개요
+  - 소프트웨어 엔티티(클래스, 모듈, 함수 등)는 확장에 대해서는 열려 있어야 하지만 변경에 대해서는 닫혀 있어야 한다
+  - = 자신의 확장에는 열려 있고, 주변의 변화에 대해서는 닫혀 있어야 함
+- 예시
+  - JDBC, MyBatis, 하이버네이트
+    - JDBC를 사용하는 클라이언트는 데이터베이스가 오라클에서 MySQL로 바뀌어도, Connection을 설정하는 부분 외에는 따로 수정 필요없음
+      - 데이터베이스 교체는 자신의 확장에는 열려있다는 것
+      - 데이터베이스를 교체해도 변경하지 않아도 되는것은 주변의 변화에는 닫혀 있어야 함
+  - 자바 자체
+    - 동작시키는 운영체제가 달라도, 코드는 수정없이 실행 가능
+  - 편의점에서 손님의 구매행위는 직원이 달라진다고 해도 전혀 달라지지 않음
+  - 스프링 프레임워크
+
+### LSP
+
+- 개요
+  - 서브 타입은 언제나 자신의 수퍼(base) 타입으로 교체할 수 있어야 한다
+    - 서브 클래스의 인스턴스는 수퍼 클래스 객체 참조 변수에 대입해 수퍼 클래스의 인스턴스 역할을 하는 데 문제가 없음
+  - 계층이 아닌, 분류도
+- 예시
+  - 동물
+    - 포유류
+      - 고래
+      - 박쥐
+    - 조류
+      - 참새
+      - 펭귄
