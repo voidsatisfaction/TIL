@@ -552,22 +552,32 @@ public class Driver {
 
 ## Ch5. 객체 지향 설계 5원칙
 
-- SOLID
-  - 개요
-    - 객체 지향 언어를 이용해 객체 지향 프로그램을 올바르게 설계해 나가는 방법이나 원칙
-    - **응집도(cohesion)는 높이고 결합도(coupling)는 낮추자**
-      - 응집도
-        - 하나의 모듈 내부에 존재하는 구성 요소들의 기능적 관련성
-        - 하나의 역할, 독립성 높이기
-          - 재활용, 기능의 수정, 유지보수 용이
-      - 결합도
-        - 모듈간의 상호 의존 정도
-  - 내용
-    - SRP(Single Responsibility Principle)
-    - OCP(Open Closed Principle)
-    - LSP(Liskov Substitution Principle)
-    - ISP(Interface Segregation Principle)
-    - DIP(Dependency Inversion Principle)
+- SOLID + Soc
+  - SOLID
+    - 개요
+      - **객체 지향 언어를 이용해 객체 지향 프로그램을 올바르게 설계해 나가는 방법이나 원칙**
+        - 객체 지향 4대 특성을 제대로 활용한 결과로 당연히 나타나는 것
+      - **응집도(cohesion)는 높이고 결합도(coupling)는 낮추자**
+        - 응집도
+          - 하나의 모듈 내부에 존재하는 구성 요소들의 기능적 관련성
+          - 하나의 역할, 독립성 높이기
+            - 재활용, 기능의 수정, 유지보수 용이
+        - 결합도
+          - 모듈간의 상호 의존 정도
+    - 내용
+      - SRP(Single Responsibility Principle)
+      - OCP(Open Closed Principle)
+      - LSP(Liskov Substitution Principle)
+      - ISP(Interface Segregation Principle)
+      - DIP(Dependency Inversion Principle)
+  - SOC(Separation Of Concern)
+    - 개요
+      - 관심사의 분리
+- 추천 책
+  - Head First Design Patterns
+  - 토비의 스프링 3.1
+  - 도메인 주도 설계란 무엇인가?
+  - 도메인 주도 설계
 
 ### SRP
 
@@ -611,8 +621,7 @@ class 암컷강아지 extends 강아지 {
 ### OCP
 
 - 개요
-  - 소프트웨어 엔티티(클래스, 모듈, 함수 등)는 확장에 대해서는 열려 있어야 하지만 변경에 대해서는 닫혀 있어야 한다
-  - = 자신의 확장에는 열려 있고, 주변의 변화에 대해서는 닫혀 있어야 함
+  - **소프트웨어 엔티티(클래스, 모듈, 함수 등)는 자신의 확장에는 열려 있고, 주변의 변화에 대해서는 닫혀 있어야 함**
 - 예시
   - JDBC, MyBatis, 하이버네이트
     - JDBC를 사용하는 클라이언트는 데이터베이스가 오라클에서 MySQL로 바뀌어도, Connection을 설정하는 부분 외에는 따로 수정 필요없음
@@ -637,3 +646,120 @@ class 암컷강아지 extends 강아지 {
     - 조류
       - 참새
       - 펭귄
+- c.f) 인터페이스의 경우
+  - 구현 클래스 is able to 인터페이스
+    - `AutoCloseable`, `Appendable`, `Clonable`, `Runnable`
+
+### ISP
+
+- 개요
+  - 클라이언트는 자신이 사용하지 않는 메서드에 의존 관계를 맺으면 안 된다
+    - 인터페이스를 통해 메서드를 외부에 제공할 떄는 최소한의 메서드만 제공
+  - SRP와 같은 문제에 대한 두 가지 다른 해결책
+    - 너무 많은 속성을 갖는 클래스
+      - 클래스 분리 => SRP
+      - 인터페이스 설정 => ISP
+
+### DIP
+
+- 개요
+  - 고차원 모듈은 저차원 모듈에 의존하면 안 된다. 이 두 모듈 모두 다른 추상화된 것에 의존해야 함
+  - 추상화된 것은 구체적인 것에 의존하면 안 된다. 구체적인 것이 추상화된 것에 의존해야 함
+  - 자주 변경되는 구체클래스에 의존하지 마라
+- 본질
+  - 자신보다 변하기 쉬운것에 의존하지 않으므로써, 변화에 영향을 받지 않게 하는 것
+
+## Ch6. 스프링이 사랑한 디자인 패턴
+
+- OOP vs 요리
+  - 4대 원칙 - 요리도구
+  - 설계 원칙 - 요리도구 사용법
+  - 디자인 패턴 - 레시피
+- 스프링 프레임워크
+  - = OOP 프레임워크
+- 디자인 패턴의 구성
+  - 상속(extends)
+  - 인터페이스(interface/implements)
+  - 합성(객체를 속성으로 이용)
+- Spring이 사랑한 디자인 패턴
+  - 어댑터 패턴
+  - 프록시 패턴
+  - 데코레이터 패턴
+  - 싱글턴 패턴
+  - 템플릿 메서드 패턴
+  - 팩터리 메서드 패턴
+  - 전략 패턴
+  - 템플릿 콜백 패턴
+  - 다른 패턴들
+    - Front Controller 패턴
+    - MVC 패턴
+
+### 어댑터 패턴
+
+*어댑터 패턴 다이어그램*
+
+- 개요
+  - 서로 다른 두 인터페이스 사이에 통신이 가능하게 하는 패턴
+  - OCP를 활용한 설계 패턴
+- 예시
+  - JDBC(어댑터)
+    - 다양한 데이터베이스 시스템을 공통의 인터페이스인 JDBC를 이용해 조작 가능
+  - JRE(어댑터)
+    - 다양한 OS를 공통의 인터페이스인 JRE를 이용해 자바 코드 실행 가능
+
+### 프록시 패턴
+
+*프록시 패턴 다이어그램*
+
+- 개요
+  - 제어 흐름을 조정하기 위한 목적으로 중간에 대리자를 두는 패턴
+  - OCP + DIP
+
+### 데코레이터 패턴
+
+*데코레이터 패턴 다이어그램*
+
+- 개요
+  - 메서드 호출의 반환값에 변화를 주기 위해 중간에 장식자를 두는 패턴
+  - 프록시 패턴 다이어그램과 같으나, 반환값에 장식을 함
+  - OCP + DIP
+
+### 싱글턴 패턴
+
+```java
+public class Singleton {
+  static Singleton singletonObject;
+
+  private Singleton() { };
+
+  public static Singleton getInstance() {
+    if (singletonObject == null) {
+      singletonObject = new Singleton();
+    }
+
+    return singletonObject;
+  }
+}
+```
+
+- 개요
+  - 인스턴스를 하나만 만들어 사용하기 위한 패턴
+- 활용
+  - 커넥션 풀, 스레드 풀, 디바이스 설정 객체
+    - 인스턴스를 여러개 만들면 불필요한 자원을 사용하게되고, 프로그램이 예상치 못한 결과를 낳는 경우
+- 제약
+  - 읽기 전용 속성만 갖게 하고, 쓰기 가능 속성을 갖지 않게 하기
+    - 공유 객체로 사용되므로, race condition이 생길 위험이 있음
+
+### 템플릿 메서드 패턴
+
+### 팩터리 메서드 패턴
+
+### 전략 패턴
+
+### 템플릿 콜백 패턴
+
+### 다른 패턴들
+
+- Front Controller 패턴
+- MVC 패턴
