@@ -25,6 +25,8 @@
   - this, super
   - c.f) JVM에서의 객체 메서드의 호출과 메모리
 - Ch5. 객체 지향 설계 5원칙
+- Ch6. 스프링이 사랑한 디자인 패턴
+- Ch7. 스프링 삼각형과 설정 정보
 
 ## 의문
 
@@ -753,13 +755,96 @@ public class Singleton {
 
 ### 템플릿 메서드 패턴
 
+*템플릿 메서드 패턴 다이어그램*
+
+- 개요
+  - 상위 클래스의 견본 메서드에서 하위 클래스가 오버라이딩한 메서드를 호출하는 패턴
+  - DIP
+
 ### 팩터리 메서드 패턴
+
+*팩터리 메서드 패턴 다이어그램*
+
+- 개요
+  - 오버라이드된 메서드가 객체를 반환하는 패턴
+  - DIP
 
 ### 전략 패턴
 
+- 개요
+  - 클라이언트가 전략을 생성해 전략을 실행할 컨텍스트에 주입하는 패턴
+  - 템플릿 메서드 패턴과 유사
+  - OCP + DIP
+- 구성 요소
+  - 전략 객체
+    - 전략 메서드를 가진 객체
+  - 컨텍스트
+    - 전략 객체의 사용자 / 소비자
+  - 클라이언트
+    - 전략 객체의 공급자
+
 ### 템플릿 콜백 패턴
+
+- 개요
+  - 전략을 익명 내부 클래스로 구현한 전략 패턴
+  - 전략 패턴과 동일하나, 전략을 익명 내부 클래스로 정의해서 사용
+  - OCP + DIP
+- 특징
+  - 스프링에서는 DI에 적극 활용하고 있음
 
 ### 다른 패턴들
 
 - Front Controller 패턴
 - MVC 패턴
+
+## Ch7. 스프링 삼각형과 설정 정보
+
+- 스프링의 이해 = POJO(Plain Old Java Object)를 기반으로 한 스프링 삼각형
+  - 스프링 3대 프로그래밍 모델
+    - IoC/DI
+    - AOP
+    - PSA
+
+### IoC/DI - 제어의 역전/의존성 주입
+
+- 의존성 주입 방법
+  - 스프링 없이 의존성 주입하기
+    - 1 생성자를 통한 의존성 주입
+    - 2 속성을 통한 의존성 주입
+      - 런타임에 의존하는 컴포넌트를 교체하기 위함
+        - 일반적으로는 생성자를 통한 의존성 주입으로 충분(의존성 잘 안바뀜)
+
+XML 파일을 사용한 의존성 주입 예시 코드
+
+```java
+import org.stringframework.context.ApplicationContext;
+import org.stringframework.context.support.ClassPathXmlApplicationContext;
+
+public class Driver {
+  public static void main(String[] args) {
+    ApplicationContext = new ClassPathXmlApplicationContext("expert002/expert002.xml");
+
+    Car car = context.getBean("car", Car.class);
+
+    Tire tire = context.getBean("tire", Tire.class);
+
+    car.setTire(tire);
+
+    System.out.println(car.getTireBrand());
+  }
+}
+```
+
+- 스프링을 통한 의존성 주입
+  - 1 XML 파일 사용
+    - 장점
+      - 재컴파일/재배포의 필요성이 없음
+        - xml파일만 수정하면 됨
+    - 1-2 XML에서 속성 주입
+  - 2 `@Autowired`를 통한 속성 주입
+  - 3 `@Resource`를 통한 속성 주입
+    - 표준 자바
+
+### AOP
+
+### PSA
