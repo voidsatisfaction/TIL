@@ -6,14 +6,21 @@
   - Java
   - Java Spring
 - Ch2. 자바와 절차적 / 구조적 프로그래밍
+  - 자바 프로그램의 개발과 구동
+  - 자바에 존재하는 절차적/구조적 프로그래밍의 유산
+    - 메모리 구조
+    - 실행과 내부 동작
 - Ch3. 자바와 객체 지향
   - 객체 지향은 인간 지향
   - 객체 지향의 4대 특성
-  - 추상화: 모델링
-  - 상속: 재사용 + 확장
-  - 다형성: 사용편의성
-  - 캡슐화: 정보 은닉
+    - 추상화: 모델링
+    - 상속: 재사용 + 확장
+      - 인터페이스
+      - 상속과 메모리
+    - 다형성: 사용편의성
+    - 캡슐화: 정보 은닉
   - 참조 변수의 복사
+    - call by value & call by reference
 - Ch4. 자바가 확장한 객체 지향
   - abstract
   - constructor
@@ -26,7 +33,9 @@
   - c.f) JVM에서의 객체 메서드의 호출과 메모리
 - Ch5. 객체 지향 설계 5원칙
   - SOLID
+    - SOC(Separation Of Concern)
 - Ch6. 스프링이 사랑한 디자인 패턴
+  - 디자인 패턴의 구성 요소
   - 어댑터 패턴
   - 프록시 패턴
   - 데코레이터 패턴
@@ -890,7 +899,7 @@ public class Driver {
     - JoinPoint
     - Pointcut
 
-### PSA
+### PSA(Portable Service Abstraction)
 
 - 개요
   - 일관성 있는 서비스 추상화
