@@ -33,6 +33,24 @@
     - 애초에 디스크에 write나 update를 하는경우에 캐시 데이터를 먼저 갱신하주는 것인가?
 - Index
   - B트리, B+트리 구조 이해
+- Load
+  - 개요
+    - OS에서 특정 작업이 처리되는 과정에서 처리되기를 기다리는 정도를 표현 한 값
+    - TASK_RUNNING + TASK_UNINTERRUPTIBLE 상태에 있는 프로세스를 수치로 표현 한 값
+      - 처리를 위해서 기다리는 상태의 프로세스(Active Task)
+      - CPU + I/O
+  - c.f) 프로세스의 상태값
+    - TASK_RUNNING
+      - CPU에 의해서 실행중 or 실행가능한 상태(RUNNABLE)
+    - TASK_INTERRUPTIBLE
+      - 인터럽트에 의해서 언제든지 상태가 변할 수 있는 대기 상태
+        - 입력을 기다린다던지
+      - (e.g sleep, 터미널의 입력대기)
+    - TASK_UNINTERRUPTIBLE
+      - 인터럽트에 의해서 상태가 변경되지 않는 대기 상태
+      - 보통 I/O 처리에 대해서 대기 중인 상태
+    - TASK_STOPPED
+      - 동작이 중단된 상태
 
 ## Ch1. 대규모 서비스 웹 개발 오리엔테이션
 
@@ -689,6 +707,7 @@ MySQL InnoDB buffer pool
   - Load Average
     - 정의
       - 프로세스가 언제든지 동작할 수 있는 상태이지만, 아직 실제 CPU가 할당되지 않아서 대기상태에 있는 프로세스 수의 평균치
+        - TASK_RUNNING + TASK_UNINTERRUPTIBLE 상태인 프로세스의 수
   - 메모리
     - 사용자 공간이 소비하는 메모리 / 공유 되는 메모리 / 커널이 사용하고 있는 버퍼의 메모리 / 디스크 캐시로 사용하는 메모리
 
