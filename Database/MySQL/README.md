@@ -151,6 +151,10 @@ port = 3305
     - 핸들러 API만 만족하면 누구든지 구현해서 추가해서 사용 가능
     - e.g) InnoDB, MyISAM
 
+MySQL 서버의 아키텍처 다이어그램
+
+![](./images/ch4/mysql_architecture1.png)
+
 ### 4.1 MySQL 엔진 아키텍처
 
 MySQL 아키텍처
