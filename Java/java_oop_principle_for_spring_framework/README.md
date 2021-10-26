@@ -901,12 +901,39 @@ public class Driver {
 
 ### PSA(Portable Service Abstraction)
 
+스프링의 트랜잭션 추상화 계층
+
+![](./images/psa1.png)
+
 - 개요
   - 일관성 있는 서비스 추상화
 - 예시
   - JDBC
     - MySQL, MS-SQL를 어댑터 패턴을 활용해서 일관성 있는 인터페이스로 구현
   - OXM
+  - `@Transactional`
+    - JPA, JDBC 어느쪽을 사용해도 해당 어노테이션만 사용하면 트랜잭션 유지 가능
+- 원리
+  - `@Transactional`
+
+```java
+private PlatformTransactionManger transactionManager;
+
+public constructor(PlatformTransactionManger transactionManager) { // 생성자
+  this.transactionManager = transactionManager; // 해당 주입 instance의 변경으로 JPA, hibernate, JDBC로 쉽게 변경 가능.
+}
+
+public void method_name() throw Exception {
+  TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+  try {
+    // 3. DB 쿼리 실행
+    transactionManager.commit(status);
+  } catch(Exception e) {
+    transactionManager.rollback(status);
+    throw e;
+  }
+}
+```
 
 ## 부록. 자바8 람다와 인터페이스의 변화
 
