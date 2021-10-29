@@ -178,6 +178,78 @@ MyISAM과 InnoDB 인덱스 구조
     - 인덱스의 핵심은 값이 정렬되어 있다는 것 -> 인덱스를 구성하는 칼럼의 순서가 매우 중요
     - MySQL 8.0 버전부터 도입
       - 루스 인덱스 스캔을 WHERE 절에도 사용가능하게 된 것
-      - 대신, 인덱스의 선행 칼럼의 기수가 작아야 함
+      - 대신, 인덱스의 선행 칼럼의 기수가 작아야 효과적
         - 그래야, 스캔 시작 지점을 검색하는 작업이 많이 필요해지기 때문
   - 동작
+    - 루스 인덱스 스캔을 WHERE 절에도 사용가능하게 된 것
+
+### 다중 칼럼(multi-column) 인덱스
+
+다중 칼럼 인덱스 예시 그림
+
+![](./images/ch8/concatenated_index1.jpg)
+
+- 개요
+  - 2개 이상의 칼럼을 포함하는 인덱스
+    - 앞 칼럼의 인덱스가 같은 값 중에서 뒤 칼럼이 오름차순으로 정렬되는 방식
+      - 따라서 해당 인덱스의 칼럼 순서가 중요함
+
+### B-Tree 인덱스의 정렬 및 스캔 방향
+
+- 인덱스의 정렬
+  - 인덱스를 생성하는 시점에 인덱스를 구성하는 각 칼럼의 정렬을 오름차순, 내림차순으로 설정 가능
+    - MySQL 8.0부터 칼럼 단위 정렬 순서를 혼합해서 인덱스 생성 가능
+- 인덱스 스캔 방향
+  - 옵티마이저가 쿼리에 따라서, 알아서 정순으로 스캔하던지 역순으로 스캔하던지 결정함
+    - e.g)
+      - `SELECT * FROM employees ORDER BY first_name DESC LIMIT 1;`
+        - first_name 칼럼의 인덱스를 역순으로 읽어서 하나 가져옴
+      - `ORDER BY`, `MIN()`, `MAX()`
+- 참고
+  - 내림차순 인덱스가 때로는 더 효율적일 떄가 존재
+    - 기본적으로 InnoDB의 경우, 인덱스의 반대방향으로 정렬후 정렬후 fetch가 정방향 fetch보다 더 느림(약 30%)
+      - 페이지내의 레코드의 연결이 단방향링크를 갖음
+
+### B-Tree 인덱스의 가용성과 효율성
+
+- 효율성
+  - 케이스 스터디
+    - `SELECT * FROM dept_emp WHERE dept_no='d002' AND emp_no >= 10114;`
+      - `INDEX(dept_no, emp_no)`
+        - dept_no가 d002인 인덱스 중에서 emp_no가 10114 이상인 친구들을 전부 가져오면 끝
+          - 효율적
+      - `INDEX(emp_no, dept_no)`
+        - emp_no가 10114 이상인 친구들중에서 dept_no가 d002인지 아닌지를 체크해야 함
+          - 비효율적
+- 가용성
+  - 케이스 스터디
+    - `SELECT * FROM employees WHERE first_name LIKE '%mer';`
+      - `INDEX(first_name)`
+        - 인덱스를 효율적으로 사용하지 못함
+        - left에서 right로 B-tree의 키가 정렬되어 있는데, 뒷부분을 기준으로 매칭시켜야 하므로
+    - `SELECT * FROM dept_emp WHERE emp_no >= 10144;`
+      - `INDEX(dept_no, emp_no)`
+        - 인덱스를 효율적으로 사용하지 못함
+        - 다중 칼럼 인덱스가 칼럼의 left에서 right로 정렬되어 있는데, 위의 쿼리에서는 index full scan을 하게 됨
+- 가용성과 효율성 판단
+  - 비효율 적인 쿼리
+    - 싱글 칼럼 인덱스
+      - NOT-EQUAL로 비교된 경우
+        - `<>`, `NOT IN`, `NOT BETWEEN`, `IS NOT NULL`
+      - LIKE '%??'
+        - 뒷부분 일치 형태로 문자열 패턴이 비교된 경우
+      - 인덱스 칼럼이 변형된 후 비교된 경우
+        - `WHERE SUBSTRING(column, 1, 1) = 'x'`
+        - `WHERE DAYOFMONTH(column) = 1`
+      - *NOT-DETERMINISTIC 속성의 스토어드 함수가 비교 조건에 사용된 경우*
+      - 데이터 타입이 서로 다른 비교
+        - `WHERE char_column = 10`
+      - 문자열 데이터 타입의 콜레이션이 다른 경우
+        - `WHERE utf8_bin_char_column = euckr_bin_char_column`
+        - *콜레이션?*
+    - 다중 칼럼 인덱스
+      - 칼럼에 대한 조건이 없는 경우
+      - 칼럼의 비교 조건이 위의 인덱스 사용 불가 조건 중 하나인 경우
+        - `... WHERE column_1 = 1 AND column_2 = 2 AND column_3 IN (10, 20, 30) AND column_4 <> 100`
+          - column_3까지는 범위 결정 조건으로 사용(인덱스 레인지 스캔)
+          - column_4는 체크 조건으로 사용(인덱스 풀스캔)
