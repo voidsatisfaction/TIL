@@ -10,6 +10,11 @@
   - 8.3.5 다중 칼럼(multi-column) 인덱스
   - 8.3.6 B-Tree 인덱스의 정렬 및 스캔 방향
   - 8.3.7 B-Tree 인덱스의 가용성과 효율성
+- 8.6 함수 기반 인덱스
+- 8.7 멀티 밸류 인덱스
+- 8.8 클러스터링 인덱스
+- 8.9 유니크 인덱스
+- 8.10 외래키
 
 ## 의문
 
@@ -269,3 +274,48 @@ MyISAM과 InnoDB 인덱스 구조
         - `... WHERE column_1 = 1 AND column_2 = 2 AND column_3 IN (10, 20, 30) AND column_4 <> 100`
           - column_3까지는 범위 결정 조건으로 사용(인덱스 레인지 스캔)
           - column_4는 체크 조건으로 사용(인덱스 풀스캔)
+
+## 8.6 함수 기반 인덱스(MySQL 8.0부터)
+
+- 개요
+  - 칼럼의 값을 변형해서 만들어진 값에 대해 인덱스를 구축
+- 구현 방법
+  - **가상 칼럼**
+    - `ALTER TABLE user ADD full_name VARCHAR(30) AS (CONCAT(first_name, ' ', last_name)) VIRTUAL, ADD INDEX ix_fullname (full_name)`
+      - 가상 칼럼은 테이블에 새로운 칼럼을 추가하는 것과 같은 효과를 냄
+      - *실제 칼럼과의 차이는?*
+  - **함수**
+    - `INDEX ix_fullname ((CONCAT(first_name, ' ', last_name)))`
+      - 테이블 구조를 변경하지 않음
+      - 인덱스를 활용하기 위해서는, 조건절에 함수 기반 인덱스에 명시된 표현식을 그대로 사용해야 함
+      - `EXPLAIN`으로 잘 인덱스를 활용하는지 확인하자
+- 특징
+  - 내부 구조와 유지관리 방법은 B-Tree 인덱스와 동일
+
+## 8.7 멀티 밸류 인덱스
+
+```sql
+CREATE TABLE user (
+  user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(10),
+  last_name VARCHAR(10),
+  credit_info JSON,
+  INDEX mx_creditscores ( (CAST(credit_info->'$.credit_scores' AS UNSIGNED ARRAY)) )
+);
+
+INSERT INTO user VALUES (1, 'Matt', 'Lee', '{"credit_scores": [360, 353, 351]}');
+
+SELECT * FROM user WHERE 360 MEMBER OF(credit_info->'$.credit_scores');
+-- row fetched
+```
+
+- 개요
+  - 하나의 데이터 레코드가 여러 개의 키 값을 가질 수 있는 형태의 인덱스
+  - RDBMS에서 JSON 데이터 타입을 지원하기 시작하면서, JSON 배열 타입의 필드에 저장된 원소들에 대한 인덱스 요건이 발생
+    - MySQL 8.0에서 배열 형태에 대한 인덱스 생성 가능하게 됨
+
+## 8.8 클러스터링 인덱스
+
+## 8.9 유니크 인덱스
+
+## 8.10 외래키
