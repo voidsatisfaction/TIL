@@ -11,6 +11,7 @@
   - Connection pool
   - MySQL vs PostgreSQL vs SQLite
   - MVCC
+  - DML vs DDL vs DCL
 
 ## 의문
 
@@ -379,3 +380,24 @@ MVCC, Rollback Segment example
     - *undo 영역 말하는건가? 왜 연산 끝나고 안지움?*
   - 데이터 버전이 충돌될 수 있음
     - *예시?*
+
+### DML vs DDL vs DCL
+
+- DML(Data Manipulation Language)
+  - 정의
+    - `INSERT`, `UPDATE`, `DELETE`, `SELECT ... FOR UPDATE`를 실행하는 SQL문
+  - 특징
+    - InnoDB 테이블에서는 트랜잭션 컨택스트안에서 동작함
+      - commit, rollback 가능
+- DDL(Data Definition Language)
+  - 정의
+    - 테이블의 행이 아니라, 데이터베이스 자체를 조작하는 SQL문
+  - 특징
+    - 자동적으로 commit되고, rollback 불가능
+  - 예시
+    - `CREATE`, `ALTER`, `DROP`, `TRUNCATE`
+- DCL(Data Control Language)
+  - 정의
+    - 권한을 조작하는 SQL문
+  - 예시
+    - `GRANT`, `REVOKE`
