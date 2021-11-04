@@ -11,6 +11,7 @@
   - Connection pool
   - MySQL vs PostgreSQL vs SQLite
   - MVCC
+  - MVCC와 lock의 관계
   - DML vs DDL vs DCL
 
 ## 의문
@@ -351,35 +352,47 @@ MVCC, Rollback Segment example
   - 동시성을 제어하기 위해 사용하는 핵심적인 방법 중 하나
     - readers never block writers, and writers never block readers
 - 구현 방식
-  - MGA(Multi Generation Architecture)
-    - 튜플을 업데이트 할 때, 동일한 데이터 페이지 내에서 새로운 튜플을 추가하고, 이전 튜플은 유효범위를 마킹해 처리
+  - 1 MGA(Multi Generation Architecture)
+    - 개요
+      - 튜플을 업데이트 할 때, 동일한 데이터 페이지 내에서 새로운 튜플을 추가하고, 이전 튜플은 유효범위를 마킹해 처리
     - e.g)
       - PostgreSQL
-  - Rollback(Undo) segment
-    - 튜플을 업데이트 할 때, 새로운 버전의 데이터를 기존 데이터 블록에서 변경하고, 이전 버전을 별도의 롤백 세그먼트에 보관
-      - select SCN(System Change Number(데이터베이스 내부의 타임스탬프 같은것))과 데이터 블록의 SCN을 비교해 Consistent Read가 필요하다고 판단되면, 롤백 세그먼트의 이전 버전을 읽어서 버퍼 캐시에 CR(Consistent Read)블록을 생성
-        - *쿼리를 파싱해서 판단하는 것인가?*
-        - *애초에 CR블록은 매번 update할때마다 생기고 지워지기는 하는건가?*
+  - 2 Rollback(Undo) segment
+    - 개요
+      - 튜플을 업데이트 할 때, 새로운 버전의 데이터를 기존 데이터 블록에서 변경하고, 이전 버전을 별도의 롤백 세그먼트에 보관
+        - select SCN(System Change Number(데이터베이스 내부의 타임스탬프 같은것))과 데이터 블록의 SCN을 비교해 Consistent Read가 필요하다고 판단되면, 롤백 세그먼트의 이전 버전을 읽어서 버퍼 캐시에 CR(Consistent Read)블록을 생성
+          - *쿼리를 파싱해서 판단하는 것인가?*
+          - *애초에 CR블록은 매번 update할때마다 생기고 지워지기는 하는건가?*
     - 목적
-      - 읽기 일관성
+      - **읽기 일관성**
         - 트랜잭션이 수행되고 있을 때, 데이터베이스의 다른 사용자는 이 트랜잭션이 커밋하지 않은 변경된 데이터를 볼 수 없음
         - SELECT문이 실행된 시점에서는 그 이전에 커밋된 데이터 까지의 정보만을 볼 수 있음
           - SELECT문 수행도중 다른 사용자에 의해 변경된 데이터는 볼 수 없음
-      - 트랜잭션 롤백
+      - **트랜잭션 롤백**
         - 트랜잭션을 롤백되는 경우에 다시 데이터값을 행으로 옮겨서 원래의 값으로 복원
-      - 트랜잭션 복구
+      - **트랜잭션 복구**
         - 트랜잭션이 수행되고 있을 때, 인스턴스가 비정상적으로 종료하면, 커밋되지 않은 변경사항을 롤백해야 함
     - e.g)
       - MSSQL
+      - MySQL
 - 장점
   - lock을 사용하지 않으므로, 일반적인 RDBMS보다 매우 빠르게 동작
   - 데이터를 읽기 시작할 때, 다른 사람이 그 데이터를 삭제하거나 수정하더라도 영향을 받지 않음
   - READ COMMITTED, REPEATABLE READ 둘다 가능하게 함
 - 단점
-  - *하나의 데이터에 대해 여러 버전의 데이터를 허용하므로, 데이터 정리 시스템 필요*
-    - *undo 영역 말하는건가? 왜 연산 끝나고 안지움?*
+  - 하나의 데이터에 대해 여러 버전의 데이터를 허용하므로, 데이터 정리 시스템 필요
+    - undo 영역
   - 데이터 버전이 충돌될 수 있음
     - *예시?*
+
+### MVCC와 lock의 관계
+
+- MVCC
+  - 읽기 일관성을 위함
+    - 하나의 트랜잭션이 일정한 기준으로 데이터의 스냅샷을 보기 위함
+- lock
+  - 동시성을 제어하기 위함
+    - e.g) UPDATE 쿼리 실행시, 락을 해서 공통자원에 대하여 concurrent한 접근을 막음
 
 ### DML vs DDL vs DCL
 
