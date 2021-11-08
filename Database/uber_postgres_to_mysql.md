@@ -29,7 +29,7 @@
       - 주기적으로 VACUUM을 해줘야 함
       - 업데이트가 있을 때 마다 디스크상의 데이터 위치 변경이 일어남
         - 인덱스 변경이 필수불가결(모든 B트리 인덱스가 리프 노드에서 ctid를 갖음(MySQL에서는 프라이머리 키를 갖음))
-  - Replica
+  - Replication
     - 개요
       - WAL(Write Ahead Log)를 이용하여 마스터 노드에서 레플리카 노드로 스트리밍하여 데이터 싱크를 맞춤
     - c.f) WAL
@@ -37,7 +37,21 @@
         - crash recovery목적으로 만들어진, 데이터베이스의 모든 트랜잭션을 기록하는 로그
       - 특징
         - on-disk의 로우레벨까지의 정보를 포함(row ctids)
+          - e.g) disk offset 8,382,491에 바이트 XYZ를 작성하라
         - 바이트 레벨까지 마스터와 정확히 일치함
+- MySQL
+  - Replication
+    - 특징
+      - 로지컬 업데이트가 가능
+        - MVCC 이용 가능
+        - READ 쿼리가 replication stream을 블로킹하지 않음
+      - 다양한 replication mode가 존재
+        - Statement-based replication
+          - SQL statement 자체를 replicate
+        - Row-based replication
+          - 변경된 row record를 replicate
+        - Mixed replication
+          - 위의 두 모드를 믹스
 
 ## PostgreSQL의 한계
 
