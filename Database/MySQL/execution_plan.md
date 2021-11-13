@@ -23,6 +23,18 @@
 
 실행 계획 쿼리 결과의 예시
 
+```SQL
+SELECT site_options.domain, sites_users.user, site_taxes.monthly_statement_fee, site.name, AVG(price) AS average_product_price
+  FROM sites_orders_products, site_taxes, site, sites_users, site_options
+    WHERE site_options.site_id = site.id
+      AND sites_users.id = site.user_id
+      AND site_taxes.site_id = site.id
+      AND sites_orders_products.site_id = site.id
+    GROUP BY site.id
+    ORDER BY site.date_modified desc
+    LIMIT 5;
+```
+
 ```
 +------+-------------+---------------------------------+--------+-----------------+---------------+---------+---------------------------------+------+-----------+
 | id   | select_type | table                           | type   | possible_keys   | key           | key_len | ref                             | rows | Extra     |
