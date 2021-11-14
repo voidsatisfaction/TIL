@@ -94,6 +94,7 @@
 
 - 개요
   - Replication이 physical level로 행해지기 때문에, Postgres9.3은 동작하는 Postgres9.2버전의 replica에 replicate불가능
+    - DB클러스터 전체가 버전을 업그레이드 해야 함
 
 ## MySQL이 더 잘하는 것
 
