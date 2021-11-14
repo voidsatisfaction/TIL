@@ -110,6 +110,17 @@ WHERE e.emp_no=de.emp_no AND de.dept_no='d005';
 -- employees 테이블을 검색
 ```
 
+index_merge의 예시
+
+```sql
+EXPLAIN
+SELECT * FROM employees
+WHERE emp_no BETWEEN 10001 AND 11000
+  OR first_name='Smith';
+
+-- 1, index_merge, [PRIMARY, ix_firstname], Using union(PRIMARY, firstname); Using where
+```
+
 - 개요
   - 테이블의 접근 방법
     - MySQL 매뉴얼에는 '조인 타입'이라고 함
