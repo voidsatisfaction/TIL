@@ -14,6 +14,29 @@
 
 ## 1. Reactive Programming의 소개
 
+Publisher, Subscriber, Subscription, Processor
+
+```java
+public interface Publisher<T> {
+    public void subscribe(Subscriber<? super T> s);
+}
+
+public interface Subscriber<T> {
+    public void onSubscribe(Subscription s);
+    public void onNext(T t);
+    public void onError(Throwable t);
+    public void onComplete();
+}
+
+public interface Subscription {
+    public void request(long n);
+    public void cancel();
+}
+
+public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
+}
+```
+
 - Reactive programming
   - 개요
     - 변화의 propagation과 데이터 스트림과 관련된 비동기 프로그래밍 패러다임
@@ -23,7 +46,7 @@
       - reactive streams는 push-based
     - publisher / subscriber
     - push된 값은 선언적으로 표현됨
-    - 에러 핸들링
+    - signaling
       - publisher의 새 값 push
         - `onNext`
       - publisher의 에러 시그널링
@@ -34,6 +57,11 @@
   - 개요
     - JVM에서의 reactive 라이브러리들을 위한 인터페이스와 상호작용의 룰의 집합을 정의하는 스펙
     - 해당 인터페이스는 Java9에서 `Flow`클래스로 통합됨
+  - 등장인물
+    - `Publisher`
+    - `Subscriber`
+    - `Subscription`
+    - `Processor`
 - Reactor
   - 개요
     - Reactive Programming 패러다임의 구현체
