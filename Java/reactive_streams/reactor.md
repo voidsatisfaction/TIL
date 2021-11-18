@@ -12,9 +12,16 @@
 
 ## 의문
 
+- reactor가 비동기적이라는 것의 의미는, publisher와 이어진 파이프라인이 다른 작업의 영향없이 병렬적으로 실행된다는 것인가?
+  - *비동기의 의미?*
+
 ## 1. Reactive Programming의 소개
 
-Publisher, Subscriber, Subscription, Processor
+Reactive Streams 등장인물간 관계도
+
+![](./images/reactive_streams_diagram1.png)
+
+Reactive Streams 등장인물: Publisher, Subscriber, Subscription, Processor
 
 ```java
 public interface Publisher<T> {
@@ -39,7 +46,8 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 
 - Reactive programming
   - 개요
-    - 변화의 propagation과 데이터 스트림과 관련된 비동기 프로그래밍 패러다임
+    - 데이터 스트림 + 비동기 + Observer패턴
+      - 프로그래밍 패러다임
   - 특징
     - OOP에서 Observer 디자인 패턴의 확장
       - iterator는 pull-based
@@ -47,7 +55,7 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
     - publisher / subscriber
     - push된 값은 선언적으로 표현됨
     - signaling
-      - publisher의 새 값 push
+      - publisher(or subscription?)의 새 값 push
         - `onNext`
       - publisher의 에러 시그널링
         - `onError`
@@ -55,8 +63,8 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
         - `onComplete`
 - Reactive Streams
   - 개요
-    - JVM에서의 reactive 라이브러리들을 위한 인터페이스와 상호작용의 룰의 집합을 정의하는 스펙
-    - 해당 인터페이스는 Java9에서 `Flow`클래스로 통합됨
+    - JVM위의 reactive 라이브러리들을 위한 **인터페이스와 상호작용의 룰의 집합** 을 정의하는 스펙
+      - 해당 인터페이스는 Java9에서 `Flow`클래스로 통합됨
   - 등장인물
     - `Publisher`
     - `Subscriber`
@@ -223,10 +231,10 @@ subscribe method의 활용 예시
 // Lambda로 subscriber 생성하기
 Flux<Integer> ints = Flux.range(1,4);
 
-ints.subscribe(i -> System.out.println(i), // 각각의 생성된 값과 함께 무엇인가를 행함
-  error -> System.err.println("Error " + error), // 에러에 대한 반응
-  () -> System.out.println("Done"), // sequence가 성공적으로 끝난 경우에, 코드를 실행
-  sub -> sub.request(10) // 10개까지의 source의 요소를 원한다고 전달
+ints.subscribe(i -> System.out.println(i), // onNext시에 호출: 각각의 생성된 값과 함께 무엇인가를 행함
+  error -> System.err.println("Error " + error), // onError시에 호출: 에러에 대한 반응
+  () -> System.out.println("Done"), // onComplete시에 호출: sequence가 성공적으로 끝난 경우에, 코드를 실행
+  sub -> sub.request(10) // onSubscribe시에 호출: 10개까지의 source의 요소를 원한다고 전달
 );
 
 // BaseSubscriber로 Lambda 대체하기
