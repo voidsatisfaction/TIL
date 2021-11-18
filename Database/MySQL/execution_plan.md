@@ -10,6 +10,13 @@
   - table
   - partitions
   - type
+  - possible_keys
+  - key
+  - key_len
+  - ref
+  - rows
+  - filtered
+  - Extra
 
 ## 의문
 
@@ -164,6 +171,109 @@ WHERE emp_no BETWEEN 10001 AND 11000
           - 전문 검색 인덱스를 사용하는 쿼리에서는 index_merge가 적용되지 않음
           - index_merge 접근 방법으로 처리된 결과는 항상 2개 이상의 집합이 되기 때문에 그 두 집합의 교집합이나 합집합, 또는 중복 제거와 같은 부가적인 작업이 더 필요함
       - index
+        - 인덱스 풀 스캔
+          - vs 테이블 풀 스캔
+            - 비교하는 레코드 건수는 같음
+            - 인덱스가 일반적으로 데이터 파일 전체보다 크기가 작으므로, 풀 테이블 스캔보다 빠르게 처리
+            - 쿼리 내용에 따라서, 정렬된 인덱스 장점 활용 가능
+        - 발동 조건(1+2 or 1+3)
+          - range, const, ref와 같은 접근 방법으로 인덱스 사용 불가한 경우
+          - 인덱스에 포함된 칼럼만으로 처리할 수 있는 쿼리의 경우
+            - 데이터 파일 읽지 않아도 되는 경우
+          - 인덱스를 이용해 정렬이나 그루핑 작업이 가능한 경우
+            - 별도의 정렬 작업을 피할 수 있는 겨우
+            - e.g) 1+3
+              - `SELECT * FROM departments ORDER BY dept_name DESC LIMIT 10;`
+                - 테이블 인덱스를 처음부터 끝까지 읽는 index접근 방식이지만, LIMIT 조건이 있기 때문에 상당히 효율적(인덱스 역순 10개가져오면 됨)
   - 인덱스 미사용
     - ALL
       - 풀 테이블 스캔
+        - 테이블을 처음부터 끝까지 전부 읽어서 불필요한 레코드 제거(체크 조건이 존재할 때)
+        - Read Ahead
+          - InnoDB는 디스크 I/O를 최소화 하기 위해서, 한꺼번에 많은 페이지를 읽어들이는 기능 제공
+          - 인접한 페이지가 연속해서 몇 번 읽히면, 백그라운드 읽기 스레드가 최대 64개의 페이지씩 한꺼번에 디스크로부터 읽어들임
+            - 하나씩 읽어 들이는 작업보다 훨씬 빠름
+
+### possible_keys
+
+- 개요
+  - 옵티마이저가 최적의 실행 계획을 만들기 위해 후보로 선정했던 접근 방법에서 사용되는 인덱스의 목록
+  - 해당 인덱스를 사용했다고 판단하면 안됨
+    - 그다지 쿼리 튜닝에 도움은 되지 않음
+
+### key
+
+- 개요
+  - 최종 선택된 실행계획에서 사용하는 인덱스
+
+### key_len
+
+- 개요
+  - 쿼리를 처리하기 위해 다중 칼럼으로 구성된 인덱스에서 몇 개의 칼럼까지 사용했는가
+    - 인덱스의 각 레코드에서 몇 바이트까지 사용했는지
+- 예시
+  - `SELECT * FROM dept_emp WHERE dept_no='d005';`
+    - key_len = 16
+      - dept_no가 utf8mb4이므로, 4바이트 x 4글자 = 16바이트
+  - `SELECT * FROM dept_emp WHERE dept_no='d005' AND emp_no=10001;`
+    - key_len = 20
+      - 16바이트 + 4바이트(INTEGER)
+  - `SELECT * FROM titles WHERE to_date <= '1985-10-10';`
+    - key_len = 4
+      - 3바이트 DATE칼럼 + 1바이트(NULL인지 체크)
+
+### ref
+
+- 개요
+  - 접근 방법이 ref일 때, 참조 조건으로 어떤 값이 제공되었는지 보여줌
+    - 크게 신경쓰지는 않아도 됨
+- 종류
+  - const
+    - 상숫값
+  - 테이블명.칼럼명
+    - 다른 테이블의 칼럼값
+  - func
+    - 콜레이션 변환이나, 값 자체의 연산을 거쳐서 참조한 경우
+- 예시
+  - `SELECT * FROM employees e, dept_emp de WHERE e.emp_no=(de.emp_no-1);`
+    - ref = func
+
+### rows
+
+- 개요
+  - 인덱스를 사용할 떄, 쿼리 처리를 위해 얼마나 많은 레코드를 읽고 어야 하는지 예측했던 레코드 건수
+    - 옵티마이저의 실행 계획의 효율성 판단을 위한 지표
+
+### filtered
+
+*아직 정확한 의미 잘모르겠음*
+
+JOIN시에, 옵티마이저는 행의 수가 더 적은 테이블을 선행(driving) 테이블로 함(해당 테이블의 행을 iterate하면서 후행(driven) 테이블과 값을 비교해서 JOIN)
+
+driving table이 실행계획에서 더 위에 있음
+
+- 개요
+  - 인덱스를 사용하지 못하는 조건에서 일치하는 레코드 건수의 비율
+    - **필터링 되고 남은 레코드의 비율**
+
+### Extra
+
+- 개요
+  - 쿼리의 실행 계획에서 성능에 관련된 중요한 내용이 표시됨
+    - 내부 처리 알고리즘에 대한 깊이 있는 내용을 보여줌
+- 종류
+  - const row not found
+  - deleting all rows
+  - distinct
+    - join시 중복된 값은 무시하고 건너뜀
+  - *firstmatch*
+  - *Full scan on NULL key*
+  - Impossible HAVING
+    - HAVING절의 조건을 만족하는 레코드가 없을 때
+  - Impossible WHERE
+    - WHERE 조건이 항상 FALSE가 될 수 밖에 없는 경우
+  - *LooseScan*
+  - No matching min/max row
+    - MIN(), MAX()와 같은 집합 함수가 있는 쿼리의 조건절에 일치하는 레코드가 한 건도 없을 때
+  - No matching row in const table
+  - *No matching rows after partition pruning*
