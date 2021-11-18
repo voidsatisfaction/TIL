@@ -325,6 +325,38 @@ Flux<String> bridge = Flux.push(sink -> {
 });
 ```
 
+hybrid push/pull model
+
+```java
+Flux<String> bridge = Flux.create(sink -> {
+    myMessageProcessor.register(
+      new MyMessageListener<String>() {
+
+        public void onMessage(List<String> messages) {
+          for(String s : messages) {
+            sink.next(s);
+          }
+        }
+    });
+    sink.onRequest(n -> {
+        List<String> messages = myMessageProcessor.getHistory(n);
+        for(String s : messages) {
+           sink.next(s);
+        }
+    });
+});
+```
+
+cleaning up after `push()`, `create()`
+
+```java
+Flux<String> bridge = Flux.create(sink -> {
+    sink.onRequest(n -> channel.poll(n))
+        .onCancel(() -> channel.cancel()) // cancel signal only
+        .onDispose(() -> channel.close()) // complete, error, or cancel signals
+    });
+```
+
 - 개요
   - Publisher인 `Flux`, `Mono`를 프로그래밍 방식으로 관련 이벤트인 `onNext`, `onError`, `onComplete`를 정의해서 생성하기
     - sink event를 트리거링 하기 위한 메서드들
@@ -349,3 +381,33 @@ Flux<String> bridge = Flux.push(sink -> {
   - `Flux.push`
     - 비동기 + 싱글스레딩
       - create와 유사하나, 하나의 producing thread만 next, complete, error를 호출 가능
+
+### 3.5 Threading and Schedulers
+
+- 개요
+  - 기본적으로, Reactor는 concurrency와는 독립적
+    - 하지만, 라이브러리차원에서 concurrency를 지원
+- Scheduler
+  - 개요
+    - 실행 모델(type)과 실행이 일어나는 장소를 결정
+    - `ExecutorService`와 유사하게 스케쥴링 역할을 담당
+  - static methods
+    - `Schedulers.immediate()`
+      - Runnable이 현재 스레드에서 바로 실행됨
+        - 사실상 스케쥴러가 아무 역할도 안함
+    - `Schedulers.single()`
+      - 다수의 호출을 처리하는 하나의 재사용 가능한 스레드
+    - `Schedulers.newSingle()`
+      - 매 호출당 스레드 할당
+    - `Schedulers.elastic()`
+      - 사용하지 말자(스레드 개수 제한이 없음)
+    - `Schedulers.boundedElastic()`
+      - 워커 풀을 생성해서 idle인 워커를 재사용함
+      - 너무 오랫동안 idle인 워커 풀을 dispose함
+      - 스레드 개수 제한이 존재
+        - default
+          - CPU코어 x 10
+      - blocking 처리를 다룰 때 좋음
+    - `Schedulers.parallel()`
+      - 병렬 처리를 위하여 최적화된 워커 풀 사용
+      - CPU 코어만큼만 워커 생성
