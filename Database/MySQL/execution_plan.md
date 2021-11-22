@@ -277,3 +277,17 @@ driving table이 실행계획에서 더 위에 있음
     - MIN(), MAX()와 같은 집합 함수가 있는 쿼리의 조건절에 일치하는 레코드가 한 건도 없을 때
   - No matching row in const table
   - *No matching rows after partition pruning*
+  - No tables used
+    - FROM절이 없는 쿼리 문장 or FROM DUAL형태의 쿼리 실행 계획
+  - Not exists
+    - 아우터 조인을 이용해 안티-조인을 수행하는 쿼리
+    - c.f) 안티조인
+      - A테이블에는 존재하지만, B테이블에는 없는 값을 조회해야 하는경우, `NOT IN`, `NOT EXISTS`연산자를 사용하는 형태의 조인
+      - 똑같은 처리를 LEFT OUTER JOIN을 이용해서 구현 가능
+  - Plan isn't ready yet
+    - `EXPLAIN FOR CONNECTION`명령을 실행했을 때, 해당 커넥션에서 아직 쿼리의 실행 계획을 수립하지 못한 상태인 경우
+      - c.f) `EXPLAIN FOR CONNECTION 8`
+        - 8번 커넥션의 실행계획을 확인
+  - *Range checked for each record*
+    - *index map*
+  - *Recursive*
