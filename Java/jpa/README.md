@@ -260,3 +260,93 @@ Persistence context와 지연 로딩
         - 엔티티 매니저가 직접 호출
         - 트랜잭션이 commit()호출할 때 자동으로 호출
         - **JPQL 쿼리 실행 전에 자동으로 호출**
+
+## 6. Entity Managers and Persistence Contexts
+
+### 6.1 Persistence Contexts
+
+- 정의
+  - 임의의 persistent 엔티티에 대해서 유니크한 엔티티 인스턴스가 있는 managed 엔티티 인스턴스들의 집합
+  - persistence context속에서, entity 인스턴스들과 라이프사이클은 entity manager에 의해서 관리됨
+- 주의
+  - 스레드 세이프하지 않음
+    - 스레드 마다 하나씩 필요함
+
+### 6.2 트랜잭션의 컨트롤링
+
+EntityTransaction 인터페이스
+
+```java
+package jakarta.persistence;
+
+/**
+ * Interface used to control transactions on resource-local entity
+ * managers.  The {@link EntityManager#getTransaction
+ *
+ * @since 1.0
+ */
+public interface EntityTransaction {
+
+     /**
+      * Start a resource transaction.
+      */
+     public void begin();
+
+     /**
+      * Commit the current resource transaction, writing any
+      * unflushed changes to the database.
+      */
+     public void commit();
+
+     /**
+      * Roll back the current resource transaction.
+      */
+     public void rollback();
+
+     /**
+      * Mark the current resource transaction so that the only
+      * possible outcome of the transaction is for the transaction
+      * to be rolled back.
+      */
+     public void setRollbackOnly();
+
+     /**
+      * Determine whether the current resource transaction has been
+      * marked for rollback.
+      */
+     public boolean getRollbackOnly();
+
+     /**
+      * Indicate whether a resource transaction is in progress.
+      */
+     public boolean isActive();
+}
+```
+
+예시 코드
+
+```java
+import jakarta.persistence.*;
+
+public class PasswordChanger {
+    public static void main (String[] args) {
+        EntityManagerFactory emf =
+            Persistence.createEntityManagerFactory("Order");
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        User user = (User)em.createQuery
+            ("SELECT u FROM User u WHERE u.name=:name AND u.pass=:pass")
+            .setParameter("name", args[0])
+            .setParameter("pass", args[1])
+            .getSingleResult();
+
+        if (user!=null)
+            user.setPassword(args[2]);
+
+        em.getTransaction().commit();
+        em.close();
+        emf.close();
+    }
+}
+```
