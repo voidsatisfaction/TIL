@@ -20,6 +20,24 @@
 
 ## 의문
 
+- 드라이빙 테이블, 드리븐 테이블?
+  - 드라이빙 테이블
+    - 개요
+      - 조인시 먼저 액세스 되는 쪽
+      - LEFT TABLE이라고 보면 됨
+    - 특징
+      - iterate하면서 driven table에 주도적으로 조인 시도
+      - 일반적으로 드리븐 테이블보다 행이 적으면 유리
+  - 드리븐 테이블
+    - 개요
+      - 조인시 나중에 액세스 되는 쪽
+      - RIGHT TABLE
+  - 옵티마이저는 조인시, 조인의 대상되는 칼럼에 인덱스가 있는 쪽을 드리븐 테이블로 둠
+    - 그래야 빠르게 검색이 가능하므로
+- 하나의 단위 쿼리가 실행되는 경우, `index_merege`이외의 접근 방법에서는 단 하나의 인덱스만 사용 가능 하다는 것은?
+  - *여러개의 WHERE조건이 있어도, 그중에서 하나의 인덱스만 적용 가능하다는 것인가?*
+    - *복수의 인덱스를 적용하고 싶다면 merge_index를 사용하라는 것인가?*
+
 ## 개요
 
 ## 10.1 통계 정보
@@ -59,6 +77,16 @@ SELECT site_options.domain, sites_users.user, site_taxes.monthly_statement_fee, 
 |    1 | SIMPLE      | sites_orders_products           | ref    | site_id         | site_id       | 4       | service.sites.id                | 4153 |           |//
 +------+-------------+---------------------------------+--------+-----------------+---------------+---------+---------------------------------+------+-----------+
 ```
+
+실행 계획 해석
+
+![](./images/ch10/execution_plan1.jpg)
+
+- 먼저, 첫번째 행을 확인하고, ID가 1인 행이 두개있으므로, JOIN임을 파악
+  - 첫번쨰 흥의 테이블이 driving table
+- 두번쨰 행을 보면, 테이블이 derived2이므로, id가 2인 세번째 행을 봄
+- 세번째 행은 서브쿼리임을 알 수 있고, LATERAL조인에서 매 derived테이블의 행 마다, 임시 테이블이 생성됨을 알 수 있음
+  - 해당 임시 테이블이 driving테이블이 됨
 
 ### **id**
 
@@ -291,3 +319,76 @@ driving table이 실행계획에서 더 위에 있음
   - *Range checked for each record*
     - *index map*
   - *Recursive*
+  - Rematerialize
+    - LATERAL JOIN시에, 래터럴로 조인되는 테이블은 선행 테이블의 레코드별로 서브쿼리를 실행해서 그 결과를 임시 테이블에 저장
+      - 이 과정이 Rematerializing
+  - Select tables optimized away
+    - `MIN()` or `MAX()`만 SELECT절에 사용되거나, `GROUP BY`로 `MIN()`, `MAX()`를 조회하는 쿼리가 인덱스를 오름차순 또는 내림차순으로 1건만 읽는 형태의 최적화가 적용는 경우
+  - *Start temporary, End temporary*
+    - *Duplicate Weed-out 최적화 전략이 사용되는 경우*
+    - e.g)
+      - `SELECT * FROM employees e WHERE e.emp_no IN (SELECT s.emp_no FROM salaries s WHERE s.salary > 150000);`
+  - Unique row not found
+    - 두 개의 테이블이 각각 유니크(프라이머리 키 포함) 칼럼으로 아우터 조인을 수행하는 쿼리에서, 아우터 테이블에 일치하는 레코드가 존재하지 않을 경우
+  - Using filesort
+    - `ORDER BY` 처리가 인덱스를 사용하지 못하는 경우
+    - 조회된 레코드를 정렬용 메모리 버퍼에 복사해, 퀵 소트 또는 힙 소트 알고리즘을 이용해 정렬을 수행
+    - 쿼리 튜닝을 하거나, 인덱스 생성이 좋음
+  - Using index
+    - 커버링 인덱스를 사용하는 경우
+      - 데이터 파일을 전혀 읽지 않고, 인덱스만 읽어서 쿼리를 모두 처리가능할 경우
+        - 프라이머리 키는 자동적으로 커버링 인덱스에 포함됨(모든 InnoDB의 세컨데리 인덱스는 리프노드의 값으로 프라이머리 인덱스의 값을 갖으므로)
+    - 레코드 건수에 따라다르지만, 수십배에서 수백배정도의 성능 이득 얻을 수 있음
+  - *Using index condition*
+    - 인덱스 컨디션 푸시 다운 최적화를 사용하는 경우
+  - Using index for group-by
+    - `GROUP BY`시에, 인덱스를 사용하고, 루스 인덱스 스캔을 사용하는 경우
+      - `MIN()`, `MAX()`
+    - Loose index scan의 조건
+      - WHERE 조건절이 없는 경우(O)
+        - `GROUP BY`절의 칼럼과 `SELECT`로 가져오는 칼럼이 "루스 인덱스 스캔"을 사용할 수 있는 조건만 갖추면 됨
+      - WHERE 조건절이 있지만 검색을 위해 인덱스를 사용하지 못하는 경우(X)
+        - `GROUP BY`를 위해 인덱스를 읽은 후, `WHERE`조건의 비교를 위해 데이터 레코드를 읽어야 함
+          - 결국 타이트 인덱스 스캔 과정을 통해 `GROUP BY`가 처리 됨
+      - WHERE 절의 조건이 있고, 검색을 위해 인덱스를 사용하는 경우
+        - **하나의 단위 쿼리가 실행되는 경우, `index_merege`이외의 접근 방법에서는 단 하나의 인덱스만 사용 가능**
+          - `WHERE`절의 조건과 `GROUP BY` 처리가 공통 인덱스를 사용할 수 있을 때만 루스 인덱스 스캔 사용가능
+          - 다를 경우에는, 일반적으로 옵티마이저가 `WHERE` 조건절이 사용할 수 있는 인덱스를 사용하도록 실행 계획을 수립하는 경향이 있음
+  - Using index for skip scan
+    - 옵티마이저가 인덱스 스킵 스캔 최적화를 사용하는 경우
+    - 쿼리 최적화에서 중요한 기능이므로, 내부적인 처리 방식을 잘 이해하면 좋음
+  - Using join buffer(Block Nested Loop, Batched Key Access, hash join)
+    - 조인시, 드리븐 테이블에 인덱스가 존재하지 않는경우, Block nested join 혹은 hash join을 사용하고, 이때에 join buffer를 사용하게 되는데 이러한 경우
+      - `join_buffer_size`라는 시스템 변수에 최대 할당 가능한 조인 버퍼 크기 설정 가능
+        - 일반적으로 1MB로 충분
+  - Using MRR(Multi Range Read)
+    - MRR
+      - MySQL엔진은 여러 개의 키 값을 한 번에 스토리지 엔진으로 전달하고, 스토리지 엔진은 넘겨받은 키 값들을 정렬해서 최소한의 페이지 접근만으로 필요한 레코드를 읽을 수 있게 최적화
+        - 원래는 MySQL엔진이 넘겨주는 키 값을 기준으로 레코드를 한 건 한 건 읽어서 반환하는 방식으로 밖에 작동하지 못하는 한계가 있었음
+  - Using sort_union(...), Using union(...), Using intersect(...)
+    - Using intersect(...)
+      - 각각의 인덱스를 사용할 수 있는 조건이 AND로 연결된 경우
+    - Using union(...)
+      - 각 인덱스를 사용할 수 있는 조건이 OR로 연결된 경우
+    - Using sort_union(...)
+      - Using union과 같은 작업을 수행하지만, Using union으로 처리될 수 없는 경우
+        - e.g) OR로 연결된 상대적으로 대량의 range 조건들
+      - Using sort_union은 프라이머리 키만 먼저 읽어서 정렬하고 병합한 이후, 비로소 레코드를 읽어서 반환할 수 있음
+  - Using temporary
+    - 임시 테이블을 사용한 경우
+      - 메모리 생성 or 디스크 생성
+    - 주의
+      - 실행계획의 Extra칼럼에 Using temporary가 표시되지는 않지만, 실제 내부적으로는 임시 테이블을 사용할 때도 많음
+        - 예시
+          - `FROM`절에 사용된 서브쿼리(Derived table)
+          - `COUNT(DISTINCT column1)`를 포함하는 쿼리중, 인덱스를 사용할 수 없는 경우
+          - `UNION`, `UNION DISTINCT`가 사용된 쿼리
+          - 인덱스를 사용하지 못하는 정렬 작업
+  - Using where
+    - MySQL엔진 레이어에서 별도의 가공을 해서 필터링 작업을 처리한 경우
+      - 머지 인덱스가 잘 되어있으면, 필터링이 아닌, 작업범위 결정조건으로 스토리지 엔진에서 처리가 됨
+  - Zero limit
+    - 데이터 값이 아닌, 쿼리 결괏값의 메타데이터만 필요한 경우
+      - 쿼리 결과가 몇개의 칼럼을 가지고, 각 칼럼의 타입은 무엇인지 등의 정보만 필요한 경우
+    - 예시
+      - `EXPLAIN SELECT * FROM employees LIMIT 0;`

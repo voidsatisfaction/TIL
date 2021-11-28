@@ -169,18 +169,30 @@ MySQL 아키텍처
 #### 4.1.1 MySQL의 전체 구조
 
 - MySQL 엔진
+  - 개요
+    - 스토리지 엔진으로부터 받은 레코드를 가공 또는 연산하는 작업을 수행
+      - e.g) 조인, 필터링, 집합처리
   - 구성
     - 커넥션 핸들러
-    - SQL파서, 전처리기, 옵티마이저, 캐시 & 버퍼
-      - *여기서 말하는 캐시 & 버퍼는 무엇을 의미하는가?*
+    - SQL파서, 전처리기, 옵티마이저
+  - 특징
+    - 체크 조건을 처리
+      - `SELECT * FROM employees WEHRE emp_no BETWEEN 10001 AND 10100 AND gender='F';`
+        - 여기에서 `gender='F'`를 스토리지 엔진으로 부터 받아와서 필터링
+          - 만약, merge_index가 존재하는 상황이라면 어떻게 되는가?
+            - 이 경우에는, 작업 범위 결정 조건으로 되어서 스토리지 엔진에서 처리됨
 - 스토리지 엔진
   - 개요
     - 데이터를 스토리지에 저장하거나, 읽어오는 역할
       - INSERT, UPDATE, DELETE, SELECT등의 작업이 발생하면 InnoDB엔진이 그러한 처리를 담당
+      - 정말 이것만 함
   - 특징
     - MySQL 엔진은 하나지만, 스토리지 엔진은 여러개를 동시에 사용 가능
       - `CREATE TABLE test_table (fd1 INT, fd2 INT) ENGINE=INNODB;`
     - 각 스토리지 엔진은 성능 향상을 위해, 키 캐시, InnoDB 버퍼풀 과 같은 기능을 내장함
+    - 작업 범위 결정 조건을 처리
+      - `SELECT * FROM employees WEHRE emp_no BETWEEN 10001 AND 10100 AND gender='F';`
+        - 여기에서 `emp_no BETWEEN 10001 AND 10100`를 애초에 데이터를 가져올때부터 필터링
 - 핸들러 API
   - 개요
     - MySQL 엔진의 쿼리 실행기에서 데이터를 쓰거나 읽을 때, 각 스토리지 엔진에 쓰기 또는 읽기를 요청하고, 그러한 요청을 핸들러 요청이라고 함
