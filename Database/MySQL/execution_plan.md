@@ -35,9 +35,9 @@
   - 옵티마이저는 조인시, 조인의 대상되는 칼럼에 인덱스가 있는 쪽을 드리븐 테이블로 둠
     - 그래야 빠르게 검색이 가능하므로
 - 하나의 단위 쿼리가 실행되는 경우, `index_merege`이외의 접근 방법에서는 단 하나의 인덱스만 사용 가능 하다는 것은?
-  - 여러개의 WHERE조건이 있어도, 테이블에 설정된 인덱스 중 오직 하나의 인덱스만 적용 가능하다는 것인가?
-    - 그렇다
-    - 오직 merge_index의 케이스에만 복수의 인덱스를 사용하게 할 수 있음
+  - 여러개의 WHERE조건이 있어도, 그중에서 하나의 인덱스만 적용 가능하다는 것인가?
+    - 복수개의 인덱스를 적용하고 싶다면 merge_index를 사용하라는 것인가?
+      - 그렇다
 
 ## 개요
 
@@ -84,8 +84,8 @@ SELECT site_options.domain, sites_users.user, site_taxes.monthly_statement_fee, 
 ![](./images/ch10/execution_plan1.jpg)
 
 - 먼저, 첫번째 행을 확인하고, ID가 1인 행이 두개있으므로, JOIN임을 파악
-  - 첫번쨰 흥의 테이블이 driving table
-- 두번쨰 행을 보면, 테이블이 derived2이므로, id가 2인 세번째 행을 봄
+  - 첫번째 행의 테이블이 driving table
+- 두번째 행을 보면, 테이블이 derived2이므로, id가 2인 세번째 행을 봄
 - 세번째 행은 서브쿼리임을 알 수 있고, LATERAL조인에서 매 derived테이블의 행 마다, 임시 테이블이 생성됨을 알 수 있음
   - 해당 임시 테이블이 driving테이블이 됨
 
@@ -111,7 +111,7 @@ SELECT site_options.domain, sites_users.user, site_taxes.monthly_statement_fee, 
     - UNION이나 서브쿼리를 가지는 SELECT 쿼리의 실행 계획에서 가장 바깥쪽에 있는 단위 쿼리
   - UNION 계열
     - UNION
-      - UNION으로 결합하는 단위 SELECT 쿼리 가운데 두번쨰 이후 단위 SELECT 쿼리
+      - UNION으로 결합하는 단위 SELECT 쿼리 가운데 두번째 이후 단위 SELECT 쿼리
         - 첫번째는 쿼리 결과들을 모아서 저장하는 임시 테이블(DERIVED)가 select_type으로 표시 됨
     - DEPENDENT UNION
       - UNION 쿼리인데, 내부의 쿼리가 외부의 값을 참조해서 처리될 때
