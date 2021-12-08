@@ -1,6 +1,9 @@
 # Reactor
 
 - 의문
+- 실전 예제
+- 잘 사용하는 오퍼레이터와 의미
+  - block
 - 1] Reactive Programming의 소개
   - 1.2 Asynchronicity to the Rescue?
 - 2] Reactive Streams의 특징
@@ -9,11 +12,50 @@
   - 3.2 Mono: an Asynchronous 0-1 Result
   - 3.3 Flux, Mono의 간단한 사용 예시
   - 3.4 sequence를 프로그래밍 방식으로 생성하기(generate, create, push)
+- 8] Advanced Features and Concepts
+  - 8.2 Hot Versus Cold
 
 ## 의문
 
 - reactor가 비동기적이라는 것의 의미는, publisher와 이어진 파이프라인이 다른 작업의 영향없이 병렬적으로 실행된다는 것인가?
   - *비동기의 의미?*
+
+## 실전 예제
+
+### Mono.defer & Mono.switchIfEmpty
+
+Mono.defer 마블 다이어그램
+
+![](./images/mono_defer1.jpeg)
+
+Mono.switchIfEmpty 마블 다이어그램
+
+![](./images/mono_switch_if_empty1.png)
+
+Mono.defer와 Mono.switchIfEmpty
+
+```java
+...
+.switchIfEmpty(Mono.defer{
+  // 외부에서 subscribe가 행해졌을때, 처음으로 값을 emit함
+  // cold publisher화
+})
+```
+
+- `Mono.defer { supplier }`
+  - defer의 바깥에서 subscribe가 발생한 이후에, defer 내부에서 supplier에 다시 한 번 subscribe
+  - 즉, 바깥에서 subscribe할 때에 비로소 supplier에서 값을 emit함
+    - 이와 반대로, `Mono.just`는 값을 바로 emit함
+- `Mono.switchIfEmpty`
+  - 모노가 데이터가 없이 끝난경우, 별도의 모노로 fallback함
+
+## 잘 사용하는 오퍼레이터와 의미
+
+- `block`
+  - this Mono를 구독하고, next 시그널이 수신될 때 까지 무기한 블로킹을 함
+  - Mono가 empty로 끝나면, null을 반환하고, 값이 있으면 그 값을 반환
+  - 주의
+    - reactor 스케줄러가 관리하는 non-blocking 스레드에서 실행되면, 에러가 남
 
 ## 1. Reactive Programming의 소개
 
@@ -411,3 +453,26 @@ Flux<String> bridge = Flux.create(sink -> {
     - `Schedulers.parallel()`
       - 병렬 처리를 위하여 최적화된 워커 풀 사용
       - CPU 코어만큼만 워커 생성
+
+## 8. Advanced Features and Concepts
+
+### 8.2 Hot Versus Cold
+
+- 개요
+  - publisher의 두 종류
+    - cold
+      - 각 subscription마다 새로 데이터를 생성함
+        - subscription이 없으면 데이터 생성도 없음
+    - hot
+      - subscription과 상관없이 바로 데이터를 emit할 수 있음
+        - subscriber는 subscribe이후에 새로 emit된 요소들만 볼 수 있음
+      - 예시
+        - `just`
+          - 어셈블리 타임에 캡쳐된 값을 나중에 구독하는 모든 subscriber에게 emit함
+  - 변환
+    - hot -> cold
+      - `defer`이용
+        - HTTP 리퀘스트를 subscription time에 하도록 연기
+        - 각 새로운 구독마다 별도의 네트워크 요청을 함
+    - cold -> hot
+      - `share`, `replay`이용
