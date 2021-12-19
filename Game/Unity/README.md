@@ -4,6 +4,13 @@
 - 유니티 느낀점
 - 좋은 공부 방식
 - Unity 기본 용어
+  - 유니티 엔진
+  - Project
+  - Scene
+  - GameObject
+  - Component
+  - Asset
+  - Prefab
 - Unity 기본 개념
   - 유니티 이벤트 함수
 
