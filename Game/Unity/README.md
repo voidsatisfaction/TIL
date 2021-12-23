@@ -13,8 +13,13 @@
   - Prefab
 - Unity 기본 개념
   - 유니티 이벤트 함수
+- Unity UI
+  - Rect Transform
 
 ## 의문
+
+- 여러개의 `Awake()`메서드가 있을경우, 어떤 게임 오브젝트의 `Awake()`가 먼저 실행되는가? 이것은 랜덤인가?
+  - 그렇다고 한다
 
 ## 유니티 느낀점
 
@@ -23,9 +28,12 @@
     - 각종 값들이나 Game Object, Component를 유니티 에디터에 드래그 앤 드롭으로 넣어줄 수 있음
   - IOC
     - 게임 컴포넌트 스크립트가 IOC의 형태
+      - 라이프사이클에 따라 알아서 메시지를 보내주고, 오브젝트는 받은 메시지를 메서드에 따라서 알아서 실행함
+- 이벤트 드리븐
+  - 이벤트 메서드를 정의하여, 매 프레임 마다 오브젝트가 해야할 행동의 메시지를 받고 처리함
 - 뷰와 로직의 분리
   - 뷰는 유니티 에디터에서 다룸
-  - 로직은 유니티 스크립트에서 Component로 작성하고 뷰의 게임 오브젝트에 DI 시켜줌
+  - 로직은 유니티 스크립트에서 Component로 작성하고 뷰의 게임 오브젝트에 DI 시켜줌(composition)
 
 ## 좋은 공부 방식
 
@@ -179,3 +187,33 @@ Monobehaviour life cycle
     - 게임이 종료될 때 1회 호출
       - *만약, 유저가 종료는 안하고, 그냥 다른 앱으로 넘어가면 어떻게 되는가?*
     - 유니티 에디터에서는 플레이 모드를 중지할 때 호출됨
+
+## Unity UI
+
+### Rect Transform
+
+- 개요
+  - Unity에서 제공하는 UI를 위한 Transform
+  - Transform을 상속하여 만든 컴포넌트
+- 특징
+  - `Canvas`게임 오브젝트가 Rect Transform으로 구성되어 있음
+    - 하위 모든 UI는 Rect Transform을 기본으로 가짐
+  - Transform vs Rect Transform
+    - Anchors
+    - Pivot
+    - Edit Mode
+  - 좌표계
+    - (0,0)은 왼쪽 아래
+- 옵션
+  - Anchors
+    - 개요
+      - 부모 오브젝트로부터의 기준을 제어할 수 있는 옵션
+    - 특징
+      - `MIN(X, Y), MAX(X, Y)`를 통해서 부모 오브젝트로부터의 기준을 제어
+        - stretch인 경우
+          - 가로 스트레치인 경우
+            - Pos X 대신 Left Right(padding), Height
+          - 세로 스트레치인 경우
+            - Pos Y 대신 Top Bottom(padding), Width
+        - stretch가 아닌 경우
+          - Pos X, Pos Y, Width, Height
