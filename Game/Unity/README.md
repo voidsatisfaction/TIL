@@ -13,8 +13,11 @@
   - Prefab
 - Unity 기본 개념
   - 유니티 이벤트 함수
+  - 코루틴
 - Unity UI
   - Rect Transform
+- Physics
+  - Rigidbody 2D
 
 ## 의문
 
@@ -39,6 +42,9 @@
 
 - 간단한 게임 하나 만들면서 인터페이스 익숙해지고, 코드 작성해보기
 - 유니티 기본 용어 정리하기
+- 참고 사이트
+  - [1 따라하면서 배우는 고박사의 유니티 하이퍼캐주얼게임 시리즈 01](https://www.inflearn.com/course/%EA%B3%A0%EB%B0%95%EC%82%AC-%ED%95%98%EC%9D%B4%ED%8D%BC%EC%BA%90%EC%A5%AC%EC%96%BC-1)
+  - [2 Unity learn](https://learn.unity.com/)
 
 ## Unity 기본 용어
 
@@ -188,6 +194,31 @@ Monobehaviour life cycle
       - *만약, 유저가 종료는 안하고, 그냥 다른 앱으로 넘어가면 어떻게 되는가?*
     - 유니티 에디터에서는 플레이 모드를 중지할 때 호출됨
 
+### 코루틴
+
+- 개요
+  - 한 컴포넌트 내에서 Update함수와는 따로 동작하는 일시적인 서브 동작 구현
+  - 다른 작업이 처리되는 것을 기다리는 기능 구현
+- 예시
+  - 스페이스를 누르면 플레이어가 공격했다고 가정하고, 공격하는 시간 동안에는 다시 공격하지 못하게 만드는 기능
+  - ~한 서브 작업이 끝나고 다음작업으로 ~한 서브 작업을 하기
+- API
+  - `yield return null`
+    - 한 프레임 동안 코루틴이 유니티로 실행 제어권을 넘겨줌
+      - *그냥 return하면 어떻게 되는것일까?*
+  - `yield return new WaitForEndOfFrame()`
+    - 프레임이 끝날 때, 코루틴 내용을 재실행
+  - `yield return new WaitUntil(() => speed > 5f)`
+    - 해당 람다식이 false면 대기, true가 되면 다음 로직 실행
+  - `yield return new WaitWhile(() => speed <= 5f)`
+    - 해당 람다식이 true면 대기, false가 되면 다음 로직 실행
+  - `StopAllCoroutines()`
+    - 이 Behaviour에 있는 모든 코루틴을 중단
+- 특징
+  - 이벤트 함수에서는 `IEnumerator Start()`만 가능
+    - 다른 이벤트 함수는 코루틴 대응 불가능
+  - 게임 오브젝트가 비활성화시, 중지됨
+
 ## Unity UI
 
 ### Rect Transform
@@ -217,3 +248,24 @@ Monobehaviour life cycle
             - Pos Y 대신 Top Bottom(padding), Width
         - stretch가 아닌 경우
           - Pos X, Pos Y, Width, Height
+
+## Physics
+
+### Rigidbody 2D
+
+- 개요
+  - 오브젝트를 물리 엔진의 컨트롤 하에 두게 만듬
+- 세팅
+  - Body Type
+    - 개요
+      - 움직임(위치, 회전), 충돌에 관한 설정
+        - 충돌은 오직 collider끼리만
+    - 종류
+      - Dynamic
+        - 중력, 힘에 영향을 받음
+        - 가장 인터렉티브한 body type
+        - 연산량이 많음
+        - transform 컴포넌트로 위치나 회전을 제어하지 말아야 함
+          - 힘, 충돌, 중력으로 적용 가능
+      - Kinematic
+      - Static
