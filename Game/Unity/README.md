@@ -1,5 +1,6 @@
 # 유니티
 
+- TODOs
 - 의문
 - 유니티 느낀점
 - 좋은 공부 방식
@@ -11,6 +12,8 @@
   - Component
   - Asset
   - Prefab
+- Unity 패턴
+  - 게임 오브젝트 사이의 커뮤니케이션 및 아키텍처
 - Unity 기본 개념
   - 유니티 이벤트 함수
   - 코루틴
@@ -18,6 +21,10 @@
   - Rect Transform
 - Physics
   - Rigidbody 2D
+
+## TODOs
+
+- [Unity architecture](https://docs.unity3d.com/Manual/unity-architecture.html)
 
 ## 의문
 
@@ -27,6 +34,9 @@
   - 유명한 디자인 패턴같은게 있을까?
 - 해상도 이슈를 어떻게 해결하는게 가장깔끔한가?
   - 주 해상도에 맞추고, 나머지는 짤려도 중앙기준으로 정렬해서 자연스럽게?
+- 일부의 component는 disable이 불가능한데? 왜 그렇지?
+  - enable, disable은 유니티의 `MonoBehaviour`의 이벤트메서드(`Start`, `Awake`, `Update`, etc)만 disable하는 것임
+    - 그러므로, 해당 메서드가 존재하지 않으면 disable도 불가능
 
 ## 유니티 느낀점
 
@@ -156,6 +166,36 @@ Project, Scene, GameObject, Component, Asset 관계도2
     - 동일한 게임 오브젝트를 여러 Scene이나 게임 월드 특정 장소에 배치할 때, Project View에 저장되어 있는 프리팹을 Drag & Drop하여 배치 가능
     - 기획상의 변경이 있을 때, 프리팹 원본을 갱신하게 되면, 모든 씬에 복사되어 배치된 게임 오브젝트들도 원본과 동일하게 업데이트 됨
 
+## Unity 패턴
+
+### 게임 오브젝트 컴포넌트 사이의 커뮤니케이션 및 아키텍처
+
+- 방식
+  - `gameObject.GetComponent<...>(...)`
+    - 장점
+      - 간편하다
+    - 단점
+      - 다른 게임 오브젝트의 어떤 컴포넌트에 어떤 메서드가 있는지 알아야 하므로 tightly coupled된 코드를 작성할 수 밖에 없음
+  - `gameObject.SendMessage(...)`
+    - 장점
+      - 게임 오브젝트 기반으로 게임오브젝트가 포함하는 컴포넌트들에게 일괄적으로 메시지 전송이 가능
+    - 단점
+      - 결국에는 다른 게임 오브젝트에서 메서드명을 알고 있어야 하고 그게 심지어 문자열
+      - 게임 오브젝트에 많은 컴포넌트가 달려있을 수록 성능상 좋지 못함
+    - c.f) [메시징 시스템](https://docs.unity3d.com/kr/current/Manual/MessagingSystem.html)
+      - 개요
+        - `gameObject.SendMessage(...)`의 개선
+      - 장점
+        - 게임 오브젝트 기반으로 게임오브젝트가 포함하는 컴포넌트들에게 일괄적으로 메시지 전송이 가능
+  - `UnityEvents`
+    - 장점
+      - 이벤트 드리븐이므로, loosely coupled된 코드를 작성 가능
+        - `Invoke()`까지만 하면 이벤트를 발생시키는 주체는 더이상 상관 안함
+    - 단점
+      - 프리펩에 심어두면, `Instantiate`할 때, 이벤트핸들러를 다시 설정해줘야 함
+      - 이벤트 핸들러가 어떻게 설정되어있는지 스크립팅으로 추가하면 알기가 좀 애매함
+        - 따라서, 게임 오브젝트 자체를 생성할 때, 이벤트 리스너등록을 알기쉽게 명시해둬야 할듯
+
 ## Unity 기본개념
 
 ### 유니티 이벤트 함수
@@ -224,6 +264,45 @@ Monobehaviour life cycle
   - 게임 오브젝트가 비활성화시, 중지됨
 
 ## Unity UI
+
+### Canvas
+
+참고: https://ansohxxn.github.io/unity%20lesson%201/chapter10-1/
+
+- 개요
+  - 모든 UI 오브젝트들을 포함하는 게임 오브젝트
+    - UI 요소들은 캔버스의 자식으로 있어야 함
+    - Scene 내에서 UI요소들이 캔버스 위에 있어야 게임 화면에 보임
+- 특징
+  - World coordinate를 사용하는 것이 아니라, 유저의 게임 화면에 대응
+    - 캔버스 1px = 유니티 게임 월드에서 1m
+- Render Mode
+  - Screen Space - Overlay
+    - 화면 좌표계
+    - 모든 3D 오브젝트 먼저 렌더하고, 나중에 UI요소들이 렌더됨
+  - Screen Space - Camera
+    - 화면 좌표계
+    - 3D 좌표상에서의 위치값을 갖음
+      - Renderer Camera로부터 Plane Distance 값만큼 떨어진 위치에 UI요소가 그려짐
+        - 3D 오브젝트가 UI 요소 보다 앞에 오게 배치 가능
+        - 파티클 효과를 UI앞에 배치하기 위함
+  - World Space
+    - world coordinate를 사용해서 UI요소를 3D오브젝트 취급
+    - 이동 및 회전 가능
+    - 증강현실 UI구현할 때 사용
+- RectTransform + 앵커, 피벗, 포지션
+  - 앵커
+    - UI 요소의 캔버스 기준의 원점 위치를 정함
+      - 0 ~ 1 사이의 값을 갖음
+        - (0,0)이 캔버스의 왼쪽 하단, (1,1)이 캔버스의 오른쪽 상단의 원점
+  - 피벗
+    - UI 요소 내부의 기준점이 될 위치(위치, 크기, 회전 등등 변경)
+      - 0 ~ 1 사이의 값을 갖음
+        - (0,0)이 자기자신의 왼쪽 하단, (1,1)이 자기자신의 상단
+    - 정해진 앵커를 어디에 놓을것인가?
+      - 피봇을 (0.5,0.5)로 두면 자신의 가운데에 두는것
+  - 포지션
+    - 앵커와 피벗을 기준으로 결정한 실제 좌표(`PosX`, `PosY`)
 
 ### Rect Transform
 
