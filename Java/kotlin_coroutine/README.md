@@ -33,12 +33,12 @@ fun postItem(item: Item) {
 
 // suspend 함수
 suspend fun postItem(item: Item) {
-    val token = requestToken()
-    val post = createPost(token, item)
-    processPost(post)
+    val token = requestToken() // continuation
+    val post = createPost(token, item) // continuation
+    processPost(post) // continuation
 }
 
-// Continuation인터페이스
+// Continuation인터페이스 (callback과 본질적으로 같음)
 interface Continuation<in T> {
   val context: CoroutineContext
   fun resume(value: T)
@@ -46,10 +46,146 @@ interface Continuation<in T> {
 }
 ```
 
-- 컴파일러가 suspend funtion을 CPS Transformation시킴
-  - e.g) `suspend fun createPost(token: Token, item: Item): Post {...}`
-    - `Object createPost(Token token, Item item, Continuation<Post> cont) { ... }`
-      - 여기있는 `Continuation<Post>`가 callback임(CPS(Continuation Passing Style))
+suspend 함수의 컴파일러로 인한 CPS Transformation(State Machine을 사용함)
+
+```kotlin
+// suspend 함수
+suspend fun postItem(item: Item) {
+    val token = requestToken() // continuation
+    val post = createPost(token, item) // continuation
+    processPost(post) // continuation
+}
+
+// 1. Labels
+// 컴파일러가 switch 코드(아래는 수도코드)로 변경
+suspend fun postItem(item: Item) {
+    val sm = object : CoroutineImpl { ... }
+    switch (sm.label) {
+      case 0:
+        val token = requestToken()
+      case 1:
+        val post = createPost(token, item)
+      case 2:
+        processPost(post)
+    }
+}
+
+// 2. State & Callback
+// 컴파일러가 switch 코드(아래는 수도코드)로 변경
+suspend fun postItem(item: Item) {
+    val sm = object : CoroutineImpl {
+      fun resume(...) {
+        // callback으로 다시 멈췄던 곳에서 시작할 수 있도록 함
+        // 그럼, 이 콜백을 등록하고 실행하는 이벤트 루프가 필요하겠네?!
+        postItem(null, this)
+      }
+    }
+    switch (sm.label) {
+      case 0:
+        sm.item = item
+        sm.label = 1
+        // State Machine as Continuation
+        val token = requestToken(sm)
+      case 1:
+        val post = createPost(token, item, sm)
+      case 2:
+        processPost(post)
+    }
+}
+
+// 3. Restore state
+suspend fun postItem(item: Item) {
+    val sm = object : CoroutineImpl {
+      fun resume(...) {
+        // callback으로 다시 멈췄던 곳에서 시작할 수 있도록 함
+        // 그럼, 이 콜백을 등록하고 실행하는 이벤트 루프가 필요하겠네?!
+        postItem(null, this)
+      }
+    }
+    switch (sm.label) {
+      case 0:
+        sm.item = item
+        sm.label = 1
+        // State Machine as Continuation
+        val token = requestToken(sm)
+      case 1:
+        val item = sm.item
+        val token = sm.result as Token
+        sm.lavel = 2
+        val post = createPost(token, item, sm)
+      case 2:
+        processPost(post)
+    }
+}
+```
+
+- 대전제
+  - 모든 asynchronous 라이브러리들(futures, ...)은 callback 기반임
+    - 다만 그것을 어떻게 이쁘게 추상화했는지가 각 라이브러리의 포인트
+    - 그렇기 때문에 어떤 라이브러리던, 코틀린 코루틴에 편입가능(jdk8, guava, nio, reactor, rx1, rx2)
+- 컴파일
+  - 컴파일러가 suspend funtion을 State Machine을 사용하여 CPS Transformation시킴
+    - e.g) `suspend fun createPost(token: Token, item: Item): Post {...}`
+      - => `Object createPost(Token token, Item item, Continuation<Post> cont) { ... }`
+        - 여기있는 `Continuation<Post>`가 callback임(CPS(Continuation Passing Style))
+- 런타임
+  - 모든 suspension마다 다음을 수행
+    - state(local variables)를 저장
+    - 레이블 저장
+    - restore state(sm에 있는 필요한 로컬 변수 꺼내옴)
+    - suspended function을 callback과 함께 호출(`sm.resume`)
+- 장점
+  - State Machine으로 상태 관리하므로, 콜백이 클로저를 계속 생성하는데에 반해 클로저를 재사용하므로 효율적
+  - 코드가 읽기 쉬움
+    - `suspend`키워드로 어디서 I/O를 기다리는지 쉽게 파악 가능
+  - 기존 async 라이브러리 쉽게 코루틴으로 편입 가능(jdk8, guava, nio, reactor, rx1, rx2)
+    - 모두 콜백 기반이기 때문에 가능
+
+### Coroutine Context
+
+ContinuationInterceptor
+
+```kotlin
+interface ContinuationInterceptor : CoroutineContext.Element {
+    companion object Key : CoroutineContext.Key<ContinuationInterceptor>
+
+    fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> {
+        // continuation의 커스텀 래핑이 가능함
+        ...
+    }
+}
+```
+
+DispatchedContinuation
+
+```kotlin
+class DispatchedContinuation<in T>(
+    val dispatcher: CoroutineDispatcher,
+    val continuation: Continuation<T>
+): Continuation<T> by continuation {
+    override fun resume(value: T) {
+        // 다른 스레드 / 스레드풀에 실행을 디스패칭
+        dispatcher.dispatch(context, DispatchTask(...))
+    }
+}
+```
+
+- 질문
+  - 코루틴이 suspend function을 resume할때, 다른 스레드(e.g UI 스레드)에서 할 수 있도록 하기 위해서는 어떻게 해야할까?
+    - `Continuation Interceptor`
+- Coroutine Context
+  - 개요
+    - map
+      - job, interceptor 등을 가지고 있음
+- `Continuation Interceptor`
+  - 개요
+    - context의 일부, map of elements
+  - 특징
+    - continuation의 커스텀 래핑이 가능함
+- `DispatchedContinuation`
+  - 개요
+    - Continuation의 wrapper
+      - resume전에 다른 스레드로 dispatching 가능
 
 ## 개요
 
