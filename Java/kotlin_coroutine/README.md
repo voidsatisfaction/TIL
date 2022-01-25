@@ -1,6 +1,10 @@
 # Kotlin Coroutine
 
 - 의문
+- 개요개요
+  - 코루틴이란
+    - 정의
+    - 구성
 - 원리
 - 개요
   - Coroutine Context
@@ -17,6 +21,68 @@
     - 아니다. 코루틴은 실행 흐름을 의미
     - suspend function은 코루틴속에서 yield할 수 있는 함수
 - 코루틴에서 `delay`를 사용하는 경우, 특정시간이 지났는지는 어떻게 파악하지? 이벤트 루프를 사용하는건가?
+
+## 개요개요
+
+### 코루틴이란
+
+- 정의
+  - *non-preemptive multitasking* 을 위한 subroutine의 일반화 버전의 컴퓨터 프로그램 컴포넌트
+- 구성
+  - Suspend function
+    - 언제든지 멈추고 재개할 수 있는 함수
+      - Stack Pointer, Variables이 있어야 함
+  - Context
+    - 개요
+      - 코루틴의 행동을 정의하는 요소들의 컬렉션
+    - 구성
+      - **Dispatcher**
+        - 어떤 스레드에서 동작할지 관리
+        - 종류
+          - 코틀린에서 기본적으로 제공하는 디스패쳐
+            - `Dispatchers.Default`
+              - `Dispatchers.IO`와 같은 스레드 풀 공유
+              - CPU 코어에 개수가 제한되어 있음(CPU intensive work할때 유용)
+            - `Dispatchers.IO`
+              - `Dispatchers.Default`와 같은 스레드 풀 공유
+              - default로 64개의 스레드 존재
+            - `Dispatchers.Unconfined`
+          - 커스텀
+            - `Executor.asCoroutineDispatcher()`
+      - **Job**
+        - 코루틴의 라이프 사이클을 다룸
+      - **Coroutine Name**
+        - 코루틴의 이름(디거빙하기 편함)
+      - **CoroutineExceptionHandler**
+        - 캐치되지 않은 익셉션을 다룸
+    - 특징
+      - `+`로 컨택스트 끼리 결합할 수 있음
+        - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
+  - CoroutineScope
+    - 개요
+      - **해당 스코프가 생성한 모든 코루틴을 추적**
+        - `scope.cancel()`하면 어느때나 진행중인 작업들 멈추게 할 수 있음
+      - 앱의 특정 레이어에 CoroutineScope를 생성해야지만 코루틴들의 라이프사이클을 조절하거나 코루틴을 시작할 수 있음
+        - `val scope = CoroutineScope(Dispatchers.Default)`
+    - *그럼 scope가 Global인거랑 Coroutine인거랑 차이는 뭐지?*
+  - `withContext(context) { ... }`
+    - 주어진 context로 suspending 블록을 호출하는데에 사용
+  - CoroutineScheduler
+    - 개요
+      - JVM 구현에서 디폴트로 사용되는 스레드 풀
+      - 알아서 가장 효율적으로 워커에게 코루틴을 넘겨줌
+    - 특징
+      - `Dispatchers.Default`, `Dispatchers.IO`는 같은 스레드 풀
+- 메타포
+  - Stack Pointer, Variables
+- 용도
+  - cooperative tasks
+  - *exceptions*
+  - event loops(이벤트 루프를 코루틴에서 돌리고, 이벤트를 받으면 메인 함수로 이벤트와 함께 컨트롤을 돌림. 메인 작업이 끝나면 다시 이벤트 루프 코루틴에서 돌림)
+  - iterators(특정 iterable의 하나의 원소들을 가져오면서 동작을 수행하고 그 수행이 끝나면 다음 원소로 넘어감)
+  - infinite lists and pipes
+    - infinite list의 데이터를 한번에 다 가져오는 것은 무한하므로 불가능한데, iterator에서 했던 것 처럼, 일부의 원소를 하나씩 coroutine에서 가져오도록 하고, 그것을 가지고 main 에서 작업을 하고 다시 coroutine에서 가져오도록 하는 방식으로 프로그램을 돌릴 수 있음
+      - e.g) 개미수열의 예시
 
 ## 원리
 
