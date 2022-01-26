@@ -19,6 +19,7 @@
   - 코루틴
 - Unity UI
   - Rect Transform
+  - Sorting
 - Physics
   - Rigidbody 2D
 
@@ -331,6 +332,10 @@ Monobehaviour life cycle
             - Pos Y 대신 Top Bottom(padding), Width
         - stretch가 아닌 경우
           - Pos X, Pos Y, Width, Height
+
+### Sorting
+
+
 
 ## Physics
 
