@@ -14,6 +14,8 @@
   - Prefab
 - Unity 패턴
   - 게임 오브젝트 사이의 커뮤니케이션 및 아키텍처
+  - 게임 데이터 로컬저장 방법
+    - PlayerPref vs File
 - Unity 기본 개념
   - 유니티 이벤트 함수
   - 코루틴
@@ -196,6 +198,22 @@ Project, Scene, GameObject, Component, Asset 관계도2
       - 프리펩에 심어두면, `Instantiate`할 때, 이벤트핸들러를 다시 설정해줘야 함
       - 이벤트 핸들러가 어떻게 설정되어있는지 스크립팅으로 추가하면 알기가 좀 애매함
         - 따라서, 게임 오브젝트 자체를 생성할 때, 이벤트 리스너등록을 알기쉽게 명시해둬야 할듯
+
+### 게임 데이터 로컬저장 방법
+
+- PlayerPref vs File
+  - File
+    - 개요
+      - 쉽게 파일로 저장하기
+      - json등을 이용하면 편함
+    - 특징
+      - `Application-persistentDataPath`사용하자
+      - 대신 유저가 직접 삭제가능하니 암호화 해야할듯
+  - PlayerPref
+    - 개요
+      - 윈도우의 경우에는 레지스트리에 저장됨
+    - 주의
+      - 사용하지 말라
 
 ## Unity 기본개념
 

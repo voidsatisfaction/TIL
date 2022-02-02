@@ -3,6 +3,11 @@
 - 의문
 - 1 유니티 인앱 리뷰
 - 2 앱스토어 / 플레이스토어 지식
+- 3 데이터 플랫폼 지식
+- 4 광고 플랫폼 지식
+- 5 트러블 슈팅
+  - 5.1 Unity IOS Resolver에서 xcworkspace 생성되지 않는 이슈
+- 6 HTTPS 사설인증서 허용하도록 하기
 
 ## 의문
 
@@ -56,3 +61,56 @@
 - AppLovin - Max
   - [코드 참고](https://github.com/AppLovin/AppLovin-MAX-Unity-Plugin/blob/master/DemoApp/Assets/Scripts/HomeScreen.cs)
   - [AppLovin - Integration](https://dash.applovin.com/documentation/mediation/unity/getting-started/integration)
+
+## 5. 트러블 슈팅
+
+### 5.1 Unity IOS Resolver에서 xcworkspace 생성되지 않는 이슈
+
+```
+iOS framework addition failed due to a CocoaPods installation failure. This will will likely result in an non-functional Xcode project.
+
+After the failure, "pod repo update" was executed and succeeded. "pod install" was then attempted again, and still failed. This may be due to a broken CocoaPods installation. See: https://guides.cocoapods.org/using/troubleshooting.html for potential solutions.
+
+pod install output:
+```
+
+- [해결](https://phillip5094.github.io/ios/unity/Unity-iOS-Resolver%EC%97%90%EC%84%9C-xcworkspace-%EC%83%9D%EC%84%B1%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94-%EC%9D%B4%EC%8A%88/)
+
+## 6. HTTPS 사설인증서 허용하도록 하기
+
+```cs
+// file1
+IEnumerator GetRequest(string uri){
+    UnityWebRequest request = UnityWebRequest.Get(uri);
+    request.certificateHandler = new AcceptAllCertificatesSignedWithASpecificKeyPublicKey();
+    yield return request.SendWebRequest ();
+    if (request.isNetworkError)
+    {
+        Debug.Log("Something went wrong, and returned error: " + request.error);
+    }
+    else
+    {
+        // Show results as text
+        Debug.Log(request.downloadHandler.text);
+    }
+}
+
+// file2
+using UnityEngine.Networking;
+using System.Security.Cryptography.X509Certificates;
+using UnityEngine;
+// Based on https://www.owasp.org/index.php/Certificate_and_Public_Key_Pinning#.Net
+class AcceptAllCertificatesSignedWithASpecificKeyPublicKey : CertificateHandler
+{
+  // Encoded RSAPublicKey
+  private static string PUB_KEY = "mypublickey";
+  protected override bool ValidateCertificate(byte[] certificateData)
+  {
+     X509Certificate2 certificate = new X509Certificate2(certificateData);
+     string pk = certificate.GetPublicKeyString();
+     if (pk.ToLower().Equals(PUB_KEY.ToLower()))
+         return true;
+     return false;
+  }
+}
+```
