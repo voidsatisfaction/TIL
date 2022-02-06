@@ -19,6 +19,8 @@
 - Unity 기본 개념
   - 유니티 이벤트 함수
   - 코루틴
+  - 패키지 매니저
+  - 유니티 버전 vs 그래들 플러그인 버전 vs 그래들 버전
 - Unity UI
   - Rect Transform
   - Sorting
@@ -206,9 +208,10 @@ Project, Scene, GameObject, Component, Asset 관계도2
     - 개요
       - 쉽게 파일로 저장하기
       - json등을 이용하면 편함
+        - But `jsonUtility`는 값을 null로 설정해도 기본값(e.g 스트링인경우 빈 문자열 '')이 들어가게 되므로 주의
     - 특징
       - `Application-persistentDataPath`사용하자
-      - 대신 유저가 직접 삭제가능하니 암호화 해야할듯
+      - 대신 유저가 직접 변조하거나 삭제가능하니 암호화 해야할듯(AES256 등)
   - PlayerPref
     - 개요
       - 윈도우의 경우에는 레지스트리에 저장됨
@@ -281,6 +284,29 @@ Monobehaviour life cycle
   - 이벤트 함수에서는 `IEnumerator Start()`만 가능
     - 다른 이벤트 함수는 코루틴 대응 불가능
   - 게임 오브젝트가 비활성화시, 중지됨
+
+### 패키지 매니저
+
+- 패키지
+  - 개요
+    - 다양한 피쳐나 에셋을 담는 컨테이너
+
+### 유니티 버전 vs 안드로이드 그래들 플러그인 버전 vs 그래들 버전
+
+![](./images/versions1.png)
+
+- [그래들 vs 안드로이드 그래들 플러그인](https://stackoverflow.com/questions/49156528/difference-between-android-gradle-plugin-and-gradle)
+  - 그래들(유니티 내장)
+    - 빌드 시스템
+    - `/Applications/Unity/Hub/Editor/{unity_version}/PlaybackEngines/AndroidPlayer/Tools/gradle/lib`에서 확인 가능
+  - 안드로이드 그래들 플러그인
+    - 그래들 빌드 시스템에 플랫폼에 특화된 행위를 할 수 있도록 하는 플러그인
+    - e.g)
+      - apk패키징, 자동 사이닝, minimum API level 등
+- 유니티 버전
+  - 유니티 버전에 맞는 안드로이드 그래들 플러그인 버전이 있고, 그것에 대응하는 그래들 버전이 존재
+    - 안드로이드 그래들 플러그인 버전과 그것에 대응하는 그래들 버전은 유니티와는 사실 독립적
+    - [참고](https://developer.android.com/studio/releases/gradle-plugin#updating-gradle)
 
 ## Unity UI
 
