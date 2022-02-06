@@ -47,9 +47,9 @@
           - Popup
           - Tutorial
     - Scenes(충격적이다 이렇게 간단히 하다니)
-      - Init
-      - Title
-      - Ingame
+      - Init.unity
+      - Title.unity
+      - Ingame.unity
     - Sound
       - BGM
       - SFX
