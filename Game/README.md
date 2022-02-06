@@ -61,6 +61,9 @@
 - AppLovin - Max
   - [코드 참고](https://github.com/AppLovin/AppLovin-MAX-Unity-Plugin/blob/master/DemoApp/Assets/Scripts/HomeScreen.cs)
   - [AppLovin - Integration](https://dash.applovin.com/documentation/mediation/unity/getting-started/integration)
+- Mediation Debugger
+  - MAX이외의 adnetwork를 붙인 이후에, 정말로 광고가 잘 나오는지 확인하기 위한 디버거
+    - https://dash.applovin.com/documentation/mediation/unity/testing-networks/mediation-debugger#within-the-app
 
 ## 5. 트러블 슈팅
 
