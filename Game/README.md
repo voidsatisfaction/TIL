@@ -26,11 +26,24 @@
 
 ## 2. 앱스토어 / 플레이스토어 지식
 
-- Android
+- Google play store
   - [공개, 비공개, 내부 테스트 설정](https://support.google.com/googleplay/android-developer/answer/9845334?hl=ko)
   - 키스토어
     - 앱 개발자에 대한 정보를 서명한 암호화 된 파일
       - 구글 플레이 스토어에 앱을 등록하기 위해서 사용되는 키(APK를 서명)
+
+### 인앱구매
+
+- 개요
+  - 디지털 재화와 돈을 거래하는 것
+- 특징
+  - 재화는 일반적으로 string id를 갖음
+- 재화 종류
+  - subscription
+  - consumable
+    - 여러번 살 수 있는 것
+  - non-consumable
+    - 한번만 살 수 있는 것
 
 ## 3. 데이터 플랫폼 지식
 
