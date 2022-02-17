@@ -1,5 +1,14 @@
 # 리더로서 갖춰야 할 기본 덕목과 명심할 것들
 
+- 0 먼저 좋은 팔로워가 되자
+- 1 Do
+- 2 Don't
+- 3 엘리트 개발팀의 조건
+  - Lead/Cycle time
+  - Deploy frequency
+  - Change failure rate
+  - Mean time to recovery
+
 ## 0. 먼저 좋은 팔로워가 되자
 
 - 흡수력
@@ -111,3 +120,15 @@
 ### 타인이 일을 잘 하게 하기 위해서
 
 - **일이 끝이 있다는 것을 명시하고, 그 끝을 향해서 하루에 한 발자국이라도 더 내딛고 있다는 것을 자각하게 하는 것이 중요**
+
+## 3. 엘리트 개발팀의 조건
+
+- 지표
+  - Lead/Cycle time
+    - 커밋이 배포되기까지 걸리는 시간(개발 + 리뷰 + 테스트 + 배포)
+  - Deploy frequency
+    - 배포 빈도
+  - Change failure rate
+    - 버그를 포함한 배포 비율
+  - Mean time to recovery
+    - 장애 진단 + 복구 시간
