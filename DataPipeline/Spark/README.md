@@ -12,6 +12,7 @@
 ## 참고
 
 - https://stackoverflow.com/questions/32621990/what-are-workers-executors-cores-in-spark-standalone-cluster
+- https://towardsdatascience.com/a-neanderthals-guide-to-apache-spark-in-python-9ef1f156d427
 
 ## 의문
 
