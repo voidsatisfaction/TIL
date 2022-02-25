@@ -5,6 +5,7 @@
   - LSP(Language Server Protocol)
   - UTF-8
   - Dry run
+  - 타임존 도메인
 
 ## 의문
 
@@ -111,3 +112,104 @@ Base64 example: "Man"
 - 예시
   - 실제 상황이 아니라 땅에서 비행기 조종사의 비상탈출 시스템을 가동해보기
   - 실제 배치잡을 동작시키기 전에, DB커밋은 없는 상태로 배치잡 돌려보기
+
+### 타임존 도메인
+
+- 타임존
+  - 개요
+    - 로컬 시간을 따르는 지역
+    - 국가별로 각자의 고유한 타임존을 사용
+      - 중국은 모든 영역이 하나의 타임존 사용해서, 서쪽지역은 오전10시에 해가 뜸
+- GMT(Greenwich Mean Time)
+  - 개요
+    - 경도 0도에 위치한 그리니치 천문대 기준으로하는 태양 시간
+    - 1972년 1월 1일까지 세계 표준시로 사용되었음
+- UTC
+  - 개요
+    - 국제 원자시를 기준으로 다시 지정된 시간대(GMT를 대체하는 새로운 표준)
+    - GMT와 거의 비슷함
+- 오프셋
+  - 개요
+    - UTC와의 차이를 나타낸 것
+    - e.g)
+      - `UTC+09:00`
+        - UTC의 기준시간보다 9시간이 빠르다
+  - 특징
+    - 특정 지역의 타임존을 단순히 오프셋이라고 지칭하기 어렵다
+      - 서머 타임(DST - Daylight Saving Time)
+        - 하절기에 표준시를 원래 시간보다 한 시간 앞당긴 시간으로 이용하는 것
+        - 국가나 지역에 따라 다름
+        - e.g)
+          - PST(UTC-08:00), PDT(UTC-07:00)
+      - 타임존은 가변이다
+        - 정치적 이유로 변경 가능함
+- 타임존1 : 오프셋N(서머타임 등 / 정치적 상황)
+  - 한 지역의 타임존은 하나 혹은 그 이상의 오프셋을 가지며, 어느 시점에 어떤 오프셋을 기준시로 사용할지는 해당 지역의 정치/경제적 상황에 따라 계속해서 달라진다고 할 수 있음
+  - "뉴욕의 타임존은 **현재** PST를 기준시로 사용하고 있어"(o)
+    - "뉴욕의 타임존은 PST야"(x)
+  - 따라서, 특정 지역의 타임존을 오프셋이 아니라, 지역명으로 지칭해야 함
+- IANA time zone database(tzdata)
+  - 타임존에 대한 역사적인 변경 내역을 모두 저장하고 있음
+    - 전 세계 모든 지역의 표준시와 DST 변경 내역을 담고 있음
+    - UNIX 시간(1970.01.01 00:00:00) 이후의 데이터의 정확도 보장
+  - Area / Location 규칙 사용
+    - e.g)
+      - Asia/Seoul / Asia/Tokyo
+        - 두 지역 모두 UTC+09:00을 표준시로 현재 사용하고 있지만, 실제 역사적인 변경 내역이 다르고, 다른 국가에 속해있기에 별도의 타임존으로 관리됨
+
+자바 Instant 사용법
+
+- 타임스탬프
+  - UTC기준으로 1970년1월1일0시0분0초를 숫자0으로 정하고, 그로부터 경과된 시간을 양수 또는 음수로 표현
+- `Instant`
+  - 개요
+    - 시간을 타임스탬프로 다루기 위해서 사용되는 클래스
+
+타임스탬프를 Instant로 나타내기
+
+```java
+Instant epoch = Instant.EPOCH; // Instant.ofEpochSecond(0); 와 동일
+System.out.println("epoch = " + epoch);
+// epoch = 1970-01-01T00:00:00Z
+
+Instant epochInFuture = Instant.ofEpochSecond(1_000_000_000);
+System.out.println("epochInFuture = " + epochInFuture);
+// epochInFuture = 2001-09-09T01:46:40Z
+
+Instant epochInPast = Instant.ofEpochSecond(-1_000_000_000);
+System.out.println("epochInPast = " + epochInPast);
+// epochInPast = 1938-04-24T22:13:20Z
+```
+
+현재 시간의 타임스탬프 값 구하기
+
+```java
+Instant current = Instant.now();
+System.out.println("Current Instant = "+ current);
+// Current Instant = 2017-12-22T08:30:18.870Z
+
+long epochSecond = current.getEpochSecond();
+System.out.println("Current Timestamp in seconds = " + epochSecond);
+// Current Timestamp in seconds = 1513931481
+
+long epochMilli = current.toEpochMilli();
+System.out.println("Current Timestamp in milli seconds = " + epochMilli);
+// Current Timestamp in milli seconds = 1513931418870
+```
+
+Instant와 ZonedDateTime 간 상호 변환하기
+
+```java
+ZonedDateTime zdtSeoul = Year.of(2002).atMonth(6).atDay(18).atTime(20, 30).atZone(ZoneId.of("Asia/Seoul"));
+System.out.println("Time in Seoul = " + zdtSeoul);
+// Time in Seoul = 2002-06-18T20:30+09:00[Asia/Seoul]
+
+Instant instant = zdtSeoul.toInstant();
+System.out.println("Instant = " + instant + ", Timestamp = " + instant.getEpochSecond());
+// Instant = 2002-06-18T11:30:00Z, Timestamp = 1024399800
+
+ZonedDateTime zdtVancouver = instant.atZone(ZoneId.of("America/Vancouver"));
+// ZonedDateTime zdtVancouver = ZonedDateTime.ofInstant(instant, ZoneId.of("America/Vancouver")); 와 동일
+System.out.println("Tine in Vancouver = " + zdtVancouver);
+// Tine in Vancouver = 2002-06-18T04:30-07:00[America/Vancouver]
+```
