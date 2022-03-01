@@ -5,7 +5,14 @@
 - 5.1 트랜잭션
 - 5.2 MySQL 엔진의 잠금
 - 5.3 InnoDB 스토리지 엔진 잠금
+  - InnoDB 락의 종류
+    - row-level 락의 범위
+    - 락의 유형
 - 5.4 MySQL의 격리 수준
+  - READ UNCOMMITTED
+  - READ COMMITTED
+  - REPEATABLE READ
+  - SERIALIZABLE
 
 ## 의문
 
@@ -24,6 +31,27 @@
         - 모든 락이 해제
 - *바이너리 로그 포맷*
   - *STATEMENT, ROW 포맷?*
+- InnoDB에서 인덱스 레코드에 락이 걸리는거면, A, B 각각 다른 트랜잭션이 같은 행에 대해서 다른 인덱스로 락을 걸어 접근하려고 하면 락이 걸리지 않는 것인지?
+  - 아니다. 락이 걸린다. 즉, clustered index의 record를 기반으로 락을 거는듯.
+
+isolation이 serializable인 경우 아래 동작의 해석
+
+```sql
+(A-1) SELECT state FROM account WHERE id = 1;
+(B-1) SELECT state FROM account WHERE id = 1;
+(B-2) UPDATE account SET state = ‘rich’, money = money * 1000 WHERE id = 1;
+(B-3) COMMIT;
+(A-2) UPDATE account SET state = ‘rich’, money = money * 1000 WHERE id = 1;
+(A-3) COMMIT;
+```
+
+- (A-1)번 SELECT 쿼리가 SELECT ... FOR SHARE로 바뀌면서 id = 1 인 row에 S lock이 걸린다
+- (B-1)번 SELECT 쿼리 역시 id = 1인 row에 S lock을 건다
+- 그 상황에서 transaction A와 B가 각각 2번 UPDATE 쿼리를 실행하려고 하면 row에 X lock을 걸려고 시도할 것이다
+  - 여기서의 lock은 implicit lock
+    - https://dev.mysql.com/doc/refman/8.0/en/innodb-locks-set.html
+- 하지만 이미 해당 row에는 S lock이 걸려있다
+- 따라서 deadlock 상황에 빠지고, 두 transaction 모두 timeout으로 실패
 
 ## 용어
 
@@ -40,6 +68,8 @@
 
 - 개요
   - 적절하게 트랜잭션을 나눠서 구현하자
+- 특성
+  - 트랜잭션 하나를 하나의 쿼리문으로 한번에 실행 시키는 것도 가능하고, interactive하게, `begin`으로 트랜잭션을 시작하고, 클라이언트와 interactive하게 실행 시키는 것도 가능
 - 주의
   - 네트워크 작업과 같은 DBMS와 관련없는 I/O작업이나 CPU연산은 트랜잭션에서 배제해야함
 
@@ -104,14 +134,47 @@ InnoDB 스토리지 엔진의 잠금
 
 ### InnoDB 락의 종류
 
+#### row-level 락의 범위
+
+- S-lock
+  - 개요
+    - 읽기는 허락하는 락
+    - 같은 S-lock은 동시에 락을 거는것을 허락함
+    - index record에 락이 걸림
+- X-lock
+  - 개요
+    - 읽기 / 쓰기 모두 허락하지 않는 락
+    - index record에 락이 걸림
+- 주의
+  - **S-lock이 걸려있든, X-lock이 걸려있든, 단순한 SELECT는 락으로 인한 wait이 없음**
+
+#### 락의 유형
+
+- Multiple Granularity Locking(MGL)
+  - 개요
+    - 다른 오브젝트를 포함하는 오브젝트에 락을 거는것
+      - e.g) DB는 계층구조임(file, page, record)
+        - 트리구조로 생각할 수 있음
+        - pages는 file의 children, records는 page의 children
+  - MySQL에서는 table과 record 사이에 MGL 가능
+- Intention lock
+  - 개요
+    - MGL에서 노드를 직접 락하는 것이 아니라, 락이 존재하거나(예를들면, MySQL에서 IS락은 해당 테이블에 record S-lock이 이미 존재하고 있다는 것을 나타냄), 락을 하려고 한다는 것을 나타내는 락
+      - 한 트랜젝션이 특정 노드에 S나 X락을 걸면, 모든 조상 노드에게 recursive하게 각각 IS혹은 IX락을 걸게 되는것
+        - 존재함을 나타내는 플래그
+  - 시나리오
+    - 한 트랜젝션에서 레코드에 S-lock을 걸려고 시도하면, innoDB에서 암묵적으로 테이블에 IS lock을 걸고, 그 다음에 레코드에 S-lock을 건다
+    - 다른 트랜젝션에서 테이블 X-lock을 걸려고 시도하면, 해당 테이블에 모든 레코드를 순회하며 락이 걸려있는지 확인하는 대신, Intention lock의 여부만 확인한다
+      - 훨씬 효율적
 - 레코드 락
   - 개요
     - 레코드 자체만 잠그는 것
       - **하지만 InnoDB에서 그 구현은 인덱스의 레코드를 잠금**
-      - 인덱스가 없어도 클러스터 인덱스로 레코드 잠금
-        - *인덱스로 레코드를 잠금한다는게 구체적으로 어떤 의미인지?*
+      - 인덱스가 없어도 클러스터 인덱스를 생성해서 해당 클러스터 인덱스로 레코드 잠금
+        - 인덱스로 레코드를 잠금한다는게 구체적으로 어떤 의미인지?
+          - 말 그대로 인덱스의 레코드다
         - table full scan의 경우에는 어떻게 레코드 락을 하는가?
-          - 대상 레코드를 찾을때까지 참조되는 모든 레코드를 락을 하는듯
+          - 대상 레코드를 찾을때까지 참조되는 모든 레코드와 갭 락을 하는듯
 - 갭 락
   - 개요
     - 레코드와 바로 인접한 레코드 사이의 간격만을 잠그는 것
@@ -121,7 +184,6 @@ InnoDB 스토리지 엔진의 잠금
 - 넥스트 키 락
   - 개요
     - 레코드 락 + 갭 락
-    - *사용되는 예시가 잘 이해가 안됨*
 - 자동 증가 락
   - 개요
     - `AUTO_INCREMENT`칼럼이 사용된 테이블에 동시에 여러 레코드가 INSERT되는 경우, 각 레코드는 중복되지 않고 저장된 순서대로 증가하는 일련번호값을 갖을 수 있도록 하는 락
@@ -132,7 +194,7 @@ InnoDB 스토리지 엔진의 잠금
 ### 인덱스와 잠금
 
 - 개요
-  - **`UPDATE`시 인덱스로 가져올 수 있는 모든 레코드에 락이 걸림**
+  - **`UPDATE`시 인덱스로 가져올 수 있는 모든 레코드에 락이 걸림(암묵적 lock)**
     - 따라서, 인덱싱을 잘하는 것이 매우 중요
   - 테이블에 인덱스가 하나도 없는 경우, 테이블을 풀스캔하면서 모든 레코드를 잠금
     - *왜 굳이 이래야만 하는가?*
@@ -150,9 +212,14 @@ InnoDB 스토리지 엔진의 잠금
 
 ## 5.4 MySQL의 격리 수준
 
-- READ UNCOMMITTED
+### READ UNCOMMITTED
+
+- 개요
   - dirty read가 가능
-- READ COMMITTED
+
+### READ COMMITTED
+
+- 개요
   - 커밋해야지만 다른 트랜잭션에서 조회 가능
   - undo log를 이용해서 구현
   - c.f) 트랜잭션 안에서의 SELECT와 밖에서의 SELECT
@@ -160,7 +227,10 @@ InnoDB 스토리지 엔진의 잠금
       - 안에서의 SELECT, 밖에서의 SELECT 큰 차이가 없음
     - REPEATABLE READ
       - 안에서의 SELECT, 밖에서의 SELECT는 차이가 있음
-- REPEATABLE READ
+
+### REPEATABLE READ
+
+- 개요
   - NON-REPEATABLE READ 부정합이 발생하지 않음
   - ROLLBACK될 가능성에 대비해 변경되기 전 레코드를 undo 공간에 백업해두고, 실제 레코드 값을 변경
   - 언두 영역
@@ -169,7 +239,11 @@ InnoDB 스토리지 엔진의 잠금
     - InnoDB 스토리지 엔진이 불필요하다고 판단하는 시점에 주기적으로 삭제
     - 실행 중인 트랜잭션 가운데 가장 오래된 트랜잭션 번호보다 트랜잭션 번호가 앞선 언두 영역의 데이터는 삭제 불가
   - PHANTOM READ는 발생
-- SERIALIZABLE
+
+### SERIALIZABLE
+
+- 개요
+  - REPEATABLE READ와 같으나, InnoDB가 암묵적으로 모든 SELECT를 `SELECT ... LOCK IN SHARE MODE`로 변환 시킴
   - 읽기 작업도 공유 잠금을 획득해야 함
     - 다른 트랜잭션은 그 레코드 변경 불가(접근 불가)
   - *InnoDB 스토리지 엔진에서는 갭 락과 넥스트 키 락 덕분에 REPEATABLE READ 격리 수준에서도 이미 PHANTOM READ가 발생하지 않기 때문에, 굳이 SERIALIZABLE을 사용할 필요성은 없다?*
