@@ -2,9 +2,11 @@
 
 - 의문
 - 개요
+  - 쿼리 실행 순서에 관한 고찰
 - 10.1 통계 정보
 - 10.2 실행 계획 확인
 - 10.3 실행 계획 분석
+  - 간단 정리
   - id
   - select_type
   - table
@@ -41,11 +43,88 @@
 
 ## 개요
 
+### JOIN 포함 쿼리 실행 순서에 관한 고찰
+
+고찰 대상 쿼리
+
+```sql
+SELECT e.emp_no, avg(s.salary) -- F)
+FROM employees e
+INNER JOIN salaries s -- D)
+  ON s.emp_no = e.emp_no -- B)
+  AND s.salary > 50000 -- C)
+  AND s.from_date <= '1990-01-01' -- C)
+  AND s.to_date > '1990-01-01' -- C)
+WHERE e.first_name = 'Matt' -- A)
+GROUP BY e.hire_date; -- E)
+```
+
+- `EXPLAIN ANALYZE`
+  - 개요
+    - 트리뷰로 쿼리 실행시간 확인 가능
+      - 트리 탐색은 postorder 서치순으로 분석해야 함
+      - `EXPLAIN`보다 정확한 쿼리 실행 순서를 알 수 있음
+    - 쿼리를 직접실행한 뒤 분석하는 것이므로, 먼저 실행계획만 확인해서 튜닝하는게 바람직
+  - 필드 설명
+    - actual time
+      - 일치하는 레코드를 검색하는 데 걸린 시간(밀리초)
+      - 첫레코드 가져오는데 걸리는 평균시간 .. 마지막 레코드 가져오는데 걸리는 평균시간
+    - rows
+      - 일치하는 테이블의 평균 레코드수
+    - loops
+      - 작업 반복 횟수, 주로 driven table이 driving table의 대상 행 개수와 같음
+- 실행 순서(인덱싱 여부 및 테이블 상태에 따라서 달라질 순 있음)
+  - A) Index lookup on e using ix_firstname
+    - ix_firstname인덱스를 통해 first_name = 'Matt' 조건에 일치하는 레코드 찾기
+  - B) Index lookup on s using PRIMARY
+    - salaries 테이블의 PRIMARY 키를 통해 emp_no가 A)의 결과의 emp_no와 동일한 레코드 찾기
+  - C) Filter
+    - 각종 조건에 일치하는 건만 가져옴
+  - D) Nested loop inner join
+    - A)와 C)의 결과를 조인
+  - E) Aggregate using temporary table
+    - 임시테이블에 결과를 저장하면서 GROUP BY 집계 실행
+  - F) Table scan on \<temporary\>
+    - 임시 테이블의 결과를 읽어서 결과 반환
+- JOIN이 있는 경우 쿼리 실행 해석
+  - 조인 전에, 어떤 행들만 조인하면 되는지, 인덱싱으로 미리 driving table, driven 테이블을 파악
+    - 그렇다면, driving table, driven table은 필터링 이후에 정해지는 걸까?
+    - 옵티마이저가 알아서 쿼리 플랜을 세우고 정할듯
+      - *그런데 여기서 필터링까지 고려하는지는 모름*
+
 ## 10.1 통계 정보
 
 ## 10.2 실행 계획 확인
 
 ## 10.3 실행 계획 분석
+
+### 간단 정리
+
+- id
+  - select의 id
+- select_type
+  - select의 타입
+- table
+  - 참조한 테이블
+- partitions
+- type
+  - 조인 타입(테이블 접근 방법)
+- possible_keys
+  - 데이터 조회시 DB에서 사용할 수 있는 인덱스 리스트
+- key
+  - 실제로 사용할 인덱스
+- key_len
+  - 실제로 사용할 인덱스 길이
+- ref
+  - key안의 인덱스와 비교하는 칼럼
+- rows
+  - 쿼리 실행시 조회하는 행 수 예상값
+- filtered
+  - 테이블 조건으로 인하여 필터링된 행의 비율
+- extra
+  - 추가 정보
+
+---
 
 - id
 - select_type

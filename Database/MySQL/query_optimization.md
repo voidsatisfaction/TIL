@@ -5,6 +5,7 @@
 - 11.2 매뉴얼의 SQL 문법 표기를 읽는 방법
 - 11.3 MySQL 연산자와 내장 함수
 - 11.4 SELECT
+  - JOIN
 - 11.5 INSERT
 - 11.6 UPDATE & DELETE
 - 11.7 스키마 조작(DDL)
@@ -14,12 +15,28 @@
 
 - JOIN을 하면, 항상 임시 테이블이 생성되는건가?
   - *애초에 임시 테이블이 뭐지?*
+- *JOIN시에는 다음과 같은 동작이 맞는가?*
+  - driving table, driven table 둘다 인덱스가 걸린 경우, driving table의 index range scan을 함
+  - driving table의 index scan하면서, driven table에서 driving table의 인덱스 값에 대응하는 index를
 
 ## 11.1 쿼리 작성과 연관된 시스템 변수
 
 ## 11.2 매뉴얼의 SQL 문법 표기를 읽는 방법
 
 ## 11.3 MySQL 연산자와 내장 함수
+
+### COUNT
+
+- 개요
+  - 결과 레코드의 건수를 반환
+  - `COUNT(* | 표현식 | 칼럼)`
+    - `*`
+      - 레코드 자체
+    - `표현식 | 칼럼`
+      - 표현식이나 칼럼의 값이 NULL이 아닌 레코드 건수 반환
+- 주의
+  - `COUNT`가 매우 느릴 수 있음
+    - 여러가지 필터 조건이 들어가면, 커버링인덱스로만 처리가 안되는 부분이 존재하기 마련인데, 그렇게 되면 결국은 테이블 데이터를 읽어야만 하는 경우가 대부분
 
 ## 11.4 SELECT
 
@@ -59,6 +76,37 @@
       - e.g) `col1 = ?`, `col2 = ?`, `col3 > ?`, `col4 < ?`
         - col4는 체크 조건이 됨
           - *왜 스킵 인덱스 사용이 안된걸까*
+
+### JOIN
+
+- 주의
+  - MySQL에서는 `JOIN`, `CROSS JOIN`, `INNER JOIN`은 전부 동의어
+    - 즉, 위의 세가지 모두 ON절, WHRERE절에 driving table, driven table을 연결해주면 `INNER JOIN`을 의미함.
+      - 하지만 표준 SQL은 `CROSS JOIN`, `INNER JOIN`이 구분되어있음
+    - 대신, driving table, driven table을 연결해주지 않으면 `CARTESIAN PRODUCT`이 적용
+      - 단순 필터도 어김없이 CARTESIAN PRODUCT 적용
+    - 예시(같은 실행 계획)
+      - `explain select * from User as u inner join ProgressionLog as pl on u.id = pl.userId where u.id = 'voidsatisfaction';`
+      - `explain select * from User as u cross join ProgressionLog as pl on u.id = pl.userId where u.id = 'voidsatisfaction';`
+  - ON vs WHERE
+    - ON으로 driving table, driven table을 연결하는 경우 vs WHERE로 연결하는 경우
+      - ON
+        - `explain select * from User as u cross join ProgressionLog as pl on u.id = pl.userId;`
+        - 연결 조건을 명시하므로 SQL을 의미적으로 알기 쉬움
+      - WHERE
+        - `explain select * from User as u cross join ProgressionLog as pl where u.id = pl.userId;`
+      - 결론
+        - ON을 쓰자
+    - ON으로 데이터 필터링 하는 경우 vs WHERE로 데이터 필터링 하는 경우
+      - ON
+        - `explain select * from User as u left join ProgressionLog as pl on u.id = pl.userId and u.id = 'voidsatisfaction';`
+        - outer join시에 원하지 않는 결과가 나올 수 있음
+          - 조인 자체를 할 때, on의 모든 조건이 맞아야만 driving table, driven table을 연결해준다(필터링이 아님)
+      - WHERE
+        - `explain select * from User as u left join ProgressionLog as pl on u.id = pl.userId where u.id = 'voidsatisfaction';`
+        - 필터링
+      - 결론
+        - 필터링 시에는 WHERE를 쓰고, 정확히 동작을 이해하자
 
 ## 11.5 INSERT
 
