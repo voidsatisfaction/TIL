@@ -1,8 +1,21 @@
 # 데이터 포맷
 
 - General
+  - 호환성
+    - 하위 호환성
+    - 상위 호환성
+  - Protocol buffer
 
 ## General
+
+### 호환성
+
+- 하위 호환성
+  - 새 제품이 별도의 수정없이 상대 이전버전에서 그대로 쓰일 수 있는것
+    - 내가 새 버전이 되어도, 다른쪽이 수정없이 그대로 쓰일 수 있는것
+- 상위 호환성
+  - 나의 이전 제품이 상대 새 버전에서 그대로 쓰일 수 있는것
+    - 내가 그대로여도, 다른쪽이 새 버전이 될 때도 그대로 쓰일 수 있는것
 
 ### Protocol buffer
 
@@ -64,6 +77,8 @@ Protocol buffer workflow
     - 언어에 따라 다름
   - 주의
     - scalar message field가 default로 설정되면, 직렬화되지 않음
+- Packages
+  - 이름 충돌을 막기 위함
 
 Best practices
 
@@ -86,5 +101,47 @@ message Foo {
   - 필드를 삭제하는 경우
     - 삭제해도 되는데, 필드 넘버는 재사용하면 안됨
       - 하지만 JSON으로 serialization하는 경우, 그냥 삭제할 수 없음
-  - 필드 이름을 바꾸는 경우
-    -
+
+RPC 예시
+
+```protobuf
+service SearchService {
+  rpc Search(SearchRequest) returns (SearchResponse);
+}
+```
+
+- GRPC
+  - 개요
+    - 특별한 protocol buffer 컴파일러 플러그인을 사용해서 관련된 RPC 코드를 생성가능
+- JSON
+  - 개요
+    - canonical json encoding도 가능
+  - 특징
+    - JSON에서 파싱할 경우, JSON에서 값이 missing이거나 null일 때, default 값으로 protocol buffer에 파싱됨
+    - protocol buffer에 한 필드가 default값을 가지면, JSON-encoded 데이터는 그 데이터를 생략함(저장 공간 최적화)
+      - 이는 설정으로 default value를 그대로 돌려주도록 설정 가능
+      - 이렇기 때문에, protobuf를 canonical json으로 serialize하는 경우는 deserialize하는 곳에서도 반드시 protobuf를 사용해야함
+        - 그래야 default value를 가져올 수 있으니
+  - 옵션
+    - default 값도 출력하기
+      - 기본 설정은 default값은 출력하지 않음
+    - unknown 필드는 무시하기
+      - 기본 설정은 파서가 unknown필드는 *reject(에러인가?)*하는데, 무시하도록 설정 가능
+    - proto field이름을 lower 케멀 케이스 대신에 사용하기
+      - 기본 설정은 lower 케멀 케이스로 변환해서 필드로 사용
+    - 문자열 대신 정수를 enum의 값으로 하기
+- 자주 사용되는 proto 옵션
+  - 파일 레벨
+    - `java_package`
+      - 컴파일러가 생성한 Java/Kotlin 클래스에 패키지 이름을 설정함
+    - `java_outer_classname`
+      - 컴파일러가 생성한 파일의 클래스와 파일 이름을 변경
+    - `java_multiple_files`
+      - false면, 프로토 파일에 대응하는 오직하나의 java 파일이 생성되고, 모든 top-level messsage, service, enumeration들이 바깥 클래스 속으로 네스팅됨
+  - 메시지 레벨
+    - `deprecated`
+- Protocol buffer java
+  - 특징
+    - 메시지 빌더는 immutable
+      - `setter()`의 반환값은 같은 빌더
+    - reflection 기능 존재
