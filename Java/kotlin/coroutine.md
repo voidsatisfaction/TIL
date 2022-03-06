@@ -2,6 +2,12 @@
 
 - 의문
 - 용어 설명
+  - structured concurrency
+  - suspending function
+  - coroutine scope
+  - scope builder
+  - coroutine builder
+  - coroutine context
 - 개요
   - 코루틴이란
     - 정의
@@ -15,83 +21,165 @@
 
 ## 의문
 
+**스레드는 비싸기 때문에, 최대한 스레드를 효율적으로 사용하기 위해서 코루틴을 사용한다.**
+
 - *코루틴에서 `delay`를 사용하는 경우, 특정시간이 지났는지는 어떻게 파악하지? 이벤트 루프를 사용하는건가?*
 - 코루틴 빌더는 현재 빌더가 호출된 코루틴 스코프의 컨텍스트를 자연스럽게 받아오는가?
   - 그렇다
+- *SupervisorJob, cancellation 전파에 관하여 아직 이해가 잘 안됨*
+  - `CoroutineScope(getDefaultCoroutineContext() + SupervisorJob())`이것의 효과는?
 
 ## 용어 설명
 
+- structured concurrency
 - suspending function
-  - 개요
-    - 코루틴 인스턴스가 될 수 있는 non-preemptive yield 가능한 서브루틴의 일반화
-      - 즉 이 자체를 코루틴으로 불러도 된다
-      - 코루틴 인스턴스
-        - 런타임에 실행되는 코루틴이 실제로 것
 - coroutine scope
-  - 개요
-    - 코루틴 인스턴스를 실행 및 관리하는 스코프
-      - 관리 정책은 context로 나타나있음
-  - 특징
-    - 인터페이스인데, coroutineContext를 래핑하였음
-      - 해당 스코프에 있는 child coroutine을 cancel할 수 있게 함
-  - 커스터마이징
-    - `CoroutineScope()` or `MainScope()`를 사용해서 생성되어야 함
-      - `CoroutineScope()`
-        - `Dispatchers.Default`를 사용
-      - `MainScope()`
-        - `Dispatchers.Main`을 사용
-    - 또한, 런칭된 코루틴이 필요없을때에는 `CoroutineScope.cancel()` extension으로 캔슬헤야 함
-  - Best practices
-    - 스코프의 이름을 명시적으로 사용하는 것이 좋음
-      - e.g) `viewModelScope.launch()`
-    - 적절한 라이프타임에 맞춰서 코루틴 스코프를 정의하고 사용해야 함
-      - `GlobalScope`의 경우에는, application의 life-time과 동치
-  - c.f) child coroutine
+- scope builder
 - coroutine builder
-  - 개요
-    - concurrent하게 새로운 코루틴을 실행시키는 주체
-    - CoroutineScope의 extension이고, 해당 CoroutineScope의 coroutine context를 상속받음
-      - extension이어서 자명한 사실
-  - 종류
-    - `launch`
-      - 결과값을 반환받지 않음
-        - 리턴이 Job
-      - `join()`으로 실행흐름 맞추기 가능
-    - `async`
-      - 결과값을 반환받음
-        - 리턴이 Deffered
-      - `await()`이 필수
 - coroutine context
-  - 개요
-    - 코루틴 스코프 내의 코루틴의 행동을 정의하는 요소들의 컬렉션
-      - 코루틴 빌더의 구현에 사용됨
-  - 구성
-    - **Dispatcher**
-      - 개요
-        - 코루틴을 어떤 스레드에서 동작시킬지 관리
-      - 종류
-        - 코틀린에서 기본적으로 제공하는 디스패쳐
-          - `Dispatchers.Main`
-            - 메인 스레드에서 코루틴을 실행하는 디스패처
-            - UI와 상호작용을 하는 작업을 실행하기 위해서만 사용해야 함
-          - `Dispatchers.Default`
-            - `Dispatchers.IO`와 같은 스레드 풀 공유
-            - CPU 코어에 개수가 제한되어 있음(CPU intensive work할때 유용)
-          - `Dispatchers.IO`
-            - `Dispatchers.Default`와 같은 스레드 풀 공유
-            - default로 64개의 스레드 존재
-          - `Dispatchers.Unconfined`
-        - 커스텀
-          - `Executor.asCoroutineDispatcher()`
-    - **Job**
-      - 코루틴의 라이프 사이클을 다룸
-    - **Coroutine Name**
-      - 코루틴의 이름(디거빙하기 편함)
-    - **CoroutineExceptionHandler**
-      - 캐치되지 않은 익셉션을 다룸
-  - 특징
-    - `+`로 컨택스트 끼리 결합할 수 있음
-      - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
+
+### structured concurrency
+
+- 개요
+  - 새 코루틴들은 특정 코루틴 스코프에서만 시작될 수 있음
+    - 코루틴의 라이프 타임을 제한함
+    - lost, leak 방지 / error가 잘 도달할 수 있게 함
+  - 외부 스코프는 children 코루틴들이 끝날때까지 끝낼 수 없음
+
+### suspending function
+
+- 개요
+  - 코루틴 인스턴스가 될 수 있는 non-preemptive yield 가능한 서브루틴의 일반화
+    - 즉 이 자체를 코루틴으로 불러도 된다
+    - 코루틴 인스턴스
+      - 런타임에 실행되는 코루틴이 실제로 것
+  - 내부적으로 다른 suspending function을 실행해서 coroutine 인스턴스를 suspend할 수 있음
+
+### coroutine scope
+
+- 개요
+  - 코루틴 인스턴스를 실행 및 관리하는 스코프
+    - 관리 정책은 context로 나타나있음
+  - 코루틴은 코루틴 스코프에서만 실행됨
+    - 코루틴의 라이프 타임을 제한함
+    - lost, leak 방지 / error가 잘 도달할 수 있게 함
+- 특징
+  - 인터페이스인데, coroutineContext를 래핑하였음
+    - 해당 스코프에 있는 child coroutine을 cancel할 수 있게 함
+- 커스터마이징
+  - `CoroutineScope()` or `MainScope()`를 사용해서 생성되어야 함
+    - `CoroutineScope()`
+      - `Dispatchers.Default`를 사용
+    - `MainScope()`
+      - `Dispatchers.Main`을 사용
+  - 또한, 런칭된 코루틴이 필요없을때에는 `CoroutineScope.cancel()` extension으로 캔슬헤야 함
+- Best practices
+  - 스코프의 이름을 명시적으로 사용하는 것이 좋음
+    - e.g) `viewModelScope.launch()`
+  - 적절한 라이프타임에 맞춰서 코루틴 스코프를 정의하고 사용해야 함
+    - `GlobalScope`의 경우에는, application의 life-time과 동치
+- c.f) child coroutine
+
+### scope builder
+
+```kotlin
+suspend fun main() {
+    withContext(Dispatchers.IO) {
+        doWorld()
+    }
+}
+
+suspend fun doWorld() {
+    coroutineScope {
+        println(coroutineContext)
+        launch {
+	        println(coroutineContext)
+            delay(2000L)
+            println("World 2")
+            println(Thread.currentThread().getId())
+        }
+        launch {
+	        println(coroutineContext)
+            delay(1000L)
+            println("World 1")
+            println(Thread.currentThread().getId())
+        }
+        println("Hello")
+        println(Thread.currentThread().getId())
+    }
+}
+
+// 출력 결과(항상 고정된건 아님)
+// [ScopeCoroutine{Active}@506b5e81, Dispatchers.IO]
+// [CoroutineId(1), "coroutine#1":StandaloneCoroutine{Active}@e6950a8, Dispatchers.IO]
+// Hello
+// 10
+// [CoroutineId(2), "coroutine#2":StandaloneCoroutine{Active}@5d8ca77b, Dispatchers.IO]
+// World 1
+// 15
+// World 2
+// 15
+```
+
+- 개요
+  - 커스텀 scope를 `coroutineScope`빌더를 사용해서 만들 수 있음
+    - 커스텀 scope는 coroutine scope를 만들고, 모든 children이 끝날 때 까지 끝나지 않음
+- 종류
+  - `runBlocking`
+    - 현재 스레드를 기다리면서 블로킹함
+    - regular function
+  - `coroutineScope`
+    - 코루틴 인스턴스를 suspend하고 스레드를 다른 코루틴 인스턴스로 양보
+    - suspending function
+
+### coroutine builder
+
+- 개요
+  - concurrent하게 새로운 코루틴을 실행시키는 주체
+  - CoroutineScope의 extension이고, 해당 CoroutineScope의 coroutine context를 상속받음
+    - extension이어서 자명한 사실
+- 종류
+  - `launch`
+    - 결과값을 반환받지 않음
+      - 리턴이 Job
+    - `join()`으로 실행흐름 맞추기 가능
+  - `async`
+    - 결과값을 반환받음
+      - 리턴이 Deffered
+    - `await()`이 필수
+
+### coroutine context
+
+- 개요
+  - 코루틴 스코프 내의 코루틴의 행동을 정의하는 요소들의 컬렉션
+    - 코루틴 빌더의 구현에 사용됨
+- 구성
+  - **Dispatcher**
+    - 개요
+      - 코루틴을 어떤 스레드에서 동작시킬지 관리
+    - 종류
+      - 코틀린에서 기본적으로 제공하는 디스패쳐
+        - `Dispatchers.Main`
+          - 메인 스레드에서 코루틴을 실행하는 디스패처
+          - UI와 상호작용을 하는 작업을 실행하기 위해서만 사용해야 함
+        - `Dispatchers.Default`
+          - `Dispatchers.IO`와 같은 스레드 풀 공유
+          - CPU 코어에 개수가 제한되어 있음(CPU intensive work할때 유용)
+        - `Dispatchers.IO`
+          - `Dispatchers.Default`와 같은 스레드 풀 공유
+          - default로 64개의 스레드 존재
+        - `Dispatchers.Unconfined`
+      - 커스텀
+        - `Executor.asCoroutineDispatcher()`
+  - **Job**
+    - 코루틴의 라이프 사이클을 다룸
+  - **Coroutine Name**
+    - 코루틴의 이름(디거빙하기 편함)
+  - **CoroutineExceptionHandler**
+    - 캐치되지 않은 익셉션을 다룸
+- 특징
+  - `+`로 컨택스트 끼리 결합할 수 있음
+    - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
 
 ## 개요
 
