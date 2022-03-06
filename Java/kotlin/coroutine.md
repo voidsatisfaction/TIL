@@ -1,6 +1,7 @@
 # Kotlin Coroutine
 
 - 의문
+- 용어 설명
 - 개요
   - 코루틴이란
     - 정의
@@ -14,50 +15,94 @@
 
 ## 의문
 
-- *coroutine scope?*
-- *coroutine builder?*
-- *coroutine?*
-  - suspend function 자체가 코루틴인가?
-    - 아니다. 코루틴은 실행 흐름을 의미
-    - suspend function은 코루틴속에서 yield할 수 있는 함수
-- 코루틴에서 `delay`를 사용하는 경우, 특정시간이 지났는지는 어떻게 파악하지? 이벤트 루프를 사용하는건가?
+- *코루틴에서 `delay`를 사용하는 경우, 특정시간이 지났는지는 어떻게 파악하지? 이벤트 루프를 사용하는건가?*
+- 코루틴 빌더는 현재 빌더가 호출된 코루틴 스코프의 컨텍스트를 자연스럽게 받아오는가?
+  - 그렇다
+
+## 용어 설명
+
+- suspending function
+  - 개요
+    - 코루틴 인스턴스가 될 수 있는 non-preemptive yield 가능한 서브루틴의 일반화
+      - 즉 이 자체를 코루틴으로 불러도 된다
+      - 코루틴 인스턴스
+        - 런타임에 실행되는 코루틴이 실제로 것
+- coroutine scope
+  - 개요
+    - 코루틴 인스턴스를 실행 및 관리하는 스코프
+      - 관리 정책은 context로 나타나있음
+  - 특징
+    - 인터페이스인데, coroutineContext를 래핑하였음
+      - 해당 스코프에 있는 child coroutine을 cancel할 수 있게 함
+  - 커스터마이징
+    - `CoroutineScope()` or `MainScope()`를 사용해서 생성되어야 함
+      - `CoroutineScope()`
+        - `Dispatchers.Default`를 사용
+      - `MainScope()`
+        - `Dispatchers.Main`을 사용
+    - 또한, 런칭된 코루틴이 필요없을때에는 `CoroutineScope.cancel()` extension으로 캔슬헤야 함
+  - Best practices
+    - 스코프의 이름을 명시적으로 사용하는 것이 좋음
+      - e.g) `viewModelScope.launch()`
+    - 적절한 라이프타임에 맞춰서 코루틴 스코프를 정의하고 사용해야 함
+      - `GlobalScope`의 경우에는, application의 life-time과 동치
+  - c.f) child coroutine
+- coroutine builder
+  - 개요
+    - concurrent하게 새로운 코루틴을 실행시키는 주체
+    - CoroutineScope의 extension이고, 해당 CoroutineScope의 coroutine context를 상속받음
+      - extension이어서 자명한 사실
+  - 종류
+    - `launch`
+      - 결과값을 반환받지 않음
+        - 리턴이 Job
+      - `join()`으로 실행흐름 맞추기 가능
+    - `async`
+      - 결과값을 반환받음
+        - 리턴이 Deffered
+      - `await()`이 필수
+- coroutine context
+  - 개요
+    - 코루틴 스코프 내의 코루틴의 행동을 정의하는 요소들의 컬렉션
+      - 코루틴 빌더의 구현에 사용됨
+  - 구성
+    - **Dispatcher**
+      - 개요
+        - 코루틴을 어떤 스레드에서 동작시킬지 관리
+      - 종류
+        - 코틀린에서 기본적으로 제공하는 디스패쳐
+          - `Dispatchers.Main`
+            - 메인 스레드에서 코루틴을 실행하는 디스패처
+            - UI와 상호작용을 하는 작업을 실행하기 위해서만 사용해야 함
+          - `Dispatchers.Default`
+            - `Dispatchers.IO`와 같은 스레드 풀 공유
+            - CPU 코어에 개수가 제한되어 있음(CPU intensive work할때 유용)
+          - `Dispatchers.IO`
+            - `Dispatchers.Default`와 같은 스레드 풀 공유
+            - default로 64개의 스레드 존재
+          - `Dispatchers.Unconfined`
+        - 커스텀
+          - `Executor.asCoroutineDispatcher()`
+    - **Job**
+      - 코루틴의 라이프 사이클을 다룸
+    - **Coroutine Name**
+      - 코루틴의 이름(디거빙하기 편함)
+    - **CoroutineExceptionHandler**
+      - 캐치되지 않은 익셉션을 다룸
+  - 특징
+    - `+`로 컨택스트 끼리 결합할 수 있음
+      - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
 
 ## 개요
 
 ### 코루틴이란
 
 - 정의
-  - *non-preemptive multitasking* 을 위한 subroutine의 일반화 버전의 컴퓨터 프로그램 컴포넌트
+  - non-preemptive multitasking 을 위한 subroutine의 일반화 버전의 컴퓨터 프로그램 컴포넌트
 - 구성
   - Suspend function
     - 언제든지 멈추고 재개할 수 있는 함수
       - Stack Pointer, Variables이 있어야 함
-  - Context
-    - 개요
-      - 코루틴의 행동을 정의하는 요소들의 컬렉션
-    - 구성
-      - **Dispatcher**
-        - 어떤 스레드에서 동작할지 관리
-        - 종류
-          - 코틀린에서 기본적으로 제공하는 디스패쳐
-            - `Dispatchers.Default`
-              - `Dispatchers.IO`와 같은 스레드 풀 공유
-              - CPU 코어에 개수가 제한되어 있음(CPU intensive work할때 유용)
-            - `Dispatchers.IO`
-              - `Dispatchers.Default`와 같은 스레드 풀 공유
-              - default로 64개의 스레드 존재
-            - `Dispatchers.Unconfined`
-          - 커스텀
-            - `Executor.asCoroutineDispatcher()`
-      - **Job**
-        - 코루틴의 라이프 사이클을 다룸
-      - **Coroutine Name**
-        - 코루틴의 이름(디거빙하기 편함)
-      - **CoroutineExceptionHandler**
-        - 캐치되지 않은 익셉션을 다룸
-    - 특징
-      - `+`로 컨택스트 끼리 결합할 수 있음
-        - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
   - CoroutineScope
     - 개요
       - **해당 스코프가 생성한 모든 코루틴을 추적**
