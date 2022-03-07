@@ -41,10 +41,13 @@
 ### structured concurrency
 
 - 개요
+  - 코루틴 스코프가, 코루틴의 실행과 라이프사이클을 관리하는것
+- 특징
   - 새 코루틴들은 특정 코루틴 스코프에서만 시작될 수 있음
-    - 코루틴의 라이프 타임을 제한함
+    - 스코프 내의 코루틴의 라이프 타임을 제한함
     - lost, leak 방지 / error가 잘 도달할 수 있게 함
   - 외부 스코프는 children 코루틴들이 끝날때까지 끝낼 수 없음
+  - 무엇인가 잘못되거나, 유저가 동작을 철회하면 child 코루틴이 자동적으로 캔슬됨
 
 ### suspending function
 
@@ -63,6 +66,7 @@
   - 코루틴은 코루틴 스코프에서만 실행됨
     - 코루틴의 라이프 타임을 제한함
     - lost, leak 방지 / error가 잘 도달할 수 있게 함
+  - **서로 다른 코루틴들의 parent-child 관계의 매니징을 책임짐**
 - 특징
   - 인터페이스인데, coroutineContext를 래핑하였음
     - 해당 스코프에 있는 child coroutine을 cancel할 수 있게 함
@@ -77,7 +81,8 @@
   - 스코프의 이름을 명시적으로 사용하는 것이 좋음
     - e.g) `viewModelScope.launch()`
   - 적절한 라이프타임에 맞춰서 코루틴 스코프를 정의하고 사용해야 함
-    - `GlobalScope`의 경우에는, application의 life-time과 동치
+    - `GlobalScope`에서 실행되는 코루틴들의 라이프 타임의 경우에는, application의 life-time과 동치이며, 글로벌 스코프의 모든 코루틴들은 서로 독립
+      - `GlobalScope.async`, `GlobalScope.launch`도 가능
 - c.f) child coroutine
 
 ### scope builder
@@ -122,8 +127,12 @@ suspend fun doWorld() {
 ```
 
 - 개요
-  - 커스텀 scope를 `coroutineScope`빌더를 사용해서 만들 수 있음
+  - coroutine builder를 통하지 않더라도 커스텀 scope만을 `coroutineScope`빌더를 사용해서 만들 수 있음
     - 커스텀 scope는 coroutine scope를 만들고, 모든 children이 끝날 때 까지 끝나지 않음
+- 특징
+  - suspend가 호출이 되는 outer scope의 child scope가 됨
+    - context를 outer scope로부터 상속받음
+      - *Job도 상속받나?*
 - 종류
   - `runBlocking`
     - 현재 스레드를 기다리면서 블로킹함
@@ -138,6 +147,7 @@ suspend fun doWorld() {
   - concurrent하게 새로운 코루틴을 실행시키는 주체
   - CoroutineScope의 extension이고, 해당 CoroutineScope의 coroutine context를 상속받음
     - extension이어서 자명한 사실
+  - 자체적으로 코루틴 스코프를 생성함
 - 종류
   - `launch`
     - 결과값을 반환받지 않음
