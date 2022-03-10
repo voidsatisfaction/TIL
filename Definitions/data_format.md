@@ -11,10 +11,10 @@
 ### 호환성
 
 - 하위 호환성
-  - 새 제품이 별도의 수정없이 상대 이전버전에서 그대로 쓰일 수 있는것
+  - 나의 새로운 버전의 기능 혹은 데이터가, 해당 기능이나 데이터와 연동된 기존의 다른 서비스에서 그대로 쓰일 수 있는것
     - 내가 새 버전이 되어도, 다른쪽이 수정없이 그대로 쓰일 수 있는것
 - 상위 호환성
-  - 나의 이전 제품이 상대 새 버전에서 그대로 쓰일 수 있는것
+  - 나의 기존의 기능 혹은 데이터가, 해당 기능이나 데이터와 연동된 새로운 다른 서비스에서 그대로 쓰일 수 있는것
     - 내가 그대로여도, 다른쪽이 새 버전이 될 때도 그대로 쓰일 수 있는것
 
 ### Protocol buffer
@@ -29,13 +29,13 @@ Protocol buffer workflow
   - JSON보다 작고, 빠르고, 네이티브 언어 바인딩 제공
   - 프로토콜버퍼 컴파일러가 존재해서, 프로그래밍 언어에 맞춘 코드 생성
     - 파서, 빌더, 인터페이스 등
-  - forward compatibility, backward compatibility를 고려한 설계
+  - forward compatibility, backward compatibility를 고려하여 만들어짐
 - 장점
   - structured, record-like, typed, language-neutral, platform-neutral, extensible
   - 커뮤니케이션 프로토콜에 사용(e.g gRPC)
   - 데이터 스토리지에서 사용
 - 다른 솔루션이 더 나을경우
-  - 프로토콜 버퍼는, 전체 메시지를 한번에 메모리로 로드될 수 있음
+  - 프로토콜 버퍼는, 전체 메시지가 한꺼번에 메모리로 로드될 수 있음
     - 몇 메가바이트를 초과하는 데이터는 다른 솔루션을 고려하는게 나을 수 있음
     - 직렬화된 복사본이 여러개 생성되어, 메모리 사용 스파이크를 칠 수 있음
   - 프로토콜 버퍼가 직렬화될 경우, 같은 데이터여도 서로 다른 바이너리 직렬화결과가 나올 수 있음
@@ -57,8 +57,8 @@ Protocol buffer workflow
       - `.proto`정의가 없이도 메시지를 임베딩 가능
   - 필드 번호
     - 재사용하거나, 변경하면 안됨
-      - 하위호환성
-        - 새 버전에서 이전 버전에서 사용하던 필드 번호를 그대로 사용해버리면, 이전 버전에서 데이터 deserialization을 잘못할 여지 존재
+      - 새 버전에서 이전 버전에서 사용하던 필드 번호를 그대로 사용해버리면, 이전 버전에서 데이터 deserialization을 잘못할 여지 존재(하위 호환성 문제)
+        - 이전 버전의 파서는 잘못된 필드 넘버 정보를 갖고 있을테니
 - default values
   - strings
     - empty string
@@ -117,7 +117,7 @@ service SearchService {
   - 개요
     - canonical json encoding도 가능
   - 특징
-    - JSON에서 파싱할 경우, JSON에서 값이 missing이거나 null일 때, default 값으로 protocol buffer에 파싱됨
+    - JSON으로부터 protocol buffer로 deserialize하는 경우, JSON에서 값이 missing이거나 null일 때, default 값으로 protocol buffer에 파싱됨
     - protocol buffer에 한 필드가 default값을 가지면, JSON-encoded 데이터는 그 데이터를 생략함(저장 공간 최적화)
       - 이는 설정으로 default value를 그대로 돌려주도록 설정 가능
       - 이렇기 때문에, protobuf를 canonical json으로 serialize하는 경우는 deserialize하는 곳에서도 반드시 protobuf를 사용해야함
