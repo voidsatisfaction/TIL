@@ -47,7 +47,7 @@
     - 스코프 내의 코루틴의 라이프 타임을 제한함
     - lost, leak 방지 / error가 잘 도달할 수 있게 함
   - 외부 스코프는 children 코루틴들이 끝날때까지 끝낼 수 없음
-  - 무엇인가 잘못되거나, 유저가 동작을 철회하면 child 코루틴이 자동적으로 캔슬됨
+  - **무엇인가 잘못되거나, 유저가 동작을 철회하면 child 코루틴이 자동적으로 캔슬됨**
 
 ### suspending function
 
@@ -60,6 +60,41 @@
 
 ### coroutine scope
 
+라이프 사이클을 갖는 오브젝트의 코루틴 스코프 예시(e.g 웹 서버 프레임워크의 리퀘스트 컨텍스트)
+
+```
+class Activity {
+    private val mainScope = MainScope()
+
+    fun destroy() {
+        mainScope.cancel()
+    }
+
+    fun doSomething() {
+        // launch ten coroutines for a demo, each working for a different time
+        repeat(10) { i ->
+            mainScope.launch {
+                delay((i + 1) * 200L) // variable delay 200ms, 400ms, ... etc
+                println("Coroutine $i is done")
+            }
+        }
+    }
+}
+
+val activity = Activity()
+activity.doSomething() // run test function
+println("Launched coroutines")
+delay(500L) // delay for half a second
+println("Destroying activity!")
+activity.destroy() // cancels all coroutines
+delay(1000) // visually confirm that they don't work
+
+// Launched coroutines
+// Coroutine 0 is done
+// Coroutine 1 is done
+// Destroying activity!
+```
+
 - 개요
   - 코루틴 인스턴스를 실행 및 관리하는 스코프
     - 관리 정책은 context로 나타나있음
@@ -67,6 +102,11 @@
     - 코루틴의 라이프 타임을 제한함
     - lost, leak 방지 / error가 잘 도달할 수 있게 함
   - **서로 다른 코루틴들의 parent-child 관계의 매니징을 책임짐**
+    - 부모코루틴은 자식 코루틴을 기다림
+    - 자식이 에러가 나면, 자식의 자식과 부모에게 에러가전달되고, 부모는 또다시 자식과 부모로 에러 전달
+  - 라이프 사이클을 갖는 오브젝트가 있을 때, 해당 오브젝트와 관련되는 다양한 코루틴이 동작할때, 오브젝트의 행동이 취소되면, 모든 코루틴들이 취소되어야 함
+    - 메모리 릭을 막자
+    - e.g) 웹 서버 프레임워크 리퀘스트 컨텍스트 오브젝트
 - 특징
   - 인터페이스인데, coroutineContext를 래핑하였음
     - 해당 스코프에 있는 child coroutine을 cancel할 수 있게 함
@@ -143,6 +183,116 @@ suspend fun doWorld() {
 
 ### coroutine builder
 
+#### Lazily started async
+
+```kotlin
+val time = measureTimeMillis {
+    val one = async(start = CoroutineStart.LAZY) { doSomethingUsefulOne() }
+    val two = async(start = CoroutineStart.LAZY) { doSomethingUsefulTwo() }
+    // some computation
+    one.start() // start the first one
+    two.start() // start the second one
+    println("The answer is ${one.await() + two.await()}")
+}
+println("Completed in $time ms")
+
+// The answer is 42
+// Completed in 1018 ms
+```
+
+#### Async-style functions
+
+```kotlin
+// The result type of somethingUsefulOneAsync is Deferred<Int>
+@OptIn(DelicateCoroutinesApi::class)
+fun somethingUsefulOneAsync() = GlobalScope.async {
+    doSomethingUsefulOne()
+}
+
+// The result type of somethingUsefulTwoAsync is Deferred<Int>
+@OptIn(DelicateCoroutinesApi::class)
+fun somethingUsefulTwoAsync() = GlobalScope.async {
+    doSomethingUsefulTwo()
+}
+
+// note that we don't have `runBlocking` to the right of `main` in this example
+fun main() {
+    val time = measureTimeMillis {
+        // we can initiate async actions outside of a coroutine
+        val one = somethingUsefulOneAsync()
+        val two = somethingUsefulTwoAsync()
+        // but waiting for a result must involve either suspending or blocking.
+        // here we use `runBlocking { ... }` to block the main thread while waiting for the result
+        runBlocking {
+            println("The answer is ${one.await() + two.await()}")
+        }
+    }
+    println("Completed in $time ms")
+}
+
+// The answer is 42
+// Completed in 1213 ms
+```
+
+- 주의
+  - 만약 위의 코드에서, one과 runBlocking사이에서 에러가 나면, 프로그램은 exception을 날리고, 해당 프로그램이 수행하던 오퍼레이션은 abort됨
+  - 하지만, `somethingUsefulOneAsync`는 여전히 백그라운드에서 동작하고 있음
+    - structured concurrency에서는 이와같은 문제 해결
+
+#### Structured concurrency with async
+
+```kotlin
+suspend fun concurrentSum(): Int = coroutineScope {
+    val one = async { doSomethingUsefulOne() }
+    val two = async { doSomethingUsefulTwo() }
+    one.await() + two.await()
+}
+
+val time = measureTimeMillis {
+    println("The answer is ${concurrentSum()}")
+}
+println("Completed in $time ms")
+
+// The answer is 42
+// Completed in 1038 ms
+```
+
+- concurrentSum 내부에서 exception이 던져지면, 모든 child coroutine은 cancel됨
+
+```kotlin
+fun main() = runBlocking<Unit> {
+    try {
+        failedConcurrentSum()
+    } catch(e: ArithmeticException) {
+        println("Computation failed with ArithmeticException")
+    }
+}
+
+suspend fun failedConcurrentSum(): Int = coroutineScope {
+    val one = async<Int> {
+        try {
+            delay(Long.MAX_VALUE) // Emulates very long computation
+            42
+        } finally {
+            println("First child was cancelled")
+        }
+    }
+    val two = async<Int> {
+        println("Second child throws an exception")
+        throw ArithmeticException()
+    }
+    one.await() + two.await()
+}
+
+// Second child throws an exception
+// First child was cancelled
+// Computation failed with ArithmeticException
+```
+
+- cancellation은 코루틴 계층을 타고 propagated됨
+
+#### 내용 설명
+
 - 개요
   - concurrent하게 새로운 코루틴을 실행시키는 주체
   - CoroutineScope의 extension이고, 해당 CoroutineScope의 coroutine context를 상속받음
@@ -155,14 +305,50 @@ suspend fun doWorld() {
     - `join()`으로 실행흐름 맞추기 가능
   - `async`
     - 결과값을 반환받음
-      - 리턴이 Deffered
+      - 리턴이 Deffered라는 future의 일종
+      - 또한, Job이기도 해서 언제든 cancel가능
     - `await()`이 필수
+    - lazy
+      - `async(start = CoroutineStart.LAZY) { suspendingFunctionCall() }`
+      - c.f) 아무런 설정이 없으면 eager evaluation
 
 ### coroutine context
+
+coroutine job state
+
+![](./images/coroutine/job_state1.png)
+
+```
+wait children
++-----+ start  +--------+ complete   +-------------+  finish  +-----------+
+| New | -----> | Active | ---------> | Completing  | -------> | Completed |
++-----+        +--------+            +-------------+          +-----------+
+|  cancel / fail       |
+|     +----------------+
+|     |
+V     V
++------------+                           finish  +-----------+
+| Cancelling | --------------------------------> | Cancelled |
++------------+                                   +-----------+
+
+```
 
 - 개요
   - 코루틴 스코프 내의 코루틴의 행동을 정의하는 요소들의 컬렉션
     - 코루틴 빌더의 구현에 사용됨
+- 특징
+  - `+`로 컨택스트 끼리 결합할 수 있음
+    - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
+  - 코루틴은 실행되는 coroutine scope의 context를 상속받음
+    - 새로운 코루틴의 job은 부모 코루틴 job의 자식이 됨
+    - **부모 job 오버라이딩 가능**
+      - `GlobalScope.launch()`와 같이 다른 스코프가 명시적으로 되어있는 경우
+      - 명시적으로 다른 `Job`오브젝트를 새 코루틴의 컨텍스트로 넘겨주는 경우
+  - 스레드 로컬 데이터는 `asContextElement` extension을 사용해서 코루틴에게 넘겨줄 수 있음
+    - e.g) `val job = launch(Dispatchers.Default + threadLocal.asContextElement(value = "launch")) { ... }`
+      - launch라는 값을 코루틴이 실행되는 스레드의 thread local로 등록
+    - 주의
+      - thread-local의 값이 변화해도, 새로운 값이 coroutine caller로 propagate되지 않음
 - 구성
   - **Dispatcher**
     - 개요
@@ -182,14 +368,39 @@ suspend fun doWorld() {
       - 커스텀
         - `Executor.asCoroutineDispatcher()`
   - **Job**
-    - 코루틴의 라이프 사이클을 다룸
+    - 코루틴의 라이프 사이클을 다루고, 취소할 수 있음
+    - parent-child 계층 구조
+      - parent의 cancel은 모든 child job들에게 재귀적으로 취소해감
+      - `CancellationException`을 제외한 child의 exception으로 인한 failure는 parent job을 cancel하고, 결과적으로 모든 다른 child job을 취소함
+        - 이는 SupervisorJob으로 커스터마이징 가능
   - **Coroutine Name**
     - 코루틴의 이름(디거빙하기 편함)
   - **CoroutineExceptionHandler**
     - 캐치되지 않은 익셉션을 다룸
-- 특징
-  - `+`로 컨택스트 끼리 결합할 수 있음
-    - `(Dispatchers.Main + CoroutineName("context")) + (Dispatchers.IO)`
+
+### coroutine dispatcher
+
+- 개요
+  - 해당 코루틴이 실행할때에 사용하는 스레드(타입)를 결정해줌
+- 특정
+  - 특정 스레드에서만 동작하게 하거나, 스레드 풀에서 동작하게하거나, unconfined하게 함
+  - unconfined vs confined
+    - unconfined
+      - 특정 스레드나 스레드풀에 한정되지 않은 코루틴 디스패처
+        - e.g) Unconfined
+    - confined
+      - 특정 스레드나 스레드풀에 한정된 코루틴 디스패처
+        - e.g) IO, Default
+- 종류
+  - `Dispatchers.Unconfined`
+    - 코루틴을 caller 스레드에서 시작시키지만, 첫번째 suspension point까지만 실행시킴
+    - *After suspension it resumes the coroutine in the thread that is fully determined by the suspending function that was invoked*
+      - 즉, `resume`을 실행하는 어떤 스레드라도 실행 가능
+  - `Dispatchers.Default`
+    - CPU Bound default thread pool
+  - `newSingleThreadContext("...")`
+    - 코루틴을 실행할 새로운 스레드를 생성
+      - 알아서 release도 해줘야 함
 
 ## 개요
 
@@ -207,7 +418,9 @@ suspend fun doWorld() {
         - `scope.cancel()`하면 어느때나 진행중인 작업들 멈추게 할 수 있음
       - 앱의 특정 레이어에 CoroutineScope를 생성해야지만 코루틴들의 라이프사이클을 조절하거나 코루틴을 시작할 수 있음
         - `val scope = CoroutineScope(Dispatchers.Default)`
-    - *그럼 scope가 Global인거랑 Coroutine인거랑 차이는 뭐지?*
+    - 그럼 scope가 Global인거랑 Coroutine인거랑 차이는 뭐지?
+      - 일반적인 coroutine scope의 경우, structured concurrency가 적용되어서, child 코루틴들이 다 끝나야지 스코프도 끝남, 그리고 각 코루틴은 그냥 Job인 경우 서로 영향을 받을 수 있음
+      - Global scope의 경우, 라이프 사이클이 application과 맞춰져있고, 각 코루틴들은 서로 독립적임
   - `withContext(context) { ... }`
     - 주어진 context로 suspending 블록을 호출하는데에 사용
   - CoroutineScheduler
