@@ -110,6 +110,11 @@ delay(1000) // visually confirm that they don't work
 - 특징
   - 인터페이스인데, coroutineContext를 래핑하였음
     - 해당 스코프에 있는 child coroutine을 cancel할 수 있게 함
+  - 반드시 블록과 관련된 개념은 아님
+    - e.g) `scope.launch(...)`
+  - scope가 정의될 때, supervisor job을 넘겨주지 않으면, child coroutine에서 에러가 났을경우, 에러가 parent job으로 propagate되어서, 다시 parent job은 child coroutine으로 에러를 전파함
+    - supervisor job은
+  - job이외의 코루틴 컨텍스트의 요소들은 child coroutine scope로 상속됨
 - 커스터마이징
   - `CoroutineScope()` or `MainScope()`를 사용해서 생성되어야 함
     - `CoroutineScope()`
