@@ -18,7 +18,7 @@ JPA transaction manager
 - `TransactionManager`
   - 개요
     - spring transaction manager 의 최상위 인터페이스(아무 동작 없음)
-    - 하나의 트랜잭션의 생성, 커밋, 롤백과 같은 라이프사이클을 관리하기위한 매니저
+    - spring에서 하나의 트랜잭션의 생성, 커밋, 롤백과 같은 라이프사이클을 관리하기위한 매니저
 - `PlatformTransactionManager`
   - 개요
     - spring의 imperative transaction 인프라에서의 중심이 되는 인터페이스
@@ -28,6 +28,27 @@ JPA transaction manager
     - `TransactionStatus getTransaction(@Nullable TransactionDefinition definition)`
     - `void commit(TransactionStatus status) throws TransactionException;`
     - `void rollback(TransactionStatus status) throws TransactionException;`
+- `AbstractPlatformTransactionManager`
+  - 개요
+    - spring의 표준 트랜잭션 워크플로우를 구현한 추상 베이스 클래스
+      - `PlatformTransactionManager`의 구현체
+  - 다루는 워크 플로우
+    - 현재 트랜잭션 존재 여부 확인
+    - 적절한 propagation 행동을 적용
+    - 트랜잭션을 중지시키거나 재개함
+    - 커밋시 rollback-only 플래그 확인
+      - rollback-only 플래그는 트랜잭션 내부에서 런타임 에러가 발생했을시에 설정됨
+    - 롤백시 적절한 수정을 적용
+    - 등록된 synchronization callback들을 트리거함
+      - c.f) transaction synchronization
+        - 트랜잭션 완료시에 호출되는 콜백들을 등록하는 매커니즘
+        - 트랜잭션 내에서 열려 있는 리소스를 트랜잭션 완료 시간에 닫기 위해서 등록
+- `JpaTransactionManager`
+  - 개요
+    - 단일 JPA EntityManagerFactory를 위한 PlatformTransactionManager의 구현체
+    - 해당 factory의 JPA EntityManager를 스레드로 바인딩함
+      - factory당 하나의 thread-bound EntityManager를 가능하게 함
+      - persistenceContext도 스레드 바운드하게 됨
 
 ### 회사에서는 TransactionManager를 어떻게 사용하고 있는가?
 
@@ -50,13 +71,21 @@ JPA transaction manager
 - 속성
   - `TransactionDefinition`
     - 개요
-      - spring-compliant transaction 속성
+      - spring-compliant transaction 속성을 나타내는 인터페이스
+        - propagation
+        - isolation level
     - propagation 속성
       - `PROPAGATION_REQUIRED`
         - 디폴트 속성
-        - 현재 트랜잭션 그대로 사용 / 현재 트랜잭션 없으면 새로 만듬
+        - 부모 트랜잭션 그대로 사용 / 부모 트랜잭션 없으면 새로 만듬
       - `PROPAGATION_REQUIRES_NEW`
-        - 새 트랜잭션 생성 / 현재 태랜잭션 있으면 중지시킴
+        - 부모 트랜잭션 있으면 해당 부모 트랜잭션 중지시키고 새 트랜잭션 생성 / 부모 트랜잭션 없으면 새로 만듬
+      - `PROPAGATION_SUPPORTS`
+        - 부모 트랜잭션 그대로 사용 / 부모 트랜잭션 없으면 트랜잭션 없이 동작
+        - *이건 어따가 씀?*
+      - `PROPAGATION_MANDATORY`
+        - 부모 트랜잭션 그대로 사용 / 부모 트랜잭션 없으면 exception 발생
+      - ... 일단 이렇게만 알아두자
 - c.f) Transaction
 - c.f) `PlatformTransactionManager`
 - c.f) `ReactiveTransactionManager`
