@@ -8,9 +8,11 @@
 
 ## 개요
 
-### Async interceptor
+### DeferredResultProcessingInterceptor
 
-![](./images/interceptor/async_interceptor.png)
+DeferredResultProcessingInterceptor
+
+![](./images/interceptor/DeferredResultProcessingInterceptor.png)
 
 - Request 스레드
   - `preHandle`
