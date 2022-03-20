@@ -43,12 +43,17 @@ JPA transaction manager
       - c.f) transaction synchronization
         - 트랜잭션 완료시에 호출되는 콜백들을 등록하는 매커니즘
         - 트랜잭션 내에서 열려 있는 리소스를 트랜잭션 완료 시간에 닫기 위해서 등록
+- `ResourceTransactionManager`
+  - 개요
+    - `PlatformTransactionManager`를 확장한 인터페이스로, 하나의 네이티브 리소스 트랜잭션 매니저를 지칭
+      - 하나의 단일 DB(리소스)를 지칭
+      - c.f) JTA transaction manager는 복수개의 트랜잭션 리소스를 다루는 XA트랜잭션을 사용
 - `JpaTransactionManager`
   - 개요
     - 단일 JPA EntityManagerFactory를 위한 PlatformTransactionManager의 구현체
     - 해당 factory의 JPA EntityManager를 스레드로 바인딩함
       - factory당 하나의 thread-bound EntityManager를 가능하게 함
-      - persistenceContext도 스레드 바운드하게 됨
+      - => persistenceContext도 스레드 바운드하게 됨
 
 ### 회사에서는 TransactionManager를 어떻게 사용하고 있는가?
 
