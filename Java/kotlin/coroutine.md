@@ -28,6 +28,8 @@
   - 그렇다
 - *SupervisorJob, cancellation 전파에 관하여 아직 이해가 잘 안됨*
   - `CoroutineScope(getDefaultCoroutineContext() + SupervisorJob())`이것의 효과는?
+  - Job은 코루틴의 라이프 사이클을 다루는 오브젝트이다. 즉 코루틴 하나마다 각자의 job이 있다고 이해를 해야 한다.
+  - 결국 현재의 코루틴스코프의 코루틴이 SupervisorJob이라는 것은, 자신의 스코프내의 자신의 잡과 연결된 자식 코루틴이 에러를 propagate할때만 그것을 부모 코루틴으로 전파시키지 않는 의미가 있는 것이다.
 
 ## 용어 설명
 
