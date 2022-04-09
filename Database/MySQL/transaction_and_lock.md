@@ -8,6 +8,8 @@
   - InnoDB 락의 종류
     - row-level 락의 범위
     - 락의 유형
+  - 인덱스와 잠금
+  - 레코드 수준의 잠금 확인 및 해제
 - 5.4 MySQL의 격리 수준
   - READ UNCOMMITTED
   - READ COMMITTED
@@ -220,6 +222,45 @@ InnoDB 스토리지 엔진의 잠금
 - 해제
   - 개요
     - `KILL (스레드 아이디)`
+
+### 데드락
+
+데드락 예시
+
+```sql
+-- Client A (1)
+mysql> START TRANSACTION;
+
+mysql> SELECT * FROM t WHERE i = 1 LOCK IN SHARE MODE;
+
+-- Client B (2)
+mysql> START TRANSACTION;
+
+mysql> DELETE FROM t WHERE i = 1;
+
+-- Client A (3)
+mysql> DELETE FROM t WHERE i = 1;
+ERROR 1213 (40001): Deadlock found when trying to get lock;
+try restarting transaction
+```
+
+- 1
+  - Client A는 i = 1 인 레코드에 S락을 검
+- 2
+  - Client B는 i = 1 인 레코드를 삭제하려고 시도하면서, X락을 걸려고 함
+  - 하지만 락을 획득할 수 없음, 왜냐하면 A가 S lock을 이미 갖고 있기 때문임
+  - 그러므로, lock 요청들의 큐로 해당 X락 요청이 들어가고, 클라이언트 B는 블로킹함
+- 3
+  - 마지막으로 A가 i = 1 인 레코드를 삭제하려고 시도하면서, X락을 걸려고 함
+  - 클라이언트 A가 X락을 획득하려는 과정에서 데드락 발생
+    - B의 요청이 이미 큐에서 A가 S lock을 풀기를 기다리는 중
+    - A의 S락을 X락으로 업그레이드 할 수 없음, 왜냐하면, B가 같은 행에 X락 요청을 먼저 날렸으므로
+  - 결과적으로, InnoDB는 A, B 클라이언트 둘 중 하나에 error를 생성하고, 에러가 생긴쪽의 클라이언트의 락을 해제함
+    - 에러: `ERROR 1213 (40001): Deadlock found when trying to get lock;
+try restarting transaction`
+  - 에러가 나지 않은 다른쪽의 클라이언트가 락을 획득하여 남은 오퍼레이션 진행 가능
+
+*어라, 그럼 spring jpa메서드 save(), saveAndFlush() 둘 중 saveAndFlush()를 사용하게 되면, 데드락의 위험성이 생기겠네?*
 
 ## 5.4 MySQL의 격리 수준
 
