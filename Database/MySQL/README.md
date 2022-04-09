@@ -160,6 +160,10 @@ MySQL 서버의 아키텍처 다이어그램
 
 ![](./images/ch4/mysql_architecture1.png)
 
+InnoDB Architecture(AWS)
+
+![](./images/ch4/innodb-architecture.png)
+
 ### 4.1 MySQL 엔진 아키텍처
 
 MySQL 아키텍처
