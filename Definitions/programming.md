@@ -1,6 +1,7 @@
 # Programming 용어
 
 - General
+  - 동기 vs 비동기 vs 블로킹 vs 논블로킹
   - coroutine
   - generator
   - iterator
@@ -28,11 +29,72 @@
 
 ## General
 
-- coroutine
-- generator
-- iterator
-- promise
-- future
+### 동기 vs 비동기 vs 블로킹 vs 논블로킹
+
+![](./images/programming/sync_async_blocking_nonblocking1.gif)
+
+Synchronous Blocking I/O
+
+```python
+# 1. Synchronous Blocking I/O
+device = IO.open()
+# 이 thread는 데이터를 읽을 때까지 아무 일도 할 수 없음
+data = device.read()
+print(data)
+```
+
+Synchronous Non-Blocking I/O
+
+```py
+# 2. Synchronous Non-Blocking I/O
+device = IO.open()
+ready = False
+while not ready:
+    print("There is no data to read!")
+
+    # 다른 작업을 처리할 수 있음
+
+    # while 문 내부의 다른 작업을 다 처리하면 데이터가 도착했는지 확인한다.
+    ready = IO.poll(device, IO.INPUT, 5)
+data = device.read()
+print(data)
+```
+
+Asynchronous Blocking I/O
+
+```py
+# 3. Asynchronous Blocking I/O
+device = IO.open()
+# select는 blocking
+data = select {
+  # IO는 non-blocking
+  IO.poll(device, IO.INPUT, 5)
+}
+print(data)
+```
+
+Asynchronous Non-Blocking I/O (AIO)
+
+```py
+# 4. Asynchronous Non-Blocking I/O (AIO)
+ios = IO.IOService()
+device = IO.open(ios)
+
+def inputHandler(data, err):
+    "Input data handler"
+    if not err:
+        print(data)
+```
+
+- 동기(synchronous)
+  - **현재의 실행 흐름** 이 하나의 API호출이 API의 작업이 끝날때 까지 기다리는 것
+- 비동기(asynchronous)
+  - **현재의 실행 흐름** 이 하나의 API호출이 API 작업이 끝날때 까지 기다리지 않고 다른 작업을 처리할 수 있는 것
+- 블로킹(blocking)
+  - **특정 동작이(예를들면 IO)** 실행 흐름을 계속해서 점유하여 다른 작업을 하지 못하는 것
+- 논블로킹(non-blocking)
+  - **특정 동작이** 실행 흐름을 점유하지 않아 다른 작업을 할 수 있는 것
+  - e.g) non-blocking IO
 
 ### coroutine
 
