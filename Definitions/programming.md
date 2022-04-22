@@ -52,7 +52,7 @@ ready = False
 while not ready:
     print("There is no data to read!")
 
-    # 다른 작업을 처리할 수 있음
+    # 다른 작업을 처리할 수 있음(non-blocking)
 
     # while 문 내부의 다른 작업을 다 처리하면 데이터가 도착했는지 확인한다.
     ready = IO.poll(device, IO.INPUT, 5)
@@ -67,7 +67,8 @@ Asynchronous Blocking I/O
 device = IO.open()
 # select는 blocking
 data = select {
-  # IO는 non-blocking
+  # async
+  # READ뿐 아니라 사실은 다양한 동작을 현 스레드에서 여기서 수행할 수 있음
   IO.poll(device, IO.INPUT, 5)
 }
 print(data)
@@ -91,9 +92,9 @@ def inputHandler(data, err):
 - 비동기(asynchronous)
   - **현재의 실행 흐름** 이 하나의 API호출이 API 작업이 끝날때 까지 기다리지 않고 다른 작업을 처리할 수 있는 것
 - 블로킹(blocking)
-  - **특정 동작이(예를들면 IO)** 실행 흐름을 계속해서 점유하여 다른 작업을 하지 못하는 것
+  - **특정 동작이(예를들면 IO)** 실행 흐름을 계속해서 점유하여 현재의 스레드가 다른 작업을 하지 못하는 것
 - 논블로킹(non-blocking)
-  - **특정 동작이** 실행 흐름을 점유하지 않아 다른 작업을 할 수 있는 것
+  - **특정 동작이** 실행 흐름을 점유하지 않아 현재의 스레드가 다른 작업을 할 수 있는 것
   - e.g) non-blocking IO
 
 ### coroutine
