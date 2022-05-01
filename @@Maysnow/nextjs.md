@@ -3,6 +3,7 @@
 - 의문
 - 개요
   - nextjs가 제공하는 것들
+- 구체적인 팁
 
 ## 의문
 
@@ -66,3 +67,80 @@
 - 런타임
   - 개요
     - 애플리케이션이 생성되고 배포된 이후에, 유저의 리퀘스트에 대한 응답으로 애플리케이션이 동작할때의 기간을 말함
+- 렌더링
+  - 서버에서 렌더(Pre-Rendering)
+    - 개요
+      - 외부 데이터와 React component를 HTML로 변환시키고, 클라이언트로 전송
+    - 종류(페이지마다 고를 수 있음)
+      - `Server-Side Rendering`
+        - 서버에서 각 request마다 HTML 페이지를 렌더
+        - 클라이언트에서는 HTML이 빠른 non-interactive page를 보여주는데에 사용되고, 리액트는 반면에 JSON data와 Javascript 명령어들로 컴포넌트들을 interactive하게 만듬(e.g event hanler를 버튼에 부착)
+          - hydration
+        - **유저 리퀘스트 마다 항상 최신 상태의 페이지를 보여줘야 할 때 사용하면 됨**
+      - `Static Site Generation`
+        - HTML이 서버에 생성되지만, SSR과는 다르게 런타임에 서버가 존재하지 않음
+        - 빌드 타임에 한 번 생성되고, CDN에서 각 리퀘스트마다 재사용됨
+        - **유저 리퀘스트 전에 pre-render가능하면 항상 사용하자**
+  - 클라이언트에서 렌더
+    - `Client-Side Rendering`
+- 네트워크
+  - 개요
+    - 리소스들을 공유할 수 있는 컴퓨터들의 링크
+  - nextjs 앱의 배포
+    - origin servers
+      - 애플리케이션의 코드를 실행하고 저장하는 메인 컴퓨터
+    - CDNs
+      - static content를 저장하고 캐시된 결과를 유저들에게 돌려줌
+      - 유저와 가장 가까운 서버에서 리스폰스 해줌
+    - Edge
+      - CDN처럼 세계 곳곳에 배치되나, 코드 실행도 가능한 서버
+
+## 구체적인 팁
+
+- code splitting
+  - 개요
+    - 해당 페이지에 필요한 코드만 가져옴(해당 페이지 코드 + 연결된 페이지의 코드까지)
+- prefetching
+  - 개요
+    - nextjs의 production build에서는 `Link`컴포넌트가 browser의 viewport에 나타나면, nextjs가 자동으로 백그라운드에서 링크된 페이지의 코드를 prefetch함
+      - 그래서 link를 클릭하면 코드가 거의 순식간에 렌더링됨
+- assets
+  - 이미지
+    - `/public`디렉토리에 넣으면 서빙 가능
+    - `next/image`
+      - 런타임 Resizing, 이미지 optimizing 가능
+      - 뷰포트에 들어오면 그때 lazy하게 로드됨
+  - 써드파티 js
+    - analytics, ads, customer support widget, sdk등을 넣기 위함
+    - 헤드(`<Head><script src="..."></script></Head>`)에 옆과 같이 넣어줌
+  - 글로벌 CSS
+    - `_app.js`에서만 임포트해서 사용가능
+    - tailwind css, sass를 비롯한 각종 세팅법
+      - https://nextjs.org/learn/basics/assets-metadata-css/styling-tips
+- pre-rendering and data fetching
+  - 개요
+    - nextjs에서는 모든 페이지를 pre-render시켜서 빌드 타임에 HTML을 미리 생성해둠
+    - 각 HTML은 해당 페이지를 위해서 최소하게 필요한 js 코드만 실행함 (hydration)
+  - prerender의 종류
+    - Static Generation
+      - 빌드 타임에 HTML을 생성하는 방식
+      - 각 request마다 재사용함
+      - `getStaticProps()`
+    - Server-side Rendering
+      - 각 request마다 HTML을 생성하는 방식
+      - `getServerSideProps()`
+- *dynamic routes*
+  - 개요
+    - 페이지의 패스가 external data에 의존하는 경우, 외부 데이터와 패스에 의존하는 페이지를 빌드 타임에 만들 수 있게 함
+    - e.g) 블로그의 각 포스팅
+  - `fallback` 설정
+    - false
+      - `getStaticPaths`에서 반환되지 않은 패스는 전부 404페이지
+    - true
+      - fallback 버전 페이지를 제공
+    - blocking
+      - 새로운 패스가 서버사이드 렌더링됨
+  - c.f) 404페이지는 `pages/404.js`로 만들면 됨
+- API route
+  - 개요
+    - Nodejs 서버리스 함수로 endpoint를 만드는 방법
