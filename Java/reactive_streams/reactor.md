@@ -51,6 +51,13 @@ Mono.defer와 Mono.switchIfEmpty
 
 ## 잘 사용하는 오퍼레이터와 의미
 
+### 에러 처리 관련
+
+- `onErrorResume`
+  - 
+
+### Synchronization 관련
+
 - `block`
   - this Mono를 구독하고, next 시그널이 수신될 때 까지 무기한 블로킹을 함
   - Mono가 empty로 끝나면, null을 반환하고, 값이 있으면 그 값을 반환
