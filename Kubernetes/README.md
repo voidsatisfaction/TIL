@@ -140,15 +140,61 @@
 
 ### 쿠버네티스 오브젝트
 
+yaml파일로 만들어진 object spec의 예시
+
+```yaml
+apiVersion: apps/v1 # required: K8s의 API버전
+kind: Deployment    # required: 생성하고자 하는 오브젝트의 종류
+metadata:           # required: 오브젝트의 유니크 식별자
+  name: nginx-deployment
+spec:               # required: 원하는 state(각 팟에 대해서, 팟과 desired 상태를 )
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:     # StatefulSet 컨트롤러가 생성하는 팟들을 나타냄
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
 - 개요
   - 쿠버네티스 오브젝트는 쿠버네티스 시스템의 영속적인 엔티티들을 의미함
-  - 쿠버네티스는 클러스터의 상태를 이러한 엔티티로 나타냄
-    - e.g) 어떤 컨테이너화된 애플리케이션 / 노드가 실행되고 있는지
-    - 그러한 애플리케이션이 사용가능한 자원
-    - 애플리케이션이 동작하는 방법에 대한 정책
-      - 재시작 정책, 업그레이드, fault-tolerance
+  - 쿠버네티스는 클러스터의 상태를 엔티티로 나타냄
+- 내용
+  - 어떤 컨테이너화된 애플리케이션 / 노드가 실행되고 있는지
+  - 그러한 애플리케이션이 사용가능한 자원
+  - 애플리케이션이 동작하는 방법에 대한 정책
+    - 재시작 정책, 업그레이드, fault-tolerance
 - 특징
   - 오브젝트를 만들면, 쿠버네티스 시스템은 지속적으로 해당 오브젝트가 존재하도록 동작함
     - 클러스터의 desired state를 만듬
   - 쿠버네티스 오브젝트를 만들고, 수정하고, 삭제하기 위해서는, 쿠버네티스 API를 사용해야 함
     - `kubectl`등과 같은 툴로도 제어 가능
+- Object spec & status
+  - 개요
+    - 거의 모든 쿠버네티스 오브젝트는 오브젝트의 설정을 제어하는 두개의 네스팅된 오브젝트 필드를 포함함
+      - `(object)spec`
+      - `(object)status`
+      - 선언적으로 desired state를 기술해서 오브젝트를 생성함
+    - 쿠버네티스 시스템은 spec을 이용해서 오브젝트를 생성하고, 지속적으로 현재 state를 spec으로 맞춤
+    - spec은 일반적으로 yaml파일로 기술
+    - 해당 파일을 JSON으로 바꾸고, API 리퀘스트를 보낼 수 있음
+      - `kubectl apply -f ~.yaml` 이런식으로도 가능
+  - status
+    - 오브젝트의 현재 상태
+      - control plane이 지속적으로 모든 오브젝트의 실제 상태를 desired 상태로 싱크를 맞춰줌
+        - *control plane*이 맞는가?
+    - 예시
+      - 쿠버네티스에서는 하나의 deployment도 클러스터에서 동작하는 애플리케이션을 타나내는 오브젝트임
+      - deployment를 만들때, deployment `spec`을 만들어서, 실행할 애플리케이션의 replica를 만듬
+      - 쿠버네티스 시스템은 deployment 스펙을 읽고 인스턴스의 개수를 원하는 상태로 맞춤
+  - spec
+    - 오브젝트의 desired 상태
+    - 쿠버네티스 시스템이 계속해서 이 스펙으로 상태를 맞춰줌
