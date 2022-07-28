@@ -21,6 +21,7 @@
       - 배포되는 컨테이너들의 원하는 상태를 기술언어로 기술 가능
     - *서비스 디스커버리와* 로드밸런싱
       - 팟들에게 각자 IP 주소를 부여하고, 팟의 집합에 하나의 DNS 이름을 부여하고 그것들의 로드밸런싱 가능
+        - 하나의 DNS 이름으로 inbound 트래픽이 들어오고, 그 트래픽을 로드밸런싱
     - 스토리지 오케스트레이션
       - 다양한 스토리지 마운트해서 사용 가능
     - 시크릿 / 설정 관리
@@ -111,7 +112,7 @@
     - Kubernetes가 서포트하는 종류
       - `containerd`
       - `CRI-O`
-      - 그 외의 Kubernetes CRI (Container Runtime Interface)
+      - 그 외의 Kubernetes CRI (Container Runtime Interface)를 만족하는 구현체들
 
 #### Addons
 
@@ -121,7 +122,7 @@
 - 종류
   - DNS(필수)
     - 모든 쿠버네티스 클러스터는 클러스터 DNS를 갖음
-    - 쿠버네티스에 의해서 시작된 컨테이너들은 DNS 서칭시에, DNS서버를 포함함
+    - 쿠버네티스에 의해서 시작된 컨테이너들은 DNS 서칭시(외부와의 통신할때)에, 쿠버네티스 DNS역시 포함함
   - Web UI (대시보드)
     - 쿠버네티스 클러스터를 위한 웹 기반 UI
     - 유저가 애플리케이션을 트러블 슈팅하거나, 클러스터 그 자체를 트러블 슈팅할 수 있게 도와줌
@@ -147,7 +148,7 @@ apiVersion: apps/v1 # required: K8s의 API버전
 kind: Deployment    # required: 생성하고자 하는 오브젝트의 종류
 metadata:           # required: 오브젝트의 유니크 식별자
   name: nginx-deployment
-spec:               # required: 원하는 state(각 팟에 대해서, 팟과 desired 상태를 )
+spec:               # required: 원하는 state(e.g 각 팟에 대해서 desired 상태를 기술)
   selector:
     matchLabels:
       app: nginx
