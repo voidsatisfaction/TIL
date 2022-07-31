@@ -2,6 +2,16 @@
 
 - 의문
 - 개요
+  - 쿠버네티스의 등장인물 & 용어소개
+  - 컴포넌트
+    - Control Plane Components
+    - Node Components
+    - Addons
+  - 쿠버네티스 API
+  - 쿠버네티스 오브젝트(리소스/카인드)
+- 태스크
+  - 애플리케이션 실행
+    - HPA(HorizontalPodAutoscaler)
 
 ## 의문
 
@@ -11,7 +21,7 @@
   - 개요
     - 컨테이너화된 서비스들을 다루는 오픈소스 플랫폼
       - 선언적 설정과 자동화
-      - A라는 상태로 계속해서 유지하도록 설정파일로 관리
+      - desired state를 계속해서 유지하도록 설정파일로 관리
   - 필요성
     - 분산 시스템을 탄력있게 실행하는 프레임워크
       - scaling, failover
@@ -36,6 +46,68 @@
       - 컨테이너가 죽으면 재시작시키고, 노드가 죽으면 컨테이너들을 재배치 시키고, 유저가 정의한 헬스체크에 반응하지 않는 컨테이너를 죽이고, 서빙이 준비되기 전까지는 노출시키지 않음
     - 확장성
       - 소스코드를 변경시키지 않고도, 쿠버네티스 클러스터에 기능 추가 가능
+
+### 쿠버네티스의 등장인물 & 용어소개
+
+- 등장인물
+  - 컨트롤러
+- 그 외 용어
+  - 팟
+    - Scheduling & Preemption & Eviction
+    - Pod Disruption
+  - namespace
+
+#### 등장인물
+
+- 컨트롤러
+  - 정의
+    - **클러스터의 상태를 보고 있다가, 특정 오브젝트를 필요할 때 desired state로 상태 변화를 일으키는 프로그램**
+      - *상태변화는 어떤식으로 일으키는 걸까? control plane의 API로 일으키는걸까? 아니면 kubelet같은걸로 직접?*
+  - 특징
+    - 적어도 하나의 쿠버네티스 리소스 타입(오브젝트)을 트래킹
+      - 이러한 오브젝트는 spec필드가 존재하여, desired state를 나타냄
+      - 해당 리소스의 컨트롤러는 쿠버네티스에서 desired state로 맞춰주기 위한 역할 담당
+    - API server로 유용한 side effect를 발생시킬 수도 있음
+    - 컨트롤러는 간단할 수록 좋음
+    - 컨트롤러는 언제나 실패할 수 있으므로 그것을 감내하도록 설계해야 함
+  - 종류
+    - 빌트인 컨트롤러
+      - `kube-controller-manager`에서 실행됨
+      - 종류
+        - Deployment, Job
+    - 커스텀 컨트롤러
+      - 쿠버네티스 확장을 위해서 컨트롤 플레인 바깥에서 동작하는 컨트롤러
+      - 팟 내부에서 동작할 수도 있고, 아예 쿠버네티스 외부에서 동작할수도 있음
+  - 컨트롤러 패턴
+    - API server를 이용한 제어
+      - 예시: Job 컨트롤러
+        - 팟을 생성해서 Job을 실행하고 팟을 제거함
+        - Job은 쿠버네티스 오브젝트
+          - 팟을 실행하거나 여러 팟을 실행해서 하나의 태스크를 실행하고 멈춤
+      - Job 컨트롤러는 직접 팟이나 컨테이너를 실행하지 않고, API 서버로 팟을 생성하거나 제거하도록 함
+      - Job의 상태 마킹도 함
+    - 직접 제어
+      - 예시: 충분한 노드를 유지하기위한 컨트롤러
+        - desired state를 유지하기 위해서 외부 시스템과 상호작용 후 API 서버로 상태 보고
+          - 쿠버네티스 control plane에서 간접적으로 여러 작업을 할 수 있도록 함(IP주소 관리, 스토리지 서비스, 클라우드 관련)
+
+#### 그 외 용어
+
+- 팟
+  - Scheduling & Preemption & Eviction
+    - Scheduling
+      - 팟을 노드에 매칭시켜서, kubelet이 팟을 실행할 수 있도록 하는 것
+    - Preemption
+      - 높은 우선순위를 갖는 팟을 노드에 스케쥴할 수 있도록 낮은 우선순위를 갖는 팟을 제거하는 것
+    - Eviction
+      - 팟을 노드에서 제거하는 것
+  - Pod Disruption
+    - 자발적으로 혹은 비자발적으로 팟이 노드에서 제거되는 것
+- namespace
+  - 하나의 클러스터에서 오브젝트의 그룹을 격리하는 매커니즘
+  - 오브젝트의 name은 namespace속에서 유일해야 함
+  - 오직 namespaced object(Deployment, Services 등)에서만 사용가능
+    - 클러스터 단위의 오브젝트인 StorageClass, Nodes, PersistentVolumes에서는 사용 불가
 
 ### 컴포넌트
 
@@ -66,22 +138,27 @@
   - `etcd`
     - 쿠버네티스가 사용하는 모든 클러스터 데이터를 저장하는데에 사용되는 key-value 스토어
   - `kube-scheduler`
-    - 새로 만들어진 노드에 할당되지 않은 팟들을 보고, 그것이 실행될 노드를 선택함
+    - 노드에 아직 할당되지 않은 새로 만들어진 팟들을 보고, 그것이 실행될 노드를 선택함(스케쥴링)
       - *팟이 만들어진다 != 팟이 실행된다?*
       - 다양한 요소를 고려함
         - 개인, 집단 자원 requirements, hardware/software/policy 제한
   - `kube-controller-manager`
-    - 컨트롤러 프로세스를 실행하는 컴포넌트
-    - 컨트롤러는 논리적으로는 분리된 프로세스이나, 복잡도를 줄이기 위해서 실제로는 하나의 바이너리에서 싱글 프로세스로 동작함
+    - 개요
+      - 컨트롤러 프로세스를 실행하는 컴포넌트
+        - c.f) 컨트롤러란, 지속적으로 시스템의 상태를 유지하는 것(e.g 온도조절장치)
+          - 클러스터의 상태를 보고 있다가, 필요할 때 desired state로 상태 변화를 일으킴
+      - 컨트롤러는 논리적으로는 분리된 프로세스이나, 복잡도를 줄이기 위해서 실제로는 하나의 바이너리에서 싱글 프로세스로 동작함
     - 종류
       - node controller
         - 노드가 죽었을경우, 알아채고 반응하는 역할
+      - deployment controller
       - job controller
         - 태스크를 수행하는 잡 오브젝트를 보고, 팟을 만들어 태스크가 끝나기까지 실행
       - endpoints controller
         - *엔드포인트 오브젝트들을 살게 함?*
       - service account & token controllers
         - *default 계정과, 새 namespace를 위한 API 접근 토큰을 생성*
+      - HPA(Horizontal Pod Autoscaler) controller
   - `cloud-controller-manager`
     - 클라우드에 특화된 제어 로직을 포함
       - 클라우드 제공자의 API로 클러스터를 링크함
@@ -139,9 +216,9 @@
     - API 오브젝트(Pods, Namespaces, ConfigMaps, Events)들의 상태를 조작하고, 쿼리할 수 있도록 함
   - 대개 `kubectl`이라는 커맨드라인 인터페이스나 `kubeadm`이라는 다른 커맨드라인 툴(둘다 API를 사용)을 사용해서 조작하나, 직접 REST call을 해서 API에 직접 접근도 가능
 
-### 쿠버네티스 오브젝트
+### 쿠버네티스 오브젝트(리소스/카인드)
 
-yaml파일로 만들어진 object spec의 예시
+yaml파일로 만들어진 object spec(desired state를 기술)의 예시
 
 ```yaml
 apiVersion: apps/v1 # required: K8s의 API버전
@@ -166,15 +243,32 @@ spec:               # required: 원하는 state(e.g 각 팟에 대해서 desired
 ```
 
 - 개요
-  - 쿠버네티스 오브젝트는 쿠버네티스 시스템의 영속적인 엔티티들을 의미함
-  - 쿠버네티스는 클러스터의 상태를 엔티티로 나타냄
-- 내용
-  - 어떤 컨테이너화된 애플리케이션 / 노드가 실행되고 있는지
-  - 그러한 애플리케이션이 사용가능한 자원
+  - **팟으로 이루어진 쿠버네티스 시스템의 영속적인 엔티티**
+    - 쿠버네티스는 클러스터의 상태를 엔티티로 나타냄
+  - 오브젝트 = 리소스 = 카인드
+  - *오브젝트의 관리는 컨트롤러로 된다?*
+- 오브젝트가 기술되는 방식
+  - 어떤 컨테이너화된 애플리케이션이 어떤 노드에서 실행되고 있는지
+  - 그러한 애플리케이션이 사용가능한 자원(resource)
   - 애플리케이션이 동작하는 방법에 대한 정책
     - 재시작 정책, 업그레이드, fault-tolerance
+- 관리 방법
+  - 1 Imperative commands
+    - 클러스터에서 실행중인 오브젝트를를 직접 다룸(`kubectl`)
+    - 예시
+      - `kubectl create deployment nginx --image nginx`
+  - 2 Imperative object configuration
+    - 파일로 오브젝트의 상태를 설정하는데, 명시적으로 커맨드 작성(CUD)
+    - 예시
+      - `kubectl create -f nginx.yaml`
+      - `kubectl delete -f nginx.yaml -f redis.yaml`
+      - `kubectl replace -f nginx`
+  - 3 Declarative object configuration
+    - 파일로 오브젝트의 상태를 설정하는데, 파일 자체에서 어떤 동작(create/update/delete)을 할것인지 선언적으로 알 수 있음
+    - 예시
+      - `kubectl apply -f configs/`
 - 특징
-  - 오브젝트를 만들면, 쿠버네티스 시스템은 지속적으로 해당 오브젝트가 존재하도록 동작함
+  - 오브젝트를 만들면, 쿠버네티스 시스템은 지속적으로 해당 오브젝트가 존재하도록 동작함(그것을 관리하는게 컨트롤러)
     - 클러스터의 desired state를 만듬
   - 쿠버네티스 오브젝트를 만들고, 수정하고, 삭제하기 위해서는, 쿠버네티스 API를 사용해야 함
     - `kubectl`등과 같은 툴로도 제어 가능
@@ -189,7 +283,7 @@ spec:               # required: 원하는 state(e.g 각 팟에 대해서 desired
     - 해당 파일을 JSON으로 바꾸고, API 리퀘스트를 보낼 수 있음
       - `kubectl apply -f ~.yaml` 이런식으로도 가능
   - status
-    - 오브젝트의 현재 상태
+    - *오브젝트의 현재 상태?*
       - control plane이 지속적으로 모든 오브젝트의 실제 상태를 desired 상태로 싱크를 맞춰줌
         - *control plane*이 맞는가?
     - 예시
@@ -199,3 +293,97 @@ spec:               # required: 원하는 state(e.g 각 팟에 대해서 desired
   - spec
     - 오브젝트의 desired 상태
     - 쿠버네티스 시스템이 계속해서 이 스펙으로 상태를 맞춰줌
+- 종류
+  - Pods
+  - 워크로드 오브젝트(리소스)
+    - Deployments
+    - ReplicaSet
+    - StatefulSets
+    - DaemonSet
+    - Jobs
+    - CronJob
+
+#### Pods
+
+#### Deployments
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3 # pod개수
+  selector:   # 어떤 팟을 매니징할것인지 찾는 방법 정의
+    matchLabels: # 레이블 이름으로 찾음
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx # app: nginx로 레이블됨
+    spec:
+      containers:  # 팟이 하나의 컨테이너 nginx만 실행하도록(desired state)
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
+- 개요
+  - **상태가 없는 Pods와 ReplicaSets의 선언적 업데이트**를 제공
+    - 그렇다면 가장 처음 초기에 아무것도 없을때에도 적용 가능
+- 동작
+  - Deployment에 desired state를 기술하고, **컨트롤러가** 상태를 desired state로 바꿈(속도 조절 가능)
+  - 새로운 ReplicaSets를 생성하거나, 존재하는 Deployments를 지우고 새로운 Deployments에 있는 리소스로 바꿀수도 있음
+- 유스케이스
+  - ReplicaSet의 rollout
+  - 팟의 새 상태를 선언
+  - 이전 버전의 Deployment로 롤백
+  - 부하를 더 감당하기 위해서 스케일업
+  - rollout의 정지
+
+#### ReplicaSet
+
+- 개요
+  - replica 팟의 안정적인 집합을 유지하기 위한 것
+    - 일반적으로 동일한 팟들의 특정 개수의 가용성을 보장하는데에 사용
+- spec
+  - selector: 팟을 특정
+  - replicas: 유지해야 하는 팟의 개수
+  - template: 개수를 유지하는 팟 대상의 정보
+- 이것을 직접 사용하지말고, Deployment를 사용하라
+
+#### StatefulSets
+
+- 개요
+  - stateful한 애플리케이션을 다루는데에 사용되는 오브젝트
+    - 팟의 배포와 스케일링을 관리함
+    - 팟의 순서와 유일성을 보장해줌
+
+#### DaemonSet
+
+#### Jobs
+
+#### CronJob
+
+## 태스크
+
+### 애플리케이션 실행
+
+#### HPA(Horizontal Pod Autoscaler)
+
+- 개요
+  - 수요에 맞춰서 workload resource(Deployment, StatefulSet)를 자동적으로 업데이트하는 기능
+    - 팟을 늘리는 방향(팟의 자원을 높이는 방향이 아님)
+  - 로드가 줄어들면 다시 minimum팟 개수로 스케일 다운함
+- 커맨드 예시
+  - 설정
+    - `kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10`
+  - status 보기
+    - `kubectl describe hp cm-test`
+- 오토스케일링 트리거 메트릭
+  - default
+    - CPU
+    - Memory
