@@ -12,11 +12,14 @@
   - TCP 기초
   - 데이터 송수신과 TCP 구조
 - DNS
+- VPN
 - 웹 서비스
 
 ## 의문
 
 ## 기초
+
+**Virtual = Logical = 소프트웨어**
 
 모든 소프트웨어의 구조
 
@@ -225,6 +228,51 @@ DNS의 질의 구조
     - *.naver.com을 다루는 DNS목록 중 하나에 쿼리
       - www.naver.com에 대응되는 ip주소를 반환
 - DNS에 주소 요청 반환값에는 항상 유효기간이 존재
+
+## VPN(Virtual Private Network)
+
+### Private Network
+
+프라이빗 네트워크
+
+![](./images/network/private_network1.png)
+
+- 개요
+  - LAN
+    - 외부로부터 방화벽을 설치해서 유해 트래픽 차단
+    - 내부에서는 비교적 자유롭게 접근 가능
+    - 전국에 LAN선을 깔아서 사용할 수 없음(비용문제)
+
+### VPN
+
+- 개요
+  - private network를 소프트웨어 적으로 확장시킨 기술
+    - 비용이 저렴함
+- SG(Secure Gateway)
+  - 개요
+    - Router & VPN을 지원함
+    - VPN클라이언트로 SG로 터널링을 함
+    - 클라이언트 컴퓨터는 IP주소를 부여받음
+- VPN 시나리오 예시(IPv3)
+  - SG 터널링이 성공
+  - Virtual NIC Driver가 생김
+  - Virtual NIC Driver에 새로운 부여받은 IP가 생김
+  - VPN내부의 컴퓨터에 접속 시도
+  - IP 헤더가 두개가 생김
+    - outer IP 패킷
+      - source: 클라이언트 컴퓨터가 할당받은 IP주소
+      - destination: 접속하고 싶은 VPN내부의 컴퓨터
+    - inner IP 패킷
+      - source: public IP주소
+      - destination: SG의 IP주소
+      - 암호화됨
+  - 해당 페킷을 인터넷을 통해서 전송
+  - SG가 outer IP 패킷을 확인호 inner IP 패킷의 복호화 수행
+  - 내부 컴퓨터에 접근 가능
+- 방식
+  - L3 VPN
+    - IPSec
+  - SSL VPN
 
 ## 웹 서비스
 
