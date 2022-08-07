@@ -4,13 +4,31 @@
 - 기초
   - 네트워크 레이어와 레이어 별 식별자
   - Host, Switch, Network 이들의 관계에 대해
+  - IPv4주소 체계
+  - 데이터 단위 정리
+  - 인터페이스 선택의 핵심 원리
+  - LAN vs WAN(널널한 개발자의 뇌피셜)
 - TCP/IP
   - TCP 기초
   - 데이터 송수신과 TCP 구조
+- DNS
+- 웹 서비스
 
 ## 의문
 
 ## 기초
+
+모든 소프트웨어의 구조
+
+![](./images/network/software_structure1.png)
+
+모든 소프트웨어는 인터페이스, 제어체계, 데이터로 이루어져 있음
+
+- 인터페이스
+  - GUI, API
+- 제어체계(연산)
+  - 소프트웨어
+- 데이터
 
 ### 네트워크 레이어와 레이어 별 식별자
 
@@ -90,6 +108,46 @@ IPv4 주소 체계
   - Host ID
     - 14
 
+### 데이터 단위 정리
+
+네트워크 데이터 단위 정리
+
+![](./images/network/network_data_unit1.png)
+
+- 유저 레이어
+  - 소켓수준에서는 stream 데이터 단위
+    - 끝을 알 수 없는 데이터
+- 커널 레이어
+  - TCP
+    - 세그먼트
+  - IP
+    - 패킷(세그먼트를 encapsulate)
+      - MTU(Maximum Transmission Unit): 1.5KB
+- 하드웨어 레이어
+  - NIC
+    - 프레임
+
+### 인터페이스 선택의 핵심 원리
+
+네트워크 인터페이스 선택의 핵심 원리 다이어그램
+
+![](./images/network/network_interface_selection1.png)
+
+- 여러 네트워크 인터페이스가 있을때, 어떤 인터페이스를 선택하는가는 '메트릭 값'즉, 비용으로 결정한다
+  - 비용은 OS나 장치 제조사마다 규칙과 노하우가 존재
+
+### LAN vs WAN(널널한 개발자의 뇌피셜)
+
+LAN과 WAN의 구분
+
+![](./images/network/lan_vs_wan1.png)
+
+- 기준
+  - 물리적이냐 vs 논리적이냐
+- 개요
+  - 인터넷은 논리적(소프트웨어) 네트워크 = WAN
+  - 이더넷은 물리적(하드웨어) 네트워크 = LAN = broadcast address가 적용되는 범위
+
 ## TCP/IP
 
 ### TCP 기초
@@ -134,3 +192,46 @@ TCP 커넥션
     - 그와 동시에 송신측에 ACK 세그먼트 보냄
   - 주의
     - TCP buffer에서 file buffer로 읽는 속도 > 전송속도 여야 속도가 느리지 않음
+
+## DNS
+
+- 세상의 인터넷을 멈추게 만드는 방법
+  - Root DNA 13대를 멈추게 만들면 됨(왜냐면, Internet = Router + DNS)
+
+### 개요
+
+DNS의 질의 구조
+
+![](./images/network/dns_structure1.png)
+
+루트 DNS들
+
+![](./images/network/root_dns1.png)
+
+- DNS 정의
+  - 도메인 네임을 IP주소로 반환해주는 매핑 서버
+- DNS 요청(www.naver.com 을 쿼리할 경우)
+  - 로컬 머신
+    - 메모리 DNS 캐시 서칭
+    - host 파일 서칭
+  - 공유기
+    - 공유기(DNS 포워딩)가 대리로 반환
+  - ISP
+    - ISP가 제공하는 DNS에 쿼리(캐시에 존재하면 반환)
+    - ISP가 RootDNS에 쿼리
+      - *.com을 다루는 DNS 목록을 반환
+    - *.com을 다루는 DNS목록 중 하나에 쿼리
+      - *.naver.com를 다루는 DNS 목록을 반환
+    - *.naver.com을 다루는 DNS목록 중 하나에 쿼리
+      - www.naver.com에 대응되는 ip주소를 반환
+- DNS에 주소 요청 반환값에는 항상 유효기간이 존재
+
+## 웹 서비스
+
+웹 서비스 구조
+
+![](./images/network/web_service1.png)
+
+- Web Server
+- WAS(Web Application Server)
+- DB
