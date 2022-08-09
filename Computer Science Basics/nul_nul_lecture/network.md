@@ -13,6 +13,9 @@
   - 데이터 송수신과 TCP 구조
 - DNS
 - VPN
+  - PN
+  - VPN
+- 인터넷 공유기 작동원리
 - 웹 서비스
 
 ## 의문
@@ -273,6 +276,40 @@ DNS의 질의 구조
   - L3 VPN
     - IPSec
   - SSL VPN
+
+## 인터넷 공유기 작동원리
+
+인터넷 공유기 작동 원리
+
+![](./images/network/router1.png)
+
+- 공유기
+  - 개요
+    - LAN에서 외부로 가는 패킷의 IP헤더 정보를(src ip, src port) NAT-Table을 이용하여 변조하고 함께 통신
+    - 패킷 필터링 방화벽 역할을 함
+      - 웜이 사라짐
+  - NAT(Network Address Translation)
+    - NAT-Table
+      - 개요
+        - local ip
+        - local port
+        - remote ip
+        - remote port
+        - 공유기가 패킷에대해서 설정한 port(설정)
+
+부하분산
+
+![](./images/network/lb1.png)
+
+- 부하분산
+  - 개요
+    - 공유기를 거꾸로 하면 됨
+    - L4 스위치
+  - 방식
+    - 라운드 로빈
+    - ...
+  - 특징
+    - 보통은 2대를 두고, standby 시켜둠
 
 ## 웹 서비스
 
