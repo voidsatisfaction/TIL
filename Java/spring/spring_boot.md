@@ -5,8 +5,10 @@
 
 ## 의문
 
-- JAR(Java ARchive)
-- WAR(Web application ARchive)
+- `@Repository`, `@Service`, `@Controller`는 Web에서 주로 사용되는데, `@Component`는 어떤 경우에 사용되는가?
+  - `@Component`는 위의 경우 이외의 경우에 사용되나, Meta Annotation으로 구현해서 사용하는게 바람직
+- `@Controller`, `@RestController`
+  - `@RestController` = `@Controller` + `@ResponseBody`
 
 ## 개요
 
@@ -56,3 +58,27 @@
       - build 폴더가 생김
   - 실행(예시)
     - `java -jar demo-0.0.1-SNAPSHOT.jar`
+
+### 자동 설정
+
+코딩 자동 설정
+
+![](./images/spring_boot/auto_configuration1.png)
+
+- 만약 애플리케이션 빈과 자동 설정으로 제공하는 빈의 id가 중복되면, 빌드가 안되도록 막혀있음
+  - 풀어줄 순 있다
+
+### 외부 설정 파일
+
+![](./images/spring_boot/properties1.png)
+
+- 개요
+  - 코드에서 값을 밖으로 꺼내는 방법 제공
+- 구체적이고 가까운 위치에 있는 설정의 우선 순위가 높음
+  - 구체적
+    - config라는 디렉터리에 들어있는 설정인지 아닌지
+  - 가까운
+    - JAR파일 안보다는 커맨드라인 or 파일 시스템에 있는 application properties가 가까움
+      - 대신 여기에서는 current working directory랑도 싱크가 맞아야 함(실행하는 working directory에 있는 application.properties)
+
+### 배포
