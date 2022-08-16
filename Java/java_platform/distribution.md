@@ -5,6 +5,7 @@
   - JAR(Java ARchive)
   - WAR(Web application ARchive)
   - APK(Android Application Package)
+- 스프링 부트 빌드(gradle bootjar)
 
 ## 의문
 
@@ -40,3 +41,33 @@
 
 - 개요
   - 안드로이드 애플리케이션에서 사용되는 자바 압축 포맷
+
+## 스프링 부트 빌드(gradle bootjar)
+
+```
+.
+├── bootJarMainClassName // 실행되는 클래스 e.g) com.example.demo.DemoApplicationKt
+├── classes              // 클래스 파일들이 존재함
+│   └── kotlin
+│       └── main
+│           ├── META-INF // 자바2 플랫(자바 플랫폼)에서 애플리케이션이나, 확장기능, 클래스로더 그리고 서비스들을 설정하기위한 디렉터리 e.g) 스프링 부트 빈 등록 spring.factories
+│           └── com      // 실제 클래스 파일들(바이트코드)이 들어감
+├── kotlin
+│   ├── compileKotlin
+│   │   ├── cacheable
+│   │   │   ├── caches-jvm
+│   │   │   └── last-build.bin
+│   │   └── localstate
+│   │       └── build-history.bin
+│   └── sessions
+├── libs
+│   └── demo-0.0.1-SNAPSHOT.jar  // 메인 jar 실행파일 java -jar demo-0.0.1-SNAPSHOT.jar 로 실행가능
+├── resources                    // 리소스 파일은 그대로 있다
+│   └── main
+│       ├── application.properties
+│       ├── static
+│       └── templates
+└── tmp
+    └── bootJar
+        └── MANIFEST.MF          // 해당 jar의 메타데이터(Start-Class, Spring-Boot-Classes, Spring-Boot-Lib, Spring-Boot-Classpath-Index, Spring-Boot-Layers-Index)
+```
