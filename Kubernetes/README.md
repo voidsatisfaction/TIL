@@ -10,9 +10,12 @@
     - Addons
   - 쿠버네티스 API
   - 쿠버네티스 오브젝트(리소스/카인드)
+- 워크로드
 - 태스크
   - 애플리케이션 실행
     - HPA(HorizontalPodAutoscaler)
+- 설정(configuration)
+- 스토리지
 
 ## 의문
 
@@ -394,11 +397,129 @@ spec:
 
 #### DaemonSet
 
-#### Jobs
+## 워크로드
 
-#### CronJob
+### 팟
 
-## 태스크
+### 워크로드 리소스
+
+#### 레플리카 셋(ReplicaSet)
+
+- 개요
+  - 레플리카 팟 집합을 항상 안정적으로 유지하는 것
+    - 명시된 동일 팟 개수에 대한 가용성 보증
+- 특징
+  - 레플리카 셋 오브젝트를 직접 조작하지말고, 디플로이먼트를 사용하길 권장
+
+## 서비스, 로드밸런싱, 네트워킹
+
+사실상 팟은 가상 호스트!!
+
+- 개요
+  - **클러스터의 모든 팟은 고유 IP주소를 갖음**
+    - 팟간의 연결을 명시적으로 만들 필요가 없음
+    - 컨테이너 포트를 호스트 포트에 매핑할 필요가 거의 없음
+    - 팟을 VM또는 물리 호스트 처럼 다룰 수 있는 깔끔하고 하위 호환성을 갖는 모델 제시
+  - 팟 별 IP 모델
+    - 팟 내의 컨테이너들은 IP주소, MAC 주소를 포함하는 네트워크 네임스페이스 공유
+    - **팟 내의 컨테이너들이 각자의 포트에 `localhost`로 접근 가능**
+- 네트워크 구현 요구사항(노드 레벨)
+  - NAT 없이 노드 상의 모든 팟과 통신 가능
+  - 노드 상의 에이전트(시스템 데몬, kubelet)는 해당 노드의 모든 팟과 통신 가능
+- 문제 해결
+  - 팟 내의 컨테이너는 루프백을 통한 네트워킹을 사용하여 통신
+  - 클러스터 네트워킹은 서로 다른 팟 간의 통신 제공
+  - 서비스 리소스를 사용하면, 팟에서 실행 중인 애플리케이션을 클러스터 외부에서 접근 가능
+  - 서비스를 사용하여, 서비스를 클러스터 내부에서만 사용할 수 있도록 할 수도 있음
+
+### 서비스
+
+- 개요
+  - 팟 집합에서 실행중인 애플리케이션을 네트워크 서비스로 노출하는 추상화 방법
+    - *네트워크 서비스란?*
+    - 서로 다른 팟의 네트워킹을 추상화
+      - IP추적 등..(서비스 디스커버리)
+  - 쿠버네티스는 팟에게 고유한 IP주소화 팟 집합에 대해서 단일 DNS명을 부여하고, 그것들 간에 로드 밸런스를 수행할 수 있음
+
+## 설정(configuration)
+
+### Best practices
+
+- 일반
+  - 안정된 최신 API버전 명시
+  - 클러스터 적용 전에 버전 컨트롤에 저장되어 있어야 함
+    - 재 생성과 복원을 빠르게 해줌
+  - YAML로 구성
+  - 연관된 오브젝트들은 하나의 파일에 모아놓기
+    - e.g) https://github.com/kubernetes/examples/blob/master/guestbook/all-in-one/guestbook-all-in-one.yaml
+  - `kubectl`은 디렉터리에 대해 호출 가능
+  - 불필요한 기본 값을 명시하지 않는다 - 간단하고 최소한의 설정은 에러를 덜 발생시킨다
+- 단독 팟 vs 레플리카셋, 디플로이먼트, 잡
+  - 단독 팟(레플리카셋이나 디플로이먼트에 연결되지 않은 팟)을 사용하지 않는것을 권장
+    - 노드 장애 이벤트가 발생해도 다시 스케쥴링 되지 않기때문
+
+## 스토리지
+
+### 볼륨
+
+configMap 볼륨
+
+```yaml
+# configMap 정의하는 쪽
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  SPECIAL_LEVEL: very
+  SPECIAL_TYPE: charm
+---
+# 사용하는 쪽
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dapi-test-pod
+spec:
+  containers:
+    - name: test-container
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/sh","-c","cat /etc/config/keys" ]
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: special-config
+        items:
+        - key: SPECIAL_LEVEL
+          path: keys
+  restartPolicy: Never
+
+# 팟이 동작할때, cat /etc/config/keys 를 호출하면 very가 출력됨
+```
+
+- 개요
+  - 스토리지
+- 분류
+  - 임시
+    - 팟의 수명과 같음
+  - 퍼시스턴트
+    - 팟의 수명과 관계없이 남음
+- 사용
+  - `.spec.volumes`에서 팟에 제공할 볼륨 지정
+  - `.spec.containers[*].volumeMounts`의 컨테이너에 해당 볼륨을 마운트할 위치를 선언
+    - 팟의 각 컨테이너에 대해서, 어디에 마운트할지 정해야 함
+  - 볼륨은 다른 볼륨 안에 마운트 될 수 없음
+- 유형
+  - configMap
+    - 구성데이터를 팟에 주입하는 방법 제공
+    - 컨피그맵에 저장된 데이터는 configMap 유형의 볼륨에서 참조되고, 컨테이너화된 애플리케이션이 소비
+    - 컨비그맵을 사용하려면, 먼저 컨피그맵을 생성해야 함
+    - 텍스트 데이터는 UTF-8 문자 인코딩을 사용하는 파일로 노출됨. 다른 문자 인코딩의 경우 `binaryData`를 사용
+  - emptyDir
+    - 팟이 노드에 할당될 때 처음 생성되며, 노드에서 팟이 실행되는 동안에만 존재
 
 ### 애플리케이션 실행
 
