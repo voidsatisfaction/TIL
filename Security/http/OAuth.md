@@ -16,6 +16,30 @@ RFC 6750
     - 클라이언트에게 발행된 access authorization을 나타내는 문자열
   - token은 resource owner로부터 동의를 받아 authorization server로부터 생성됨
 
+## OAuth의 구성 및 순서
+
+![](./images/oauth1.jpg)
+
+- 용어
+  - User
+    - Resource에 대한 접근 권한을 갖고 있는 유저
+  - Client
+    - 접근 권한을 요청하는 주체(대개 서버)
+  - Resource Server
+    - Authorization Server
+      - Client에게 인증 및 권한을 주는 서버
+      - 인증이 완료되면 client에 access token을 발급해준다
+    - Resource Server
+      - 실제 리소스를 갖고 있는 서버
+      - access token으로 client가 리소스를 접근할 수 있게 해준다
+- 본질
+  - Client는 User와 Authorization server둘 다 로부터 인가(authorize)를 받아야 함
+- 순서
+  - 0 Client를 Authorization 서버에 등록
+  - 1 User가 Client를 Authorize
+  - 2 Authorization Server가 Client를 Authorize
+  - 3 access token의 발급
+
 ## 실전예시: OAuth2 login
 
 OAuth2 login 예시
