@@ -33,6 +33,7 @@
 
 ## 용어 설명
 
+- 전체 용어 및 관계
 - structured concurrency
 - suspending function
 - coroutine scope
@@ -40,10 +41,46 @@
 - coroutine builder
 - coroutine context
 
+### 전체 용어 및 관계
+
+- structured concurrency
+  - 개요
+    - 코루틴 스코프가 코루틴의 실행과 라이프 사이클을 관리하는 방식
+      - 새 코루틴은 특정 코루틴 스코프에서만 시작될 수 있음(라이프사이클 제한)
+      - 코루틴의 무엇인가가 잘못되었거나, 유저가 동작을 철회하면 child 코루틴이 자동적으로 캔슬됨
+    - 구현 방법
+      - job을 통한 구현
+- coroutine scope
+  - 개요
+    - 코루틴 인스턴스를 실행 및 관리하는 스코프
+      - 관리 정책은 context로 나타나있음
+    - 코루틴은 코루틴 스코프에서만 실행됨
+      - 코루틴의 라이프 타임을 제한함
+      - lost, leak 방지 / error가 잘 도달할 수 있게 함
+    - **서로 다른 코루틴들의 parent-child 관계의 매니징을 책임짐**
+      - 부모코루틴은 자식 코루틴을 기다림
+      - 자식이 에러가 나면, 자식의 자식과 부모에게 에러가전달되고, 부모는 또다시 자식과 부모로 에러 전달
+    - **라이프 사이클을 갖는 오브젝트가 있을 때, 해당 오브젝트와 관련되는 다양한 코루틴이 동작할때, 오브젝트의 행동이 취소되면, 모든 코루틴들이 취소되어야 함**
+      - 메모리 릭을 막자
+      - e.g) 웹 서버 프레임워크 리퀘스트 컨텍스트 오브젝트
+  - 종류
+    - 커스텀 코루틴 스코프 생성
+      - `CoroutineScope`
+    - 코루틴 스코프 빌더
+      - `coroutineScope`, `supervisorScope`
+      - `withContext`
+- coroutine builder
+  - 개요
+    - coroutine scope의 확장 함수이며, 코루틴을 생성하는 방식
+    - 코루틴 스코프의 컨텍스트를 상속해서 중단도 전파함
+  - 종류
+    - `launch`
+    - `async`
+
 ### structured concurrency
 
 - 개요
-  - 코루틴 스코프가, 코루틴의 실행과 라이프사이클을 관리하는것
+  - 코루틴 스코프가, 코루틴의 실행과 라이프사이클을 관리하는 방식
 - 특징
   - 새 코루틴들은 특정 코루틴 스코프에서만 시작될 수 있음
     - 스코프 내의 코루틴의 라이프 타임을 제한함
@@ -58,7 +95,8 @@
   - 내부적으로 다른 suspending function을 실행해서 코루틴 인스턴스를 suspend할 수 있음
 - 특징
   - 이 suspending function을 실행만한다고 코루틴 인스턴스가 생성되는건 아님
-    - coroutine builder와 함께 생성해야 함
+    - 코루틴은 coroutine builder와 함께 생성해야 함
+    - 즉, **코루틴 인스턴스는 Job이 동반되어야 함**
 
 ### coroutine scope
 
@@ -115,9 +153,8 @@ delay(1000) // visually confirm that they don't work
   - 반드시 블록과 관련된 개념은 아님
     - e.g) `scope.launch(...)`
   - scope가 정의될 때, supervisor job을 넘겨주지 않으면, child coroutine에서 에러가 났을경우, 에러가 parent job으로 propagate되어서, 다시 parent job은 child coroutine으로 에러를 전파함
-    - supervisor job은
   - job이외의 코루틴 컨텍스트의 요소들은 child coroutine scope로 상속됨
-    - **job은 상속 관계가 생성되는 것(structured concurrency)** 그래서 따로 job을 생성하거나 하면 안 됨
+    - **job은 그 자체가 상속이 되는게 아니라, 상속 '관계'가 생성되는 것(structured concurrency)** 그래서 child coroutine을 빌더를 통해 생성할 시에 따로 job을 생성하거나 하면 안 됨
 - 커스터마이징
   - `CoroutineScope()` or `MainScope()`를 사용해서 생성되어야 함
     - `CoroutineScope()`
@@ -129,7 +166,7 @@ delay(1000) // visually confirm that they don't work
   - 스코프의 이름을 명시적으로 사용하는 것이 좋음
     - e.g) `viewModelScope.launch()`
   - 적절한 라이프타임에 맞춰서 코루틴 스코프를 정의하고 사용해야 함
-    - `GlobalScope`에서 실행되는 코루틴들의 라이프 타임의 경우에는, application의 life-time과 동치이며, 글로벌 스코프의 모든 코루틴들은 서로 독립(즉, Job 계층이 만들어지지 않음)
+    - `GlobalScope`에서 실행되는 코루틴들의 라이프 타임의 경우에는, application의 life-time과 동치이며, 글로벌 스코프의 모든 코루틴들은 서로 독립(즉, **Job 계층이 만들어지지 않음**)
       - `GlobalScope.async`, `GlobalScope.launch`도 가능
 - c.f) child coroutine
 
