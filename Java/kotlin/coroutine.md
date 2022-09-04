@@ -55,10 +55,10 @@
 
 - 개요
   - 코루틴 인스턴스가 될 수 있는 non-preemptive yield 가능한 서브루틴의 일반화
-    - 즉 이 자체를 코루틴으로 불러도 된다
-    - 코루틴 인스턴스
-      - 런타임에 실행되는 코루틴이 실제로 것
-  - 내부적으로 다른 suspending function을 실행해서 coroutine 인스턴스를 suspend할 수 있음
+  - 내부적으로 다른 suspending function을 실행해서 코루틴 인스턴스를 suspend할 수 있음
+- 특징
+  - 이 suspending function을 실행만한다고 코루틴 인스턴스가 생성되는건 아님
+    - coroutine builder와 함께 생성해야 함
 
 ### coroutine scope
 
@@ -129,7 +129,7 @@ delay(1000) // visually confirm that they don't work
   - 스코프의 이름을 명시적으로 사용하는 것이 좋음
     - e.g) `viewModelScope.launch()`
   - 적절한 라이프타임에 맞춰서 코루틴 스코프를 정의하고 사용해야 함
-    - `GlobalScope`에서 실행되는 코루틴들의 라이프 타임의 경우에는, application의 life-time과 동치이며, 글로벌 스코프의 모든 코루틴들은 서로 독립
+    - `GlobalScope`에서 실행되는 코루틴들의 라이프 타임의 경우에는, application의 life-time과 동치이며, 글로벌 스코프의 모든 코루틴들은 서로 독립(즉, Job 계층이 만들어지지 않음)
       - `GlobalScope.async`, `GlobalScope.launch`도 가능
 - c.f) child coroutine
 
@@ -190,64 +190,38 @@ suspend fun doWorld() {
   - `coroutineScope`
     - 코루틴 인스턴스를 suspend하고 스레드를 다른 코루틴 인스턴스로 양보
     - suspending function
+  - `supervisorScope`
+    - coroutineScope + `SupervisorJob`
 
 ### coroutine builder
 
-#### Lazily started async
-
 ```kotlin
-val time = measureTimeMillis {
-    val one = async(start = CoroutineStart.LAZY) { doSomethingUsefulOne() }
-    val two = async(start = CoroutineStart.LAZY) { doSomethingUsefulTwo() }
-    // some computation
-    one.start() // start the first one
-    two.start() // start the second one
-    println("The answer is ${one.await() + two.await()}")
-}
-println("Completed in $time ms")
+fun CoroutineScope.launch(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+): Job
 
-// The answer is 42
-// Completed in 1018 ms
+fun <T> CoroutineScope.async(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> T
+): Deferred<T>
 ```
 
-#### Async-style functions
-
-```kotlin
-// The result type of somethingUsefulOneAsync is Deferred<Int>
-@OptIn(DelicateCoroutinesApi::class)
-fun somethingUsefulOneAsync() = GlobalScope.async {
-    doSomethingUsefulOne()
-}
-
-// The result type of somethingUsefulTwoAsync is Deferred<Int>
-@OptIn(DelicateCoroutinesApi::class)
-fun somethingUsefulTwoAsync() = GlobalScope.async {
-    doSomethingUsefulTwo()
-}
-
-// note that we don't have `runBlocking` to the right of `main` in this example
-fun main() {
-    val time = measureTimeMillis {
-        // we can initiate async actions outside of a coroutine
-        val one = somethingUsefulOneAsync()
-        val two = somethingUsefulTwoAsync()
-        // but waiting for a result must involve either suspending or blocking.
-        // here we use `runBlocking { ... }` to block the main thread while waiting for the result
-        runBlocking {
-            println("The answer is ${one.await() + two.await()}")
-        }
-    }
-    println("Completed in $time ms")
-}
-
-// The answer is 42
-// Completed in 1213 ms
-```
-
-- 주의
-  - 만약 위의 코드에서, one과 runBlocking사이에서 에러가 나면, 프로그램은 exception을 날리고, 해당 프로그램이 수행하던 오퍼레이션은 abort됨
-  - 하지만, `somethingUsefulOneAsync`는 여전히 백그라운드에서 동작하고 있음
-    - structured concurrency에서는 이와같은 문제 해결
+- 개요
+  - launch
+    - 현재 스레드를 블로킹하지 않고, 코루틴을 새로 시작하고 Job으로 코루틴의 레퍼런스를 반환
+      - 코루틴은 job이 취소되면 최소됨
+  - async
+    - 코루틴을 생성하고, future result를 Deferred라는 구현으로 반환
+      - deferred가 취소되면 취소됨
+  - GlobalScope를 제외하고는 structured concurrency가 적용됨
+  - 코루틴 컨텍스트는 `CoroutineScope`으로부터 상속됨
+  - Job의 상속 관계를 생성함, 즉, 코루틴 인스턴스가 생성되는 것임
+  - 그 자체가 코루틴 스코프를 생성함
+- 특징
+  - 코루틴 빌더에 `start = CoroutineStart.LAZY`와 같이 LAZY하게 코루틴을 시작할 수도 있음
 
 #### Structured concurrency with async
 
@@ -300,27 +274,6 @@ suspend fun failedConcurrentSum(): Int = coroutineScope {
 ```
 
 - cancellation은 코루틴 계층을 타고 propagated됨
-
-#### 내용 설명
-
-- 개요
-  - concurrent하게 새로운 코루틴을 실행시키는 주체
-  - CoroutineScope의 extension이고, 해당 CoroutineScope의 coroutine context를 상속받음
-    - extension이어서 자명한 사실
-  - 자체적으로 코루틴 스코프를 생성함
-- 종류
-  - `launch`
-    - 결과값을 반환받지 않음
-      - 리턴이 Job
-    - `join()`으로 실행흐름 맞추기 가능
-  - `async`
-    - 결과값을 반환받음
-      - 리턴이 Deffered라는 future의 일종
-      - 또한, Job이기도 해서 언제든 cancel가능
-    - `await()`이 필수
-    - lazy
-      - `async(start = CoroutineStart.LAZY) { suspendingFunctionCall() }`
-      - c.f) 아무런 설정이 없으면 eager evaluation
 
 ### coroutine context
 
@@ -451,7 +404,7 @@ V     V
       - launch라는 값을 코루틴이 실행되는 스레드의 thread local로 등록
     - 주의
       - thread-local의 값이 변화해도, 새로운 값이 coroutine caller로 propagate되지 않음
-- 구성
+- 분류
   - **Dispatcher**
     - 개요
       - 코루틴을 어떤 스레드에서 동작시킬지 관리
