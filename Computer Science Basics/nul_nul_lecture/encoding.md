@@ -51,13 +51,22 @@ UTF-8 인코딩 원리
   - 특징
     - 한글은 완성형으로 숫자와 매핑
       - 조합형(x)
+    - BMP(Basic Multilingual Plane) + supplementary characters
+      - BMP
+        - 0에서 65535까지(U+0000에서 U+FFFF)
+        - 1에서 3바이트까지 가변 인코딩 가능
+        - 2바이트로 고정 인코딩 가능
+        - 거의 모든 언어에서 충분함
+      - supplementary characters
+        - U+10000에서 U+10FFFF까지
+        - 4바이트까지 차지
 - 인터넷의 등장
   - 다양한 문자를 숫자로 표현할 수 있는 표준 인코딩에 대한 필요성을 느끼게 됨
   - UTF-8로 대동단결
   - URL encoding
     - UTF-8을 사용하는데, 16진수앞에는 %를 붙임
     - ASCII문자라 하더라도 예약된 의미를 가진 문자의경우(/, &, =), 문자 그 자체의 의미로서 전달하고 싶으면 이스케이프 처리가 필요함
-- **UTF-8**
+- **UTF-8(Unicode Transformation Format with 8-bit units)**
   - 개요
     - UNICODE기반으로 1-4 바이트 가변길이를 이용하여 하나의 문자 표현
     - ASCII 코드는 1바이트 + UNICODE(2-4바이트)
