@@ -92,6 +92,7 @@
 - `terraform init`
   - 개요
     - 지정한 backend에 상태 저장을 위한 `.tfstate`파일을 생성
+      - `.tfstate`파일은 내가 `apply`를 적용한 시점의 상태
     - 가장 마지막에 적용한 테라폼 내역이 저장됨
 - `terraform plan`
   - 개요
