@@ -9,6 +9,7 @@
   - IaaC(Infrastructure as Code)
   - 데브옵스 로드맵
 - 3 테라폼 기본
+- 4 CI/CD 파이프라인 예시
 
 ## 의문
 
@@ -193,3 +194,9 @@ data "terraform_remote_state" "vpc" {
   }
 }
 ```
+
+## 4. CI/CD 파이프라인 예시
+
+CI/CD 파이프라인 예시(EKS)
+
+![](./images/ci_cd_example1.png)
