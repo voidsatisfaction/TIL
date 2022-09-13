@@ -4,6 +4,13 @@
 - IaC
 - 개요
   - 동작 원리
+  - 기본 개념
+  - 3가지 형상
+  - 테라폼 인프라 정의 흐름
+- HCL
+  - 변수
+  - 함수
+  - 모듈
 
 ## 의문
 
@@ -116,3 +123,76 @@
     - `apply`전까지는 백엔드에 저장되지 않음
     - import 이후에 plan을 하면 로컬에서 해당 코드가 없어서, 리소스가 삭제 또는 변경된다는 결과를 보여줌
       - 이 결과를 바탕으로 코드를 작성할 수 있음
+
+## HCL
+
+### 변수
+
+- 변수 타입
+  - `string`
+  - `number`
+  - `bool`
+- 복잡 변수 타입
+  - `list()`
+  - `set()`
+  - `map()`
+  - `object({ =, ... })`
+  - `tuple([, ...])`
+- 변수에 대한 값 할당 방식
+  - `-var` 커맨드
+    - e.g)
+      - `terraform apply -var="image_id=ami-abc123"`
+      - `terraform apply -var='image_id_list=["ami-abc123", "ami-def456"]'`
+      - `terraform apply -var='image_id_map={"us-east-1":"ami-abc123","us-east-2":"ami-def456"}'`
+  - `.tfvars` 파일에서 변수 선언
+    - `terraform.tfvars` 변수 파일을 자동적으로 그냥 파싱
+  - 환경 변수
+
+### 함수
+
+- 종류
+  - Numeric
+  - String
+    - e.g) `join`, `split`
+  - Collection
+  - Encoding
+  - Filesystem
+  - Date and Time
+  - Hash and Crypto
+  - IP Network
+  - Type Conversion
+
+### 모듈
+
+```hcl
+// root module 예시
+module "tada_web" {
+  source = "../../../app/tada_web"
+
+  assets_bucket_name           = "staging-tada-web-assets"
+  github_actions_iam_user_name = "staging-tada-web-githubaction"
+}
+
+// child module 예시
+variable "assets_bucket_name" {}
+variable "github_actions_iam_user_name" {}
+```
+
+- 개요
+  - 다수의 서로 사용되는 리소스를 위한 하나의 컨테이너
+    - 물리적인 오브젝트를 직접 기술하는게 아니라, 아키텍처를 기술 할 수 있도록 함
+  - `terraform plan`과 `terraform apply`를 실행하는 working directory에 있는 `.tf`파일들은 루트 모듈을 형성함
+  - 해당 루트 모듈은 다른 모듈을 `call`할 수 있고, output 변수를 다른 모듈의 input 변수로 전달하여 함께 연결할 수 있음
+    - `call`하는 모듈은 `module`블록에서 `source`로 path를 지정해주면 됨
+- 구성
+  - 루트 모듈(테라폼 모듈)
+    - 모든 테라폼 설정이 적어도 하나는 갖고 있는 모듈
+      - main working directory에 있는 `.tf`파일들로 구성
+  - child 모듈
+    - 테라폼의 모듈은 다른 모듈의 자원을 설정에 추가할 수 있는데, 추가된 다른 모듈을 child 모듈이라고 함
+      - local의 경우 `source`로 path를 지정
+  - published 모듈
+    - 테라폼 레지스트리에 있는 public / private 레지시트리에 있는 모듈들
+      - `source`로 uri를 지정
+- 특징
+  - 모듈 속의 변수는 캡슐화 되어있으나, output value는 모듈을 호출함으로써 참조 가능
