@@ -126,6 +126,45 @@
 
 ## HCL
 
+### Data Source
+
+데이터 소스 예시
+
+```hcl
+// 아래에서 참조한 data source를 사용
+locals {
+  eks_node_security_group_ids = concat(
+    data.terraform_remote_state.eks_cluster_v4.outputs.node_security_group_ids,
+  )
+  eks_node_subnet_route_table_ids = [
+    data.terraform_remote_state.eks_cluster_v4.outputs.node_route_table_id1,
+    data.terraform_remote_state.eks_cluster_v4.outputs.node_route_table_id2,
+  ]
+}
+
+// eks cluster v4 라는 tfstate 파일의 내용을 참조함
+data "terraform_remote_state" "eks_cluster_v4" {
+  backend = "s3"
+  config = {
+    bucket = "test-tokyo-vcnc-tf-remote-state"
+    key    = "test.ap-northeast-1/eks-cluster-v4.tfstate"
+    region = "ap-northeast-1"
+  }
+}
+```
+
+- 개요
+  - 테라폼 코드 외부에 정의된 정보를 사용할 수 있도록 해줌
+    - data 블록 내부가 쿼리임
+- 특징
+  - resource vs data source
+    - resource
+      - 테라폼이 리소스를 생성 / 업데이트 / 제거
+    - data source
+      - 테라폼이 오직 읽을 수만 있음
+  - provider에 종속
+  - 테라폼은 데이터 리소스를 planning phase에 읽으려고 함
+
 ### 변수
 
 - 변수 타입
