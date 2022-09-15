@@ -8,6 +8,7 @@
   - 3가지 형상
   - 테라폼 인프라 정의 흐름
 - HCL
+  - Data Source
   - 변수
   - 함수
   - 모듈
@@ -167,16 +168,30 @@ data "terraform_remote_state" "eks_cluster_v4" {
 
 ### 변수
 
-- 변수 타입
-  - `string`
-  - `number`
-  - `bool`
-- 복잡 변수 타입
-  - `list()`
-  - `set()`
-  - `map()`
-  - `object({ =, ... })`
-  - `tuple([, ...])`
+- 종류
+  - input
+    - 테라폼 모듈의 소스코드를 변경시키지 않고, 커스터마이징 가능하게 함
+      - 재사용 가능하도록
+  - output
+    - child module
+      - parent module에 리소스 속성을 노출
+    - root module
+      - `terraform apply`실행 이후에 output 변수를 프린트 가능
+    - remote state를 사용할 경우, `terraform_remote_state` data source로 접근 가능
+  - local
+    - 선언된 모듈에서만 참조 가능한 변수
+    - 변수가 재활용되고, 미래에 변화 가능성이 큰 경우 사용
+- 타입
+  - simple
+    - `string`
+    - `number`
+    - `bool`
+  - complex
+    - `list()`
+    - `set()`
+    - `map()`
+    - `object({ =, ... })`
+    - `tuple([, ...])`
 - 변수에 대한 값 할당 방식
   - `-var` 커맨드
     - e.g)
