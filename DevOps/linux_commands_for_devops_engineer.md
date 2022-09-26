@@ -10,12 +10,18 @@
 - Application
   - `ssh`
   - `curl`
+  - `ps`
 - Transport
+  - `netstat`
+  - `ss`
 - Internet(인터넷)
   - IP
     - `ifconfig`, `curl ifconfig.co`
   - DNS
     - `nslookup`
+  - Routing
+    - `traceroute`
+    - `route`
 - Data Link
 - Physical
 
@@ -46,7 +52,12 @@
 ## 4. 도메인의 IP를 조회하는 명령어는?
 
 - `nslookup`
-- 조회 과정
+  - 개요
+    - 특정 URL의 명령어를
+  - 설치
+    - `apt install dnsutils`
+  - 명령어
+- 네트워크 통신시 DNS 조회 과정
   - `/etc/hosts`
   - `/etc/resolve.conf`
     - 네임서버 조회
@@ -54,3 +65,142 @@
       - e.g) k8s의 컨테이너 내부의 경우
         - `search default.svc.cluster.local svc.cluster.local cluster.local ap-northeast-1.compute.internal`
           - 그래서 컨테이너 내부에서 단순히 `curl gryphon-server`해도 response가능
+
+## 5. 웹서버 혹은 DB 같은 서버들을 확인하는 방법은?
+
+- `telnet`, `nc`
+  - `telnet`
+  - `nc`
+- 잘못된 답변) `ping`
+
+## 6. 내 서버가 잘 떠있는지, 현재 DB 커넥션 등을 확인하는 명령어는?
+
+```
+ss -ltp
+
+State  Recv-Q(수신 소켓 버퍼 사이즈) Send-Q(송신 소켓 버퍼 사이즈)   Local Address:Port   Peer Address:Port      Process
+LISTEN      0           4096                   0.0.0.0:15006                     0.0.0.0:*
+LISTEN      0           100                    0.0.0.0:18080                     0.0.0.0:*          users:(("java",pid=6,fd=620))
+LISTEN      0           4096                   0.0.0.0:15021                     0.0.0.0:*
+LISTEN      0           100                    0.0.0.0:http-alt                  0.0.0.0:*          users:(("java",pid=6,fd=615))
+LISTEN      0           4096                   0.0.0.0:15090                     0.0.0.0:*
+LISTEN      0           4096                 127.0.0.1:15000                     0.0.0.0:*
+LISTEN      0           4096                   0.0.0.0:15001                     0.0.0.0:*
+LISTEN      0           4096                         *:15020                           *:*
+```
+
+- `netstat`(obsolete 라고 함)
+  - 개요
+  - 설치
+  - 명령어
+    - `netstat -lntpu`
+    - `netstat -an | grep port`
+- `ss`(socket statistics)
+  - 개요
+    - socket을 알아보는데 사용되는 툴
+      - 설정이 없으면 established인 소켓만 보여줌
+    - c.f) socket lifecycle
+      - `LISTEN`
+        - 소켓 연결을 기다리는 중
+      - `ESTABLISHED`
+        - 소켓 연결이 확립됨
+  - 설치
+    - `apt install iproute2`
+  - 명령어
+    - `ss`
+      - established인 소켓 덤프
+    - `ss -tl`
+      - tcp이고 listening인 소켓 덤프
+
+## 7. Linux에서 특정 프로세스를 확인하는 명령어는? java process id, option 등을 확인하고 싶으면?
+
+- `ps`
+  - c.f) 옵션 스타일
+    - UNIX
+      - 대시와 알파벳 그룹, `ps -ef`
+        - 모든 프로세스를, full format으로 보여주기
+      - `ps -wwef`
+        - 모든 프로세스를, full format으로 보여주는데, 너무 긴 텍스트는 줄바꿈도 해서 보여줘
+    - BSD
+      - 대시 없는 알파벳 그룹, `ps aux`
+        - 모든 프로세스를, 유저가 쉽게 볼 수 있도록, tty 없는 프로세스도 보여주기
+    - GNU long options
+      - 대시 두개가 붙음, `ps --tty`
+  - 개요
+    - 현재 프로세스들에 대한 스냅샷을 보여줌
+  - 설치
+  - 명령어
+    - `ps -ef`
+    - `ps aux`
+
+## 8. Linux에서 CPU, Memory, Disk 등 시스템 정보등을 확인하는 명령어들은?
+
+- `htop`
+  - 개요
+    - 실시간으로 CPU, Memory, Swap 등의 다양한 메트릭을 볼 수 있는 커맨드
+- `sar`
+  - 개요
+    - 시스템 모니터링 툴
+- `free`
+  - 개요
+    - 현재 메모리 사용량을 알려줌
+    - 메트릭
+      - total
+        - 전체 설치된 메모리
+        - `/proc/meminfo`에서의 MemTotal
+      - used
+        - 유저공간에서 사용된 메모리
+        - `total - free - buffers - cache`
+      - free
+        - 전혀 사용되지 않은 메모리
+        - `/proc/meminfo`에서의 SwapFree
+      - shared
+        - 대게 `tmpfs`에 의해서 사용된 메모리
+        - `/proc/meminfo`에서의 `Shmem`
+      - buffers
+        - 커널의 버퍼(디스크)에 의해서 사용된 캐시 메모리
+          - 디스크 블록을 임시적으로 저장
+          - write를 한꺼번에 한다던지, 디스크를 읽을때 사용한다던지
+          - 디스크 IO를 줄인다던지
+        - `/proc/meminfo`에서의 Buffers
+      - cache
+        - 파일 페이지 캐시나 slabs(커널에 의해서 사용되는 데이터 스트럭쳐를 저장하는데에 사용되는 메모리 공간)
+          - 디스크로부터 파일을 읽기 위하여 만든 페이지 캐시
+          - 다음에 같은 파일을 접근하면, 메모리로부터 직접적으로 빠르게 가져올 수 있음
+          - 쓰기에도 사용됨
+        - *그럼, disk와 파일의 차이는 무엇일까?*
+      - buff/cache
+        - 버퍼와 캐시의 합
+      - available
+        - 스왑하지 않고 새 애플리케이션을 시작하는 데 사용할 수 있는 메모리 양을 추정
+          - 사용되고는 있는데, 캐시나 버퍼 같은 것들이어서 새로운 애플리케이션이 할당받아 스왑 없이 사용가능
+- `df`
+  - 개요
+    - 파일 시스템 디스크 공간 사용 모니터링 커맨드
+  - 명령어
+    - `df`
+      - 모든 마운트된 파일 시스템의 디스크 공간을 보여줌
+    - `df -alh`
+      - 모든 파일 시스템 중에서, 로컬 파일 시스템이고, 사람이 보기 쉽게 프린트하기
+- `iostat`
+  - 개요
+    - CPU통계와 디바이스와 파티션에 대한 I/O 통계를 보여줌
+      - CPU 사용 리포트
+      - Device 사용 리포트
+
+## 9. 리눅스에서 서비스들은 어떻게 관리되고, 그와 연관된 명령어는?
+
+- `service`
+- `sysctl`
+
+## 11. 라우팅이 잘 되는지 확인하는 커맨드
+
+- `traceroute`
+  - 개요
+    - IP 패킷이 주어진 호스트로 잘 가는지 트래킹
+      - IP 프로토콜의 TTL필드를 사용해서 목적지 호스트까지의 각각의 게이트웨이(라우터)에서 ICMP TIME_EXCEEDED 응답을 끌어냄
+      - 처음에는 작은 TTL 패킷을 보내고, 디폴트 최대 30TTL까지 늘려서 보내봄
+  - 특징
+    - *는 타임아웃까지 아무런 응답이 없는 경우
+  - 설치
+    - `apt install traceroute`
