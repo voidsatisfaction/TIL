@@ -2,6 +2,60 @@
 
 ## 의문
 
+## Aurora DB
+
+Aurora 아키텍처
+
+![](./images/RDS/aurora_architecture1.png)
+
+### AWS RDS MySQL vs AWS Aurora MySQL
+
+- RDS MySQL
+  - RDS내에서 데이터베이스 플랫폼은 EC2에 연결되어서 실행됨
+    - AMI 프로비저닝
+    - EBS 연결
+    - 서브넷 그룹과 보안그룹이 인스턴스에 연결
+    - EC2 인스턴스에 실행되므로, I/O 대역폭 및 IOPS로 인해 성능이 제한됨
+- Aurora MySQL
+  - 기존의 소스를 커스터마이징하여 AWS에 최적화 시킴
+  - EBS스토리지 대신, NVMe SSD드라이브 위에서 구축
+  - 매우 높은 가용성
+
+### 개요
+
+- 개요
+  - MySQL 및 PostgreSQL과 호환되는 완전 관리형 관계형 데이터베이스 엔진
+    - 기본적으로 단순 MySQL, PostgreSQL보다 5배 ~ 3배 빠르게 제공 가능
+  - 분산형 스토리지 포함
+    - 자동으로 128TiB 까지 확장 가능
+    - 컴퓨팅과 스토리지 작업의 분리
+  - 데이터베이스 클러스터링 및 복제를 자동화
+  - Amazon RDS의 일부
+    - *Amazon RDS vs Aurora?*
+- 버전 관리
+  - 메이저.마이너.패치
+  - 메이저
+    - Aurora와 호환되는 MySQL, PostgreSQL의 커뮤니티버을 대응
+  - 마이너
+    - 새 기능과 수정
+    - 자동 업그레이드
+      - 다운타임이 생길 수 있음(ZDT를 이용하면 완화 가능)
+
+### Amazon Aurora DB 클러스터
+
+- 구성
+  - 하나 이상의 DB 인스턴스
+  - DB 인스턴스의 데이터를 관리하는 클러스터 볼륨
+- DB 인스턴스 유형
+  - 기본 DB 인스턴스
+    - Read & Write
+    - 클러스터 볼륨의 모든 데이터를 수정
+  - Replica
+    - Read
+    - 최대 15개까지 Aurora 복제본 구성 가능
+    - 별고의 가용영역에 배치
+    - 읽기 워크로드를 오프로드 가능
+
 ## Aurora MySQL 튜닝
 
 분류는 cpu, io, synchronization 이렇게 세가지로 나눔
