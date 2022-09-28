@@ -2,11 +2,12 @@
 
 - 의문
 - IaC
+  - Terraform vs Ansible
 - 개요
   - 동작 원리
   - 기본 개념
   - 3가지 형상
-  - 테라폼 인프라 정의 흐름
+  - 명령어
 - HCL
   - Data Source
   - 변수
@@ -18,6 +19,17 @@
 ## IaC(Infrastructure As Code)
 
 - 개요
+
+### Terraform vs Ansible
+
+테라폼 vs 엔지블
+
+![](./images/terraform_vs_ansible1.png)
+
+- 테라폼
+  - 인프라 스트럭처의 프로비저닝에 특화
+- 엔지블
+  - 인프라 스트럭처의 설정에 특화
 
 ## 개요
 
@@ -91,7 +103,7 @@
 - aws 실제 인프라
   - 실제로 aws에 배포되어 있는 인프라
 
-### 테라폼 인프라 정의 흐름
+### 명령어
 
 기존 인프라를 AWS에 배포한 상태에서 테라폼을 적용하고 싶으면, 모든 리소스를 terraform import로 옮겨야 함
 
@@ -117,13 +129,20 @@
       - *그럼 어느쪽이 우선순위인지? git에 형상관리해도 되는지?*
 - `terraform import`
   - 개요
-    - AWS 인프라에 배포된 리소스를 `terraform state`로 옮겨주는 작업
+    - AWS 인프라에 테라폼으로 관리되지 않은채로 배포된 리소스를 `terraform state`로 옮겨주는 작업
     - local의 `.terraform`에 해당 리소스의 상태 정보를 저장해줌
       - 코드 생성(x)
   - 주의
     - `apply`전까지는 백엔드에 저장되지 않음
     - import 이후에 plan을 하면 로컬에서 해당 코드가 없어서, 리소스가 삭제 또는 변경된다는 결과를 보여줌
       - 이 결과를 바탕으로 코드를 작성할 수 있음
+- `terraform refresh` (deprecated)
+  - 개요
+    - 실제 형상을 테라폼 스테이트에 반영해줌
+      - 즉, terraform state를 변경
+    - 지금은 `terraform plan`, `terraform apply`를 하면 자동으로 적용됨
+  - 주의
+    - state를 업데이트하기전에 확인이 불가능해서 위험함
 
 ## HCL
 
