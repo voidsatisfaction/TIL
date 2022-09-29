@@ -132,6 +132,7 @@
     - AWS 인프라에 테라폼으로 관리되지 않은채로 배포된 리소스를 `terraform state`로 옮겨주는 작업
       - 즉 코드에서 resource블록으로 정의되지 않았던 리소스
       - 각 리소스별로 import하는 방법이 다르므로 참고해야 함
+      - e.g) `terraform import aws_security_group_rule.bastion_holistics_rds sg-04223941d80c1104c_ingress_all_0_65536_sg-08bda9d196c56ed6d`
     - local의 `.terraform`에 해당 리소스의 상태 정보를 저장해줌
       - 코드 생성(x)
   - 주의
