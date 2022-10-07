@@ -56,6 +56,38 @@ Aurora 아키텍처
     - 별고의 가용영역에 배치
     - 읽기 워크로드를 오프로드 가능
 
+### Amazon Aurora 연결 관리
+
+- 개요
+  - 단일 인스턴스 대신에, DB 인스턴스 클러스터와 연관됨
+  - 엔드포인트
+    - 호스트 이름과 포트가 엔드포인트라는 중간 핸들러를 가리킴(추상화)
+      - 가상의 DNS와 비슷한 느낌으로 동작
+      - 그래서 DNS 캐시를 날려줘야 함
+    - 일부 인스턴스를 사용할 수 없을때, 호스트 이름을 하드코딩하거나, 코드 재작성 필요없음
+    - e.g) `jdbc:mysql://test-drs.cx3ahmhpf1om.ap-northeast-1.rds.amazonaws.com:3306/dragonball?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false`
+  - 자동 로드 밸런싱이 수행됨
+- 엔드 포인트 타입
+  - 클러스터(writer)
+    - 쓰기 작업을 수행할 수 있는 유일한 엔드포인트(기본 인스턴스에 연결)
+      - 읽기 작업도 가능
+      - 엔드 포인트 자체의 생성 / 삭제 / 수정 불가
+    - 기본 DB 인스턴스에 장애가 발생하면, Aurora가 자동으로 새로운 기본 DB 인스턴스로 장애 조치함
+      - 장애 조치 동안에도, DB 클러스터가 새로운 기본 DB 인스턴스의 클러스터 엔드포인트 연결 요청을 처리하여 서비스 중단 최소화
+    - 예시
+      - `mydbcluster.cluster-123456789012.us-east-1.rds.amazonaws.com:3306`
+    - 주의
+      - failover에서 새 DB 인스턴스가 클러스터의 읽기/쓰기 기본 인스턴스가 되도록 승격하면, 클러스터 엔드포인트가 가리키는 물리적 IP 주소가 변경됨
+  - 리더(reader)
+    - DB 클러스터에 대한 읽기 전용 연결 시 로드 밸런싱 지원
+    - 예시
+      - `mydbcluster.cluster-ro-123456789012.us-east-1.rds.amazonaws.com:3306`
+  - 사용자 지정
+    - 선택한 임의의 DB 인스턴스의 집합
+      - 읽기 전용 / 쓰기 전용 이외의 조건인 경우
+  - 인스턴스
+    - 특정 DB 인스턴스에 연결
+
 ## Aurora MySQL 튜닝
 
 분류는 cpu, io, synchronization 이렇게 세가지로 나눔
