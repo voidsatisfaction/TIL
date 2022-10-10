@@ -111,6 +111,8 @@ PromQL Instant vector / Range vector
     - 특징
       - counter reset을 알아서 잘 다룸(magic)
         - e.g) `[4, 6, 1, 3] -> [4, 6, 7, 9] (보정)`
+      - golden rule
+        - 적어도 scraping 주기의 4배의 time range를 설정해서 메트릭을 봐야함(스크레이핑이 실패할 수도 있다)
     - 예시
       - `rate(http_requests_total[10m])`
 
