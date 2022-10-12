@@ -46,3 +46,18 @@
     - 회사의 OKR(우선순위)
     - 팀 OKR(우선순위)
     - 개인 OKR(우선순위)
+
+## 좋은 개발팀 문화 요소
+
+- DevOps 철학
+  - CAMSP
+    - Culture
+    - Automatic
+    - Measure
+    - Share
+    - Pile up
+- 리뷰데이
+  - 화 / 목 16:00 ~ 17:00 리뷰만 하는 시간 + 이야기도 함
+- 코드 리뷰
+- 기술 발표회
+- 공유
