@@ -1,5 +1,10 @@
 # Gradle
 
+- 의문
+- 개요
+- 기능
+  - 커맨드
+
 ## 의문
 
 ## 개요
@@ -33,3 +38,30 @@
   -
 - 그래들은 확장 가능함
 - 빌드 스크립트는 API에 대해서 동작함
+
+## 기능
+
+### 플러그인
+
+### 태스크 타입
+
+- Build
+  - 개요
+    - lifecycle task이며, 테스트, production artiract, 도큐멘테이션 전체까지를 담당하기 위한 태스크
+- Jar
+  - 개요
+    - JAR archive를 모음
+
+### 커맨드
+
+- `gradle test` vs `gradle check`
+  - `gradle test`
+    - 프로젝트에서 모든 유닛테스트를 실행
+      - 프로젝트의 모든 유닛테스트 auto-detect
+      - 테스트 실행
+      - 리포트 생성
+  - `gradle check`
+    - 다수의 테스트 태스크를 하나로 모을 수 있음
+      - 만약 다른 플러그인이 없으면 gradle test와 완전히 동작이 같음(일단 유닛테스트는 포함)
+    - 주로 코드 체킹 및 유닛테스트를 수행함
+    - e.g) `gradle check -x ktlint -x classes -x jar --parallel --build-cache`
