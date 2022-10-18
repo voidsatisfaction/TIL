@@ -144,6 +144,10 @@ LISTEN      0           4096                         *:15020                    
   - 명령어
     - `ps -ef`
     - `ps aux`
+      - `ps auxww`
+        - 표시에서 줄넘어가는것까지 보여줌
+      - `ps aux -T`
+        - 스레드까지 보여줌
 
 ## 8. Linux에서 CPU, Memory, Disk 등 시스템 정보등을 확인하는 명령어들은?
 
