@@ -13,6 +13,8 @@
 - 유저 생성
   - `CREATE USER 'username' IDENTIFIED BY 'password'`
     - `CREATE USER 'server-new-settlement-prod' IDENTIFIED BY 'password';`
+    - 암호 생성할떄 참고할 랜덤 스트링
+      - https://www.random.org/passwords/?num=100&len=24&format=html&rnd=new
 - 권한 조회
   - `SHOW GRANTS [ FOR username ]`
     - `SHOW GRANTS FOR 'server-new-settlement-prod'@'%'`
