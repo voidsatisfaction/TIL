@@ -21,6 +21,12 @@
 
 ## 장애 대응 매뉴얼
 
+- 장애 파악
+- 장애 조치
+- 장애 예방
+- 공유
+  - 공유까지 진행해야 올바른 장애 대응이라고 할 수 있다
+
 ### 1. 장애 파악(AINDA)
 
 - 개요
@@ -32,14 +38,16 @@
       - 장애의 원인이 되는것으로 보이는 에러의 모든 이벤트 파악하기
   - 인프라 이슈인가?(Infra)
     - 모니터링
-      - k8s cluster use method
-      - istio service
-      - deployments
-      - pods
-      - jvm micrometer
+      - k8s
+        - k8s cluster use method
+        - istio service
+        - k8s events
+      - AWS
+        - AWS cloud watch
   - 네트워크 이슈인가?(Network)
     - 모니터링
       - 네트워크 메트릭 관찰
+        - e.g) istio service, AWS ALB
       - 얼럿
     - 대응사례
   - DB 이슈인가?(DB)
@@ -55,8 +63,13 @@
       - 커넥션 이슈
       - long running tx로 인한 rollback history가 너무 많이 자라는 문제
   - 서버 이슈인가?(Application server)
-    - 얼럿 확인
-    - 로그 확인
+    - 모니터링
+      - k8s
+        - deployments
+        - pods
+        - jvm micrometer
+      - 얼럿 확인
+      - 서버 로그 확인
 
 ### 2. 장애 조치
 
@@ -84,14 +97,13 @@
   - 서버 팀 내부 공유
   - 다른 팀 외부 공유
     - 기술적인 용어는 알기 쉽게 풀어서 써주자
-
-### 장애 문서 작성
-
-- 프레임워크
+- 문서 프레임워크
   - 현상
   - 대응
   - 원인
   - 조취
+
+#### 장애 문서 작성 예시
 
 예시
 
