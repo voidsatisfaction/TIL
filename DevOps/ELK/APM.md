@@ -40,13 +40,21 @@ Elastic APM 아키텍처
 
 - Transaction
   - 개요
-    - 애플리케이션내에서 측정되는 최상위 작업
-      - 서버의 리퀘스트 핸들링, 배치잡, 백그라운드 잡 등
+    - 애플리케이션내에서 측정되는 최상위 작업이자 span
+      - 서버의 리퀘스트, 배치잡, 백그라운드 잡, 커스텀 트랜잭션 등
+  - 특징
+    - 에이전트가 트랜잭션을 샘플링할지 말지 결정 가능
+      - 트랜잭션의 span들이 보내질 수도 있고 아닐 수 있음
+    - UI에서 `type`과 `name`으로 그룹화 됨
+      - `type`
+        - `request`, `backgroundjob`
+      - `name`
+        - `GET /users/:id`, `UsersController#show`
   - 구성
     - `Event Timestamp`
-    - `ID, type, name`
+    - `유니크 ID, type, name`
     - `Event`가 생성된 환경에 대한 데이터
-      - server
+      - service
         - environment, framework, language
       - host
         - architecture, hostname, IP, etc
@@ -59,12 +67,18 @@ Elastic APM 아키텍처
 - Span
   - 개요
     - 실행을 추적하기 위한 논리적 작업 단위
-    - 실행되는 코드의 시작 및 소요시간 정보가 존재
+    - 실행되는 코드(어떤 한 행위)의 시작 및 소요시간 정보가 존재
     - span 사이의 부모/자식 관계를 가질 수 있음
   - 구성
-    - transaction.id, parent.id
+    - transaction.id
+    - parent.id
     - start time, duration
     - name, type, stacktrace
+  - dropped spans
+    - 성능상의 이유로 특정 span을 드롭 가능
+  - missing spans
+    - 트랜잭션과는 별개로 APM 서버로 span을 스트리밍하기 때문에, 몇몇 span은 사라질 수 있음
+      - 사라진 것들은 디스플레이에 나타내 줌
 - Error
   - 개요
     - 애플리케이션에서 발생한 에러나 익셉션의 정보 및 로그
@@ -87,11 +101,25 @@ Elastic APM 아키텍처
         - email, ID, username
 - Metric
   - 개요
-    - 에이전트 호스트에 대한 CPU, memory등의 기본 매트릭 정보를 자동으로 수집
-    - 자바의 JVM Metric이나 Go의 런타임 매트릭 수집 가능
+    - 에이전트 호스트에 대한 CPU, memory등의 기본 메트릭 정보를 자동으로 수집
+    - 자바의 JVM Metric이나 Go의 런타임 메트릭 수집 가능
+  - 종류
+    - System metrics
+      - 기본 인프라, 애플리케이션 메트릭
+    - Calculated metrics
+      - 결합된 trace이벤트 메트릭
 - Metadata
   - 개요
     - 이벤트에 대한 부가적인정보
+  - 종류
+    - Label
+      - transaction, span, error에 인덱스화된 정보를 더함
+        - 검색 가능해짐 / 취합 가능해짐
+        - 대시보드 만들 수 있음
+    - Custom context
+      - transaction, span, error에 인덱스화되지 않은 정보를 더함
+    - User context
+      - transaction, span, error에 인덱스화된 유저 정보를 더함
 
 ## JAVA Agent 설치 및 설정 방법
 
