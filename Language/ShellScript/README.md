@@ -7,6 +7,7 @@
   - 마지막 값 자르기
   - date 비교하기
   - json파싱
+  - `:-`, `:=`: fallback
 - 예시
   - 1 server health check script
 
@@ -53,6 +54,20 @@ fi
 
 ```sh
 cat json.txt | jq '.name'
+```
+
+### `:-`, `:=`: fallback
+
+```sh
+x=
+echo ${x:-1} # 1
+echo $x #
+```
+
+```sh
+x=
+echo ${x:=1} # 1
+echo $x # 1
 ```
 
 ## 예시
