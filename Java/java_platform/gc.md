@@ -16,6 +16,7 @@
   - 3 Parallel Old GC(Parallel Compacting GC)
   - 4 CMS(Concurrent Mark & Sweep) GC
   - 5 G1(Garbage First) GC
+- GC 모니터링 방법
 
 ## 의문
 
@@ -23,14 +24,18 @@
 
 ## 참고
 
-- c.f) stop the world
-  - GC를 실행하기 위해 JVM이 애플리케이션 실행을 멈추는 것
-    - GC 스레드 제외 나머지 스레드 모두 작업을 멈춤
-    - GC튜닝은 stop the world 시간을 줄이는 것
 - 사이트
   - [Java GC](https://d2.naver.com/helloworld/1329)
   - [GC 모니터링 방법](https://d2.naver.com/helloworld/6043)
   - [권남](https://kwonnam.pe.kr/wiki/java/performance)
+  - [G1 GC 적용과 JVM Upgrade](https://brunch.co.kr/@alden/45)
+  - [GC Allocation Failures](https://technospace.medium.com/gc-allocation-failures-42c68e8e5e04)
+- c.f) stop the world
+  - GC를 실행하기 위해 JVM이 애플리케이션 실행을 멈추는 것
+    - GC 스레드 제외 나머지 스레드 모두 작업을 멈춤
+    - GC튜닝은 stop the world 시간을 줄이는 것
+- GC duration
+  - `= GC Pause Duration + GC Concurrent Duration`
 
 ### 메모리 누수 및 full GC 예시
 
@@ -40,12 +45,32 @@
 
 ![](./images/gc/memory_leak_gc_example2.png)
 
+### GC모니터링과 해석
+
+GC 모니터링 예시
+
+![](./images/gc/gc_example1.png)
+
+![](./images/gc/gc_example2.png)
+
+- 해석
+  - old generation에서 committed된 메모리에서 메모리를 더 사용하려고 하면(정확히는 minor gc가 일어나서 old generation에 committed space에 꽉채워서 다 쓰면) major gc가 발생
+
 ## 개요
 
 - 개요
   - 가비지 컬렉터의 전제 조건(weak generational hypothesis)
     - 대부분의 객체는 금방 접근 불가능 상태(unreachable - 즉 참조가 안되는 대상)가 된다
     - 오래된 객체에서 젊은 객체로의 참조는 아주 적게 존재한다
+- *GC 동작방식?*
+  - Young Generation 영역이 committed 수준까지 다 참(allocation failure)
+  - Minor GC동작
+  - 위의 GC에서 살아남은 오브젝트들은 Old Generation 영역으로 보내짐
+  - 그래도 부족하면 더 많은 공간을 commit
+  - minor GC를 실행해서 Old Generation 영역으로 보내진 오브젝트들까지 포함해서 Old Generation 영역이 committed 수준까지 다 참
+  - Major(Full) GC동작
+  - 그래도 부족하면 더 많은 공간을 commit
+  - full GC 이후에도 힙 공간이 부족하면 `OutOfMemoryError: Java heap space`에러가 발생
 
 ## 영역
 
@@ -62,6 +87,10 @@ Card Table
     - 새롭게 생성한 객체의 대부분이 위치하는 영역
     - 대부분의 객체가 금방 접근 불가능 상태가 되기 때문에 매우 많은 객체가 Young 영역에 생성되었다가 사라짐
     - 이 영역에서 객체가 사라질때 Minor GC가 발생한다고 함
+      - *minor gc도 stop the world인가?*
+  - c.f) allocation failure
+    - Young Generation 영역에 더이상 새 오브젝트를 생성할 공간이 없을때 발생
+    - minor GC 트리거
 - Old Generation 영역
   - 개요
     - 접근 불가능 상태로 되지 않아 Young 영역에서 살아남은 객체가 여기로 복사됨
@@ -178,4 +207,21 @@ G1 GC
 - 특징
   - 장점
     - 성능적으로 가장 빠름
+    - Old GC로 인한 Stop-The-World 문제를 해결하는데에 도움을 줌
   - 단점
+
+## GC 모니터링 방법
+
+- 개요
+  - JVM이 어떻게 GC를 수행하고 있는지 알아내는 과정
+    - Young 영역에 있는 오브젝트를 Old 영역으로 언제 얼마나 이동했는지
+    - stop-the-world가 언제 일어나고 얼마동안 일어났는지 등의 정보
+  - JVM이 효율적으로 GC를 수행하는지 파악하고, 추가적인 GC 튜닝 작업이 필요한지 확인하기 위함
+
+### 모니터링 방법
+
+- jstat
+  - 개요
+    - HotSpot JVM에 있는 모니터링 도구
+    - `jstat stat , S1C, S0U`
+- visualVM + visualGC
