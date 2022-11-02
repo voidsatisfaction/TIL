@@ -10,13 +10,31 @@
 
 ### 데이터베이스 부하
 
-평균 활성 세션(AAS)의 예시
+평균 활성 세션(AAS)의 계산 예시
 
 ![](./images/aurora_performance_insights/aas_example1.png)
 
-평균 활성 실행(AAE)의 예시
+평균 활성 실행(AAE)의 계산 예시
 
 ![](./images/aurora_performance_insights/aae_example1.png)
+
+AAS load graph
+
+![](./images/aurora_performance_insights/aas_load_graph1.png)
+
+Active session
+
+![](./images/aurora_performance_insights/active_session1.png)
+
+Average Active Session
+
+![](./images/aurora_performance_insights/aas1.png)
+
+![](./images/aurora_performance_insights/aas2.png)
+
+Active Session State
+
+![](./images/aurora_performance_insights/active_session_state1.png)
 
 - 활성 세션
   - 개요
