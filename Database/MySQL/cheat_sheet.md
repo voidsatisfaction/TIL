@@ -24,6 +24,10 @@ select * from information_schema.processlist;
 
 ```sql
 create table test1(id int not null, c1 int, primary key (id));
+
+insert into test1 values (1, 10);
+insert into test1 values (2, 15);
+insert into test1 values (3, 22);
 ```
 
 ### 인덱스 만들기
