@@ -156,7 +156,7 @@ InnoDB 스토리지 엔진의 잠금
 
 #### 락의 유형
 
-- Multiple Granularity Locking(MGL)
+- c.f) Multiple Granularity Locking(MGL)
   - 개요
     - 다른 오브젝트를 포함하는 오브젝트에 락을 거는것
       - e.g) DB는 계층구조임(file, page, record)
@@ -181,12 +181,13 @@ InnoDB 스토리지 엔진의 잠금
       - 인덱스가 없어도 클러스터 인덱스를 생성해서 해당 클러스터 인덱스로 레코드 잠금
         - 인덱스로 레코드를 잠금한다는게 구체적으로 어떤 의미인지?
           - 말 그대로 인덱스의 레코드다
+          - 복합인덱스의 경우, 인덱스를 일부만 타면, 그 인덱스에 대해서만 락을 검
         - table full scan의 경우에는 어떻게 레코드 락을 하는가?
-          - 대상 레코드를 찾을때까지 참조되는 모든 레코드와 갭 락(넥스트 키 락)을 하는듯
+          - 모든 레코드에 락을 검
 - 갭 락
   - 개요
     - 레코드와 바로 인접한 레코드 사이의 간격만을 잠그는 것
-      - 간격 사이에 새 레코드가 INSERT되는 것을 막아줌
+    - **간격 사이에 새 레코드가 INSERT되는 것을 막아줌**
       - phantom read를 방지
     - 넥스트 키 락의 일부로 자주 사용
   - 특징
@@ -209,24 +210,27 @@ InnoDB 스토리지 엔진의 잠금
 ### 인덱스와 잠금
 
 - 개요
-  - **`SELECT / UPDATE / DELETE`시 인덱스로 스캔되는 모든 레코드에 락이 걸림(암묵적 lock)**
+  - **`SELECT ... FOR UPDATE (FOR SHARE) / UPDATE / DELETE`시 인덱스로 스캔되는 모든 레코드 및 갭에 락이 걸림(암묵적 lock)**
     - 따라서, 인덱싱을 잘하는 것이 매우 중요
-  - **테이블에 인덱스가 하나도 없는 경우, 테이블을 풀스캔하면서 모든 레코드를 잠금**
+    - 갭에도 걸린다는 것을 반드시 인지해야 함
+  - **테이블에 인덱스가 하나도 없는 경우, 테이블을 풀스캔하면서 모든 레코드 및 갭을 잠금**
     - *왜 굳이 이래야만 하는가?*
     - *그냥 마지막에 수정할때만 해당 레코드에 락을걸면 되는거 아닌가*
     - e.g) `SELECT * FROM test1 where c1 < 4 for update`
       - c1에 인덱스가 없을 경우
-        - 모든 테이블의 row를 full scan하면서 x-lock이 걸림
+        - 모든 테이블의 row를 full scan하면서 레코드 및 갭에 x-lock이 걸림
       - c1에 인덱스가 있을 경우
-        - 인덱스 스캔 범위에만 row를 scan하면서 x-lock이 걸림
-  - *그런데 이게 gap lock때문에 생기는건가??*
+        - 인덱스 스캔 범위에만 row를 scan하면서 레코드 및 갭에 x-lock이 걸림
+      - `SELECT COUNT(*)`도 마찬가지(왜냐하면, 인덱스 스캔자체에서 락을거므로)
 
 ### 레코드 수준의 잠금 확인 및 해제
 
 - 확인
   - 개요
     - `SHOW PROCESSLIST`
-    - ...
+      - 잠금을 가지고 있는 프로세스는 Info가 NULL로 나옴
+      - 잠금 대기중인 프로세스는 State가 `updating`이고 `Info`에 query문이 존재하며 `Time`을 보면 된다
+    - (MySQL8.0) `performance_schema.data_locks`, `performance_schema.data_lock_waits, information_schema.innodb_trx` 등을 join해서 파악 가능
 - 해제
   - 개요
     - `KILL (스레드 아이디)`
