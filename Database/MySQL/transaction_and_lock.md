@@ -162,7 +162,9 @@ InnoDB 스토리지 엔진의 잠금
       - e.g) DB는 계층구조임(file, page, record)
         - 트리구조로 생각할 수 있음
         - pages는 file의 children, records는 page의 children
-  - MySQL에서는 table과 record 사이에 MGL 가능
+  - 특징
+    - MySQL에서는 table과 record 사이에 MGL 가능
+      - e.g) `SELECT ... FOR SHARE`혹은 `SELECT ... FOR UPDATE` 와 같이 row에 s-lock, x-lock을 걸기전에 table level의 intention lock을 걸어서 실제 table level의 lock을 걸때에(`LOCK TABLE ... WRITE`) 쉽게 참고할 수 있게 한다
 - Intention lock
   - 개요
     - MGL에서 노드를 직접 락하는 것이 아니라, 락이 존재하거나(예를들면, MySQL에서 IS락은 해당 테이블에 record S-lock이 이미 존재하고 있다는 것을 나타냄), 락을 하려고 한다는 것을 나타내는 락
@@ -207,11 +209,17 @@ InnoDB 스토리지 엔진의 잠금
 ### 인덱스와 잠금
 
 - 개요
-  - **`UPDATE`시 인덱스로 가져올 수 있는 모든 레코드에 락이 걸림(암묵적 lock)**
+  - **`SELECT / UPDATE / DELETE`시 인덱스로 스캔되는 모든 레코드에 락이 걸림(암묵적 lock)**
     - 따라서, 인덱싱을 잘하는 것이 매우 중요
-  - 테이블에 인덱스가 하나도 없는 경우, 테이블을 풀스캔하면서 모든 레코드를 잠금
+  - **테이블에 인덱스가 하나도 없는 경우, 테이블을 풀스캔하면서 모든 레코드를 잠금**
     - *왜 굳이 이래야만 하는가?*
     - *그냥 마지막에 수정할때만 해당 레코드에 락을걸면 되는거 아닌가*
+    - e.g) `SELECT * FROM test1 where c1 < 4 for update`
+      - c1에 인덱스가 없을 경우
+        - 모든 테이블의 row를 full scan하면서 x-lock이 걸림
+      - c1에 인덱스가 있을 경우
+        - 인덱스 스캔 범위에만 row를 scan하면서 x-lock이 걸림
+  - *그런데 이게 gap lock때문에 생기는건가??*
 
 ### 레코드 수준의 잠금 확인 및 해제
 
