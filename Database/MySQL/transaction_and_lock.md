@@ -206,6 +206,14 @@ InnoDB 스토리지 엔진의 잠금
       - 테이블 수준의 락
     - `INSERT`시에만 걸림
     - `AUTO_INCREMENT`값을 가져오는 순간만 락이 걸렸다가 즉시 해제
+- c.f) foreign key에 의한 부모, 자식 테이블의 락
+  - 개요
+    - 외래키 제약으로 인해, 자식 테이블(외래키를 갖고 있는 테이블)에서 지정하는 부모의 id가 부모 테이블에 존재함(정합을)을 보장하기 위해 부모 또는 자식행에 shared lock를 걸어줌
+  - e.g)
+    - `Tx1, Tx2 - BEGIN`
+    - `Tx1 - UPDATE parent SET age = age + 1 WHERE id = 1;`
+    - `Tx2 - INSERT INTO child (id, age, parent_id) VALUES ("", 20, 1);`
+      - 블로킹됨
 
 ### 인덱스와 잠금
 
