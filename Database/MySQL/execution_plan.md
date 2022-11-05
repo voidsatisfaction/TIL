@@ -370,6 +370,7 @@ driving table이 실행계획에서 더 위에 있음
 - 개요
   - 쿼리의 실행 계획에서 성능에 관련된 중요한 내용이 표시됨
     - 내부 처리 알고리즘에 대한 깊이 있는 내용을 보여줌
+    - 특히, `Using temporary`, `Using where`, `Using filesort`이 셋은 모두 storage engine layer가 아닌, mysql engine layer에서 동작하는 것들
 - 종류(자주 보는건 볼드)
   - **Using temporary**
     - 임시 테이블을 사용한 경우
