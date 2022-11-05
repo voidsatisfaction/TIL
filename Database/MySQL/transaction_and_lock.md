@@ -69,25 +69,31 @@ isolation이 serializable인 경우 아래 동작의 해석
 ## 5.1 트랜잭션
 
 - 개요
-  - 적절하게 트랜잭션을 나눠서 구현하자
+  - ACID를 만족하는 정보의 가공
 - 특성
   - 트랜잭션 하나를 하나의 쿼리문으로 한번에 실행 시키는 것도 가능하고, interactive하게, `begin`으로 트랜잭션을 시작하고, 클라이언트와 interactive하게 실행 시키는 것도 가능
 - 주의
   - 네트워크 작업과 같은 DBMS와 관련없는 I/O작업이나 CPU연산은 트랜잭션에서 배제해야함
 
+## 5.2.0) 락의 구분
+
+- 스토리지 엔진 레벨
+- MySQL 엔진 레벨
+  - 스토리지 엔진을 제외한 나머지 부분
+  - 락 종류
+    - 테이블 락
+      - 테이블 데이터 동기화
+    - 메타데이터 락
+      - 테이블 구조 잠금
+    - 네임드 락
+      - 사용자의 필요에 맞게 사용
+
 ## 5.2 MySQL 엔진의 잠금
 
-- 락 구분
-  - 스토리지 엔진 레벨
-  - MySQL 엔진 레벨
-    - 스토리지 엔진을 제외한 나머지 부분
-    - 락 종류
-      - 테이블 락
-        - 테이블 데이터 동기화
-      - 메타데이터 락
-        - 테이블 구조 잠금
-      - 네임드 락
-        - 사용자의 필요에 맞게 사용
+- 글로벌 락
+- 테이블 락
+- 네임드 락
+- 메타데이터 락
 
 ### 글로벌 락
 
@@ -151,7 +157,7 @@ InnoDB 스토리지 엔진의 잠금
   - **S-lock이 걸려있든, X-lock이 걸려있든, 단순한 SELECT는 락으로 인한 wait이 없음**
     - MySQL이 구현한 MVCC의 언두로그를 생각하면 어찌보면 당연함(consistent read)
   - **InnoDB의 lock은 최신 버전의 row에만 걸 수 있음**
-    - 이전 버전의 row에는 걸지 못함
+    - 이전 버전(rollback history)의 row에는 걸지 못함
     - 따라서, REPEATABLE READ에서 `select * from ...`에서 보이지 않던 레코드가, `select * from ... for update`나 `select * from ... for share`에서는 보이는 경우가 존재
 
 #### 락의 유형
@@ -186,8 +192,7 @@ InnoDB 스토리지 엔진의 잠금
           - 모든 레코드에 락을 검
 - 갭 락
   - 개요
-    - 레코드와 바로 인접한 레코드 사이의 간격만을 잠그는 것
-    - **간격 사이에 새 레코드가 INSERT되는 것을 막아줌**
+    - **간격 사이에 새 레코드가 INSERT되는 것을 막아주기 위한 락**
       - phantom read를 방지
     - 넥스트 키 락의 일부로 자주 사용
   - 특징
@@ -195,6 +200,8 @@ InnoDB 스토리지 엔진의 잠금
     - 서로다른 트랜젝션의 갭 락은 충돌되지 않음
     - S-gap lock, X-gap lock 차이가 없음
       - 그냥 단지, 갭 사이에 insertion을 못하게 막을 뿐
+  - 주의
+    - InnoDB에서는, `SELECT ... FOR UPDATE`, `SELECT ... FOR SHARE`두 쿼리의 경우 Rollback history에 lock을 걸 수 없기 때문에 phantom read발생
 - 넥스트 키 락
   - 개요
     - 레코드 락 + 갭 락
@@ -220,7 +227,6 @@ InnoDB 스토리지 엔진의 잠금
 - 개요
   - **`SELECT ... FOR UPDATE (FOR SHARE) / UPDATE / DELETE`시 인덱스로 스캔되는 모든 레코드 및 갭에 락이 걸림(암묵적 lock)**
     - 따라서, 인덱싱을 잘하는 것이 매우 중요
-    - 갭에도 걸린다는 것을 반드시 인지해야 함
   - **테이블에 인덱스가 하나도 없는 경우, 테이블을 풀스캔하면서 모든 레코드 및 갭을 잠금**
     - *왜 굳이 이래야만 하는가?*
     - *그냥 마지막에 수정할때만 해당 레코드에 락을걸면 되는거 아닌가*
@@ -229,6 +235,7 @@ InnoDB 스토리지 엔진의 잠금
         - 모든 테이블의 row를 full scan하면서 레코드 및 갭에 x-lock이 걸림
       - c1에 인덱스가 있을 경우
         - 인덱스 스캔 범위에만 row를 scan하면서 레코드 및 갭에 x-lock이 걸림
+          - **만약, c1이 primary, unique 조건으로 인해서 1행이라는 것이 확실시되면, 레코드락만 걸림**
       - `SELECT COUNT(*)`도 마찬가지(왜냐하면, 인덱스 스캔자체에서 락을거므로)
 
 ### 레코드 수준의 잠금 확인 및 해제
@@ -283,6 +290,11 @@ try restarting transaction`
 *어라, 그럼 spring jpa메서드 save(), saveAndFlush() 둘 중 saveAndFlush()를 사용하게 되면, 데드락의 위험성이 생기겠네?*
 
 ## 5.4 MySQL의 격리 수준
+
+- READ UNCOMMITTED
+- READ COMMITTED
+- REPEATABLE READ
+- SERIALIZABLE
 
 ### READ UNCOMMITTED
 
