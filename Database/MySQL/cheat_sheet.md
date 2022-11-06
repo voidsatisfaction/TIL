@@ -16,6 +16,13 @@
 select * from information_schema.processlist;
 ```
 
+### 프로세스 삭제
+
+- mysql
+  - `KILL (프로세스id)`
+- aurora mysql
+  - `mysql.rds_kill_query(queryID)`
+
 ## 테스트
 
 ### 테스트용 데이터베이스 만들기
