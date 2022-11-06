@@ -140,9 +140,14 @@ InnoDB 스토리지 엔진의 잠금
 
 ![](./images/ch5/innodb_locks1.jpg)
 
-### InnoDB 락의 종류
+- c.f) lock type, mode
+  - lock type
+    - 테이블 수준의 잠금이 아니라, 레코드 수준의 잠금을 의미
+      - 테이블에 존재하는 레코드 자체의 잠금(x)
+  - lock mode
+    - 실제 어떤 락이 걸린것인지
 
-#### row-level 락의 범위
+### 락의 모드(Lock mode)
 
 - S-lock
   - 개요
@@ -157,10 +162,11 @@ InnoDB 스토리지 엔진의 잠금
   - **S-lock이 걸려있든, X-lock이 걸려있든, 단순한 SELECT는 락으로 인한 wait이 없음**
     - MySQL이 구현한 MVCC의 언두로그를 생각하면 어찌보면 당연함(consistent read)
   - **InnoDB의 lock은 최신 버전의 row에만 걸 수 있음**
-    - 이전 버전(rollback history)의 row에는 걸지 못함
+    - 이전 버전(rollback history)의 row에는 걸지 못함(인덱스에 락을 거므로)
     - 따라서, REPEATABLE READ에서 `select * from ...`에서 보이지 않던 레코드가, `select * from ... for update`나 `select * from ... for share`에서는 보이는 경우가 존재
+      - phantom read가 존재
 
-#### 락의 유형
+### 락의 유형(Lock type)
 
 - c.f) Multiple Granularity Locking(MGL)
   - 개요
@@ -172,55 +178,74 @@ InnoDB 스토리지 엔진의 잠금
     - MySQL에서는 table과 record 사이에 MGL 가능
       - e.g) `SELECT ... FOR SHARE`혹은 `SELECT ... FOR UPDATE` 와 같이 row에 s-lock, x-lock을 걸기전에 table level의 intention lock을 걸어서 실제 table level의 lock을 걸때에(`LOCK TABLE ... WRITE`) 쉽게 참고할 수 있게 한다
 - Intention lock
-  - 개요
-    - MGL에서 노드를 직접 락하는 것이 아니라, 락이 존재하거나(예를들면, MySQL에서 IS락은 해당 테이블에 record S-lock이 이미 존재하고 있다는 것을 나타냄), 락을 하려고 한다는 것을 나타내는 락
-      - 한 트랜젝션이 특정 노드에 S나 X락을 걸면, 모든 조상 노드에게 recursive하게 각각 IS혹은 IX락을 걸게 되는것
-        - 존재함을 나타내는 플래그
-  - 시나리오
-    - 한 트랜젝션에서 레코드에 S-lock을 걸려고 시도하면, innoDB에서 암묵적으로 테이블에 IS lock을 걸고, 그 다음에 레코드에 S-lock을 건다
-    - 다른 트랜젝션에서 테이블 X-lock을 걸려고 시도하면, 해당 테이블에 모든 레코드를 순회하며 락이 걸려있는지 확인하는 대신, Intention lock의 여부만 확인한다
-      - 훨씬 효율적
-- 레코드 락
-  - 개요
-    - 레코드 자체만 잠그는 것
-      - **하지만 InnoDB에서 그 구현은 인덱스의 레코드를 잠금**
-      - 인덱스가 없어도 클러스터 인덱스를 생성해서 해당 클러스터 인덱스로 레코드 잠금
-        - 인덱스로 레코드를 잠금한다는게 구체적으로 어떤 의미인지?
-          - 말 그대로 인덱스의 레코드다
-          - 복합인덱스의 경우, 인덱스를 일부만 타면, 그 인덱스에 대해서만 락을 검
-        - table full scan의 경우에는 어떻게 레코드 락을 하는가?
-          - 모든 레코드에 락을 검
-- 갭 락
-  - 개요
-    - **간격 사이에 새 레코드가 INSERT되는 것을 막아주기 위한 락**
-      - phantom read를 방지
-    - 넥스트 키 락의 일부로 자주 사용
-  - 특징
-    - 유니크한 행을 유니크 인덱스로 찾아서 잠금을 걸때는 사용되지 않음
-    - 서로다른 트랜젝션의 갭 락은 충돌되지 않음
-    - S-gap lock, X-gap lock 차이가 없음
-      - 그냥 단지, 갭 사이에 insertion을 못하게 막을 뿐
-  - 주의
-    - InnoDB에서는, `SELECT ... FOR UPDATE`, `SELECT ... FOR SHARE`두 쿼리의 경우 Rollback history에 lock을 걸 수 없기 때문에 phantom read발생
-- 넥스트 키 락
-  - 개요
-    - 레코드 락 + 갭 락
-  - 예시
-    - 인덱싱이 안되어있는 필터 조건으로 필터링할때, 열람되는 모든 행의 클러스터 인덱스 레코드에 넥스트 키락을 검
-- 자동 증가 락
-  - 개요
-    - `AUTO_INCREMENT`칼럼이 사용된 테이블에 동시에 여러 레코드가 INSERT되는 경우, 각 레코드는 중복되지 않고 저장된 순서대로 증가하는 일련번호값을 갖을 수 있도록 하는 락
-      - 테이블 수준의 락
-    - `INSERT`시에만 걸림
-    - `AUTO_INCREMENT`값을 가져오는 순간만 락이 걸렸다가 즉시 해제
-- c.f) foreign key에 의한 부모, 자식 테이블의 락
-  - 개요
-    - 외래키 제약으로 인해, 자식 테이블(외래키를 갖고 있는 테이블)에서 지정하는 부모의 id가 부모 테이블에 존재함(정합을)을 보장하기 위해 부모 또는 자식행에 shared lock를 걸어줌
-  - e.g)
-    - `Tx1, Tx2 - BEGIN`
-    - `Tx1 - UPDATE parent SET age = age + 1 WHERE id = 1;`
-    - `Tx2 - INSERT INTO child (id, age, parent_id) VALUES ("", 20, 1);`
-      - 블로킹됨
+- record lock
+- gap lock
+- next-key lock
+- auto-increment lock
+- foreign-key lock
+
+#### Intention lock
+
+- 개요
+  - MGL에서 노드를 직접 락하는 것이 아니라, 락이 존재하거나(예를들면, MySQL에서 IS락은 해당 테이블에 record S-lock이 이미 존재하고 있다는 것을 나타냄), 락을 하려고 한다는 것을 나타내는 락
+    - 한 트랜젝션이 특정 노드에 S나 X락을 걸면, 모든 조상 노드에게 recursive하게 각각 IS혹은 IX락을 걸게 되는것
+      - 존재함을 나타내는 플래그
+- 시나리오
+  - 한 트랜젝션에서 레코드에 S-lock을 걸려고 시도하면, innoDB에서 암묵적으로 테이블에 IS lock을 걸고, 그 다음에 레코드에 S-lock을 건다
+  - 다른 트랜젝션에서 테이블 X-lock을 걸려고 시도하면, 해당 테이블에 모든 레코드를 순회하며 락이 걸려있는지 확인하는 대신, Intention lock의 여부만 확인한다
+    - 훨씬 효율적
+
+#### 레코드 락
+
+- 개요
+  - 레코드 자체만 잠그는 것
+    - **하지만 InnoDB에서 그 구현은 인덱스의 레코드를 잠금**
+    - 인덱스가 없어도 클러스터 인덱스를 생성해서 해당 클러스터 인덱스로 레코드 잠금
+      - 인덱스로 레코드를 잠금한다는게 구체적으로 어떤 의미인지?
+        - 말 그대로 인덱스의 레코드다
+        - 복합인덱스의 경우, 인덱스를 일부만 타면, 그 인덱스에 대해서만 락을 검
+      - table full scan의 경우에는 어떻게 레코드 락을 하는가?
+        - 모든 레코드에 락을 검
+
+#### 갭 락
+
+- 개요
+  - **간격 사이에 새 레코드가 INSERT되는 것을 막아주기 위한 락**
+    - phantom read를 방지
+- 특징
+  - 넥스트 키 락의 일부로 자주 사용
+  - 유니크한 행을 유니크 인덱스로 찾아서 잠금을 걸때는 사용되지 않음
+    - 행이 하나라는게 보장되면 사용되지 않음
+  - 서로다른 트랜젝션의 갭 락은 충돌되지 않음
+  - S-gap lock, X-gap lock 차이가 없음
+    - 그냥 단지, 갭 사이에 insertion을 못하게 막을 뿐
+- 주의
+  - InnoDB에서는, `SELECT ... FOR UPDATE`, `SELECT ... FOR SHARE`두 쿼리의 경우 Mysql에서 Rollback history에 lock을 걸 수 없고, 오직 index에만 락을 걸 수 있어서 phantom read발생
+
+#### 넥스트 키 락
+
+- 개요
+  - 레코드 락 + 갭 락
+- 예시
+  - 인덱싱이 안되어있는 필터 조건으로 필터링할때, 열람되는 모든 행의 클러스터 인덱스 레코드에 넥스트 키락을 검
+
+#### 자동 증가 락
+
+- 개요
+  - `AUTO_INCREMENT`칼럼이 사용된 테이블에 동시에 여러 레코드가 INSERT되는 경우, 각 레코드는 중복되지 않고 저장된 순서대로 증가하는 일련번호값을 갖을 수 있도록 하는 락
+    - 테이블 수준의 락
+  - `INSERT`시에만 걸림
+  - `AUTO_INCREMENT`값을 가져오는 순간만 락이 걸렸다가 즉시 해제
+
+#### c.f) foreign key에 의한 부모, 자식 테이블의 락
+
+- 개요
+  - 외래키 제약으로 인해, 자식 테이블(외래키를 갖고 있는 테이블)에서 지정하는 부모의 id가 부모 테이블에 존재함(정합을)을 보장하기 위해 부모 또는 자식행에 shared lock를 걸어줌
+- e.g)
+  - `Tx1, Tx2 - BEGIN`
+  - `Tx1 - UPDATE parent SET age = age + 1 WHERE id = 1;`
+  - `Tx2 - INSERT INTO child (id, age, parent_id) VALUES ("", 20, 1);`
+    - 블로킹됨
 
 ### 인덱스와 잠금
 
