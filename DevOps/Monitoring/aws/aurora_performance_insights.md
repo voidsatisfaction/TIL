@@ -81,6 +81,16 @@ Active Session State
         - *인덱스를 타지 않는 소팅 혹은 필터링 같은것인듯(그건 mysql engine에서 직접 처리하므로)*
   - `io/aurora_redo_log_flush`
     - 이 이벤트는 세션이 Aurora 스토리지에 영구 데이터를 쓸 때 발생합니다.
+      - 데이터베이스가 너무 많은 커밋을 수행하는 경우 I/O 작업 대기 필요
+      - batch로 insert하는것이, 하나하나 insert commit하는것 보다 훨씬 효율적
+      - 줄이기 위한 방법
+        - 쓰기 작업 그룹화
+        - 자동 커밋 해제
+        - 트랜잭션 사용
+        - 배치 사용
+          - `INSERT INTO ... VALUES (...), (...), (...)`
+          - `UPDATE ... SET ... WHERE ...`
+          - `DELETE FROM ... WHERE ...`
   - `io/aurora_respond_to_client`
     - 이 이벤트는 스레드가 결과 집합을 클라이언트에 반환하기 위해 대기 중일 때 발생합니다.
   - `io/file/innodb/innodb_data_file`
