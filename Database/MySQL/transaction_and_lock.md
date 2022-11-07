@@ -209,25 +209,121 @@ InnoDB 스토리지 엔진의 잠금
 
 #### 갭 락
 
+갭 락의 필요성1: Repeatable read 격리 수준 보장(phantom read방지)
+
+![](./images/transaction_and_lock/why_use_gap_lock1.png)
+
+갭 락의 필요성2: Replication 일관성 보장
+
+![](./images/transaction_and_lock/why_use_gap_lock2.png)
+
 - 개요
   - **간격 사이에 새 레코드가 INSERT되는 것을 막아주기 위한 락**
-    - phantom read를 방지
+    - 쿼리의 결과가 오직 1건의 결과를 보장하지 못하고, (S or X)lock을 거는 경우 경우 넓은 범위의 갭락이 발생
+      - `SELECT ... FOR UPDATE(FOR SHARE), UPDATE, DELETE`와 같은 쿼리를 할 경우
+- 필요성
+  - Repeatable read 격리 수준 보장(phantom read방지)
+    - 즉, READ-COMMITTED에서는 phantom read가 발생
+  - Replication 일관성 보장(Binary Log Format = Statement or Mixed(SQL문장을 바이너리 로그 파일로 기록))
+  - Foreign Key 일관성 보장
 - 특징
-  - 넥스트 키 락의 일부로 자주 사용
   - 유니크한 행을 유니크 인덱스로 찾아서 잠금을 걸때는 사용되지 않음
     - 행이 하나라는게 보장되면 사용되지 않음
   - 서로다른 트랜젝션의 갭 락은 충돌되지 않음
   - S-gap lock, X-gap lock 차이가 없음
     - 그냥 단지, 갭 사이에 insertion을 못하게 막을 뿐
+  - 넥스트 키 락의 일부로 자주 사용
 - 주의
   - InnoDB에서는, `SELECT ... FOR UPDATE`, `SELECT ... FOR SHARE`두 쿼리의 경우 Mysql에서 Rollback history에 lock을 걸 수 없고, 오직 index에만 락을 걸 수 있어서 phantom read발생
+  - 쿼리의 결과가 1건의 결과를 보장하지 못하는 경우 넓은 범위의 갭락이 발생할 수 있음
+    - 인덱스를 타지 않는 쿼리
+      - 테이블 행 전체에 next-key lock(gap lock + record lock)을 걸음
+    - 복합 인덱스의 일부만 타는 쿼리(unique하지 않는경우)
 
 #### 넥스트 키 락
+
+갭 락과 넥스트 키 락 예시
+
+```
+mysql> select * from test1;
++----+------+
+| id | c1   |
++----+------+
+|  1 |   10 |
+|  2 |   15 |
+|  3 |   22 |
+|  7 |   11 |
+| 10 |   24 |
++----+------+
+
+위의 예시에서, id는 primary key이고, c1은 아무런 인덱스가 걸려있지 않다
+여기에서 tx1에서 다음과 같이 실행하면 블로킹이 됨
+
+예시1: gap lock의 범위 속에서는 락이 걸린다
+
+tx1> begin;
+tx1> update test1 set c1 = 50 where id = 5; // id 4-6 사이에 gap lock이 걸림
+
+tx2> begin;
+tx2> update test1 set c1 = 50 where id = 3; // 4-6 사이에 gap lock이 걸린것이므로 성공
+tx2> insert into test1 values (4, 30); // 블로킹
+
+예시2: gap lock의 범위 바깥에서는 락이 걸리지 않는다
+
+하지만 인덱스의 범위를 피해서 아래와 같이 트랜잭션을 실행하면 블로킹이 되지 않음
+
+tx1> begin;
+tx1> update test1 set c1 = 50 where id = 5; // id 4-6 사이에 gap lock이 걸림
+
+tx2> begin;
+tx2> insert into test1 values (8, 30); // 성공
+tx2> insert into test1 values (11, 30); // 성공
+
+예시3: 인덱스가 없는 경우의 next key lock이 모든 행과 gap에 걸린다
+
+tx1> begin;
+tx1> select * from test1 where c1 = 11 for update;
+
+tx2> begin;
+tx2> insert into test1 values (11, 30); // 블로킹
+
+tx3> begin;
+tx3> update test1 set c1 = 70 where id = 1; // 블로킹
+```
 
 - 개요
   - 레코드 락 + 갭 락
 - 예시
-  - 인덱싱이 안되어있는 필터 조건으로 필터링할때, 열람되는 모든 행의 클러스터 인덱스 레코드에 넥스트 키락을 검
+  - 인덱싱이 안되어있는 칼럼으로 필터링할 경우
+    - 열람되는 모든 행의 클러스터 인덱스 레코드에 넥스트 키락을 검(full-scan이어서)
+  - 인덱싱이 되어있는 칼럼으로 필터링할 경우
+    - 인덱스가 설정되지 않은 행에 S,X락을 걸 경우 가장 가까운 인덱스 범위에 gap lock이 걸림
+      - 위의 예시 참조
+
+**갭 락으로 인한 데드락 예시(매우 중요)**
+
+![](./images/transaction_and_lock/gap_lock_deadlock1.png)
+
+- 데드락 해설
+  - 3번까지의 SQL 명령은 실행 시점이나 순간에 관계없이, 2개의 트랜잭션간 상호 간섭이나 대기 없이 실행됨
+    - tb_gaplock 테이블에 id=2인 레코드가 없으므로, `SELECT ... FOR UPDATE`문장과 `DELETE`문장은 레코드락 없이 갭 락만 획득
+    - 갭 락은 항상 S-lock이므로 서로 충돌하지 않음
+  - 4,5번의 INSERT 문장은 갭 락과 다른 형태의 잠금인 INSERT Intention Gap Lock을 필요로 함
+    - 이 락은 갭 락과 호환되지 않아서, 각각의 세션이 서로의 갭 락을 기다리게 됨
+    - 데드락 발생
+- 갭 락 사용 최소화 & Concurrency 향상 방법
+  - `binlog_format = ROW`
+    - 그다지 큰 변화는 아님
+  - `transaction_isolation = READ-COMMITTED`
+    - 매우 중요한 변화이므로 조심해야 함
+    - but, 데드락이 발생하지 않으면, 서로 다른 트랜잭션에서 INSERT한 레코드 들이 섞여서 의도하지 않은 버그를 만들어낼 수도 있음
+
+#### Insert intention gap lock
+
+- 개요
+  - INSERT만을 위한 갭 락
+    - Duplicate Key에러가 아니면, 여러 INSERT가 동시에 실행 가능하도록 함
+    - INSERT시에도 gap lock을 사용하면, 너무 넓은 범위의 잠금 효과를 만들게 될 수 있으므로
 
 #### 자동 증가 락
 
