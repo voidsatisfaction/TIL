@@ -44,3 +44,9 @@ create index test1_idx1 on test1 (c1);
 ```
 
 ### 칼럼 타입 바꾸기
+
+### 테이블 구조 보기
+
+```sql
+show create table test1 \G;
+```
