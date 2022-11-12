@@ -30,8 +30,10 @@
 - 운영
   - 모니터링
     - 인프라 모니터링
-    - 로그, 메트릭, 트레이스 관제 시스템 구축
-    - apm 시스템 구축
+    - 로그, 메트릭, 트레이스, apm 관제 시스템 구축
+      - prometheus
+      - Elastic stack
+        - Elastic APM
     - 얼럿 시스템 세팅
   - 배포 전략
     - rolling update
