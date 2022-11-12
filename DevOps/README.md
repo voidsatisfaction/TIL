@@ -1,6 +1,7 @@
 # DevOps
 
 - 의문
+- 0 업무 범위
 - 1 DevOps의 기본적 이해
   - 5가지 철학(CAMSP)
   - Immutable infrastructure
@@ -8,12 +9,52 @@
   - DevOps 엔지니어가 갖추어야할 스킬
   - IaaC(Infrastructure as Code)
   - 데브옵스 로드맵
-- 3 테라폼 기본
-- 4 CI/CD 파이프라인 예시
 
 ## 의문
 
 공부방법은, 지금 당장 설치하고 작성해서 무엇을 만드는게 최고다
+
+## 0. 업무 범위
+
+애플리케이션 개발도 병행하여 기본적으로 해당 도메인을 잘 알아야 수월히 업무를 진행할 수 있음
+
+- 인프라 구축
+  - 클라우드(온프레미스)
+  - IaaC
+- 애플리케이션 제작
+  - 아키텍처 설계
+  - 최적화
+- CI/CD 파이프라인
+  - CI
+  - CD
+- 운영
+  - 모니터링
+    - 인프라 모니터링
+    - 로그, 메트릭, 트레이스 관제 시스템 구축
+    - apm 시스템 구축
+    - 얼럿 시스템 세팅
+  - 배포 전략
+    - rolling update
+    - canary deploy
+  - 장애 예방
+    - 이중화
+  - 컨테이너 오케스트레이션
+    - k8s
+    - helm
+  - DB 관리
+    - 장애가 나기 쉬운 지점 관리하기
+      - e.g) foreign key추가로 인한 metadata lock 이슈등
+    - 파라미터 튜닝
+- 장애대응
+  - 모니터링 지표를 보고 대응
+  - AINDA
+    - Alert
+    - Infra
+    - Network
+    - DB
+    - Application
+- 각종 자동화
+  - 프로그래머 대신 컴퓨터가 대신 하도록
 
 ## 1. DevOps의 기본적 이해
 
@@ -97,106 +138,3 @@
 ![](./images/devops_loadmap1.png)
 
 위의 선형구조가 순서는 아니고, 전체가 다 중요함
-
-## 3. 테라폼 기본
-
-### 테라폼 구성요소
-
-- provider
-  - 테라폼으로 생성할 인프라의 종류를 의미
-- resource
-  - 테라폼으로 실제로 생성할 인프라 자원
-- state
-  - 테라폼을 통해 생성한 자원의 상태
-    - 테라폼 명령어 실행 결과
-    - 실제 상태는 아니지만, 이렇게 상태를 만들도록 유지하려 함
-- output
-  - 테라폼으로 만든 자원을 변수 형태로 state 에 저장하는 것
-- module
-  - 공통적으로 활용할 수 있는 코드를 모듈 형태로 정의하는 것
-- remote
-  - 다른 경로의 state를 참조하는 것. output 변수를 불러올 때 주로 사용
-
-### 테라폼 기본 명령어
-
-- init
-  - 테라폼 명령어 사용을 위해 각종 설정을 진행
-- plan
-  - 테라폼으로 작성한 코드가 실제로 어떻게 만들어질지에 대한 예측 결과를 보여줌
-- apply
-  - 테라폼 코드로 실제 인프라를 생성하는 명령어
-- import
-  - 이미 만들어진 자원을 테라폼 state 파일로 옮겨주는 명령어
-- state
-  - 테라폼 state를 다루는 명령어. 하위 명령어로 mv, push와 같은 명령어가 존재
-- destroy
-  - 생성된 자원들 state 파일 모두 삭제하는 명령어
-
-### 예시
-
-```tf
-# provider
-provider "aws" {
-  region = "ap-northeast-2"
-  version = "~> 3.0"
-}
-
----
-
-# resource
-resource "aws_vpc" "example" {
-  cidr_block = "10.0.0.0/16"
-}
-
----
-
-# state
-{
-  "version": 4,
-  "terraform_version": "0.12.24",
-  ...
-}
-
----
-
-# output
-resource "aws_vpc" "example" {
-  cidr_block = "10.0.0.0/16"
-}
-
-output "vpc_id" {
-  value = aws_vpc.default.id
-}
-
-output "cidr_block" {
-  value = aws_vpc.default.cidr_block
-}
-
----
-
-# module
-module "vpc" {
-  source = "../_modules/vpc"
-
-  cidr_block = "10.0.0.0/16"
-}
-
----
-
-# remote
-data "terraform_remote_state" "vpc" {
-  backend = "remote"
-
-  config = {
-    bucket = "terraform-s3-bucket"
-    region = "ap-northeast-2"
-    key = "terraform/vpc/terraform.tfstate"
-  }
-}
-```
-
-## 4. CI/CD 파이프라인 예시
-
-CI/CD 파이프라인 예시(EKS)
-
-![](./images/ci_cd_example1.png)
