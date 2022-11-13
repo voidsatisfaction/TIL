@@ -8,7 +8,7 @@
   - Job과 Instance
 - 아키텍처
   - 프로메테우스 서버
-    - DB
+    - 스토리지(DB)
     - Data Retrieval worker
     - HTTP Server
   - 메트릭을 타겟으로부터 수집하는 법
@@ -91,7 +91,7 @@
 
 - Alert
   - 프로메테우스가 firing하는 alerting rule의 결과
-  - 프로메테우스 서버에서 Alertmanager로 쏴줌
+  - **프로메테우스 서버에서 Alertmanager로 쏴줌**
 - Alertmanager
   - Alert를 받아들여서, 취합하여 그루핑하고, 스로틀링해서 이메일이나 Pagerduty나 슬랙으로 보내주는 역할 담당
 - Bridge
@@ -219,32 +219,26 @@ job: api-server
 ![](./images/prometheus_architecture1.png)
 
 - 프로메테우스 컴포넌트
-  - 프로메테우스 서버
-    - scrape / store
-  - *클라이언트 라이브러리*
-    - *애플리케이션 코드에 삽입(왜?)*
-    - *알아서 pull해서 가져간다며?*
-  - 푸시 게이트웨이
-    - 짧은 기간동안 살아있는 job의 메트릭 수집을 위함
-  - exporters
-    - 메트릭을 서드파티 시스템으로부터 프로메테우스 메트릭으로 export해주는 프로그램들
-      - 오피셜 / 논오피셜 존재
-    - HAProxy, StatsD, Graphite, MySQL...
-  - alertmanager
-    - 얼럿을 통지함
-  - 여러가지 다른 툴들
-
-### 프로메테우스 서버
-
-- Storage(DB)
-  - local
-  - remote(e.g RDB)
-- Data Retrieval worker
-  - pulling
-  - save to storage
-- HTTP Server
-  - 쿼리를 받아서 데이터 돌려줌
-  - PromQL 쿼리를 사용
+  - Ingest
+    - exporters
+      - 메트릭을 서드파티 시스템으로부터 프로메테우스 메트릭으로 export해주는 프로그램들
+        - 오피셜 / 논오피셜 존재
+      - HAProxy, StatsD, Graphite, MySQL...
+    - *클라이언트 라이브러리*
+      - *애플리케이션 코드에 삽입(왜?)*
+      - *알아서 pull해서 가져간다며?*
+        - 아마도 `/metrics`를 열어주려고?
+    - 푸시 게이트웨이
+      - 짧은 기간동안 살아있는 job의 메트릭 수집을 위함
+  - Store
+    - 프로메테우스 서버
+      - 스토리지
+      - 워커
+      - HTTP 서버
+  - Consume
+    - alertmanager
+      - 프로메테우스로부터 받은 얼럿 이벤트를 직접 송신해줌(slack, email, pagerduty)
+    - grafana
 
 ### 메트릭을 타겟으로부터 수집하는 법
 
