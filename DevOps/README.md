@@ -55,6 +55,7 @@
     - Network
     - DB
     - Application
+- 보안
 - 각종 자동화
   - 프로그래머 대신 컴퓨터가 대신 하도록
 
