@@ -100,6 +100,9 @@ GROUP BY e.hire_date; -- E)
 
 ### 간단 정리
 
+같은 id일 경우, 출력된 실행 계획에서 위쪽에 출력된 결과일수록 쿼리의 바깥 부분이거나, 먼저 접근한(driving)테이블이고,
+아래쪽에 출력된 결과일수록 쿼리의 안쪽 부분 또는 나중에 접근한 테이블에 해당함(driven)
+
 - id
   - select의 id
 - select_type
@@ -166,7 +169,7 @@ SELECT site_options.domain, sites_users.user, site_taxes.monthly_statement_fee, 
   - 첫번째 행의 테이블이 driving table
 - 두번째 행을 보면, 테이블이 derived2이므로, id가 2인 세번째 행을 봄
 - 세번째 행은 서브쿼리임을 알 수 있고, LATERAL조인에서 매 derived테이블의 행 마다, 임시 테이블이 생성됨을 알 수 있음
-  - 해당 임시 테이블이 driving테이블이 됨
+- 다시 첫번째로 돌아가면, 첫번째 row가 두번째 row보다 더 먼저 등장하므로, e가 driving테이블이고, derived2가 driven테이블(실제로 LEFT JOIN LATERAL)
 
 ### **id**
 
