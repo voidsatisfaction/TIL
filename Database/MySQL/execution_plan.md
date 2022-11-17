@@ -103,6 +103,9 @@ GROUP BY e.hire_date; -- E)
 같은 id일 경우, 출력된 실행 계획에서 위쪽에 출력된 결과일수록 쿼리의 바깥 부분이거나, 먼저 접근한(driving)테이블이고,
 아래쪽에 출력된 결과일수록 쿼리의 안쪽 부분 또는 나중에 접근한 테이블에 해당함(driven)
 
+**기본적으로 id가 높은 순으로 먼저 실행되고, 같은 id에서는 위쪽에 출력된 결과가 더 먼저 실행된 경우다**
+**table과 key는 실제로 해당 table에 적용된 key를 나타냄**
+
 - id
   - select의 id
 - select_type
@@ -135,41 +138,29 @@ GROUP BY e.hire_date; -- E)
 - partitions
 - type
 
-실행 계획 쿼리 결과의 예시
+실행 계획 해석1
 
-```SQL
-SELECT site_options.domain, sites_users.user, site_taxes.monthly_statement_fee, site.name, AVG(price) AS average_product_price
-  FROM sites_orders_products, site_taxes, site, sites_users, site_options
-    WHERE site_options.site_id = site.id
-      AND sites_users.id = site.user_id
-      AND site_taxes.site_id = site.id
-      AND sites_orders_products.site_id = site.id
-    GROUP BY site.id
-    ORDER BY site.date_modified desc
-    LIMIT 5;
-```
-
-```
-+------+-------------+---------------------------------+--------+-----------------+---------------+---------+---------------------------------+------+-----------+
-| id   | select_type | table                           | type   | possible_keys   | key           | key_len | ref                             | rows | Extra     |
-+------+-------------+---------------------------------+--------+-----------------+---------------+---------+---------------------------------+------+-----------+
-|    1 | SIMPLE      | sites                           | index  | PRIMARY,user_id | PRIMARY       | 4       | NULL                            |  858 | Using temporary; Using filesort |
-|    1 | SIMPLE      | sites_options                   | ref    | site_id         | site_id       | 4       | service.sites.id                |    1 |           |
-|    1 | SIMPLE      | sites_taxes                     | ref    | site_id         | site_id       | 4       | service.sites.id                |    1 |           |
-|    1 | SIMPLE      | sites_users                     | eq_ref | PRIMARY         | PRIMARY       | 4       | service.sites.user_id           |    1 |           |
-|    1 | SIMPLE      | sites_orders_products           | ref    | site_id         | site_id       | 4       | service.sites.id                | 4153 |           |//
-+------+-------------+---------------------------------+--------+-----------------+---------------+---------+---------------------------------+------+-----------+
-```
-
-실행 계획 해석
-
-![](./images/ch10/execution_plan1.jpg)
+![](./images/execution_plan/execution_plan1.jpg)
 
 - 먼저, 첫번째 행을 확인하고, ID가 1인 행이 두개있으므로, JOIN임을 파악
   - 첫번째 행의 테이블이 driving table
 - 두번째 행을 보면, 테이블이 derived2이므로, id가 2인 세번째 행을 봄
 - 세번째 행은 서브쿼리임을 알 수 있고, LATERAL조인에서 매 derived테이블의 행 마다, 임시 테이블이 생성됨을 알 수 있음
 - 다시 첫번째로 돌아가면, 첫번째 row가 두번째 row보다 더 먼저 등장하므로, e가 driving테이블이고, derived2가 driven테이블(실제로 LEFT JOIN LATERAL)
+
+실행 걔획 해석2
+
+```sql
+explain select driveracti0_.driver_id as driver_i1_26_, driveracti0_.seq_id as seq_id2_26_, driveracti0_.activity_status as activity3_26_, driveracti0_.end_at as end_at4_26_, driveracti0_.ride_id as ride_id8_26_, driveracti0_.ride_status as ride_sta5_26_, driveracti0_.start_at as start_at6_26_, driveracti0_.trip_id as trip_id9_26_, driveracti0_.trip_ride_status as trip_rid7_26_, driveracti0_.vehicle_id as vehicle10_26_ from driver_activity driveracti0_ left outer join driver driver1_ on driveracti0_.driver_id=driver1_.id where driver1_.id='DTX69446' and driveracti0_.start_at<='2022-11-17 10:35:34.464' order by driveracti0_.seq_id desc limit 1;
+```
+
+![](./images/execution_plan/execution_plan2.png)
+
+- 먼저, ID가 1인 행이 두개 있으므로 JOIN
+- 첫번쨰 행의 테이블이 driving table이고, PRIMARY key로 데이터를 가져오는데, 여기서 covering index(`using index`)를 사용
+- 두번쨰 행에서 driver_activity중에서 첫번째 행에서 가져온 driver.id로 인덱스를 타서 레코드를 가져옴
+  - 그리고 그 외의 필터링을 mysql engine에서 행함(`using where`)
+- 두 대상을 조인함
 
 ### **id**
 
