@@ -40,6 +40,8 @@
   - 여러개의 WHERE조건이 있어도, 그중에서 하나의 인덱스만 적용 가능하다는 것인가?
     - 복수개의 인덱스를 적용하고 싶다면 merge_index를 사용하라는 것인가?
       - 그렇다
+- *JOIN연산은 반드시 mysql engine레벨에서 실행되는 것인가?*
+  - 그런거 같은데..
 
 ## 개요
 
@@ -148,18 +150,28 @@ GROUP BY e.hire_date; -- E)
 - 세번째 행은 서브쿼리임을 알 수 있고, LATERAL조인에서 매 derived테이블의 행 마다, 임시 테이블이 생성됨을 알 수 있음
 - 다시 첫번째로 돌아가면, 첫번째 row가 두번째 row보다 더 먼저 등장하므로, e가 driving테이블이고, derived2가 driven테이블(실제로 LEFT JOIN LATERAL)
 
-실행 걔획 해석2
+실행 계획 해석2
 
 ```sql
-explain select driveracti0_.driver_id as driver_i1_26_, driveracti0_.seq_id as seq_id2_26_, driveracti0_.activity_status as activity3_26_, driveracti0_.end_at as end_at4_26_, driveracti0_.ride_id as ride_id8_26_, driveracti0_.ride_status as ride_sta5_26_, driveracti0_.start_at as start_at6_26_, driveracti0_.trip_id as trip_id9_26_, driveracti0_.trip_ride_status as trip_rid7_26_, driveracti0_.vehicle_id as vehicle10_26_ from driver_activity driveracti0_ left outer join driver driver1_ on driveracti0_.driver_id=driver1_.id where driver1_.id='DTX69446' and driveracti0_.start_at<='2022-11-17 10:35:34.464' order by driveracti0_.seq_id desc limit 1;
+explain select driveracti0_.driver_id as driver_i1_26_, driveracti0_.seq_id as seq_id2_26_,
+driveracti0_.activity_status as activity3_26_, driveracti0_.end_at as end_at4_26_, driveracti0_.ride_id as
+ride_id8_26_, driveracti0_.ride_status as ride_sta5_26_, driveracti0_.start_at as start_at6_26_,
+driveracti0_.trip_id as trip_id9_26_, driveracti0_.trip_ride_status as trip_rid7_26_,
+driveracti0_.vehicle_id as vehicle10_26_
+from driver_activity driveracti0_ left outer join driver driver1_ on driveracti0_.driver_id=driver1_.id
+where driver1_.id='DTX69446' and driveracti0_.start_at<='2022-11-17 10:35:34.464'
+order by driveracti0_.seq_id desc limit 1;
 ```
 
 ![](./images/execution_plan/execution_plan2.png)
 
 - 먼저, ID가 1인 행이 두개 있으므로 JOIN
+- 주의
+  - 여기에서, outer join되는 테이블인 driver의 `driver.id='DTX69446'`를 명시했기 때문에, 옵티마이저가 INNER JOIN으로 변경해서 실행해버림
+    - 진짜 LEFT JOIN을 의도했으면 `driver1_.id='DTX69446'`을 `left outer join ... on`절 다음으로 옮겼어야 함
 - 첫번쨰 행의 테이블이 driving table이고, PRIMARY key로 데이터를 가져오는데, 여기서 covering index(`using index`)를 사용
-- 두번쨰 행에서 driver_activity중에서 첫번째 행에서 가져온 driver.id로 인덱스를 타서 레코드를 가져옴
-  - 그리고 그 외의 필터링을 mysql engine에서 행함(`using where`)
+  - 일단 아이디에 해당하는 드라이버만 가져온다
+- 두번쨰 행에서 driver_activity중에서 첫번째 행에서 가져온 driver.id로 인덱스를 타서 레코드를 가져옴 그리고 그 외의 필터링을 mysql engine에서 행함(`using where`)
 - 두 대상을 조인함
 
 ### **id**
