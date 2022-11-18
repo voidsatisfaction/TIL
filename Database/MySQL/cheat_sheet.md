@@ -50,3 +50,8 @@ create index test1_idx1 on test1 (c1);
 ```sql
 show create table test1 \G;
 ```
+
+### 큰 데이터셋 만들기
+
+- information schema를 이용한 방법
+  - https://stackoverflow.com/a/60841951
