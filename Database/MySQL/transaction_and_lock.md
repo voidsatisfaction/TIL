@@ -124,15 +124,30 @@ isolation이 serializable인 경우 아래 동작의 해석
 
 ### 메타데이터 락
 
+Online DDL이 Metadata lock을 기다리면서 쿼리를 블록하는 이슈가 존재
+
 - 개요
-  - 데이터베이스 객체(테이블, 뷰 등)의 이름이나 구조를 변경하는 경우에 획득하는 잠금
-- 활용
-  - 테이블 구조변경
-    - 데이터를 새 테이블에 미리 어느정도 많이 옮김
-    - 작업 대상 테이블 2개에 대해 테이블 쓰기 락 획득
-    - 남은 데이터 복사
-    - RENAME 명령으로 새로운 테이블을 서비스로 투입
-    - 불필요한 테이블 삭제
+  - 데이터베이스 객체(테이블, 뷰 등)의 이름이나 구조를 변경하지 못하도록 획득하는 잠금
+    - 데이터베이스 오브젝트에 대한 동시 접근과 데이터 일관성을 유지하기 위해서 메타데이터 락을 사용
+- 특징
+  - S, X락이 존재
+  - 테이블 뿐 아니라, 스키마, procedures, functions, triggers, scheduled events, table spaces, `GET_LOCK()`으로 인한 명시적으로 획득한 유저 락까지도 적용됨
+  - performance_schema의 `metadata_locks`에서 세션이 갖고 있는 메타데이터 락과 블로킹 정보를 볼 수 있음
+- 동작
+  - Acquisition
+    - 우선순위가 존재하여, 쓰기 락 요청이 더 높아서 읽기 락 요청보다 함께 대기중이라면 먼저 실행이 됨
+    - DML문은 락을 획득함
+    - DDL의 경우, 데드락을 방지하기 위해서, 락을 명시적으로 알파벳 순서대로 획득
+      - `RENAME TABLE tbla TO tbld, tblc TO tbla;`
+        - tbla, tblc, tbld 순으로 락 획득(알파벳 순서)
+  - Release
+    - **트랜잭션의 serializability때문에, mysql 엔진은 다른 세션에서 명시적으로든, 암묵적으로든 끝나지 않은 트랜잭션이 있다면 DDL을 허락하지 않음**
+      - 메타데이터 락을 통해서 구현
+      - 메타데이터락은 테이블 구조의 변화를 막음
+    - e.g)
+      - session1: `BEGIN; SELECT * FROM t; SELECT * FROM nt;`
+      - session2: `DROP TABLE t; ALTER TABLE t ..., ...; LOCK TABLE t ... WRITE;`
+      - session2는 session1의 트랜잭션이 끝날때까지 블로킹
 
 ## 5.3 InnoDB 스토리지 엔진 잠금
 
