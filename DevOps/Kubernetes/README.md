@@ -1,15 +1,23 @@
 # 쿠버네티스
 
 - 의문
-- 현장
 - 개요
-  - 쿠버네티스의 등장인물 & 용어소개
-  - 컴포넌트
-    - Control Plane Components
-    - Node Components
-    - Addons
-  - 쿠버네티스 API
-  - 쿠버네티스 오브젝트(리소스/카인드)
+- 쿠버네티스의 등장인물 & 용어소개
+  - 오브젝트
+  - 오브젝트 metadata
+    - namespace
+    - label
+    - 어노테이션
+    - 파이널라이저
+    - 필드 셀렉터
+    - 소유자(Owners)와 의존자(Dependents)
+  - 컨트롤러
+- 컴포넌트
+  - Control Plane Components
+  - Node Components
+  - Addons
+- 쿠버네티스 API
+- 쿠버네티스 오브젝트(리소스/카인드)
 - 워크로드
 - 태스크
   - 애플리케이션 실행
@@ -18,35 +26,6 @@
 - 스토리지
 
 ## 의문
-
-## 현장
-
-- probe
-  - 개요
-    - 컨테이너에서 kubelet에 의해 주기적으로 수행되는 진단
-    - 진단을 수행하기 위해서 kubelet은 컨테이너에 의해서 구현된 핸들러를 호출한다
-  - 핸들러 타입
-    - ExecAction
-      - 컨테이너 내에서 지정된 명령어를 실행하고, 명령어 상태코드가 0으로 종료되면 성공
-    - TCPSocketAction
-      - 지정된 포트에서 컨테이너의 IP 주소에 대해 TCP 검사를 수행한다. 포트가 활성화되어 있다면 진단이 성공한 것으로 간주
-    - HTTPGetAction
-      - 지정된 포트 및 경로에서 컨테이너의 IP 주소에 대한 HTTP Get요청을 수행. 응답의 상태코드가 200보다 크고, 400보다 작으면 진단이 성공으로 간주
-  - probe 결과
-    - Success
-      - 컨테이너 진단 통과
-        - 실패시, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 재시작 정책의 대상이 됨
-    - Failure
-      - 컨테이너 진단 실패
-    - Unknown
-      - 진단 자체가 실패하였으므로 아무런 액션 수행하면 안됨
-  - probe 종류
-    - livenessProbe
-      - 컨테이너가 동작중인지 여부
-    - readinessProbe
-      - 컨테이너가 요청을 처리할 준비가 되었는지 여부
-    - startupProbe
-      - 컨테이너 내의 애플리케이션이 시작되었는지를 나타냄
 
 ## 개요
 
@@ -80,9 +59,10 @@
     - 확장성
       - 소스코드를 변경시키지 않고도, 쿠버네티스 클러스터에 기능 추가 가능
 
-### 쿠버네티스의 등장인물 & 용어소개
+## 쿠버네티스의 등장인물 & 용어소개
 
 - 등장인물
+  - 오브젝트
   - 컨트롤러
 - 그 외 용어
   - 팟
@@ -90,39 +70,202 @@
     - Pod Disruption
   - namespace
 
-#### 등장인물
+### 오브젝트
 
-- 컨트롤러
-  - 정의
-    - **클러스터의 상태를 보고 있다가, 특정 오브젝트를 필요할 때 desired state로 상태 변화를 일으키는 프로그램**
-      - *상태변화는 어떤식으로 일으키는 걸까? control plane의 API로 일으키는걸까? 아니면 kubelet같은걸로 직접?*
-  - 특징
-    - 적어도 하나의 쿠버네티스 리소스 타입(오브젝트)을 트래킹
-      - 이러한 오브젝트는 spec필드가 존재하여, desired state를 나타냄
-      - 해당 리소스의 컨트롤러는 쿠버네티스에서 desired state로 맞춰주기 위한 역할 담당
-    - API server로 유용한 side effect를 발생시킬 수도 있음
-    - 컨트롤러는 간단할 수록 좋음
-    - 컨트롤러는 언제나 실패할 수 있으므로 그것을 감내하도록 설계해야 함
+- 개요
+  - 쿠버네티스 시스템에서 영속성을 가지는 대상
+- 특징
+  - spec, status를 가짐
+    - spec은 desired state를 의미하며, 쿠버네티스는 status를 항상 spec으로 맞추려고 함
+    - status는 현재 실제 오브젝트의 상태를 의미
+  - `.yaml`파일에서 다음 필드는 required
+    - `apiVersion`
+    - `kind`
+    - `metadata`
+      - name, uid, namespace를 포함하여 오브젝트를 유일하게 구분지어줄 메타데이터
+    - `spec`
+- 예시
+  - pod, service, deployment, ...
+
+### 오브젝트 `metadata`
+
+#### namespace
+
+- 개요
+  - 하나의 클러스터에서 오브젝트의 리소스 그룹을 격리하는 매커니즘
+- 특징
+  - 오브젝트의 name은 namespace속에서 유일해야 함
+  - 오직 namespaced object(Deployment, Services 등)에서만 사용가능
+    - 클러스터 단위의 오브젝트인 StorageClass, Nodes, PersistentVolumes에서는 사용 불가
+  - 서비스를 생성하면 해당 DNS 엔트리가 생성됨
+    - `<서비스-이름>.<네임스페이스-이름>.svc.cluster.local`(FQDN)
+      - 만약, 컨테이너가 `<서비스-이름>`만 사용하는 경우, 네임스페이스 내에 국한된 서비스로 연결됨(PQDN)
+      - c.f) FQDN vs PQDN
+        - FQDN(Fully Qualified Domain Name)
+        - PQDN(Partially Qualified Domain Name)
+- 초기 네임스페이스
+  - `default`
+    - 다른 네임스페이스가 없는 오브젝트를 위한 기본 네임스페이스
+  - `kube-system`
+    - 쿠버네티스 시스템에서 생성한 오브젝트를 위한 네임스페이스
+  - `kube-public`
+    - 모든 사용자가 읽기 권한으로 접속 가능한 네임스페이스
+
+#### label
+
+- 개요
+  - 오브젝트의 특성을 식별하는데 사용되어 오브젝트에 부여된 키와 값의 쌍의 메타데이터
+    - 검색에 사용하기에 용이
+- 특징
+  - 오브젝트의 키는 유니크 해야 함
+  - 키
+    - `(접두사)/이름`
+    - e.g)
+      - `kubernetes.io/ingress.class`
+        - `kubernetes.io/`와 `k8s.io/`접두사는 쿠버네티스의 핵심 컴포넌트로 예약 되어있음
+      - `environment: production`
+      - `app: {{ template "common.name" }}` (helm)
+- e.g)
+  - `"release": "stable"`, `"release": "canary"`
+  - `"environment: "dev"`, `"environment": "qa", "environment": "production"`
+- label selector
+  - 개요
+    - 클라이언트와 사용자가 레이블링 된 오브젝트를 식별하는 방식
   - 종류
-    - 빌트인 컨트롤러
-      - `kube-controller-manager`에서 실행됨
-      - 종류
-        - Deployment, Job
-    - 커스텀 컨트롤러
-      - 쿠버네티스 확장을 위해서 컨트롤 플레인 바깥에서 동작하는 컨트롤러
-      - 팟 내부에서 동작할 수도 있고, 아예 쿠버네티스 외부에서 동작할수도 있음
-  - 컨트롤러 패턴
-    - API server를 이용한 제어
-      - 예시: Job 컨트롤러
-        - 팟을 생성해서 Job을 실행하고 팟을 제거함
-        - Job은 쿠버네티스 오브젝트
-          - 팟을 실행하거나 여러 팟을 실행해서 하나의 태스크를 실행하고 멈춤
-      - Job 컨트롤러는 직접 팟이나 컨테이너를 실행하지 않고, API 서버로 팟을 생성하거나 제거하도록 함
-      - Job의 상태 마킹도 함
-    - 직접 제어
-      - 예시: 충분한 노드를 유지하기위한 컨트롤러
-        - desired state를 유지하기 위해서 외부 시스템과 상호작용 후 API 서버로 상태 보고
-          - 쿠버네티스 control plane에서 간접적으로 여러 작업을 할 수 있도록 함(IP주소 관리, 스토리지 서비스, 클라우드 관련)
+    - 일치성 기준
+      - `=, ==, !=`
+      - e.g)
+        - `environment=production,tier!=frontend`
+          - frontend를 제외하고 production을 필터링(쉼표는 and)
+        - 팟이 노드를 선택하는 기준을 지정하는 것
+          - `nodeSelector: accelerator: nvidia-tesla-p100`
+    - 집합성 기준
+      - `in, notin, exists`
+      - e.g)
+        - `partition,environment notin (qa)`
+          - 값에 상관없이 키가 partition이고, 키가 `environment`이고 값이 `(qa)`와 같음
+  - 특징
+    - `&&`연산지로 구분 가능(or는 없음!)
+    - 서비스와 레플리케이션 컨트롤러는 지정하는 팟 집합을 레이블 셀렉터로 정의
+    - kubectl에서의 셀렉터 이용이 가능
+      - `k get svc -o yaml -l "app=server"`
+
+#### 어노테이션
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: annotations-demo
+  annotations:
+    sidecar.istio.io/inject: "true"
+    sidecar.istio.io/statsInclusionPrefixes: cluster.inbound
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+```
+
+- 개요
+  - 비식별 메타데이터를 오브젝트에 첨부하는 방법
+    - 도구 및 라이브러리와 같은 클라이언트는 이 메타데이터를 검색할 수 있음
+- 특징
+  - 키와 값은 문자열이어야 함
+
+#### 파이널라이저
+
+- 개요
+  - 쿠버네티스가 오브젝트를 완전히 삭제하기 이전, 삭제 표시를 위해 특정 조건이 충족될때까지 대기하도록 알려주기 위한 네임스페이스에 속한 키
+
+#### 필드 셀렉터
+
+- 개요
+  - 한 개 이상의 오브젝트 필드 값에 따라 쿠버네티스 리소스를 필터링하기 위해 사용됨
+- 예시
+  - `kubectl get pods --field-selector status.phase=Running`
+
+#### 소유자(Owners)와 의존자(Dependents)
+
+- 예시
+  - ReplicaSet은 Pods의 소유자
+
+#### 권장 레이블
+
+권장 레이블 활용 예시
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: myservice
+    app.kubernetes.io/instance: myservice-abcxzy
+...
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: myservice
+    app.kubernetes.io/instance: myservice-abcxzy
+...
+```
+
+- 개요
+  - 공통의 방식으로 오브젝트를 식별하고, 도구들이 상호간에 쉽게 작동할 수 있게 함
+    - 필수는 아님
+- 레이블
+  - `app.kubernetes.io/name`
+    - 애플리케이션 이름(`mysql`)
+  - `app.kubernetes.io/instance`
+    - 애플리케이션 인스턴스를 식별하는 고유한 이름(`mysql-abcxyz`)
+  - `app.kubernetes.io/version`
+    - 애플리케이션의 현재 버전(`5.7.21`)
+  - `app.kubernetes.io/component`
+    - 아키텍처 내 구성요소(`database`)
+  - `app.kubernetes.io/part-of`
+    - 이 애플리케이션의 전체 이름(`wordpress`)
+  - `app.kubernetes.io/managed-by`
+    - 애플리케이션의 작동을 관리하는 데 사용되는 도구(`helm`)
+  - `app.kubernetes.io/created-by`
+    - 이 리소스를 만든 컨트롤러/사용자(`controller-manager`)
+
+### 컨트롤러
+
+- 정의
+  - **클러스터의 상태를 보고 있다가, 특정 오브젝트를 필요할 때 desired state로 상태 변화를 일으키는 프로그램**
+    - *상태변화는 어떤식으로 일으키는 걸까? control plane의 API로 일으키는걸까? 아니면 kubelet같은걸로 직접?*
+- 특징
+  - 적어도 하나의 쿠버네티스 리소스 타입(오브젝트)을 트래킹
+    - 이러한 오브젝트는 spec필드가 존재하여, desired state를 나타냄
+    - 해당 리소스의 컨트롤러는 쿠버네티스에서 desired state로 맞춰주기 위한 역할 담당
+  - API server로 유용한 side effect를 발생시킬 수도 있음
+  - 컨트롤러는 간단할 수록 좋음
+  - 컨트롤러는 언제나 실패할 수 있으므로 그것을 감내하도록 설계해야 함
+- 종류
+  - 빌트인 컨트롤러
+    - `kube-controller-manager`에서 실행됨
+    - 종류
+      - Deployment, Job
+  - 커스텀 컨트롤러
+    - 쿠버네티스 확장을 위해서 컨트롤 플레인 바깥에서 동작하는 컨트롤러
+    - 팟 내부에서 동작할 수도 있고, 아예 쿠버네티스 외부에서 동작할수도 있음
+- 컨트롤러 패턴
+  - API server를 이용한 제어
+    - 예시: Job 컨트롤러
+      - 팟을 생성해서 Job을 실행하고 팟을 제거함
+      - Job은 쿠버네티스 오브젝트
+        - 팟을 실행하거나 여러 팟을 실행해서 하나의 태스크를 실행하고 멈춤
+    - Job 컨트롤러는 직접 팟이나 컨테이너를 실행하지 않고, API 서버로 팟을 생성하거나 제거하도록 함
+    - Job의 상태 마킹도 함
+  - 직접 제어
+    - 예시: 충분한 노드를 유지하기위한 컨트롤러
+      - desired state를 유지하기 위해서 외부 시스템과 상호작용 후 API 서버로 상태 보고
+        - 쿠버네티스 control plane에서 간접적으로 여러 작업을 할 수 있도록 함(IP주소 관리, 스토리지 서비스, 클라우드 관련)
 
 #### 그 외 용어
 
@@ -136,13 +279,8 @@
       - 팟을 노드에서 제거하는 것
   - Pod Disruption
     - 자발적으로 혹은 비자발적으로 팟이 노드에서 제거되는 것
-- namespace
-  - 하나의 클러스터에서 오브젝트의 그룹을 격리하는 매커니즘
-  - 오브젝트의 name은 namespace속에서 유일해야 함
-  - 오직 namespaced object(Deployment, Services 등)에서만 사용가능
-    - 클러스터 단위의 오브젝트인 StorageClass, Nodes, PersistentVolumes에서는 사용 불가
 
-### 컴포넌트
+## 컴포넌트
 
 쿠버네티스의 컴포넌트
 
@@ -159,7 +297,7 @@
 - control plane
   - 클러스터 내부의 워커 노드와 팟들을 관리함
 
-#### Control Plane Components
+### Control Plane Components
 
 - 개요
   - 클러스터에 대한 global decision을 내리는 곳(e.g 스케쥴링, 팟의 개수 싱크)
@@ -204,7 +342,7 @@
       - service controller
         - 클라우드의 로드 밸런서를 생성하고, 갱신하고, 삭제하기위함
 
-#### Node Components
+### Node Components
 
 - 개요
   - 노드 각각에서 실행되며, 실행중인 팟들을 관리하고 쿠버네티스 런타임 환경을 제공함
@@ -224,7 +362,7 @@
       - `CRI-O`
       - 그 외의 Kubernetes CRI (Container Runtime Interface)를 만족하는 구현체들
 
-#### Addons
+### Addons
 
 - 개요
   - 클러스터 기능들을 구현하기 위해서 쿠버네티스 자원을 사용
@@ -241,7 +379,7 @@
   - Cluster-level Logging
     - 컨테이너 로그들을 중앙 로그 저장소에 저장하고, search/browsing interface를 확충
 
-### 쿠버네티스 API
+## 쿠버네티스 API
 
 - 개요
   - kubernetes의 control plane의 핵심은 HTTP API 서버
@@ -249,7 +387,7 @@
     - API 오브젝트(Pods, Namespaces, ConfigMaps, Events)들의 상태를 조작하고, 쿼리할 수 있도록 함
   - 대개 `kubectl`이라는 커맨드라인 인터페이스나 `kubeadm`이라는 다른 커맨드라인 툴(둘다 API를 사용)을 사용해서 조작하나, 직접 REST call을 해서 API에 직접 접근도 가능
 
-### 쿠버네티스 오브젝트(리소스/카인드)
+## 쿠버네티스 오브젝트(리소스/카인드)
 
 yaml파일로 만들어진 object spec(desired state를 기술)의 예시
 
@@ -316,7 +454,7 @@ spec:               # required: 원하는 state(e.g 각 팟에 대해서 desired
     - 해당 파일을 JSON으로 바꾸고, API 리퀘스트를 보낼 수 있음
       - `kubectl apply -f ~.yaml` 이런식으로도 가능
   - status
-    - *오브젝트의 현재 상태?*
+    - 오브젝트의 동작하고 있는 현재 상태
       - control plane이 지속적으로 모든 오브젝트의 실제 상태를 desired 상태로 싱크를 맞춰줌
         - *control plane*이 맞는가?
     - 예시
@@ -336,9 +474,9 @@ spec:               # required: 원하는 state(e.g 각 팟에 대해서 desired
     - Jobs
     - CronJob
 
-#### Pods
+### Pods
 
-#### Deployments
+### Deployments
 
 ```yaml
 apiVersion: apps/v1
@@ -377,7 +515,7 @@ spec:
   - 부하를 더 감당하기 위해서 스케일업
   - rollout의 정지
 
-#### ReplicaSet
+### ReplicaSet
 
 - 개요
   - replica 팟의 안정적인 집합을 유지하기 위한 것
@@ -388,14 +526,14 @@ spec:
   - template: 개수를 유지하는 팟 대상의 정보
 - 이것을 직접 사용하지말고, Deployment를 사용하라
 
-#### StatefulSets
+### StatefulSets
 
 - 개요
   - stateful한 애플리케이션을 다루는데에 사용되는 오브젝트
     - 팟의 배포와 스케일링을 관리함
     - 팟의 순서와 유일성을 보장해줌
 
-#### DaemonSet
+### DaemonSet
 
 ## 워크로드
 
