@@ -18,6 +18,8 @@
 - 디플로이먼트 롤백
   - `k rollout history deployment/[deployment_name]`
   - `k rollout undo deployment/[deployment_name] --to-revision=?`
+- 이벤트 시간순대로 보여주기
+  - `k get events --sort-by='.metadata.creationTimestamp' -A`
 
 ### helm
 
