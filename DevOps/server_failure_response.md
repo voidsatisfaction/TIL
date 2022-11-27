@@ -55,6 +55,7 @@
       - AWS AuroraDB cloud watch
         - CPU / Memory / DB connection 수(max 확인)
       - AWS AuroraDB performance insights
+        - **실시간 5분으로 세팅해두고 지속 모니터링(어떤 쿼리가 어떤 이유에서 블로킹 되어있는지 확인)**
       - 실제 DB 들어가서
         - `select * from information_schema.processlist (where info is not null)`
           - 스레드들의 상태를 관찰(데드락 등)
