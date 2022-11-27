@@ -338,7 +338,8 @@ tx3> update test1 set c1 = 70 where id = 1; // 블로킹
 - 개요
   - INSERT만을 위한 갭 락
     - Duplicate Key에러가 아니면, 여러 INSERT가 동시에 실행 가능하도록 함
-    - INSERT시에도 gap lock을 사용하면, 너무 넓은 범위의 잠금 효과를 만들게 될 수 있으므로
+    - INSERT시에도 gap lock을 사용하면, 너무 넓은 범위의 잠금 효과를 만들게 될 수 있으므로 같은 INSERT는 가능하도록 설정해둔 락
+      - 갭락과는 서로 블로킹한다(호환되지 않음)
 
 #### 자동 증가 락
 
@@ -351,12 +352,19 @@ tx3> update test1 set c1 = 70 where id = 1; // 블로킹
 #### c.f) foreign key에 의한 부모, 자식 테이블의 락
 
 - 개요
-  - 외래키 제약으로 인해, 자식 테이블(외래키를 갖고 있는 테이블)에서 지정하는 부모의 id가 부모 테이블에 존재함(정합을)을 보장하기 위해 부모 또는 자식행에 shared lock를 걸어줌
+  - 외래키 제약으로 인해, 자식 테이블(외래키를 갖고 있는 테이블)에서 지정하는 부모의 id가 부모 테이블에 존재함(정합을)을 보장하기 위해 자식 테이블의 **외래키에대한 칼럼변경(INSERT, UPDATE)** 는 부모 테이블의 확인이 필요
+    - SELECT를 제외한 DML
 - e.g)
-  - `Tx1, Tx2 - BEGIN`
-  - `Tx1 - UPDATE parent SET age = age + 1 WHERE id = 1;`
-  - `Tx2 - INSERT INTO child (id, age, parent_id) VALUES ("", 20, 1);`
-    - 블로킹됨
+  - 자식 테이블이 블로킹 되는 경우
+    - `Tx1, Tx2 - BEGIN`
+    - `Tx1 - UPDATE parent SET age = age + 1 WHERE id = 1;`
+    - `Tx2 - INSERT INTO child (id, age, parent_id) VALUES ("", 20, 1);`
+      - 블로킹
+  - 부모 테이블이 블로킹 되는 경우(`외래키에 ON DELETE CASCADE가 적용되었을 때`)
+    - `Tx1, Tx2 - BEGIN`
+    - `Tx1 - UPDATE child SET address='seoul' where parent_id = 1;`
+    - `Tx2 - DELETE FROM parent WHERE id = 1;`
+      - 블로킹
 
 ### 인덱스와 잠금
 
