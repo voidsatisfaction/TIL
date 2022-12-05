@@ -34,6 +34,10 @@
     - 오브젝트의 한 종류로서, 쿠버네티스에서 구동되는 애플리케이션
   - 컨트롤러
     - 쿠버네티스의 특정 오브젝트를 desired state로 유지시켜주는 프로그램
+    - e.g) 내장 컨트롤러, ingress controller
+      - 내장 컨트롤러는 k8s를 설치하면 들어있는 컨트롤러로, ReplicaSet, Deployment 컨트롤러 등이 존재
+      - ingress controller는 내장 컨트롤러가 아니어서, 따로 쿠버네티스 오브젝트로서 설치가 필요함
+        - e.g) nginx controller
   - 셋의 관계
     - 워크로드는 오브젝트의 한 종류이고, 컨트롤러는 특정 오브젝트를 desired state로 유지시켜주는 프로그램
 
