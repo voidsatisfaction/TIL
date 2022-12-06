@@ -20,6 +20,8 @@
   - `k rollout undo deployment/[deployment_name] --to-revision=?`
 - 이벤트 시간순대로 보여주기
   - `k get events --sort-by='.metadata.creationTimestamp' -A`
+- curl팟 생성하기
+  - `kubectl run -it mycurlpod --image=curlimages/curl sh`
 
 ### helm
 
