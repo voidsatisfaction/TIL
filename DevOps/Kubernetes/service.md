@@ -9,6 +9,18 @@
 ## 의문
 
 - 타다의 서비스는 내부적으로 클러스터IP를 사용할때, `gryphon-server-pg:8081` 이런식으로 하는데, 어떻게 IP가 아닌 클러스터의 도메인이름을 지정할 수 있는가?
+  - 같은 네임스페이스에서는 위와같이 원래 지원이 됨
+  - kube-proxy를 이용함
+- serviceMonitor(prometheus operator), service, deployment에서 named port 사용하기
+  - 기본적으로 자신의 object 파일에서 named port를 참조하는 경우에는 자기자신의 named port를 지칭함
+  - serviceMonitor
+    - 서비스를 지정하므로, named port의 경우에는 service의 named port이다
+    - `endpoints.port`
+  - service
+    - 컨테이너의 포트를 연결해줘야하므로, `targetPort`필드에는 deployment의 container의 named port를 지칭
+    - `ports[...].targetPort`
+  - deployment
+    - 자기자신의 포트를 노출시키므로, `livenessProbe`나 `readinessProbe`에서 httpGet나 TCP의 경우 자기자신이 정의한 `spec.containers[...].ports[...]`의 named port를 지칭
 
 ## 서비스
 
