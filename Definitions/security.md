@@ -325,12 +325,15 @@ MAC 사용 예제
       - Issuer
     - `sub`
       - Subject
+        - JWT의 대상
     - `aud`
       - Audience
+        - JWT가 기대하는 JWT를 받고 검증하는 주체
     - `exp`
       - Expiration Time
     - `nbf`
       - Not Before
+        - 특정 시간 이전에는 JWT가 받아들여지면 안됨
     - `iat`
       - Issued at
     - `jti`
