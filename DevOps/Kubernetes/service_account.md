@@ -78,7 +78,8 @@ Role의 Trusted entities 예시
   - 1 IAM <-> EKS Cluster 연결
     - *Create Provider*
       - *이게 뭐야?*
-      - OpenID 연동하기
+    - EKS자체가 사용자의 신원을 보증해줌
+      - 보증의 증거가 token임(serviceAccount로 생성된 토큰)
   - 2 IAM role 생성
     - web identity
     - trust relationship 수정

@@ -128,6 +128,70 @@ IAM에서의 AM
 
 ## Identity
 
+### IAM role
+
+- 개요
+  - 특정 권한을 지닌 IAM 자격 증명
+- role 적용 대상
+  - IAM 사용자
+    - 역할과 동일한 AWS 계정
+    - 역할과 다른 AWS 계정
+  - AWS에서 제공하는 웹 서비스(e.g EC2)
+  - OpenID Connect와 같은 외부자격 증명 공급자에 의해 인증된 외부 사용자
+    - e.g) Google, Facebook, Amazon Cognito
+  - SAML2.0
+    - SSO(Single Sign-On)
+- 특징
+  - 정책을 갖고 있음
+  - 누구든지 역할을 맡을 수 있음
+  - 임시 보안 자격 증명이 제공됨
+    - AWS키 대신 사용
+
+#### Trusted Relation
+
+신뢰 정책의 예시
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::111122223333:root" # sts:AssumeRole 권한이 있는 111122223333 AWS 계정의 모든 보안 주체가 이 역할을 맡을 수 있음
+        "AWS": "arn:aws:iam::111122223333:user/LiJuan" # sts:AssumeRole 권한이 있는 IAM 사용자 LiJuan만 이 역할을 맡을 수 있음
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {}
+    }
+  ]
+}
+```
+
+- 개요
+  - IAM role을 맡을 수 있는 보안 주체 및 조건을 나타냄
+- 필드 설명
+  - `Action`
+    - `sts.AssumeRole`
+    - `sts:AssumeRoleWithSAML`
+    - `sts:AssumeRoleWithWebIdentity`
+  - `Resource`
+    - 존재하지 않는데, 신뢰 정책 맥락에서의 리소스가 IAM role이기 때문
+
+#### Federation
+
+![](./images/iam/federation1.png)
+
+- 개요
+  - AWS 유저가 아니면서 일시적으로 권한을 받아서 AWS에 접속하는 서비스
+    - AWS로부터 신임을 받는 3rd party에 로그인을 하고, 그 서비스가 credential을 증명해주고 해당 account를 가지고 AWS에 접속
+- 서드 파티 종류
+  - LDAP
+  - SAML
+  - SSO
+  - Open ID
+  - Cognito
+
 ## Policy
 
 ### Policy structure
