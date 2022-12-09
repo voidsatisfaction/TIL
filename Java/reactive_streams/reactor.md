@@ -2,6 +2,8 @@
 
 - 의문
 - 실전 예제
+  - Mono.just vs Mono.defer vs Mono.fromCallable
+  - Mono.defer & Mono.switchIfEmpty
 - 잘 사용하는 오퍼레이터와 의미
   - block
 - 1] Reactive Programming의 소개
@@ -21,6 +23,16 @@
   - *비동기의 의미?*
 
 ## 실전 예제
+
+### Mono.just vs Mono.defer vs Mono.fromCallable
+
+- `Mono.just`
+  - instantiation time(eager)에 값을 emit하는 모노를 반환
+- `Mono.defer`
+  - Mono supplier를 파라미터로 받아서 subscription time(lazy)에 값을 emit하는 모노를 반환
+    - 즉, 블록내의 반환값이 모노여야 함
+- `Mono.fromCallable`
+  - Callable supplier(블록)을 받아서 subscription time(lazy)에 값을 emit하는 모노를 반환
 
 ### Mono.defer & Mono.switchIfEmpty
 
@@ -54,7 +66,7 @@ Mono.defer와 Mono.switchIfEmpty
 ### 에러 처리 관련
 
 - `onErrorResume`
-  - 
+  -
 
 ### Synchronization 관련
 
