@@ -16,6 +16,10 @@
 
 ## 의문
 
+- role을 assume한다의 의미?
+  - AWS STS(Security Token Service)에서 임시 Access key와 Secret key를 발급받아 AWS의 여러 리소스를 사용할 수 있게 하는 것
+    - 즉, 정해진 기간동안 권한을 위임받는 것
+
 ## 기반 지식
 
 IAM aws ninja > 좋은 강의 자료
@@ -130,6 +134,86 @@ IAM에서의 AM
 
 ### IAM role
 
+Policy와 Permission 세팅(아래와 같은 Permisson 세팅이 다수가 될 수 있음)
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sqs:*"
+            ],
+            "Resource": [
+                "arn:aws:sqs:ap-northeast-2:111122223333:ProdSeoulTadaDispatcherQueue",
+                "arn:aws:sqs:ap-northeast-2:111122223333:ProdSeoulTadaDispatcherLongRunningQueue"
+            ]
+        }
+    ]
+}
+```
+
+Trust Policy 세팅
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::111122223333:oidc-provider/oidc.eks.ap-northeast-2.amazonaws.com/id/07210EB908CE1106FFCA7206ADBE38D9"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity", # sts:AssumeRole, sts:AssumeRoleWithSAML, sts:AssumeRoleWithWebIdentity
+            "Condition": {
+                "StringLike": {
+                    "oidc.eks.ap-northeast-2.amazonaws.com/id/07210EB908CE1106FFCA7206ADBE38D9:sub": [
+                        "system:serviceaccount:default:gryphon-server",
+                        "system:serviceaccount:default:gryphon-server*"
+                    ]
+                }
+            }
+        }
+    ]
+}
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::111122223333:user/PauloSantos"
+        ]
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "true"
+        },
+        "IpAddress": {
+          "aws:SourceIp": "203.0.113.0/24"
+        },
+        "DateGreaterThan": {
+          "aws:CurrentTime": "2020-09-01T12:00:00Z"
+        },
+        "DateLessThan": {
+          "aws:CurrentTime": "2020-09-07T12:00:00Z"
+        }
+      }
+    }
+  ]
+}
+# AWS 계정 번호 111122223333의 PauloSantos 사용자만
+## 1. MFA로 인증되고
+## 2. 203.0.113.0~203.0.113.24 CIDR 범위의 IP 주소에서 로그인하고
+## 3. 날짜가 2020년 9월 1일 정오부터 2020년 9월 7일 정오 사이
+## 위의 3가지 경우에만 역할을 assume할 수 있도록 허용
+```
+
 - 개요
   - 특정 권한을 지닌 IAM 자격 증명
 - role 적용 대상
@@ -138,13 +222,17 @@ IAM에서의 AM
     - 역할과 다른 AWS 계정
   - AWS에서 제공하는 웹 서비스(e.g EC2)
   - OpenID Connect와 같은 외부자격 증명 공급자에 의해 인증된 외부 사용자
-    - e.g) Google, Facebook, Amazon Cognito
+    - e.g) Google, Facebook, Amazon Cognito, AWS EKS
   - SAML2.0
     - SSO(Single Sign-On)
+- IAM role의 접근 제어
+  - Identity-based policies
+    - 해당 롤이 어떤 작업을 할 수 있는지
+  - Trust policy
+    - 어떤 주체가 어떤 조건을 만족해야 role을 assume할 수 있는지
+    - Resourced의 경우, 대상이 어차피 IAM role 자기 자신이기 떄문에, 적어두지 않음
 - 특징
-  - 정책을 갖고 있음
-  - 누구든지 역할을 맡을 수 있음
-  - 임시 보안 자격 증명이 제공됨
+  - 기간이 정해진 임시 보안 자격 증명이 제공됨(임시 엑세스키, 임시 시크릿 키)
     - AWS키 대신 사용
 
 #### Trusted Relation
