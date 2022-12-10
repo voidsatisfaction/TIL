@@ -170,6 +170,13 @@ SA로 인해서 생성된 secret JWT내용
 
 ### 5. 해당 JWT를 가지고 AWS cli나 sdk가 자원에 접근
 
+AssumeRole하기 위한 워크 플로우
+
+![](./images/eks_pod_iam_role/eks_iam_role2.png)
+
+위의 그림에서 `AssumeRoleWithWebIdentity`의 경우, AWS STS로 리퀘스트를 보내는 것임을 명심하면 된다.(STS는 유효성을 EKS IdP로 확인)
+*주의: 위의 그림에서 Pod Identity Webhook이 아직 유효한지 모름*
+
 - 정확히는 해당 토큰으로 AWS STS(Security Token Service)에서 AssumeRole(임시 access key, secret key를 발급)을 하고 그것을 바탕으로 AWS의 자원에 접근
 - AWS SDK는 `AWS_ROLE_ARN`및 `AWS_WEB_IDENTITY_TOKEN_FILE`이라는 환경변수의 값이 설정되어있으면, 해당 환경변수를 읽어들여 Web Identity토큰으로 Assume role을 시도함
   - 즉, `$(AWS_ROLE_ARN)`라는 역할을 Assume 하기 위한 자격증명으로서 `$(AWS_WEB_IDENTITY_TOKEN_FILE)`경로의 Web Identity 토큰 파일을 사용
