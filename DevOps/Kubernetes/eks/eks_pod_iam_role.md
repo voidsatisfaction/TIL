@@ -63,3 +63,5 @@ EKS에서 pod level IAM role을 service account로 사용하기 큰 그림
 - `serviceAccountName: ...`
 
 ### 5. 해당 JWT를 가지고 AWS cli나 sdk가 자원에 접근
+
+- 정확히는 해당 토큰으로 AWS STS(Security Token Service)에서 AssumeRole(임시 access key, secret key를 발급)을 하고 그것을 바탕으로 AWS의 자원에 접근
