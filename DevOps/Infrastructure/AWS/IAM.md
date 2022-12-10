@@ -239,6 +239,14 @@ Trust Policy 세팅
 
 #### Assume Role
 
+AWS 콘솔을 이용한 assume role의 과정
+
+![](./images/assume_role1.png)
+
+본질은 AWS STS로 assume role API를 요청하고,
+응답으로 임시 자격 증명(임시 액세스 키, 임시 시크릿키, 시큐리티 토큰)을 받아서,
+AWS SDK나 CLI에 임시 자격 증명을 넣어서 AWS의 리소스에 접근하는 것
+
 - 개요
   - Role을 사용할 임시 보안 정보을 STS로부터 부여받는 것
   - c.f) 임시 보안 정보
