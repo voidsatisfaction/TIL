@@ -85,3 +85,25 @@
   - security group 룰은 IP나 security group로 참조가능
 - 규제 방식(**Transport layer**)
   - ports, ip ranges, inbound network, outbound network
+
+### EC2 비용 설정
+
+- On-demand
+  - 필요할때 잠깐 인스턴스를 쓰고 shutdown하는 방식
+- Savings Plan
+  - 오래 지속해서 인스턴스를 사용할떄, 시간당 과금양을 미리 정해두고 인스턴스를 사용하는 방식
+    - 같은 region의 같은 EC2 타입에 적용
+- Reserved Instance
+  - 미리 인스턴스의 개수를 예약해두고 사용하는 방식
+    - 같은 region의 같은 EC2 타입에 적용
+- Spot Instance
+  - 실시간 경매에 참여하여 인스턴스를 사용하는 방식
+    - 자신이 설정한 비용보다 비싸지면 2분의 termination time을 주고 shutdown됨
+    - 가장 큰 비용 절감 가능
+- c.f) Dedicated host
+  - 물리 서버 독점 전용 가능
+    - MS및 Oracle과 같은 공급업체의 소프트웨어 라이선스가 있을떄 활용 가능
+    - 소켓 및 물리적 코어의 가시성 확보
+    - 여러개의 instance(VM 인스턴스)를 사용가능
+- c.f) Dedicated instance
+  - Dedicated host위에서 물리 서버의 VM instance를 전용 사용 가능
