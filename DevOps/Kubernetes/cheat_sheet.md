@@ -20,8 +20,14 @@
   - `k rollout undo deployment/[deployment_name] --to-revision=?`
 - 이벤트 시간순대로 보여주기
   - `k get events --sort-by='.metadata.creationTimestamp' -A`
-- curl팟 생성하기
+
+#### 각종 임시 팟 생성하기
+
+- curl팟
   - `kubectl run -it mycurlpod --image=curlimages/curl sh`
+- mysql client팟
+  - `kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- /bin/bash`
+  - `mysql -h mysql-service -uroot -proot_password`
 
 ### helm
 
