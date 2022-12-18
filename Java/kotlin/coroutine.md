@@ -1,6 +1,9 @@
 # Kotlin Coroutine
 
 - 의문
+- 개요
+  - 코틀린 코루틴
+  - 코루틴 예시 코드 및 디컴파일된 코드
 - 용어 설명
   - structured concurrency
   - suspending function
@@ -33,32 +36,301 @@
 
 ## 개요
 
-- 코틀린 코루틴
-  - 개요
-    - continuation passing 매커니즘을 이용하여 코루틴의 런타임 컨텍스트와 컨트롤 흐름 상태를 관리함
-      - 1 메서드가 호출되면, 변수들이 스택에 생성됨
-      - 2 해당 메서드가 suspend할 때에는, 런타임이 모든 로컬 변수를 저장하고, 어디까지 코드가 실행되었는지 라인을 저장하고, state를 반환
-      - 3 resume시에는, 런타임은 모든 로컬 변수를 저장된 컨텍스트에서 불러오고, 코드가 기존에 suspended된 곳으로 가서 다시 실행을 함
-    - c.f) callback, promise
-      - 본질적으로는 callback과 promise의 연장선상에 있다고 생각하면 됨
-        - suspention이 서로 suspend함수를 호출해서 계속해서 체이닝되면, `Continuation`이 계속해서 래핑됨
-          - 변수명은 `ContinuationImpl`이고 타입이 `Continuation`임
-  - 관련 타입
-    - `Continuation`
-      - 실행시에 필요한 컨텍스트를 갖고 있음
-        - label
-        - 로컬 변수
-        - suspend함수 실행의 결과값
-        - `invokeSuspend`메서드
-          - resume시키는 코루틴 런타임에서 호출하기 위함
-    - `Job`
-      - coroutine의 라이프사이클을 다룸
-      - `Deferred`
-        - Job의 서브클래스로, 코루틴의 결과를 await해서 활용해야 하는 경우에 사용됨
-    - `CoroutineContext`
-      - 코루틴 인스턴스 관리 정책
-    - `CoroutineScope`
-      - 코루틴 인스턴스를 실행 및 관리하는 스코프
+### 코틀린 코루틴
+
+- 개요
+  - continuation passing 매커니즘을 이용하여 코루틴의 런타임 컨텍스트와 컨트롤 흐름 상태를 관리함
+    - 1 메서드가 호출되면, 변수들이 스택에 생성됨
+    - 2 해당 메서드가 suspend할 때에는, 런타임이 모든 로컬 변수를 저장하고, 어디까지 코드가 실행되었는지 라인을 저장하고, state를 반환
+    - 3 resume시에는, 런타임은 모든 로컬 변수를 저장된 컨텍스트에서 불러오고, 코드가 기존에 suspended된 곳으로 가서 다시 실행을 함
+  - c.f) callback, promise
+    - 본질적으로는 callback과 promise의 연장선상에 있다고 생각하면 됨
+      - suspention이 서로 suspend함수를 호출해서 계속해서 체이닝되면, `Continuation`이 계속해서 래핑됨
+        - `ContinuationImpl`은 `Continuation`의 subclass
+          - 말 그대로 구체적인 구현을 나타냄(`resumeWith()` 등을 정의)
+- 관련 타입
+  - `Continuation`
+    - 실행시에 필요한 컨텍스트를 갖고 있음
+      - label
+      - 로컬 변수
+      - suspend함수 실행의 결과값
+      - `invokeSuspend`메서드
+        - resume시키는 코루틴 런타임에서 `resumeWith()`메서드를 호출하고 그 내부에서 호출됨
+    - 코루틴 런타임이 `invokeSuspend`를 호출해서 suspend된 코루틴을 재개함
+    - Continuation은 계속해서 래핑되는 스타일
+  - `Job`
+    - coroutine의 라이프사이클을 다룸
+    - `Deferred`
+      - Job의 서브클래스로, 코루틴의 결과를 await해서 활용해야 하는 경우에 사용됨
+  - `CoroutineContext`
+    - 코루틴 인스턴스 관리 정책
+  - `CoroutineScope`
+    - 코루틴 인스턴스를 실행 및 관리하는 스코프
+
+### 코루틴 예시 코드 및 디컴파일된 코드
+
+```kotlin
+package coroutine_test.app
+
+import kotlinx.coroutines.delay
+
+suspend fun main() {
+    val processor = Processor2()
+
+    processor.process()
+}
+
+class Processor2 {
+    suspend fun process() {
+        val processor = Processor3()
+        processor.process()
+        println(1)
+    }
+}
+
+class Processor3 {
+    suspend fun process() {
+        val local = 1
+        delay(1 * 1000L)
+        println(local)
+    }
+}
+```
+
+디컴파일된 코드
+
+```java
+@Metadata(
+   mv = {1, 6, 0},
+   k = 1,
+   d1 = {"\u0000\u0014\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\u0018\u00002\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0002J\u0011\u0010\u0003\u001a\u00020\u0004H\u0086@ø\u0001\u0000¢\u0006\u0002\u0010\u0005\u0082\u0002\u0004\n\u0002\b\u0019¨\u0006\u0006"},
+   d2 = {"Lcoroutine_test/app/Processor2;", "", "()V", "process", "", "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "app"}
+)
+public final class Processor2 {
+   @Nullable
+   public final Object process(@NotNull Continuation var1) {
+      Object $continuation;
+      label20: {
+         if (var1 instanceof <undefinedtype>) {
+            $continuation = (<undefinedtype>)var1;
+            if ((((<undefinedtype>)$continuation).label & Integer.MIN_VALUE) != 0) {
+               ((<undefinedtype>)$continuation).label -= Integer.MIN_VALUE;
+               break label20;
+            }
+         }
+
+         $continuation = new ContinuationImpl(var1) {
+            // $FF: synthetic field
+            Object result;
+            int label;
+
+            @Nullable
+            public final Object invokeSuspend(@NotNull Object $result) {
+               this.result = $result;
+               this.label |= Integer.MIN_VALUE;
+               return Processor2.this.process(this);
+            }
+         };
+      }
+
+      Object $result = ((<undefinedtype>)$continuation).result;
+      Object var6 = IntrinsicsKt.getCOROUTINE_SUSPENDED();
+      switch(((<undefinedtype>)$continuation).label) {
+      case 0:
+         ResultKt.throwOnFailure($result);
+         Processor3 processor = new Processor3();
+         ((<undefinedtype>)$continuation).label = 1;
+         if (processor.process((Continuation)$continuation) == var6) {
+            return var6;
+         }
+         break;
+      case 1:
+         ResultKt.throwOnFailure($result);
+         break;
+      default:
+         throw new IllegalStateException("call to 'resume' before 'invoke' with coroutine");
+      }
+
+      byte var3 = 1;
+      System.out.println(var3);
+      return Unit.INSTANCE;
+   }
+}
+// App2Kt$$$main.java
+package coroutine_test.app;
+
+import kotlin.Metadata;
+import kotlin.coroutines.Continuation;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.Lambda;
+
+// $FF: synthetic class
+@Metadata(
+   mv = {1, 6, 0},
+   k = 3
+)
+final class App2Kt$$$main extends Lambda implements Function1 {
+   // $FF: synthetic field
+   private final String[] args;
+
+   // $FF: synthetic method
+   App2Kt$$$main(String[] var1) {
+      super(1);
+      this.args = var1;
+   }
+
+   // $FF: synthetic method
+   public final Object invoke(Object var1) {
+      return App2Kt.main((Continuation)var1);
+   }
+}
+// Processor3.java
+package coroutine_test.app;
+
+import kotlin.Metadata;
+import kotlin.ResultKt;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.intrinsics.IntrinsicsKt;
+import kotlin.coroutines.jvm.internal.ContinuationImpl;
+import kotlinx.coroutines.DelayKt;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@Metadata(
+   mv = {1, 6, 0},
+   k = 1,
+   d1 = {"\u0000\u0014\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\u0002\n\u0002\b\u0002\u0018\u00002\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0002J\u0011\u0010\u0003\u001a\u00020\u0004H\u0086@ø\u0001\u0000¢\u0006\u0002\u0010\u0005\u0082\u0002\u0004\n\u0002\b\u0019¨\u0006\u0006"},
+   d2 = {"Lcoroutine_test/app/Processor3;", "", "()V", "process", "", "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "app"}
+)
+public final class Processor3 {
+   @Nullable
+   public final Object process(@NotNull Continuation var1) {
+      Object $continuation;
+      label20: {
+         if (var1 instanceof <undefinedtype>) {
+            $continuation = (<undefinedtype>)var1;
+            if ((((<undefinedtype>)$continuation).label & Integer.MIN_VALUE) != 0) {
+               ((<undefinedtype>)$continuation).label -= Integer.MIN_VALUE;
+               break label20;
+            }
+         }
+
+         $continuation = new ContinuationImpl(var1) {
+            // $FF: synthetic field
+            Object result;
+            int label;
+            int I$0;
+
+            @Nullable
+            public final Object invokeSuspend(@NotNull Object $result) {
+               this.result = $result;
+               this.label |= Integer.MIN_VALUE;
+               return Processor3.this.process(this);
+            }
+         };
+      }
+
+      Object $result = ((<undefinedtype>)$continuation).result;
+      Object var5 = IntrinsicsKt.getCOROUTINE_SUSPENDED();
+      int local;
+      switch(((<undefinedtype>)$continuation).label) {
+      case 0:
+         ResultKt.throwOnFailure($result);
+         local = 1;
+         ((<undefinedtype>)$continuation).I$0 = local;
+         ((<undefinedtype>)$continuation).label = 1;
+         if (DelayKt.delay(1000L, (Continuation)$continuation) == var5) {
+            return var5;
+         }
+         break;
+      case 1:
+         local = ((<undefinedtype>)$continuation).I$0;
+         ResultKt.throwOnFailure($result);
+         break;
+      default:
+         throw new IllegalStateException("call to 'resume' before 'invoke' with coroutine");
+      }
+
+      System.out.println(local);
+      return Unit.INSTANCE;
+   }
+}
+// App2Kt.java
+package coroutine_test.app;
+
+import kotlin.Metadata;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.intrinsics.IntrinsicsKt;
+import kotlin.coroutines.jvm.internal.RunSuspendKt;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+@Metadata(
+   mv = {1, 6, 0},
+   k = 2,
+   d1 = {"\u0000\n\n\u0000\n\u0002\u0010\u0002\n\u0002\b\u0002\u001a\u0011\u0010\u0000\u001a\u00020\u0001H\u0086@ø\u0001\u0000¢\u0006\u0002\u0010\u0002\u0082\u0002\u0004\n\u0002\b\u0019¨\u0006\u0003"},
+   d2 = {"main", "", "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "app"}
+)
+public final class App2Kt {
+   @Nullable
+   public static final Object main(@NotNull Continuation $completion) {
+      Processor2 processor = new Processor2();
+      Object var10000 = processor.process($completion);
+      return var10000 == IntrinsicsKt.getCOROUTINE_SUSPENDED() ? var10000 : Unit.INSTANCE;
+   }
+
+   // $FF: synthetic method
+   public static void main(String[] var0) {
+      RunSuspendKt.runSuspend(new App2Kt$$$main(var0));
+   }
+}
+
+```
+
+BaseContinuationImpl의 내부 구현
+
+```kotlin
+internal abstract class BaseContinuationImpl(
+    // This is `public val` so that it is private on JVM and cannot be modified by untrusted code, yet
+    // it has a public getter (since even untrusted code is allowed to inspect its call stack).
+    public val completion: Continuation<Any?>?
+) : Continuation<Any?>, CoroutineStackFrame, Serializable {
+    // This implementation is final. This fact is used to unroll resumeWith recursion.
+    public final override fun resumeWith(result: Result<Any?>) {
+        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
+        var current = this
+        var param = result
+        while (true) {
+            // Invoke "resume" debug probe on every resumed continuation, so that a debugging library infrastructure
+            // can precisely track what part of suspended callstack was already resumed
+            probeCoroutineResumed(current)
+            with(current) {
+                val completion = completion!! // fail fast when trying to resume continuation without completion
+                val outcome: Result<Any?> =
+                    try {
+                        val outcome = invokeSuspend(param)
+                        if (outcome === COROUTINE_SUSPENDED) return
+                        Result.success(outcome)
+                    } catch (exception: Throwable) {
+                        Result.failure(exception)
+                    }
+                releaseIntercepted() // this state machine instance is terminating
+                if (completion is BaseContinuationImpl) {
+                    // unrolling recursion via loop
+                    current = completion
+                    param = outcome
+                } else {
+                    // top-level completion reached -- invoke and return
+                    completion.resumeWith(outcome)
+                    return
+                }
+            }
+        }
+    }
+```
+
 
 ## 용어 설명
 
