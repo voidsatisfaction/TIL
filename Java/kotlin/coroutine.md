@@ -31,6 +31,35 @@
   - Job은 코루틴의 라이프 사이클을 다루는 오브젝트이다. 즉 코루틴 하나마다 각자의 job이 있다고 이해를 해야 한다.
   - 결국 현재의 코루틴스코프의 코루틴이 SupervisorJob이라는 것은, 자신의 스코프내의 자신의 잡과 연결된 자식 코루틴이 에러를 propagate할때만 그것을 **부모 코루틴으로 전파시키지 않는 의미** 가 있는 것이다.
 
+## 개요
+
+- 코틀린 코루틴
+  - 개요
+    - continuation passing 매커니즘을 이용하여 코루틴의 런타임 컨텍스트와 컨트롤 흐름 상태를 관리함
+      - 1 메서드가 호출되면, 변수들이 스택에 생성됨
+      - 2 해당 메서드가 suspend할 때에는, 런타임이 모든 로컬 변수를 저장하고, 어디까지 코드가 실행되었는지 라인을 저장하고, state를 반환
+      - 3 resume시에는, 런타임은 모든 로컬 변수를 저장된 컨텍스트에서 불러오고, 코드가 기존에 suspended된 곳으로 가서 다시 실행을 함
+    - c.f) callback, promise
+      - 본질적으로는 callback과 promise의 연장선상에 있다고 생각하면 됨
+        - suspention이 서로 suspend함수를 호출해서 계속해서 체이닝되면, `Continuation`이 계속해서 래핑됨
+          - 변수명은 `ContinuationImpl`이고 타입이 `Continuation`임
+  - 관련 타입
+    - `Continuation`
+      - 실행시에 필요한 컨텍스트를 갖고 있음
+        - label
+        - 로컬 변수
+        - suspend함수 실행의 결과값
+        - `invokeSuspend`메서드
+          - resume시키는 코루틴 런타임에서 호출하기 위함
+    - `Job`
+      - coroutine의 라이프사이클을 다룸
+      - `Deferred`
+        - Job의 서브클래스로, 코루틴의 결과를 await해서 활용해야 하는 경우에 사용됨
+    - `CoroutineContext`
+      - 코루틴 인스턴스 관리 정책
+    - `CoroutineScope`
+      - 코루틴 인스턴스를 실행 및 관리하는 스코프
+
 ## 용어 설명
 
 - 전체 용어 및 관계
