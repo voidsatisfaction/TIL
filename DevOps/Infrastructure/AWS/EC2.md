@@ -5,6 +5,8 @@
   - EC2 설정
   - EC2 타입
   - Security Groups
+  - EC2 비용 설정
+  - Elastic IP
 
 ## 의문
 
@@ -107,3 +109,14 @@
     - 여러개의 instance(VM 인스턴스)를 사용가능
 - c.f) Dedicated instance
   - Dedicated host위에서 물리 서버의 VM instance를 전용 사용 가능
+
+### Elastic IP
+
+- public IP
+  - instance가 stop이후 다시 start될 때마다 계속해서 변화함
+- elastic IP
+  - 일정한 IP
+  - 계정당 5개만 부여
+    - AWS에 요청하면 늘릴 수 있음
+  - 사용하지 않는 것이 좋음
+    - **대신, DNS이름을 random public IP와 연동하는게 좋다**
