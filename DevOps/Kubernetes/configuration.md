@@ -45,10 +45,18 @@
 
 - CPU limit
   - 컨테이너가 사용할 수 있는 CPU 시간에 대한 강한 상한을 정의하여, CPU 스케줄링 간격(time slice)마다 리눅스 커널이 이 제한이 초과되었는지 확인하고, 초과되었다면 cgroup의 실행 재개를 허가하지 않고 기다림(throttling)
+  - 구현
+    - cgroup cpu.cfs_period_us, cpu.cfs_quota_us(마이크로세컨트 - 비슷하게 생긴 u로 사용하는 듯) (cfs bandwidth control)
+
+![](./images/configuration/cpu_time_definition1.png)
+
 - CPU request
   - 가중치 설정을 정의
     - CPU부하가 높은 시스템에서 여러개의 컨테이너가 실행되어야 하는 경우, CPU요청량에 비례해서 남은 CPU 자원을 비율로 분배받는다
       - e.g) 2000m vs 1000m을 cpu request로 설정하였다면, 남은 자원을 사용할 필요가 있는 경우 2:1로 분배함
+  - 구현
+    - cgroup cpu.shares(즉, CPU time)
+      - 생각해보면, cpu time정의로 설정해도 ok인 것이, 어차피 scheduler가 node의 실제 코어를 넘는 cpu이상으로 scheduling을 안할것이기 때문에, 최소로 각 팟이 설정한 expected한 cpu time 이상을 보장받을 수 있다
 
 ### Memory
 
