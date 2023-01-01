@@ -77,6 +77,14 @@
     - Execution
       - 설정 페이즈에서 결정된 태스크 그래프대로 태스크를 실행
 
+### 설치 필요사항
+
+- JDK 8이상
+  - `JAVA_HOME` 환경변수를 설정하여 해당 JDK로 사용
+- 필요없는 것
+  - groovy library
+    - 무조건 그레들에 있는 groovy library만 사용
+
 ### 5가지 그래들 기본 개념
 
 - 그래들은 general-purpose의 빌드 툴
