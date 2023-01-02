@@ -27,7 +27,7 @@
 - 공유
   - 공유까지 진행해야 올바른 장애 대응이라고 할 수 있다
 
-### 1. 장애 파악(AINDA)
+### 1. 장애 파악(ADAIN)
 
 - 개요
   - 장애가 어디서 어떻게 났는지 파악하는 세션
@@ -36,20 +36,7 @@
     - 센트리 얼럿
       - 어떤 에러가 나고 있는지?
       - 장애의 원인이 되는것으로 보이는 에러의 모든 이벤트 파악하기
-  - 인프라 이슈인가?(Infra)
-    - 모니터링
-      - k8s
-        - k8s cluster use method
-        - istio service
-        - k8s events
-      - AWS
-        - AWS cloud watch
-  - 네트워크 이슈인가?(Network)
-    - 모니터링
-      - 네트워크 메트릭 관찰
-        - e.g) istio service, AWS ALB
-      - 얼럿
-    - 대응사례
+    - 프로메테우스 얼럿
   - DB 이슈인가?(DB)
     - 모니터링
       - AWS AuroraDB cloud watch
@@ -71,6 +58,20 @@
         - jvm micrometer
       - 얼럿 확인
       - 서버 로그 확인
+  - 인프라 이슈인가?(Infra)
+    - 모니터링
+      - k8s
+        - k8s cluster use method
+        - istio service
+        - k8s events
+      - AWS
+        - AWS cloud watch
+  - 네트워크 이슈인가?(Network)
+    - 모니터링
+      - 네트워크 메트릭 관찰
+        - e.g) istio service, AWS ALB
+      - 얼럿
+    - 대응사례
 
 ### 2. 장애 조치
 
