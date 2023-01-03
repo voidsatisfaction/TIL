@@ -18,7 +18,7 @@ Use Method 전략의 플로우
 ## 개요
 
 - 정의
-  - 모든 자원에 대해서 utilization, saturation, error를 체크하라
+  - 빠르게 퍼포먼스 문제의 원인을 파악하기 위해서 모든 컴퓨팅 자원에 대해서 utilization, saturation, error를 체크하자는 방법론
     - resources
       - 물리적 서버의 기능적 컴포넌트(CPU, memory, disks, busses, ...)
     - utilization
@@ -49,8 +49,8 @@ Use Method 전략의 플로우
 - 하드웨어
   - CPUs: sockets, cores, hardware threads (vCPUs)
   - Memory: capacity
-  - Network interfaces
   - Storage devices: I/O, capacity
+  - Network interfaces
   - Controllers: storage, network cards
   - Interconnects: CPUs, memory, I/O
 - 소프트웨어
@@ -72,12 +72,6 @@ Use Method 전략의 플로우
     - 사용가능한 free memory
   - saturation
     - major page fault(swapping)
-- Network interface
-  - utilization
-    - rx/tx throughput
-      - receive, transmit
-  - saturation
-    - dropped rx/tx 패킷 개수
 - Storage device I/O
   - utilization
     - 디바이스의 busy percent
@@ -85,6 +79,12 @@ Use Method 전략의 플로우
     - wait queue의 길이
   - errors
     - 디바이스 에러
+- Network interface
+  - utilization
+    - rx/tx throughput
+      - receive, transmit
+  - saturation
+    - dropped rx/tx 패킷 개수
 
 #### 소프트웨어 리소스에 대한 메트릭
 
