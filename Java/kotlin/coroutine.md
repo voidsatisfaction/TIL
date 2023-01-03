@@ -59,13 +59,13 @@
     - 코루틴 런타임이 `invokeSuspend`를 호출해서 suspend된 코루틴을 재개함
     - Continuation은 계속해서 래핑되는 스타일
   - `Job`
-    - coroutine의 라이프사이클을 다룸
+    - 하나의 코루틴의 라이프사이클을 다루기 위한 오브젝트
     - `Deferred`
       - Job의 서브클래스로, 코루틴의 결과를 await해서 활용해야 하는 경우에 사용됨
-  - `CoroutineContext`
-    - 코루틴 인스턴스 관리 정책
   - `CoroutineScope`
     - 코루틴 인스턴스를 실행 및 관리하는 스코프
+  - `CoroutineContext`
+    - 코루틴 스코프에서의 코루틴 인스턴스 관리 정책
 
 ### 코루틴 예시 코드 및 디컴파일된 코드
 
