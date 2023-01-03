@@ -3,7 +3,12 @@
 - 의문
 - 개요
 - 장애 대응 매뉴얼
-  - 1 장애 파악(AINDA)
+  - 1 장애 파악(ADAIN)
+    - Alert
+    - Database
+    - Application
+    - Infra
+    - Network
   - 2 장애 조치
   - 3 장애 예방
   - 4 공유
@@ -30,56 +35,93 @@
 ### 1. 장애 파악(ADAIN)
 
 - 개요
-  - 장애가 어디서 어떻게 났는지 파악하는 세션
-- 체크 포인트
-  - 얼럿 확인(Alert)
-    - 센트리 얼럿
-      - 어떤 에러가 나고 있는지?
-      - 장애의 원인이 되는것으로 보이는 에러의 모든 이벤트 파악하기
-    - 프로메테우스 얼럿
-  - DB 이슈인가?(DB)
-    - 모니터링
-      - AWS AuroraDB cloud watch
-        - CPU / Memory / DB connection 수(max 확인)
-      - AWS AuroraDB performance insights
-        - **실시간 5분으로 세팅해두고 지속 모니터링(어떤 쿼리가 어떤 이유에서 블로킹 되어있는지 확인)**
-      - 실제 DB 들어가서
-        - `select * from information_schema.processlist (where info is not null)`
-          - 스레드들의 상태를 관찰(데드락 등)
-    - 대응 사례
-      - 데드락
-      - 커넥션 이슈
-      - long running tx로 인한 rollback history가 너무 많이 자라는 문제
-  - 서버 이슈인가?(Application server)
-    - 모니터링
-      - k8s
-        - deployments
-        - pods
-        - jvm micrometer
-      - 얼럿 확인
-      - 서버 로그 확인
-  - 인프라 이슈인가?(Infra)
-    - 모니터링
-      - k8s
-        - k8s cluster use method
-        - istio service
-        - k8s events
-      - AWS
-        - AWS cloud watch
-  - 네트워크 이슈인가?(Network)
-    - 모니터링
-      - 네트워크 메트릭 관찰
-        - e.g) istio service, AWS ALB
-      - 얼럿
-    - 대응사례
+  - 장애가 어디서 어떻게 났는지 쉽게 파악하기 위한 프레임워크
+    - 앞에서 뒤로 문제를 더 빨리 찾을 수 있는 가능성이 높은 순서대로 나열되어있다
+      - Alert을 먼저 보는게 Network부분을 먼저보는것 보다 문제를 빠르게 특정할 수 있는 가능성이 높아짐
+    - **각 페이즈마다 USE(Utilization, Saturation, Error) method, TSA(Thread State Analysis) method등의 방법론을 적절히 사용하면 좋다**
+- ADAIN
+  - Alert
+  - Database
+  - Application
+  - Infrastucture
+  - Network
+
+#### 1.1 얼럿 확인(Alert)
+
+- 개요
+  - 장애가 자주 나는 부분 및 한 번 장애가 났던 부분은 메트릭설정으로 쉽게 얼럿을 받을 수 있도록 해야한다
+- 조사대상(E)
+  - 센트리 얼럿
+    - 어떤 에러가 나고 있는지?
+    - 장애의 원인이 되는것으로 보이는 에러의 모든 이벤트 파악하기
+  - 프로메테우스 메트릭 얼럿
+
+#### 1.2 DB 이슈인가?(DB)
+
+- 개요
+  - 일반적으로 웹 서버의 경우 DB가 병목이 되는 경우가 많다
+- 조사대상(USE)
+  - AWS AuroraDB cloud watch
+    - CPU / Memory / DB connection 수(max 확인)
+      - US 체크
+  - AWS AuroraDB performance insights
+    - **실시간 5분으로 세팅해두고 지속 모니터링(어떤 쿼리가 어떤 이유에서 블로킹 되어있는지 확인)**
+      - US 체크
+  - 실제 DB 들어가서
+    - `select * from information_schema.processlist (where info is not null)`
+      - 스레드들의 상태를 관찰(데드락 등)
+      - E 체크
+- 대응 사례
+  - 데드락
+  - 커넥션 이슈
+  - long running tx로 인한 rollback history가 너무 많이 자라는 문제
+  - 메모리 문제
+  - CPU를 너무 많이 사용하는 문제
+
+#### 1.3 서버 이슈인가?(Application server)
+
+- 조사대상(USE)
+  - k8s
+    - grafana(US)
+      - deployments
+      - pods
+      - jvm micrometer
+        - TSA방법론 적용
+    - 팟 로그 확인(E)
+  - 얼럿 확인
+    - E
+
+#### 1.4 인프라 이슈인가?(Infra)
+
+- 개요
+  - DB를 제외한 서비스를 구성하는 전체 인프라 리소스들
+  - e.g)
+    - AWS SQS
+    - AWS Kinesis
+    - k8s 등
+- 모니터링
+  - k8s
+    - k8s cluster use method
+    - istio service
+    - k8s events
+  - AWS
+    - AWS cloud watch(USE)
+
+#### 1.5 네트워크 이슈인가?(Network)
+
+- 모니터링
+  - 네트워크 관련 메트릭 관찰(US)
+    - e.g) istio service, AWS ALB, Ingress등
+  - 얼럿(E)
+- 대응사례
 
 ### 2. 장애 조치
 
 - 개요
   - 장애 포인트를 특정하고 나서, 원상태로 회복시키는 단계
 - 방법론
-  - 장애 파악시에 로깅을 잘 남기자
-    - 추후에 원인 특정에 유리
+  - 장애 파악시에 스냅샷을 잘 남기자
+    - 추후에 원인 특정 및 개선시 유리
     - e.g) mysql process kill 이전에 미리 어떤 쿼리였고, 어떤 유저였는지 체크하기
 
 ### 3. 장애 예방
