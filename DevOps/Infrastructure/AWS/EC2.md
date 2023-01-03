@@ -120,3 +120,17 @@
     - AWS에 요청하면 늘릴 수 있음
   - 사용하지 않는 것이 좋음
     - **대신, DNS이름을 random public IP와 연동하는게 좋다**
+
+### ENI(Elastic Network Interface)
+
+*우리가 그냥 사용하는 EC2도 ENI를 쓰는건가?*
+
+- 개요
+  - VPC 내부에서 가상 네트워크 카드의 역할을 함
+- 특징
+  - 하나의 primary private IPv4와 하나 이상의 secondary IPv4를 할당
+  - 하나의 public IPv4를 갖게 할 수도 있음
+  - 하나 이상의 security group을 갖음
+  - 하나의 MAC 주소를 갖음
+  - ENI를 따로 만들고 EC2인스턴스에 붙일 수 있음
+  - 하나의 AZ에 제한됨
