@@ -127,6 +127,7 @@
 
 - 개요
   - VPC 내부에서 가상 네트워크 카드의 역할을 함
+    - EC2기본 프라이빗 네트워크가 아닌, elastic하게 붙였다 뗄 수 있어서 네트워크를 통한 failover등에 활용가능
 - 특징
   - 하나의 primary private IPv4와 하나 이상의 secondary IPv4를 할당
   - 하나의 public IPv4를 갖게 할 수도 있음
