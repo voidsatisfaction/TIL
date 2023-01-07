@@ -46,9 +46,12 @@
   - 특징
     - 클라이언트에게 전송되었으나, 아직 삭제되지 않았음
     - visibility window의 끝에 도달하지 않은 메시지
+    - USE method에서 Utilization을 나타냄
 - `ApproximateNumberOfMessagesVisible`
   - 개요
     - 대기열에서 가져올 수 있는 메시지의 수
+  - 특징
+    - USE method에서 Saturation을 나타냄
 - `NumberOfEmptyReceives`
   - 개요
     - 메시지를 반환하지 않은 `ReceiveMessage API` 호출의 수
