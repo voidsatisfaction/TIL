@@ -1,7 +1,12 @@
 # USE(Utilization Saturation and Errors) Method
 
 - 의문
+- Use Method의 전략 플로우
 - 개요
+  - 리소스 리스트
+    - 하드웨어 리소스에 대한 메트릭
+    - 소프트웨어 리소스에 대한 메트릭
+  - Functional Block Diagram
 
 ## 의문
 
