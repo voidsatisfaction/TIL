@@ -1,14 +1,23 @@
 # AWS EC2
 
 - 의문
+- Elastic 모델
 - 개요
   - EC2 설정
   - EC2 타입
   - Security Groups
   - EC2 비용 설정
   - Elastic IP
+  - ENI(Elastic Network Interface)
 
 ## 의문
+
+## Elastic 모델
+
+- 개요
+  - AWS는 일반적으로 기본적인 아키텍처 컴포넌트를 별개의 부품으로 분해했음
+    - 유연함
+  - e.g) EC2에 EBS, Elastic IP, Elastic LB, Elastic Network Interface를 부착가능
 
 ## 개요
 
@@ -126,15 +135,25 @@
 *우리가 그냥 사용하는 EC2도 ENI를 쓰는건가?*
 
 - 개요
-  - VPC 내부에서 가상 네트워크 카드의 역할을 함
+  - VPC 내부에서 가상 네트워크 카드의 역할을 함(EC2 인스턴스와 IP 주소의 분리)
     - EC2기본 프라이빗 네트워크가 아닌, elastic하게 붙였다 뗄 수 있어서 네트워크를 통한 failover등에 활용가능
+- 속성
+  - private IP address
+  - elastic IP address
+  - MAC address
+  - security group
+  - *source/destination check flag*
 - 특징
+  - 하나의 VCP의 서브넷에 국한되어, 하나의 AZ로 제한됨
+  - EC2를 특정 VPC의 특정 subnet에서 런칭하는것이 아니라, ENI를 붙여서 동적으로 할당 가능
+    - ENI자체가 subnet과 연관됨
+  - EC2인스턴스와 라이프사이클이 별개
+    - ENI를 별도로 부착하지 않으면, 자동으로 생성되고, delete on termination이 동작
   - 하나의 primary private IPv4와 하나 이상의 secondary IPv4를 할당
   - 하나의 public IPv4를 갖게 할 수도 있음
   - 하나 이상의 security group을 갖음
   - 하나의 MAC 주소를 갖음
   - ENI를 따로 만들고 EC2인스턴스에 붙일 수 있음
-  - 하나의 AZ에 제한됨
 
 ### EC2 Hibernate
 
