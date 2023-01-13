@@ -55,7 +55,7 @@
 - `NumberOfEmptyReceives`
   - 개요
     - 메시지를 반환하지 않은 `ReceiveMessage API` 호출의 수
-      - *반환이 ack인가?*
+      - 기본적으로, sqs는 롱폴링을 하는데, 해당 폴링의 결과로 메시지를 받지 않은 경우의 수를 일컬음
 - `NumberOfMessagesDeleted`
   - 개요
     - 큐에서 삭제된 메시지의 개수
