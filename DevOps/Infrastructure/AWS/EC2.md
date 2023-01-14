@@ -9,6 +9,7 @@
   - EC2 비용 설정
   - Elastic IP
   - ENI(Elastic Network Interface)
+- EBS
 
 ## 의문
 
@@ -161,3 +162,22 @@
   - 메모리에 있는 상태를 보전하고 있음
     - 부팅이 훨씬 빠름(OS도 그대로)
     - RAM의 상태를 EBS 볼륨파일에 작성
+
+## EC2 Instance Storage
+
+### EBS(Elastic Block Store)
+
+- 개요
+  - EC2 인스턴스가 동작하는 동안에 부착할 수 있는 네트워크 스토리지 드라이브(네트워크 USB 스틱같은 느낌)
+    - 따라서 네트워크에 따라서 레이턴시가 존재
+- 특징
+  - EC2의 라이프사이클과는 별개로 데이터를 영속화 할 수 있게 함
+  - 여러 인스턴스에 한번에 마운트 가능
+  - 같은 AZ에서만 사용 가능
+    - 스냅샷을 떠서 다른 AZ에 옮길 수 있음
+  - capacity를 프로비저닝 해야함
+    - 사이즈(GB)
+    - IOPS(I/O Per Seconds)
+- 기능
+  - Delete on Termination 특성이 있음
+    - 루트 EBS 볼륨은 default true 나머지는 false
