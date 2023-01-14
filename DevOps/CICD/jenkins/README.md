@@ -1,6 +1,10 @@
 # Jenkins
 
 - 의문
+- 아키텍처
+  - Jenkins Dataflow
+  - Jenkins controller 아키텍처
+- 파이프라인
 - 용어
   - 동작의 주체
   - job관련
@@ -9,6 +13,123 @@
   - 그 외
 
 ## 의문
+
+- 일반적으로 사용되는 플러그인
+  - kubernetes
+    - 쿠버네티스 agent를 사용하기 위함
+  - workflow-aggregator
+    - jenkins pipeline을 사용하기 위함
+  - git
+    - jenkins잡이 git을 사용할 수 있도록 함
+  - configuration-as-code
+    - JCasC(Jenkins Configuration as Code)
+      - 젠킨스 설정을 코드로 할 수 있도록 함
+  - job-dsl
+    - DSL API참고: https://jenkinsci.github.io/job-dsl-plugin/
+  - blueocean
+  - slack
+  - github-scm-trait-notification-context
+  - reverse-proxy-auth-plugin
+
+## 베스트 프렉티스
+
+JCasC Seed job 예시
+
+```yaml
+cloudName: "kubernetes"
+
+JCasC:
+  defaultConfig: true
+  configScripts:
+    credentials: |
+      credentials:
+        system:
+          domainCredentials:
+          - credentials:
+            - ... 
+    job-dsl: |
+      security:
+        globalJobDslSecurityConfiguration:
+          useScriptSecurity: false
+      jobs:
+        - script: >
+            job('seed') {
+              scm {
+                git {
+                  branch('main')
+                  remote {
+                    github('VCNC/tada-infra')
+                    credentials('GitHubCredential')
+                  }
+                }
+              }
+              steps {
+                dsl {
+                  external('jenkins/jobs/staging.groovy')
+                }
+              }
+              triggers {
+                githubPush()
+              }
+            }
+```
+
+- 젠킨스 관련 모든 global 설정을 code로 관리하기
+  - e.g) helm chart
+- JCasC(Jenkins Configuration as Code)와 job-dsl을 활용해서, job 설정을 코드로 관리하기
+
+## 아키텍처
+
+### Jenkins Dataflow
+
+![](./images/jenkins-dataflow1.png)
+
+- Inbound Agent
+  - 개요
+    - 젠킨스와 JNLP 프로토콜로 통신하여, controller로부터 어떤 태스크를 실행할지 명령을 받고, 태스크 실행 결과를 JNLP 커넥션을 이용해서 controller로 돌려줌
+
+### Jenkins controller 아키텍처
+
+![](./images/jenkins-controller1.png)
+
+- 참고
+  - 플러그인은 무한히 기능을 추가가능하므로, 비즈니스 레이어는 무한함
+
+## 파이프라인
+
+파이프라인 흐름 예시
+
+![](./images/pipeline-flow1.png)
+
+- 기본 개념
+  - pipeline
+    - CD 파이프라인의 유저가 정의한 모델
+  - node
+    - 파이프라인을 실행할 수 있는 머신
+  - stage
+    - 개념적으로 잡 전체를 부분집합을 나눈것(e.g Build, Test, Deploy)
+  - steps
+    - 젠킨스가 특정 스테이지에서 무엇을 할지 기술하는 것
+
+### 개요
+
+- 개요
+  - CD pipeline은 소프트웨어를 버전 컨트롤에서 사용자와 고객에게 바로 전달하기 위한 프로세스의 자동화된 표현
+    - 소프트웨어의 변화는 복잡한 프로세스를 타서 릴리즈되는데, 이는 믿을 수 있고 반복적인 방식임
+- 특징
+  - 코드(Jenkinsfile)로 파이프라인을 모델링 가능함(DSL)
+  - 선언적으로, 혹은 스크립트와 같이 작성할 수 있음
+- 생성 방법
+  - **SCM(jenkinsfile)**
+    - 베스트 프랙티스
+      - 코드리뷰 가능
+      - 파이프라인 트래킹 가능
+      - single source of truth로 모두가 수정 및 관리 가능
+  - Blue Ocean
+    - 클래식 UI보다 나은수준이지만, SCM으로 하는게 베스트
+  - classic UI
+- 전역 변수의 사용
+  - `${YOUR_JENKINS_URL}/pipeline-syntax/globals` 참고
 
 ## 용어
 
@@ -19,13 +140,13 @@
   - Core(`jenkins.war`)
     - 메인젠킨스 애플리케이션으로, 기본 웹 UI와 설정, 그리고 플러그인을 설치하는 기반을 제공함
 - Agent
-  - 젠킨스 컨트롤러에 연결되고, 컨트롤러에 의해서 지시받은 태스크를 실행하는 머신이자 컨테이너
+  - 젠킨스 컨트롤러에 연결되고, 컨트롤러에 의해서 지시받은 태스크를 실행하는 (물리적, 가상)머신혹은 컨테이너(job을 실행하는 환경)
   - Label로 agent를 그루핑 할 수 있음
     - e.g) linux는 linux-based agent, docker는 docker-capable agent
   - Executor
-    - 하나의 노드에서 파이프라인 또는 잡에 의해서 정의된 일의 실행을 위한 슬롯
-      - *정확한 의미는?*
-    - 하나의 노드는 0이상의 executor를 갖고, 동시에 job이나 파이프라인을 실행하도록 설정됨
+    - agent내부의 프로세스로, 빌드를 수행함
+      - 각 agent에 몇개의 executor를 둘지 설정 가능함
+        - 에이전트 리소스 관리 가능
 - Node
   - 파이프라인 또는 잡을 실행할 수 있는 젠킨스 환경을 구성하는 머신
     - Controller, Agent 둘다 노드로 간주됨
@@ -34,10 +155,10 @@
 
 - job(project)
   - 젠킨스가 실행해야하는 유저가 설정한 일의 상세이며, 예를들자면, 소프트웨어 빌드등이 있다
+- build
+  - 하나의 잡의 실행되는 인스턴스
 - pipeline
   - 유저가 정의한 CD의 파이프라인 모델
-- build
-  - 하나의 잡 실행의 결과
 - artifact
   - 빌드나 파이프라인 실행 도중에 생성되는 불변파일이며, 컨트롤러에 저장되어서 나중에 유저가 참조 가능하게 함
 - folder
