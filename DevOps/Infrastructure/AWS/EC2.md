@@ -181,3 +181,12 @@
 - 기능
   - Delete on Termination 특성이 있음
     - 루트 EBS 볼륨은 default true 나머지는 false
+  - 스냅샷
+    - detach없이 백업을 만들 수 있음
+      - 스냅샷을 Region, AZ단위로 옮길 수 있음
+    - 스냅샷 아카이브가 존재
+      - 75% 싸지만, 복구하는데에 24~72시간이 걸림
+    - Recycle bin
+      - 스냅샷 삭제했을시에 retention을 지정해서 지정한 기간동안 보관
+    - Fast Snapshot Restore(FSR)
+      - 스냅샷을 다시 인스턴스로 만드는데에 레이턴시가 거의 없게 하지만, 돈이 많이듬
