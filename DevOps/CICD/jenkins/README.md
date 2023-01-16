@@ -14,22 +14,28 @@
 
 ## 의문
 
-- 일반적으로 사용되는 플러그인
+- 유용한 플러그인
   - kubernetes
     - 쿠버네티스 agent를 사용하기 위함
   - workflow-aggregator
     - jenkins pipeline을 사용하기 위함
-  - git
-    - jenkins잡이 git을 사용할 수 있도록 함
   - configuration-as-code
     - JCasC(Jenkins Configuration as Code)
-      - 젠킨스 설정을 코드로 할 수 있도록 함
+    - 젠킨스의 글로벌 시스템 설정을 코드로 할 수 있도록 함
   - job-dsl
     - DSL API참고: https://jenkinsci.github.io/job-dsl-plugin/
+    - job을 DSL로 설정 가능하게 함
+    - configuration-as-code 플러그인과 함께 사용되어서, 잡 생성을 dsl로 할 수 있도록 함
+    - dsl을 파싱해서 job xml파일을 생성함
+  - git
+    - jenkins잡이 git을 사용할 수 있도록 함
   - blueocean
+    - CD 파이프라인의 시각화를 더 알기 쉽게 해주는 플러그인
   - slack
-  - github-scm-trait-notification-context
+    - 슬랙으로 메시지를 보낼 수 있도록 하는 플러그인
   - reverse-proxy-auth-plugin
+    - jenkins의 앞단에 reverse 프록시로 인증을 수행하는 경우, 단순히 헤더의 이름을 보고 jenkins의 유저네임으로 사용할 수 있도록 함
+  - github-scm-trait-notification-context
 
 ## 베스트 프렉티스
 
@@ -46,7 +52,7 @@ JCasC:
         system:
           domainCredentials:
           - credentials:
-            - ... 
+            - ...
     job-dsl: |
       security:
         globalJobDslSecurityConfiguration:
@@ -76,7 +82,7 @@ JCasC:
 
 - 젠킨스 관련 모든 global 설정을 code로 관리하기
   - e.g) helm chart
-- JCasC(Jenkins Configuration as Code)와 job-dsl을 활용해서, job 설정을 코드로 관리하기
+- JCasC(Jenkins Configuration as Code)와 job-dsl플러그인을 활용해서, job 설정을 코드로 관리하기
 
 ## 아키텍처
 
