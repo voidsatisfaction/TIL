@@ -9,7 +9,10 @@
   - EC2 비용 설정
   - Elastic IP
   - ENI(Elastic Network Interface)
-- EBS
+- EC2 Instance Storage
+  - EBS(Elastic Block Store)
+  - AMI(Amazon Machine Image)
+  - EIS(EC2 Instance Store)
 
 ## 의문
 
@@ -190,3 +193,33 @@
       - 스냅샷 삭제했을시에 retention을 지정해서 지정한 기간동안 보관
     - Fast Snapshot Restore(FSR)
       - 스냅샷을 다시 인스턴스로 만드는데에 레이턴시가 거의 없게 하지만, 돈이 많이듬
+
+### AMI(Amazon Machine Image)
+
+- 개요
+  - EC2 인스턴스의 커스터마이제이션
+    - 소프트웨어, 설정, OS, 모니터링 등을 넣을 수 있음
+    - 빠른 부팅과 설정 시간(소프트웨어가 이미 패키징 되어있으므로)
+- 특징
+  - region bounded
+  - 다양한 AMI로 부터 EC2를 런칭 가능
+    - Public AMI
+    - own AMI
+    - Marcketplace AMI
+- 생성 프로세스
+  - EC2 인스턴스를 생성하고 커스터마이징을 함
+  - 인스턴스를 멈춤(data integrity)
+  - AMI를 빌드
+    - EBS 스냅샷도 생성
+  - 빌드된 AMI로부터 인스턴스를 생성
+
+### EC2 Instance Store
+
+- 개요
+  - 높은 disk I/O 성능이 필요한 경우, 사용하는 물리적 스토리지
+- 특징
+  - EC2 인스턴스의 라이프사이클을 따름
+    - EC2인스턴스가 멈추거나 삭제가 되면 이 디스크 스토리지도 삭제됨(ephemeral)
+  - 버퍼 / 캐싱 / 임시 데이터를 다루는 경우에 좋음
+  - 하드웨어에 문제가 생기면 데이터 손실의 문제가 생김
+  - 백업과 replication은 알아서 신경써야 함
