@@ -93,6 +93,11 @@ JCasC:
 - Inbound Agent
   - 개요
     - 젠킨스와 JNLP 프로토콜로 통신하여, controller로부터 어떤 태스크를 실행할지 명령을 받고, 태스크 실행 결과를 JNLP 커넥션을 이용해서 controller로 돌려줌
+  - 특징
+    - agent가 먼저 controller에게 네트워크 커넥션을 요청함(그래서 컨트롤러 입장에서는 인바운드)
+- c.f) Outbound SSH Agent
+  - 특징
+    - controller가 먼저 agent와 필요할때 네트워크 커넥션을 맺음
 
 ### Jenkins controller 아키텍처
 
