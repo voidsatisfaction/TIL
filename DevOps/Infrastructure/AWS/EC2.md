@@ -284,3 +284,35 @@
   - 버퍼 / 캐싱 / 임시 데이터를 다루는 경우에 좋음
   - 하드웨어에 문제가 생기면 데이터 손실의 문제가 생김
   - 백업과 replication은 알아서 신경써야 함
+
+### Amazon EFS(Elastic File System)
+
+- 개요
+  - 관리되는 NFS(Network File System)이며, 여러 EC2에 마운트 될 수 있음
+- 특징
+  - 여러 AZ의 EC2인스턴스와 연동 가능
+  - available, scalable, expensive (gp2의 3배비쌈)
+  - 유스 케이스
+    - content management, 웹 서빙, 데이터 공유, 워드 프레스
+  - NFSv4.1 프로토콜 사용
+  - EFS 접근을 제어하기 위해서 security group을 사용
+  - 리눅스 기반 AMI와 호환 가능
+    - 윈도우 불가
+  - KMS를 사용해서 암호화 가능
+  - POSIX compatible한 파일 시스템
+  - 비용은 pay-per-use라, 사용할 수록 내고, 자동으로 스케일링 됨
+- 성능
+  - EFS Scale
+    - 1000s of concurrent NFS 클라이언트, 10GB+/s 스루풋
+  - Performance mode
+    - General purpose
+      - latency-sensitive use cases
+        - 웹 서버, CMS, etc...
+    - Max I/O
+      - higher latency, highly parallel
+        - big data, media processing
+  - Throughput mode
+    - Bursting
+      - 1TB = 50MiB/s + burst of up to 100MiB/s
+    - Provisioned
+      - 스루풋 자체를 설정 가능 (1GiB/s for 1TB 스토리지)
