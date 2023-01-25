@@ -3,6 +3,7 @@
 - 의문
 - 개요
   - 구현 방법
+- `@Async`
 
 ## 의문
 
@@ -94,5 +95,69 @@ public class AnnotationDrivenEventListener {
 @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
 public void handleCustom(CustomSpringEvent event) {
     System.out.println("Handling event inside a transaction BEFORE COMMIT.");
+}
+```
+
+## `@Async`
+
+```java
+@Async
+public Future<String> asyncMethodWithReturnType() {
+    System.out.println("Execute method asynchronously - "
+      + Thread.currentThread().getName());
+    try {
+        Thread.sleep(5000);
+        return new AsyncResult<String>("hello world !!!!");
+    } catch (InterruptedException e) {
+        //
+    }
+
+    return null;
+}
+```
+
+- 개요
+  - `@Async` 애노테이션을 빈의 메서드에 붙이면, 호출시 다른 스레드에서 실행되며, caller method는 기다리지 않음
+- 특징
+  - public method에만 적용 가능
+    - proxied되기 위함
+  - 같은 클래스에서 `async` 메서드를 호출하면 동작하지 않음
+    - 같은 클래스에서 호출할경우, proxy를 바이패스하고, method를 직접 호출함
+
+### configuration
+
+```java
+// override executor at method level
+@Configuration
+@EnableAsync
+public class SpringAsyncConfig {
+    @Bean(name = "threadPoolTaskExecutor")
+    public Executor threadPoolTaskExecutor() {
+        return new ThreadPoolTaskExecutor();
+    }
+}
+
+// override executor at application level
+//// default (@Async)
+@Configuration
+@EnableAsync
+public class SpringAsyncConfig implements AsyncConfigurer {
+   @Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.initialize();
+        return threadPoolTaskExecutor;
+    }
+
+    @Override
+    public void handleUncaughtException(
+      Throwable throwable, Method method, Object... obj) {
+
+        System.out.println("Exception message - " + throwable.getMessage());
+        System.out.println("Method name - " + method.getName());
+        for (Object param : obj) {
+            System.out.println("Parameter value - " + param);
+        }
+    }
 }
 ```
