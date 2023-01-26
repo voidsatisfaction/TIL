@@ -35,6 +35,24 @@
       - Elastic stack
         - Elastic APM
     - 얼럿 시스템 세팅
+      - infrastructure
+        - cloud watch(USE method) + SNS + Slack(or PagerDuty or Email)
+          - DB CPU utilization
+          - DB load
+          - DB rollback history segment
+          - Queue too long waiting task alert
+          - Queue saturation alert
+          - Queue dead letter queue
+        - alertmanager(prometheus)
+          - USE method
+          - cluster
+          - node
+          - deployment
+          - service
+          - persistence volume
+      - application
+        - sentry
+        - prometheus
   - 배포 전략
     - rolling update
     - canary deploy
