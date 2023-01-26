@@ -24,7 +24,7 @@
     - failure_count / time_window
 - Availability
   - 개요
-    - 시스템이 동작하는 상태인 시간의 비율(uptime)
+    - 특정 시간동안 시스템이 동작하는 상태인 시간의 비율(uptime)
   - 메트릭
     - uptime / time_window
 - 주의
