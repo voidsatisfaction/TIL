@@ -19,6 +19,7 @@
 - Reliability
   - 개요
     - 특정 시간동안 실패(failure) 없이 의도된 동작을 수행하는 시스템의 능력
+      - fault tolerant(fault가 있어도 failure로는 이어지지 않게하는 능력)
   - 메트릭
     - failure_count / time_window
 - Availability
