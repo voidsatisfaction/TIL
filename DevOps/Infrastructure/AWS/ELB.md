@@ -13,7 +13,7 @@
   - 인스턴스의 healthcheck를 하기 위함
   - downstream 인스턴스들의 실패를 심리스하게 다루기 위함
   - 높은 availability를 제공하기 위함
-  - 웹 사이트에 TLS를 제공하기 위함
+  - 웹 애플리케이션 통신에 TLS를 제공하기 위함
   - 쿠키의 stickiness를 위함
 - ELB 쓰는 이유
   - managed LB이다
