@@ -9,6 +9,8 @@
   - Input Variables
   - Output Variables
   - Local Variables
+- Expressions
+  - 개요
 - State
   - Purpose of Terraform State
 
@@ -228,3 +230,59 @@ locals {
 - 팁
   - 값이나 식이 반복되는 경우 && 미래에 변경될것 같은 경우에만 사용하기
   - 중앙 장소에서 value를 바꿀 수 있게 하기
+
+## Expressions
+
+### 개요
+
+- 개요
+  - configuration 내부에서 값을 평가하는 것
+- 값의 타입
+  - primitive type
+    - `string`
+      - 유니코드 문자열
+    - `number`
+      - 숫자, 부동소수점
+    - `bool`
+      - 불린 값
+        - `true`는 "true"로 *필요에 의해서* 변환될 수 있음
+          - *언제가 필요에 의한 것인지?*
+  - complex type
+    - collection type(dynamic, flexible)
+      - `list(...)`
+        - 같은 타입의 값의 리퀀스
+      - `map(...)`
+        - 이름이 붙은 레이블에 의해서 식별된 값들의 그룹
+        - `{ "foo": "bar", "bar": "baz" }`
+        - `{ foo = "bar", bar = "baz" }`
+        - multi-line map에서는 키벨류값의 페어는 새 라인으로 충분함
+          - `terraform fmt`가 수직적으로 equal sign을 맞춰줌
+      - `set(...)`
+        - 유니크한 값들의 컬렉션
+    - structural type(static, schema)
+      - `object(...)`
+        - 각각이 각자의 타입을 갖는 이름을 갖는 attribute의 컬렉션
+          - 리소스나 데이터블록을 선언하는데에 사용됨
+        - 스키마
+          - `{ <KEY> = <TYPE>, <KEY> = <TYPE>, ... }`
+          - additional key에 대한 값들은 버려짐
+      - `tuple(...)`
+        - 각 엘리먼트가 각자의 타입을 갖는 엘리먼트의 시퀀스
+        - 스키마
+          - `[<TYPE>, <TYPE>, ...]`
+          - 즉, 반드시 같은 원소의 개수를 만족해야 함
+    - 특징
+      - 유사한 complex type은 쉽게 서로 교환해서 사용 가능(`list/tuple/set`, `map/object`)
+        - 테라폼이 알아서 비슷한 타입은 변환해줌
+      - 가능하다면, 테라폼은 complex type내부의 element 값들을 recursive하게 타입변환을 함
+      - e.g)
+        - `list(string)`
+          - `["a", 15, true]` -> `["a", "15", "true"]`
+        - `map(string)`
+          - `{name = ["Kristy", "Claudia", "Mary Anne", "Stacey"], age = 12}` -> `type mismatch error`
+  - c.f) 타입이 아님
+    - `null`
+      - 값의 부재나 생략을 나타냄
+        - 기본값을 사용하거나 인자가 반드시 필요한 경우 에러를 낼 수 있음
+    - `any`
+      - 타입의 placeholder이며, 테라폼이 하나의 실제 대체 가능한 타입을 찾으려고 함
