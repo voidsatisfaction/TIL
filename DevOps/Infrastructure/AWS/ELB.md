@@ -77,7 +77,7 @@ ELB 컴포넌트 아키텍처
 ### ALB
 
 - 개요
-  - 네트워크 애플리케이션 레이어에서의 다양한 변수에 대해서 트래픽 분배
+  - 애플리케이션 레이어에서의 다양한 변수에 대해서 트래픽 분배
 - 특징
   - Application레이어의 HTTP, HTTPS 리스너에만 적용됨
     - HTTP/2와 웹 소켓도 적용 가능
@@ -98,12 +98,13 @@ ELB 컴포넌트 아키텍처
     - `X-Forwarded-Proto`
       - 클라이언트의 프로토콜
 - 라우팅 방식
-  - URL path
-    - `example.com/users`, `example.com/posts`
-  - URL hostname
-    - `one.example.com`, `other.example.com`
-  - Query String, Headers
-    - `example.com/users?id=123&order=false`
+  - Listener내부의 Rule을 사용하여 설정
+    - URL path
+      - `example.com/users`, `example.com/posts`
+    - URL hostname
+      - `one.example.com`, `other.example.com`
+    - Query String, Headers
+      - `example.com/users?id=123&order=false`
 - 타겟 그룹
   - EC2 인스턴스들(오토스케일링 그룹) - HTTP
   - ECS 태스크 - HTTP
