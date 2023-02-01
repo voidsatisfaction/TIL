@@ -13,6 +13,7 @@
   - 개요
 - State
   - Purpose of Terraform State
+  - For Expressions
 
 ## 의문
 
@@ -286,3 +287,29 @@ locals {
         - 기본값을 사용하거나 인자가 반드시 필요한 경우 에러를 낼 수 있음
     - `any`
       - 타입의 placeholder이며, 테라폼이 하나의 실제 대체 가능한 타입을 찾으려고 함
+
+### For Expressions
+
+```tf
+[for s in var.list : upper(s)] // 반환값은 튜플
+
+[for k, v in var.map : length(k) + length(v)] // key값
+
+[for i, v in var.list : "${i} is ${v}"] // 인덱스
+
+{for s in var.list : s => upper(s)} // 반환값은 object
+
+[for s in var.list : upper(s) if s != ""] // 값의 필터링
+
+toset([for e in var.set : e.example]) // 결과값을 set으로 변경
+```
+
+- 개요
+  - `for`은 식이며, 결과값의 타입은 bracakets에 따라서 다름
+    - `[]`
+      - tuple
+    - `{}`
+      - object
+      - e.g) `{for s in var.list : s => upper(s)}`
+- 특징
+  - 일반적으로 ordered collection에서 object로 변경하거나, object에서 for loop으로 순회할땐 순서는 고려하지 말자
