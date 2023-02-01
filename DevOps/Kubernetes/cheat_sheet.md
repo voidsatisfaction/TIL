@@ -36,3 +36,5 @@
 - 헬름 릴리스 롤백
   - `helm history [release]`
   - `helm rollback [release] [revision]`
+- 헬름 릴리스 삭제
+  - `helm uninstall [release] (--keep-history)`
