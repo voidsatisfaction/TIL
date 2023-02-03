@@ -114,12 +114,21 @@ ELB 컴포넌트 아키텍처
 ### NLB
 
 - 개요
-  - IP주소와 포트 기준으로 트래픽을 분배
+  - TCP & UDP 트래픽을 IP주소와 포트 기준으로 트래픽을 분배(network layer)하는 로드 밸런서
 - 특징
+  - 매초당 수백만의 리퀘스트 핸들링 가능
+  - 레이턴시가 ~100ms (ALB는 ~400ms)
+  - 각 AZ마다 하나의 고정 IP를 갖고 있음
   - context-less
     - 트래픽 내용이 아닌, 오직 ip와 포트만으로 라우팅
   - availability판단시, 서버와의 ICMP핑 혹은 TCP핸드셰이크가 되는것까지만 판단
     - 따라서, 완전한 availability는 모름
+- 타겟 그룹
+  - EC2 인스턴스
+  - IP 주소들
+    - private IPs
+  - ALB
+  - 헬스체크는 TCP, HTTP, HTTPS
 
 ### CLB
 
