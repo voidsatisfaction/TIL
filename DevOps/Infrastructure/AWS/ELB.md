@@ -2,6 +2,12 @@
 
 - 의문
 - 개요
+- ELB
+  - ELB 컴포넌트 아키텍처
+- ELB 타입: ALB(Application) vs NLB(Network) vs GLB(Gateway)
+  - ALB
+  - NLB
+  - GLB
 
 ## 의문
 
@@ -72,7 +78,7 @@ ELB 컴포넌트 아키텍처
       - 커넥션 시도하기
       - 테스트 리퀘스트 보내기
 
-## ELB 타입: ALB(Application) vs NLB(Network) vs CLB(Classic)
+## ELB 타입: ALB(Application) vs NLB(Network) vs GLB(Gateway)
 
 ### ALB
 
@@ -130,8 +136,19 @@ ELB 컴포넌트 아키텍처
   - ALB
   - 헬스체크는 TCP, HTTP, HTTPS
 
-### CLB
+### GLB(Gateway Load Balancer)
 
 - 개요
-  - Network / Application Layer
-  - 레거시
+  - AWS에서의 서드파티의 플릿을 매니지하고 배포하고 스케일할 수 있는 LB
+- 특징
+  - 네트워크 레이어에서 동작(IP 패킷)
+  - 투명한 네트워크 게이트웨이(single entry/exit for all traffic)
+    - 다른 애플리케이션은 해당 게이트웨이를 몰라도 됨(투명함 = 알아서 처리함)
+  - 타겟 그룹으로 부하를 분배
+  - 6081포트의 `GENEVE` 프로토콜을 사용
+- 타겟 그룹
+  - EC2 인스턴스
+  - IP 주소들
+    - private IPs
+- 예시
+  - 네트워크 레이어의 방화벽, 침입감지 / 방지 시스템, 패킷 조사 시스템, payload 변조, ...
