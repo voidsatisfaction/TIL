@@ -8,6 +8,8 @@
   - ALB
   - NLB
   - GLB
+- ELB의 기능
+  - Sticky Sessions(Session Affinity)
 
 ## 의문
 
@@ -152,3 +154,25 @@ ELB 컴포넌트 아키텍처
     - private IPs
 - 예시
   - 네트워크 레이어의 방화벽, 침입감지 / 방지 시스템, 패킷 조사 시스템, payload 변조, ...
+
+## ELB의 기능
+
+- Sticky Sessions(Session Affinity)
+
+### Sticky Sessions(Session Affinity)
+
+- 개요
+  - ALB에서 같은 클라이언트를 항상 동일한 인스턴스로 트래픽을 가게 할 수 있음
+    - 쿠키 사용
+    - 로드 밸런싱이 잘 안될 수 있음
+- 사용되는 쿠키
+  - Application-based Cookies
+    - Custom cookie
+      - target에 의해서 생성됨
+      - 어떤 데이터도 포함 가능
+    - Application cookie
+      - ALB에 의해서 생성됨
+      - `AWSALBAPP`이라는 쿠키명
+  - Duration-based Cookies
+    - ALB에 의해서 생성된 쿠키
+    - `AWSALB`라는 쿠키명을 갖고 있음
