@@ -26,7 +26,7 @@
   - `SHOW GRANTS [ FOR username ]`
     - `SHOW GRANTS FOR 'server-new-settlement-prod'@'%'`
 - 부여
-  - `GRANT [USAGE] ON *.* TO 'server-new-settlement-prod'@'%';`
+  - `GRANT [USAGE] ON [DB(*)].[TABLE(*)] TO 'server-new-settlement-prod'@'%';`
     - 아무런 실질적인 권한이 없음
   - `GRANT [ALL PRIVILEGES] ON tada.* TO 'server-new-settlement-prod'@'%';`
     - `tada`데이터베이스의 모든 테이블에 모든 권한을 부여
