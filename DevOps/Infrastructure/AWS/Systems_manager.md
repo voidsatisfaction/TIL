@@ -96,3 +96,4 @@ Host tada-prod-rds
   - CLI로부터 AWS SSM session을 열고, SSH ProxyCommand support를 함
 - 위의 설정 해석
   - Proxy Server를 접근하기 위해서 현 local에서 ProxyCommand 실행
+  - `.ssh/config`의 파일에 aws-vault및 ssm을 이용한 ssh연결 설정을 할 수 있다는 것이 장점
