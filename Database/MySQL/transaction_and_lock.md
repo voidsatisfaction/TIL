@@ -239,6 +239,8 @@ InnoDB 스토리지 엔진의 잠금
 - 필요성
   - Repeatable read 격리 수준 보장(phantom read방지)
     - 즉, READ-COMMITTED에서는 phantom read가 발생
+      - plain SELECT의 경우, rollback history로 인한 MVCC로 phantom read가 발생하지 않음
+      - **`SELECT ... FOR UPDATE ...` or `SELECT ... LOCK IN SHARE MODE ...`에서는 rollback history에 lock을 걸 수 없고, 오직 index에 락을 걸 수 있어서 phantom read가 발생하는데 그것을 막아줌**
   - Replication 일관성 보장(Binary Log Format = Statement or Mixed(SQL문장을 바이너리 로그 파일로 기록))
   - Foreign Key 일관성 보장
 - 특징
@@ -308,6 +310,7 @@ tx3> update test1 set c1 = 70 where id = 1; // 블로킹
 
 - 개요
   - 레코드 락 + 갭 락
+    - mysql에서는 gap lock을 걸 경우, 실제로는 하한, 상한에 row가 존재하면(e.g id를 4-5 사이를 갭락(X-lock)을 걸었는데, 혹시 3과 6에 row가 존재하면, 그 row에도 row lock(X-lock)이 걸림) 대한 next-key lock이 걸림
 - 예시
   - 인덱싱이 안되어있는 칼럼으로 필터링할 경우
     - 열람되는 모든 행의 클러스터 인덱스 레코드에 넥스트 키락을 검(full-scan이어서)
