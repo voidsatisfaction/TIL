@@ -78,3 +78,14 @@ IGW와 Router의 관계
   - VPC와는 별개로 생성되어야 함
   - 하나의 VPC는 하나의 IGW를 부착할 수 있고, 하나의 IGW도 마찬가지로 하나의 VPC에만 적용 가능
   - IGW로만 인터넷이 가능하게 하주는게 아니라, Route table을 설정해줘야 함
+
+## Bastion hosts
+
+- 개요
+  - private subnet에 존재하는 aws 자원에 접근하기 위한 public subnet에 존재하는 인스턴스
+- 특징
+  - 유저의 접속
+    - Session manager를 통한 접속(추천)
+    - ~port 22의 SSH 접속(비추)~
+  - 다른 리소스에 접근
+    - 각 리소스의 Security group은 bastion host의 Security Group의 접근을 허용해줘야 함
