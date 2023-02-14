@@ -8,6 +8,12 @@
 
 - OIDC(Open ID Connect)
   - OAuth2.0 기반으로 유저를 인증하는 프로토콜로, OAuth2.0과의 차이점은 OAuth2.0은 authorization을 포함한다면, OIDC는 Authentication에 집중함
+- EKS를 단순히 여러 AZ로 분산시키는 것의 단점
+  - complexity의 증가
+  - 높은 비용
+    - cross-AZ traffic에 의한 비용증가
+  - 성능 저하
+    - AZ사이의 트래픽은 아무래도 같은 AZ에서의 트래픽보다 느림
 
 ## 타다의 구성
 
