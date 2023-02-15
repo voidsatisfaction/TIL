@@ -1,6 +1,7 @@
 # DevOps
 
 - 의문
+- 추천 자료
 - 0 업무 범위
 - 1 DevOps의 기본적 이해
   - 5가지 철학(CAMSP)
@@ -13,6 +14,14 @@
 ## 의문
 
 공부방법은, 지금 당장 설치하고 작성해서 무엇을 만드는게 최고다
+
+## 참고 자료
+
+- 모니터링
+  - 성능 모니터링
+    - https://www.brendangregg.com/methodology.html
+      - use, tsa 등 추천
+    - [위의 저자가 쓴 책 - System Performance](https://www.amazon.com/Systems-Performance-Brendan-Gregg/dp/0136820158/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=deirdrestraug-20&linkId=815ef3388ba65b674f4f8fd582713f24&language=en_US)
 
 ## 0. 업무 범위
 
