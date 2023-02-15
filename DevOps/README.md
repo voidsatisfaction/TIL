@@ -73,7 +73,11 @@
     - Network
     - DB
     - Application
+  - 장애 문서 작성
 - 보안
+  - IAM role을 사용한 개발 프로세스 정립
+  - https://alas.aws.amazon.com/
+    - rss feed를 구독해서 계속 관리하자
 - 각종 자동화
   - 프로그래머 대신 컴퓨터가 대신 하도록
 
