@@ -14,6 +14,10 @@
 - Best practice
 - Advanced
 
+## 참고 자료
+
+- [IAM 예시](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_examples.html)
+
 ## 의문
 
 - role을 assume한다의 의미?
