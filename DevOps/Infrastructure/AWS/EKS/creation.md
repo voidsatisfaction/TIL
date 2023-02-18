@@ -19,6 +19,8 @@
 
 ## 2. EKS 클러스터 생성
 
+기본적으로 terraform의 aws eks모듈을 사용하면 아래의 편하게 eks를 운용하는데에 필요한 자원을 생성 가능하다
+
 - EKS 클러스터용 IAM role 생성
   - role policy
     - `--policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy`
@@ -40,17 +42,23 @@
         - 2개 이상의 서브넷 설정 필요
         - 클러스터 생성후에는 서브넷 변경 불가
     - 보안 그룹 설정
-- `kubectl` 설정
-  - config파일에 새 컨텍스트를 추가하여 `kubectl`이 클러스터와 통신하도록 설정
 - OIDC provider 생성
-- *CNI 플러그인 구성*
-  - *정말 필요한 것인지?*
+- CNI 플러그인 구성
+  - 정말 필요한 것인지?
 - AWS EBS CSI 드라이버 설치
+  - 애드온
+  - 자체 관리형 설치(helm chart 등)
 
 ## 3. 그 외 EKS 설정
 
-- `aws-auth`에 바스티온 혹은 다른 사용자 eks 권한 추가
-- 엔드포인트의 제어
+- 접근 권한
+  - EKS primary security group에 ingress rule의 추가
+  - `aws-auth`에 eks 접근 권한 추가(API server)
+    - 바스티온 role
+    - 사용자 등
+- `kubectl` 설정
+  - config파일에 새 컨텍스트를 추가하여 `kubectl`이 클러스터와 통신하도록 설정
+- EKS API server 엔드포인트의 제어
   - 프라이빗 활성화
     - VPC내에서 클러스터에 액세스하도록 하기
   - 퍼블릭 비활성화
@@ -63,20 +71,27 @@ EKS 버전을 업데이트하는 경우
 
 - Helm 설치
 - Helm을 이용하여 필요 오브젝트 설치
-  - cluster-autoscaler
-  - aws-node-termination-handler
-  - external-secrets
-  - google-auth-server(custom OAuth2 proxy server)
-  - alb controller
-  - ingress controller
+  - 아래의 오브젝트들의 설정 값을 새 클러스터용으로 변경
+  - 주로 사용하는 오브젝트들(helmfile로 관리하면 편함)
+    - CNI(terraform으로 설정하지 않은 경우)
+    - cluster-autoscaler
+    - aws-node-termination-handler
+    - external-secrets
+    - google-auth-server(custom OAuth2 proxy server)
+    - alb controller
+    - ingress controller
 
 ### 4-1 kubernetes 서비스 메시 설정
 
-## 5. 모니터링 시스템 설정
+- istio
 
-## 6. CI 시스템 설정
+## 5. 워크로드 설치
 
-## 7. 애플리케이션 시스템 설정
+### 5-1 모니터링 시스템
+
+### 5-2 CI 시스템
+
+### 5-3 애플리케이션
 
 ## 용어
 
