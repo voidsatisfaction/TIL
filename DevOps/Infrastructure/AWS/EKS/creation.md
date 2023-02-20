@@ -72,6 +72,7 @@ EKS 버전을 업데이트하는 경우
 - Helm 설치
 - Helm을 이용하여 필요 오브젝트 설치
   - 아래의 오브젝트들의 설정 값을 새 클러스터용으로 변경
+    - 아래 친구들의 자세한 내용은 `./add_ons.md`파일에 설명
   - 주로 사용하는 오브젝트들(helmfile로 관리하면 편함)
     - CNI(terraform으로 설정하지 않은 경우)
     - cluster-autoscaler
