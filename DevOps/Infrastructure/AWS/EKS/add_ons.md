@@ -20,6 +20,10 @@
 
 ## 2. external-secrets
 
+- 개요
+  - 쿠버네티스의 외부에서 관리되는 시크릿 값을 안전하게 가져와서 secret 오브젝트로 생성해서 사용하기 위한 애드온
+-
+
 ## 3. alb controller
 
 ALB controller의 디자인
@@ -38,7 +42,10 @@ ALB controller의 디자인
 ## 5. cluster-autoscaler
 
 - 참고
-  - https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md#cluster-autoscaler-on-aws
+  - aws 사용 매뉴얼
+    - https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md#cluster-autoscaler-on-aws
+  - 주로 묻는 FAQ
+    - https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca
 - 개요
   - 클러스터의 워커 노드의 auto scaling해주는 애드온
     - c.f) karpenter라는 친구가 새로 있긴 함
