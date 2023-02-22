@@ -48,5 +48,6 @@ ALB controller의 디자인
       - `k8s.io/cluster-autoscaler/node-template/taint/dedicated:	jenkins:NoSchedule`
       - `k8s.io/cluster-autoscaler/node-template/label/jenkins:	true`
     - terraform에서는 `aws_autoscaling_group_tag`를 사용하면 가능(`tags_all`아님!)
+      - 참고: https://github.com/aws/containers-roadmap/issues/608
 
 ## 6. google-auth-server(custom OAuth2 proxy server)
