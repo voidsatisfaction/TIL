@@ -11,30 +11,32 @@
 
 ## 서비스메시
 
-### 마이크로서비스에서의 과제
-
-마이크로 서비스에서의 문제
+마이크로 서비스에서의 문제(애플리케이션 복잡도 상승)
 
 ![](./images/microservice_problem1.png)
-
-- 과제
-  - 서비스 디스커버리
-  - 클러스터 내부의 보안
-  - 리트라잉 로직
-  - 메트릭 수집
-  - 트레이싱
-- 위와 같은 기능은 비즈니스로직이 아니지만 마이크로서비스 애플리케이션에 꼭 포함되어야 함
-  - 마이크로서비스 애플리케이션이 복잡해짐
-
-### 서비스메시
 
 Istio 솔루션(sidecar 패턴)
 
 ![](./images/istio1.png)
 
 - 개요
-  - 마이크로서비스의 데이터를 공유하는 방식을 제어하는 패턴(패러다임)
-    - istio는 구현체
+  - 마이크로서비스 환경에서 데이터 네트워크 플로우의 방식을 제어하는 패턴 및 레이어
+    - observability, traffic management, and security를 코드 추가 없이 수행하는 인프라 레이어
+- 기능
+  - 트래픽 제어
+    - load balancing
+      - A/B testing
+      - canary deployments
+      - rate limiting
+    - failure recovery
+  - 트래픽 관찰
+    - discovery
+    - metrics
+    - monitoring
+  - 보안
+    - access control
+    - encryption
+    - end-to-end authentication
 - 서비스 메시의 솔루션(sidecar proxy)
   - side car 애플리케이션을 만들어서, 네트워킹 로직을 다루도록 함
   - 프록시로 동작하도록 함
@@ -54,7 +56,11 @@ Istio의 전체적인 흐름: 메트릭 수집
 
 ---
 
-Istio의 구성
+Istio의 구성1
+
+![](./images/istio_architecture1.svg)
+
+Istio의 구성2
 
 ![](./images/istio2.png)
 
@@ -67,16 +73,23 @@ Istio의 아키텍처
     - proxy컨테이너를 각 팟에 주입
     - MS끼리는 proxy를 통해서 서로 상호작용 함
   - 데이터 플레인
+    - 서비스 사이의 커뮤니케이션
 - 기능
-  - 트래픽 분할 & 설정
-    - 카나리 배포를 가능하게 함
-  - 서비스 디스커버리
-    - 서비스와 그들의 엔드포인트의 내부 레지스트리가 됨
-      - 새 마이크로서비스가 자동으로 등록됨
+  - 트래픽 제어
+    - 서비스 디스커버리
+      - 서비스와 그들의 엔드포인트의 내부 레지스트리가 됨
+        - 새 마이크로서비스가 자동으로 등록됨
+    - 라우팅 룰 추가
+    - 재시도
+    - failover
+    - fault injection
+    - 로드 밸런싱
+      - HTTP, gRPC, 웹소켓, TCP 트래픽의 로드 밸런싱 가능하게 함
+  - 트래픽 관찰
+    - 메트릭 & 트레이싱
+      - 인보이 프록시로부터 메트릭 데이터를 규합함
   - 보안
     - 마이크로 서비스 사이의 안전한 TLS 통신을 가능하게 함
-  - 메트릭 & 트레이싱
-    - 인보이 프록시로부터 메트릭 데이터를 규합함
 - 아키텍처
   - 컨트롤 플레인
     - istiod
