@@ -31,6 +31,8 @@
 
 ### helm
 
+- 헬름 패키지 생성
+  - `helm create [name]`
 - 헬름 릴리스 버전 업그레이드
   - `helm upgrade --install [release] [chart] -f [value-file] --namespace ... --version ...`
 - 헬름 릴리스 롤백
