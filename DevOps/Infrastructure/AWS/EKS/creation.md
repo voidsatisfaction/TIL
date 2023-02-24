@@ -5,6 +5,11 @@
 - 2 EKS 클러스터 생성
 - 3 그 외 EKS 설정
 - 4 kubernetes 시스템 오브젝트 설정(여기부터는 커스터마이징)
+  - 4-1 kubernetes 서비스 메시 설정
+- 5 워크로드 설치
+  - 5-1 모니터링 시스템
+  - 5-2 CI/CD 시스템
+  - 5-3 애플리케이션
 - 용어
 
 ## 의문
@@ -74,23 +79,39 @@ EKS 버전을 업데이트하는 경우
   - 아래의 오브젝트들의 설정 값을 새 클러스터용으로 변경
     - 아래 친구들의 자세한 내용은 `./add_ons.md`파일에 설명
   - 주로 사용하는 오브젝트들(helmfile로 관리하면 편함)
-    - CNI(terraform으로 설정하지 않은 경우)
+    - CNI(eks addon으로 설정하지 않은 경우)
     - cluster-autoscaler
     - aws-node-termination-handler
+      - 이건 eks버전업으로 필요없어짐
     - external-secrets
-    - google-auth-server(custom OAuth2 proxy server)
     - alb controller
     - ingress controller
+    - google-auth-server(custom OAuth2 proxy server)
 
 ### 4-1 kubernetes 서비스 메시 설정
 
 - istio
+  - istio-base, istiod를 헬름 차트를 통해서 쉽게 설치 가능
 
 ## 5. 워크로드 설치
 
 ### 5-1 모니터링 시스템
 
-### 5-2 CI 시스템
+스타트업은 데이터독 쓰는게 나을것 같다는 생각도 든다
+
+- Metrics Server
+  - 쿠버네티스의 오직 autoscaling pipeline을 위한 리소스 메트릭을 제공(kubelet 으로부터)
+    - HPA, VPA
+- Prometheus stack
+  - kube-prometheus-stack
+    - custom grafana dashboard
+  - loki
+- ELK stack
+  - Elastic Search
+  - Kibana
+  - Elastic APM
+
+### 5-2 CI/CD 시스템
 
 ### 5-3 애플리케이션
 
