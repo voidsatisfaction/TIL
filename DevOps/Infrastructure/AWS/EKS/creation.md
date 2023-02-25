@@ -16,10 +16,18 @@
 
 ## 1. 인프라 깔기
 
+- DNS
+  - Route 53
+  - ACM
 - VPC
   - IP 주소들
-    - Private
-    - Public
+    - Private ips
+    - Public ips
+  - subnet
+    - private subnets
+    - public subnets
+  - nat gateway
+  - route table
   - DNS 부여
 
 ## 2. EKS 클러스터 생성
@@ -48,11 +56,12 @@
         - 클러스터 생성후에는 서브넷 변경 불가
     - 보안 그룹 설정
 - OIDC provider 생성
-- CNI 플러그인 구성
+- *CNI 플러그인 구성*
   - 정말 필요한 것인지?
 - AWS EBS CSI 드라이버 설치
   - 애드온
   - 자체 관리형 설치(helm chart 등)
+  - gp3용 storage class 생성
 
 ## 3. 그 외 EKS 설정
 
@@ -101,17 +110,24 @@ EKS 버전을 업데이트하는 경우
 
 - Metrics Server
   - 쿠버네티스의 오직 autoscaling pipeline을 위한 리소스 메트릭을 제공(kubelet 으로부터)
-    - HPA, VPA
+    - HPA, VPA만을 위한 메트릭 서버
 - Prometheus stack
   - kube-prometheus-stack
     - custom grafana dashboard
   - loki
+    - promtail agent가 알아서 kubelet으로부터 log를 수집
 - ELK stack
   - Elastic Search
   - Kibana
   - Elastic APM
 
 ### 5-2 CI/CD 시스템
+
+- jenkins
+  - 주의
+    - eks 1.23 버전부터는 docker-shim지원이 중지 되었으므로, docker daemon을 native로 사용할 수 없음
+      - 따라서, docker in docker, user data를 이용한 docker 설치 등의 방법을 동원해봐야한다
+    - helm chart를 이용하여 jenkins 내부의 플러그인을 설치하고, jcasc를 정의하면 쉽게 provisioning가능하다
 
 ### 5-3 애플리케이션
 
