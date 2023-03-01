@@ -3,6 +3,10 @@
 - 의문
 - flow control
   - 화이트스페이스 제어
+  - 실제 예시1
+  - 실제 예시2
+  - 연습 예시1
+  - 연습 예시2
 
 ## 의문
 
@@ -18,6 +22,8 @@
   - 양`-`
     - 앞`-` and 뒤`-` 합친것
       - if문에서는 블록을 대체하게 됨
+
+### 실제 예시1
 
 ```yaml
 {{- if .Values.externalSecret -}}
@@ -47,6 +53,30 @@ metadata:
 - `{{- end }}`
   - 뒷줄을 앞줄바로 뒤로 끌고가야 하므로
 
+### 실제 예시2
+
+```yaml
+- backend:
+    service:
+    {{- if .Values.nexusProxy.svcName }}
+      name: {{ .Values.nexusProxy.svcName }}
+    {{- else }}
+      name: {{ template "nexus.fullname" . }}
+    {{- end }}
+      port:
+```
+
+- `{{- if .Values.nexusProxy.svcName }}`
+  - if의 결과로 나온 줄을 한줄 땡기기
+- `{{- else }}`
+  - 만약 else 앞줄이 선택될 경우, `{{- end }}`를 바로 뒷줄까지 땡기는 역할을 함
+  - 만약 else 뒷줄이 선택될 경우, `name: ... `를 if 바로 뒷줄까지 땡기는 역할을 함
+  - 주의
+    - 여기서 `{{- else -}}`를 사용하게 되면, else 앞줄이 선택될 경우는 상관없는데, else 뒷줄이 선택될 경우에는 if의 같은줄 뒷쪽에 `name: ...`이 붙어버리는 결과가 나오므로 에러
+- ``
+
+### 연습 예시1
+
 ```yaml
   food: {{ .Values.favorite.food | upper | quote }}*
 **{{- if eq .Values.favorite.drink "coffee" }}
@@ -58,10 +88,12 @@ metadata:
 - 위의 예시에서 *가 -에 의해서 삭제되는 whitespace를 나타냄
 - 즉, 원하는 대로 food밑에 mug가 들어옴
 
+### 연습 예시2
+
 ```yaml
   food: {{ .Values.favorite.food | upper | quote }}*
 **{{- if eq .Values.favorite.drink "coffee" -}}*
-**mug: true
+**mug: true*
 **{{- end -}}*
 ```
 
