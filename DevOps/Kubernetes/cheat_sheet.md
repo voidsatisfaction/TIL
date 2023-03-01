@@ -29,6 +29,10 @@
   - `kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- /bin/bash`
   - `mysql -h mysql-service -uroot -proot_password`
 
+#### 팟 강제 삭제
+
+- `kubectl delete pods <pod> --grace-period=0 --force`
+
 ### helm
 
 - 헬름 패키지 생성
@@ -40,3 +44,5 @@
   - `helm rollback [release] [revision]`
 - 헬름 릴리스 삭제
   - `helm uninstall [release] (--keep-history)`
+- 헬름 패키지 로컬로 다운로드
+  - `helm pull [repo/chartname]`
