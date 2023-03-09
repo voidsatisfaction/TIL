@@ -2,6 +2,12 @@
 
 - 의문
 - 개요
+- VPC
+  - Default VPC
+- Subnet
+- Internet Gateway
+- Bastion hosts
+- NAT Gateway
 
 ## 의문
 
@@ -89,3 +95,19 @@ IGW와 Router의 관계
     - ~port 22의 SSH 접속(비추)~
   - 다른 리소스에 접근
     - 각 리소스의 Security group은 bastion host의 Security Group의 접근을 허용해줘야 함
+
+## NAT Gateway
+
+NAT Gateway와 availability
+
+![](./images/vpc/nat_gateway_availability1.png)
+
+- 개요
+  - AWS가 관리하는 high bandwidth, high availability, 관리가 필요없는 NAT장치
+- 특징
+  - 과금은 사용량과 bandwidth로 결제됨
+  - 특정 AZ에 생성되고, Elastic IP를 사용
+  - 같은 subnet에서의 EC2 인스턴스는 사용 불가
+  - IGW가 있어야 인터넷 통신 가능(Private Subnet => NATGW => IGW)
+  - 5Gbps 밴드위스를 갖고, 45Gbps까지는 자동 스케일업
+  - 프라이빗 서브넷에서 Route table의 룰을 설정해서 NAT GW로 트래픽을 전송 가능
