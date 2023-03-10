@@ -111,3 +111,33 @@ NAT Gateway와 availability
   - IGW가 있어야 인터넷 통신 가능(Private Subnet => NATGW => IGW)
   - 5Gbps 밴드위스를 갖고, 45Gbps까지는 자동 스케일업
   - 프라이빗 서브넷에서 Route table의 룰을 설정해서 NAT GW로 트래픽을 전송 가능
+
+## Security Groups & NACL
+
+*Statefulness는 무엇으로 판단하는 것인지? Application layer에서는 request, response가 구분되지만, Transport layer에서는 구분되지 않으므로, 즉 NACL은 Transport layer에서 동작하는 것인지?*
+
+![](./images/vpc/security_groups_nacl1.png)
+
+- NACL
+  - 개요
+    - 서브넷의 트래픽을 컨트롤하는 방화벽
+  - 특징
+    - stateless
+    - Network layer
+    - 하나의 서브넷당 NACL하나만 할당
+    - 룰이 존재하며, 우선순위가 존재
+      - `#100 ALLOW 10.0.0.10/32`이 `#200 DENY 10.0.0.10/32`보다 우선
+    - 서브넷 레벨에서 IP 주소를 블로킹할 수 있음
+    - 임시 포트를 사용하기 때문에 NACL에서 트래픽을 허용할 경우, 구간으로 함(1024 - 65535 등)
+  - c.f) Default NACL
+    - 모든 inboud/outbound를 연계한 서브넷 트래픽에 모두 받아들임
+  - c.f) Ephemeral Ports(임시 포트)
+    - 클라이언트는 서버의 defined port와 연결하고, 응답은 ephemeral port로 받는 것을 기대함
+      - linux의 경우 32768 - 60999
+- Security Groups
+  - 개요
+    - 인스턴스의 트래픽을 컨트롤하는 방화벽
+  - 특징
+    - stateful
+      - request, response traffic을 트래킹해서 응답은 반드시 allow해줌
+    - Transport layer
