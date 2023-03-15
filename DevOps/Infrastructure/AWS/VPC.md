@@ -141,3 +141,16 @@ NAT Gateway와 availability
     - stateful
       - request, response traffic을 트래킹해서 응답은 반드시 allow해줌
     - Transport layer
+
+## VPC Peering
+
+- 개요
+  - 두개의 VPC를 AWS의 네트워크를 이용해서 사설 네트워크 망으로 연결하는 것
+    - 마치 같은 네트워크인 것 처럼 사용 가능함
+- 특징
+  - CIDR가 겹치면 안됨
+  - *transitive 하지 않음*
+    - A <=> B 이고, B <=> C 이어도, A <=> C 하지 않음
+  - 각 VPC의 서브넷의 route table을 업데이트 해줘야지 서로의 EC2 인스턴스들이 통신 가능
+  - VPC 피어링을 다른 AWS 계정이나 리전과 맺을 수 있음
+  - 피어링된 VPC에 있는 Security Group을 참조할 수 있음
