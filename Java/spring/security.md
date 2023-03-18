@@ -7,6 +7,13 @@
   - SecurityFilterChain
   - Security Exception Handling
 - Authentication
+  - SecurityContextHolder
+  - Authentication
+  - GrantedAuthority
+  - AuthenticationManager
+  - ProviderManager
+  - AuthenticationProvider
+  - Request Credentials with AuthenticationEntryPoint
 
 ## 의문
 
@@ -75,6 +82,7 @@ Multiple SecurityFilterChain의 구조
 - 개요
   - `SecurityFilterChain`은 `FilterChainProxy`가 어떤 Spring Security `Filter`인스턴스들을 현재 리퀘스트에서 호출해야하는지 정하는데에 사용됨
     - `SecurityFilterChain`에 있는 `Securiy Filters`는 일반적으로 Bean이나, `FilterChainProxy`에 등록됨
+  - **url기반으로 어떤 SecurityFilterChain을 적용할 것인지도 설정 가능**
 - 특징
   - 디버깅 포인트를 `FilterChainProxy`로 지정하면, 쉽게 디버그 할 수 있음
   - `Filter`는 특정 URL에만 기반해서 호출되나, `FilterChainProxy`는 `HttpServletRequest`의 어떤것이든 기반해서 호출 가능
@@ -111,6 +119,32 @@ try {
     - `ExceptionTranslationFilter`는 `FilterChainProxy`에 `Security Filters`중 하나로 등록됨
 
 ## Authentication
+
+- URL차이에 따라 서로 다른 SecurityFilterChain을 적용하고
+- 각 SecurityFilterChain은 AbstractAuthenticationProcessingFilter를 각각 갖으며, 해당 Filter는 Authentication을 생성해서 AuthenticationManager로 해당 Authentication인스턴스를 넘겨준다.
+- AuthenticationManager는 받은 Authentication을 기반으로 인증
+  - ProviderManager를 사용할 경우, 미리 주입된 AuthenticationProvider들을 기반으로 인증 진행
+  - *그럼, AbstractAuthenticationProcessingFilter에서 AbstractAuthenticationProcessingFilter의 서브클래스에 따라서 Authentication을 생성한다는 것은 AuthenticationProvider와는 별개인건가?*
+
+Authentication architecture
+
+![](./images/security/authentication_architecture1.png)
+
+1. 유저가 credentials를 제출하면, `AbstractAuthenticationProcessingFilter`는 `Authentication`을 `HttpServletRequest`로부터 생성함(`Authentication`의 타입은 `AbstractAuthenticationProcessingFilter`의 서브클래스에 따라 다름 - `UsernamePasswo rdAuthenticationFilter`는 `UsernamePasswordAuthenticationToken`을 생성)
+2. `Authentication`이 `AuthenticationManager`로 넘겨짐
+3. authentication이 실패하면, failure
+  - SecurityContextHolder가 clear out됨
+  - `RememberMeService.loginFail()`가 호출되며, 설정하지 않았으면 아무것도 안함
+  - `AuthenticationFailureHandle`가 호출됨
+4. authentication이 성공하면, success
+  - `SessionAuthenticationStrategy`가 새 로그인 이벤트를 받음
+  - `SecurityContextHolder`에 `Authentication`이 세팅됨
+    - `SecurityContextPersistenceFilter`가 `SecurityContext`를 `HttpSession`에 저장
+  - `RememberMeService.loginSuccess`가 호출됨
+  - `ApplicationEventPublisher`에서 `InteractiveAuthenticationSuccessEvent`를 publish함
+  - `AuthenticationSuccessHandler`를 호출
+
+---
 
 - `SecurityContextHolder`
   - authenticated된 사람에 대한 정보를 저장하는 곳
@@ -162,3 +196,50 @@ SecurityContextHolder의 구조
         - roles, scopes
 
 ### GrantedAuthority
+
+- 개요
+  - principal이 부여받은 어플리케이션 레벨의 허가인스턴스
+    - roles, scopes
+  - `Authentication.getAuthorities()`로 참조 가능
+- 특징
+  - username/password 기반 인증을 사용할 경우, `GrantedAuthority`인스턴스는 `UserDetailsService`가 가져옴
+
+### AuthenticationManager
+
+- 개요
+  - Spring Security의 필터들이 어떻게 authentication을 진행할지를 정의하는 API 인터페이스
+    - Authentication을 생성함
+
+### ProviderManager
+
+ProviderManager의 구조
+
+![](./images/security/ProviderManager1.png)
+
+여러개의 SecurityFilterChain이 있고 공통 authentication이 존재하는 경우
+
+![](./images/security/ProviderManager2.png)
+
+- 개요
+  - `AuthenticationManager`의 가장 일반적인 구현체
+    - `List<AuthenticationProvider>`에 위임함
+- 특징
+  - 각 `AuthenticationProvider`는 authentication이 successful, fail, cannot decide인지 나타낼 수 있음
+    - 만약, 어떤 `AuthenticationProvider`도 authenticate할 수 없으면, `ProviderNotFoundException`이 발생함
+  - 각 `AuthenticationProvider`는 특정 타입의 authentification을 어떻게 수행하는지를 알고 있음
+    - e.g) username/password전용 `AuthenticationProvider` 혹은 SAML전용 등
+  - `Authentication`오브젝트의 sensitive credential 정보를 제거함
+    - 캐시를 사용할때에는 `eraseCredentialsAfterAuthentication`을 disable해야 함
+
+### AuthenticationProvider
+
+- 개요
+  - `ProviderManager`에 여러개의 `AuthenticationProvider`인스턴스를 주입하여, 각 `AuthenticationProvider`가 특정 타입의 인증을 진행
+    - e.g)
+      - `JwtAuthenticationProvider`는 JWT token인증을 지원
+
+### Request Credentials with AuthenticationEntryPoint
+
+- 개요
+  - client에서 credential을 먼저 포함해서 요청하는 경우, Spring Security가 request credential을 하는 response를 돌려줄 필요가 없음
+  - 그러나, client가 unauthenticated request를 보내는 경우, `AuthenticationEntryPoint`를 써서, login page로 redirect를 하곤 함
