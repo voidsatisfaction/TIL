@@ -21,11 +21,30 @@
     - 빌드
       - 프로젝트 생성
       - 의존성 관리
+        - dependency management
+          - `io.spring.dependency-management` 플러그인이 스프링 부트 버전에 맞게 다른 라이브러리의 버전을 기입하지 않아도 적절한 버전으로 싱크해줌
+        - starters
+          - 필요한 의존성을 공식적으로 쉽고 한번에 프로젝트에 포함시킬 수 있도록 도와줌
+          - e.g)
+            - `spring-boot-starter-data-jpa`
+            - `spring-boot-starter-jdbc`
       - 애플리케이션 패키징 및 실행
     - 코딩
       - 개발 툴 제공
       - 자동 설정(Auto-Configuration)
       - 외부 설정
+      - Bean과 DI
+        - constructor injection과 `@ComponentScan`을 통한 bean탐색 추천
+        - application 클래스를 top package에 위치한 경우
+          - `@ComponentScan`을 argument없이 설정 가능 혹은, `@SpringBootApplication`어노테이션을 붙이면 암묵적으로 설정됨
+            - `@Component`, `@Service`, `@Repository`, `@Controller` 등이 spring bean으로 등록됨
+      - `@SpringBootApplication`어노테이션 사용
+        - 기능
+          - `@EnableAutoConfiguration`
+          - `@ComponentScan`
+            - 애플리케이션이 존재하는 패키지의 `@Component`를 스캐닝함
+          - `@SpringBootConfiguration`
+            - 여분의 bean을 등록하거나, 추가적인 configuration class를 import 할 수 있게 함
     - 배포 및 관리
       - 내장 컨테이너(톰켓, 제티, 언더토우)
       - 도커 이미지 생성
@@ -45,14 +64,16 @@
   - group, artifact, version의 조합으로 구분 가능
 - 스프링 부트에서 알아서 특정 라이브러리의 적절한 버전을 지정 가능(`dependency-management`)
 
-### 애플리케이션 실행
+### Best Practices
 
-빌드: 애플리케이션 실행
-
-![](./images/spring_boot/build_application_execution1.png)
-
-- `gradlew`
-- main 클래스 실행
+- default package(package declaration이 없는 클래스)는 사용하지 않는다
+- java-based configuration 사용하기(xml (x))
+- configuration 클래스를 분리해서 `@Import`하기
+- autoconfiguration 사용하기
+  - `@Configuration`클래스에 `@EnableAutoConfiguration`어노테이션을 붙이거나, `@SpringBootApplication`을 붙이고, 사용하고자 하는 의존성이 classpath에 존재하면, bean을 자동으로 configure해줌
+    - 해당 auto-configured bean을 교체 가능
+    - e.g) `DataSource` bean을 재정의
+- `gradlew` 사용하기
 - JAR 패키징 & java -jar
   - JAR 패키징
     - `gradle bootjar`
