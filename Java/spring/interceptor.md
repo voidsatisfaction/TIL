@@ -8,6 +8,10 @@
 
 ## 개요
 
+Spring MVC Request Lifecycle
+
+![](./images/interceptor/request_response_flow1.png)
+
 ### DeferredResultProcessingInterceptor
 
 DeferredResultProcessingInterceptor

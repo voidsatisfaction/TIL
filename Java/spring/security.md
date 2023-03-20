@@ -17,7 +17,15 @@
 
 ## 의문
 
+- 여러개의 security filter를 적용하려면 어떻게 해야하는가?
+  - 그리고, 그 여러개의 security filter를 각각의 상황에 다르게 적용하려면?
+- filter에서 authentication을 생성하면, 다음 filter도 계속해서 필터링 하는가? 아니면, authentication이 생성되면 무시하는가?
+
 ## Servlet 개요
+
+Spring MVC Request Lifecycle
+
+![](./images/security/request_response_flow1.png)
 
 Servlet filter chain
 
@@ -35,6 +43,7 @@ fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterCh
 
 - 개요
   - Servlet Filter Chain 기반
+    - 즉, spring interceptor보다 먼저 실행되는 친구들
 
 ### DelegatingFilterProxy
 
