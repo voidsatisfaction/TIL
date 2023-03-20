@@ -154,3 +154,32 @@ NAT Gateway와 availability
   - 각 VPC의 서브넷의 route table을 업데이트 해줘야지 서로의 EC2 인스턴스들이 통신 가능
   - VPC 피어링을 다른 AWS 계정이나 리전과 맺을 수 있음
   - 피어링된 VPC에 있는 Security Group을 참조할 수 있음
+
+## VPC Endpoints
+
+VPC endpoint(option2)
+
+![](./images/vpc/vpc_endpoint1.png)
+
+
+VPC endpoint types
+
+![](./images/vpc/vpc_endpoint2.png)
+
+- 개요
+  - 모든 AWS 서비스들은 public URL로 공개되어 있음
+  - VPC Endpoints는 AWS 서비스를 private network를 사용해서 연결
+    - IGW, NATGW 등이 필요 없음
+  - redundant & scale horizontally
+- 타입
+  - interface endpoints
+    - AWS 서비스에 ENI(private IP)를 provision함
+      - security group을 반드시 부착해야 함
+    - 비용
+      - $ per hour + $ per GB of data processed
+  - gateway endpoints
+    - 게이트웨이를 provision하고, 해당 게이트웨이를 route table의 target으로 둬야 함
+    - 서비스
+      - S3, DynamoDB
+    - 비용
+      - 공짜
