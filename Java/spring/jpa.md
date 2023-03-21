@@ -1,12 +1,85 @@
 # Spring data-jpa
 
 - 의문
+- Entity
 - TransactionManager
 - Annotations
   - Transactional
 - OSIV(Open Session In View)
 
 ## 의문
+
+## Entity
+
+엔티티 코드 예시
+
+```kotlin
+@Entity
+class User(
+    @get:Id
+    @get:GeneratedValue(generator = "id")
+    @get:GenericGenerator(
+        name = "id",
+        strategy = IdGenerators.LongString,
+        parameters = [
+            Parameter(name = IdGenerators.Params.PREFIX, value = IdPrefix.user),
+        ],
+    )
+    @get:Column(length = 16, nullable = false)
+    var id: String? = null,
+
+    @get:Column(length = 128, nullable = false)
+    var code: String,
+
+    @get:OneToOne(fetch = FetchType.LAZY)
+    @get:JoinColumn(name = "user_setting_id", nullable = false)
+    var setting: UserSetting,
+
+    @get:Column(nullable = false)
+    var createdAt: Instant,
+
+    @get:Column(nullable = false)
+    var lastAccessedAt: Instant
+)
+
+//
+
+@Entity
+class UserSetting(
+    @get:Id
+    @get:GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+
+    @get:OneToOne(fetch = FetchType.LAZY, mappedBy = "setting")
+    var user: User? = null,
+
+    @get:Column(name = "is_background_music_on", nullable = false)
+    var isBackgroundMusicOn: Boolean,
+
+    @get:Column(nullable = false)
+    var updatedAt: Instant
+) {
+    companion object {
+        fun createDefault(now: Instant): UserSetting {
+            return UserSetting(
+                isBackgroundMusicOn = true,
+                updatedAt = now,
+            )
+        }
+    }
+}
+```
+
+- 위 코드 해석
+  - `@Entity`
+    - JPA에서 해당 클래스가 Entity임을 나타내는 어노테이션
+  - `@GeneratedValue(generator = "id")` & `@get:GenericGenerator(...)`
+    - `IdGenerators.LongString` 패키지로 정의된 ID generator를 id라는 generator로 정의하고, 해당 id라는 generator를 엔티티의 ID generator로 사용함
+  - `@get:OneToOne(fetch = FetchType.LAZY)` & `@JoinColumn`
+    - 외래키를 갖는 관계의 주인으로, Join을 할 시에는 해당 외래키로 join함
+  - `@get:OneToOne(fetch = FetchType.LAZY, mappedBy = "setting")`
+    - 외래키가 없는 관계의 주인이 아님
+    - 주인 entity의 setting property에 매핑됨
 
 ## TransactionManager
 
