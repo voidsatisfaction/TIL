@@ -5,6 +5,7 @@
   - 스프링의 배경
   - 스프링의 정의
   - 스프링의 특징
+- Spring request lifecycle
 - Bean
   - `@Configuration`
 
@@ -42,6 +43,12 @@
 - 비침투적
   - 기술의 적용 사실이 코드에 직접 반영되지 않음
   - 기술과 도메인 로직의 분리
+
+## Spring request lifecycle
+
+Spring request lifecycle
+
+![](./images/readme/spring-mvc-architecture1.png)
 
 ## Bean
 
