@@ -32,7 +32,6 @@
     - 코딩
       - 개발 툴 제공
       - 자동 설정(Auto-Configuration)
-      - 외부 설정
       - Bean과 DI
         - constructor injection과 `@ComponentScan`을 통한 bean탐색 추천
         - application 클래스를 top package에 위치한 경우
@@ -45,6 +44,18 @@
             - 애플리케이션이 존재하는 패키지의 `@Component`를 스캐닝함
           - `@SpringBootConfiguration`
             - 여분의 bean을 등록하거나, 추가적인 configuration class를 import 할 수 있게 함
+      - 실행
+        - IDE에서 dependency만 import하면 실행 가능
+        - 방법
+          - IDE
+          - `java -jar ...`
+            - 이렇게 실행하면, production application취급을 함
+          - Gradle plugin
+            - `gradle bootRun`
+      - dev-tool
+        - auto-restart가능
+          - 클래스패스에 존재하는 파일들이 변경되면 자동 restart
+        - cache설정을 자동으로 꺼둠
     - 배포 및 관리
       - 내장 컨테이너(톰켓, 제티, 언더토우)
       - 도커 이미지 생성
