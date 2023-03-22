@@ -48,10 +48,10 @@
         - IDE에서 dependency만 import하면 실행 가능
         - 방법
           - IDE
-          - `java -jar ...`
-            - 이렇게 실행하면, production application취급을 함
           - Gradle plugin
             - `gradle bootRun`
+          - `java -jar ...`
+            - 이렇게 실행하면, production application취급을 함
       - dev-tool
         - auto-restart가능
           - 클래스패스에 존재하는 파일들이 변경되면 자동 restart
