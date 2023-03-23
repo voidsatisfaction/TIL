@@ -17,9 +17,25 @@
 
 ## 의문
 
-- 여러개의 security filter를 적용하려면 어떻게 해야하는가?
+- *여러개의 security filter를 적용하려면 어떻게 해야하는가?*
   - 그리고, 그 여러개의 security filter를 각각의 상황에 다르게 적용하려면?
 - filter에서 authentication을 생성하면, 다음 filter도 계속해서 필터링 하는가? 아니면, authentication이 생성되면 무시하는가?
+  - 계속해서 필터링 함
+- filter에서 ExceptionTranslationFilter는 AccessDeniedException, AuthenticationException를 핸들링 해준다고 하나, 해당 ExceptionTranslationFilter의 위치가 FilterChain에서 FilterSecurityInterceptor의 바로 앞에(즉 맨뒤에서 두번째)있다
+  - 이렇게 되면, 앞선 Filter에서 생긴 exception을 어떻게 catch하는 것인지?
+  - 일단 ExceptionTranslationFilter는 앞선 필터들을통해서 Authentication이 설정되지 않은 경우, `AuthenticationException`을 throw하고(이는 FilterSecurityInterceptor에서 던지는 `AuthenticationException`임), Authentication은 존재하나, 앞선 필터들에서 받은 GrantedAuthority가 해당 API에 적용가능하지 않은 경우, `AccessDeniedException`를 throw함(이 역시 FilterSecurityInterceptor에서)
+  - 따라서, 앞선 Filter자체에서 exception을 던지는 경우를 핸들링 하기 위해서는, 필터의 맨 앞에 `ExceptionHandlerFilter`를 둬서 처리를 해줘야 함
+  - `FilterChainProxy.java`쪽 코드를 읽으면 내용 파악이 쉬움
+    - `VirtualFilterChain`클래스의 `doFilter()`메서드에서 `nextFilter.doFilter(request, response, this);`코드에서 chain이 this이고, 필터들을 가져오고 인스턴스변수로 filter의 포지션을 기록하고 증가시켜나감(`this.currentPosition`)
+
+## Spring Security 큰 그림
+
+Spring Security Filter Chain Entire Architecture
+
+![](./images/security/spring_security_filter_chain_structure1.png)
+
+- 오늘은 spring security에서 ExceptionTranslationFilter쪽 코드와 FilterChainProxy쪽 코드를 직접 읽어보았습니다. 원래는 ExceptionTranslationFilter쪽에서 필터 전체의 throw된 에러를 헨들링해주는것인줄 알았는데, 그게 아니라, 아래 그림에서처럼 FilterSecurityInterceptor에서 생긴 에러를 catch해서 response를 처리해주더라고요.
+  - 그래서 만약, custom filter에서 생기는 exception을 처리하고 싶다면, 필터 체인의 앞쪽에 exception handler를 위치시켜야 합니다.
 
 ## Servlet 개요
 
