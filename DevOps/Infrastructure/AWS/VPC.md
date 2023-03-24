@@ -8,6 +8,9 @@
 - Internet Gateway
 - Bastion hosts
 - NAT Gateway
+- Security Groups & NACL
+- VPC Peering
+- VPC Endpoints
 
 ## 의문
 
@@ -161,7 +164,6 @@ VPC endpoint(option2)
 
 ![](./images/vpc/vpc_endpoint1.png)
 
-
 VPC endpoint types
 
 ![](./images/vpc/vpc_endpoint2.png)
@@ -183,3 +185,20 @@ VPC endpoint types
       - S3, DynamoDB
     - 비용
       - 공짜
+
+## VPC Flow Logs
+
+VPC Flow Logs 문법
+
+![](./images/vpc/vpc_flow_logs1.png)
+
+- 개요
+  - 인터페이스로 들어가는 IP 트래픽을 캡쳐
+    - VPC Flow Logs
+    - Subnet Flow Logs
+    - ENI Flow Logs
+- 특징
+  - 모니터링하거나 연결 이슈에 대한 트러블 슈팅할때 도움이 됨
+  - Flow logs 데이터는 S3 혹은 CloudWatch 로그로 보내짐
+  - AWS 매니지드 인터페이스로부터의 네트워크 정보도 캡쳐함
+    - ELB, RDS, ElasticCache, NATGW 등
