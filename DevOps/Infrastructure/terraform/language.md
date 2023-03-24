@@ -5,6 +5,8 @@
 - 파일과 디렉터리
   - Module
   - Dependency Lock File
+- Resources
+  - Meta-Arguments
 - Variables and Outputs
   - Input Variables
   - Output Variables
@@ -144,6 +146,33 @@ resource "aws_instance" "example" {
     - 일단 처음에는 무조건 lock파일에 버전에 맞는 체크섬을 넣고 신뢰함
     - 나중에 한 번 이상 기록된 체크섬에 맞지 않는 provider가 등장하면 신뢰하지 않음
   - `terraform init -upgrade` 하면, `.terraform.lock.hcl`내의 provider 블록 내의 version, constraints, hashes도 변할 수 있음
+
+## Resources
+
+### Meta-Arguments
+
+- `depends_on`
+- `count`
+- `for_each`
+- `provider`
+- `lifecycle`
+  - 개요
+    - resource의 lifecycle을 커스터마이징하는 meta-arguments
+      - 해당 블록 내부에서는 literal만 사용가능(processing이 너무 일찍 일어남)
+  - arguments
+    - `create_before_destroy`
+      - in-place로 업데이트 불가능한 리소스를 변경할때, 일반적으로는 object를 destory한 다음에, create하는데, 이게 `true`라면, 새 대체 오브젝트를 먼저 생성한뒤에 이전 오브젝트를 삭제함
+      - 모든 resource에 대해서 가능한건 아님
+        - uniqueness를 보장해야하는 리소스들은 불가능함
+    - `prevent_destroy`
+      - `true`인 경우, 해당 인프라 오브젝트와 연결된 리소스를 삭제하는 plan을 할 시에 에러를 발생
+      - 우연히 재생성하는것을 방지
+        - e.g) db 인스턴스
+      - `prevent_destroy` 세팅 자체가 지워지면, 리소스 삭제가 진행될 수 있음
+    - `ignore_changes`
+      - 설정한 attribute의 리모트 오브젝트에서의 변경을 무시함
+    - `replace_triggered_by`
+      - 설정한 리소스나 attribute가 변경되면 리소스를 새로 대체함
 
 ## Variables and Outputs
 
