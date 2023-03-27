@@ -80,6 +80,9 @@ AWS Systems manager 프로세스 흐름
 - 사용자나 그룹에 IAM role 부여
   - action `ssm:StartSession`, `ssm:TerminateSession`, `ec2-instance-connect:SendSSHPublicKey`(`aws-gate`를 쓰기 위함)
 - aws cli및, aws-gate, 웹을 사용하여 접속
+  - aws-gate를 사용하지 않아도, `aws ssm start-session --target (instance-id) --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters host="$rds_host",portNumber="$rds_port",localPortNumber="$local_port"`
+    - 이 커맨드로 port forwarding이 가능
+    - 참고: https://docs.aws.amazon.com/ko_kr/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-remote-port-forwarding
 
 ```sh
 # ssh cluster
