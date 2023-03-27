@@ -192,6 +192,10 @@ VPC Flow Logs 문법
 
 ![](./images/vpc/vpc_flow_logs1.png)
 
+VPC Flow Logs 모니터링
+
+![](./images/vpc/vpc_flow_logs2.png)
+
 - 개요
   - 인터페이스로 들어가는 IP 트래픽을 캡쳐
     - VPC Flow Logs
@@ -202,3 +206,7 @@ VPC Flow Logs 문법
   - Flow logs 데이터는 S3 혹은 CloudWatch 로그로 보내짐
   - AWS 매니지드 인터페이스로부터의 네트워크 정보도 캡쳐함
     - ELB, RDS, ElasticCache, NATGW 등
+- 모니터링 방법
+  - VPC Flow Logs -> CloudWatch Logs -> CloudWatch Contributor Insights
+  - VPC Flow Logs -> CloudWatch Logs -> CloudWatch Alarm -> Amazon SNS
+  - VPC Flow Logs -> S3 Bucket -> Amazon Athena(SQL) -> Amazon QuickSight
