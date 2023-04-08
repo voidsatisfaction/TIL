@@ -2,6 +2,12 @@
 
 - 의문
 - 개요
+  - 스프링 부트가 다루는 영역
+  - 스프링 부트 빌드
+  - Best Practices
+  - 자동 설정
+  - 외부 설정 파일
+  - 배포
 
 ## 의문
 
@@ -16,51 +22,53 @@
   - 스프링을 손쉽게 쓰기 위해 제공해주는 툴
   - c.f) 스프링
     - 자바 엔터프라이즈 애플리케이션 개발을 편리하게 하기위해 개발된 툴
-- 스프링 부트가 다루는 영역
-  - 애플리케이션 개발 관련 거의 모든 영역
-    - 빌드
-      - 프로젝트 생성
-      - 의존성 관리
-        - dependency management
-          - `io.spring.dependency-management` 플러그인이 스프링 부트 버전에 맞게 다른 라이브러리의 버전을 기입하지 않아도 적절한 버전으로 싱크해줌
-        - starters
-          - 필요한 의존성을 공식적으로 쉽고 한번에 프로젝트에 포함시킬 수 있도록 도와줌
-          - e.g)
-            - `spring-boot-starter-data-jpa`
-            - `spring-boot-starter-jdbc`
-      - 애플리케이션 패키징 및 실행
-    - 코딩
-      - 개발 툴 제공
-      - 자동 설정(Auto-Configuration)
-      - Bean과 DI
-        - constructor injection과 `@ComponentScan`을 통한 bean탐색 추천
-        - application 클래스를 top package에 위치한 경우
-          - `@ComponentScan`을 argument없이 설정 가능 혹은, `@SpringBootApplication`어노테이션을 붙이면 암묵적으로 설정됨
-            - `@Component`, `@Service`, `@Repository`, `@Controller` 등이 spring bean으로 등록됨
-      - `@SpringBootApplication`어노테이션 사용
-        - 기능
-          - `@EnableAutoConfiguration`
-          - `@ComponentScan`
-            - 애플리케이션이 존재하는 패키지의 `@Component`를 스캐닝함
-          - `@SpringBootConfiguration`
-            - 여분의 bean을 등록하거나, 추가적인 configuration class를 import 할 수 있게 함
-      - 실행
-        - IDE에서 dependency만 import하면 실행 가능
-        - 방법
-          - IDE
-          - Gradle plugin
-            - `gradle bootRun`
-          - `java -jar ...`
-            - 이렇게 실행하면, production application취급을 함
-      - dev-tool
-        - auto-restart가능
-          - 클래스패스에 존재하는 파일들이 변경되면 자동 restart
-        - cache설정을 자동으로 꺼둠
-    - 배포 및 관리
-      - 내장 컨테이너(톰켓, 제티, 언더토우)
-      - 도커 이미지 생성
-      - Actuator
-      - 스프링 부트 어드민
+
+### 스프링 부트가 다루는 영역
+
+- 애플리케이션 개발 관련 거의 모든 영역
+  - 빌드
+    - 프로젝트 생성
+    - 의존성 관리
+      - dependency management
+        - `io.spring.dependency-management` 플러그인이 스프링 부트 버전에 맞게 다른 라이브러리의 버전을 기입하지 않아도 적절한 버전으로 싱크해줌
+      - starters
+        - 필요한 의존성을 공식적으로 쉽고 한번에 프로젝트에 포함시킬 수 있도록 도와줌
+        - e.g)
+          - `spring-boot-starter-data-jpa`
+          - `spring-boot-starter-jdbc`
+    - 애플리케이션 패키징 및 실행
+  - 코딩
+    - 개발 툴 제공
+    - 자동 설정(Auto-Configuration)
+    - Bean과 DI
+      - constructor injection과 `@ComponentScan`을 통한 bean탐색 추천
+      - application 클래스를 top package에 위치한 경우
+        - `@ComponentScan`을 argument없이 설정 가능 혹은, `@SpringBootApplication`어노테이션을 붙이면 암묵적으로 설정됨
+          - `@Component`, `@Service`, `@Repository`, `@Controller` 등이 spring bean으로 등록됨
+    - `@SpringBootApplication`어노테이션 사용
+      - 기능
+        - `@EnableAutoConfiguration`
+        - `@ComponentScan`
+          - 애플리케이션이 존재하는 패키지의 `@Component`를 스캐닝함
+        - `@SpringBootConfiguration`
+          - 여분의 bean을 등록하거나, 추가적인 configuration class를 import 할 수 있게 함
+    - 실행
+      - IDE에서 dependency만 import하면 실행 가능
+      - 방법
+        - IDE
+        - Gradle plugin
+          - `gradle bootRun`
+        - `java -jar ...`
+          - 이렇게 실행하면, production application취급을 함
+    - dev-tool
+      - auto-restart가능
+        - 클래스패스에 존재하는 파일들이 변경되면 자동 restart
+      - cache설정을 자동으로 꺼둠
+  - 배포 및 관리
+    - 내장 컨테이너(톰켓, 제티, 언더토우)
+    - 도커 이미지 생성
+    - Actuator
+    - 스프링 부트 어드민
 
 ### 스프링 부트 빌드
 
