@@ -3,6 +3,7 @@
 - 의문
 - 개요
   - 툴
+- 용어
 
 ## 의문
 
@@ -19,3 +20,10 @@
   - Manifest
     - Manifest 파일을 expo dev server가 반환하고, 내부의 bundleUrl 필드에 있는 프로젝트 스크립트 코드 url을 이용해서 다운로드 받음
     - 다운 받은 코드는 js engine으로 실행
+
+## 용어
+
+- Expo Config
+  - `app.json`, `app.config.json`, `app.config.js`, `app.config.ts`인 파일
+  - Expo cli 관련 설정 & EAS update시에 프로젝트 manifest를 생성
+  - Expo config plugin과 `npx expo prebuild`가 네이티브 코드를 어떻게 생성하는지 내용 포함
