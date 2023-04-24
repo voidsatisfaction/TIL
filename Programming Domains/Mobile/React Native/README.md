@@ -23,3 +23,5 @@
   - Redux thunk
 - Test
   - Jest
+- etc
+  - eslint

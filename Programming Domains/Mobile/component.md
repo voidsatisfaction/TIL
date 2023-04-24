@@ -1,10 +1,17 @@
 # Component
 
+- 개요
+- Notification
+  - In-App Notification
+  - 배너 vs 팝업
+- Button
+  - FAB
+
 ## 개요
 
 - 각종 모바일에서 사용되는 컴포넌트의 명칭과 생김새를 정리함
 
-## notification
+## Notification
 
 푸시 예시
 
@@ -39,7 +46,7 @@
 - Light Notifications
   - 노티를 받으면 디바이스에 플래시가 비춰짐
 
-### In-App
+### In-App Notification
 
 - toast message
   - 개요
@@ -74,7 +81,7 @@
 
 ![](./images/component/popup_timing1.png)
 
-## 버튼
+## Button
 
 ### FAB(Floating Action Button)
 
