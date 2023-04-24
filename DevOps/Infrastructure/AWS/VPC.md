@@ -11,6 +11,7 @@
 - Security Groups & NACL
 - VPC Peering
 - VPC Endpoints
+- VPC Flow Logs
 
 ## 의문
 
