@@ -211,3 +211,19 @@ VPC Flow Logs 모니터링
   - VPC Flow Logs -> CloudWatch Logs -> CloudWatch Contributor Insights
   - VPC Flow Logs -> CloudWatch Logs -> CloudWatch Alarm -> Amazon SNS
   - VPC Flow Logs -> S3 Bucket -> Amazon Athena(SQL) -> Amazon QuickSight
+
+## Site to Site VPN, Virtual Private Gateway, Customer Gateway
+
+Site to Site VPN connection
+
+![](./images/vpc/site_to_site_vpc1.png)
+
+- 개요
+  - AWS의 VPN Gateway와 사설 데이터센터의 Customer Gateway를 Site to Site VPN 커넥션으로 이어줄 수 있음
+- 특징
+  - internet을 사용하고, 암호화 되어있음
+  - Virtual Private Gateway(AWS VPC쪽)
+    - Route table 설정 해주기
+    - Security group 설정 해주기
+  - Customer Gateway Device(On-premises)
+    - 인터넷에 연결된 IP 주소 할당해주기
