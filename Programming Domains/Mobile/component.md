@@ -4,6 +4,8 @@
 - Notification
   - In-App Notification
   - 배너 vs 팝업
+- Screen
+  - BottomSheet
 - Button
   - FAB
 
@@ -80,6 +82,17 @@
 팝업 - 특정 시점
 
 ![](./images/component/popup_timing1.png)
+
+## Screen
+
+### BottomSheet
+
+바텀시트 예시(타다)
+
+![](./images/component/bottom_sheet1.png)
+
+- 개요
+  - 스크린의 아래로부터 컨텐츠를 보여주는 오버레이 모달
 
 ## Button
 
