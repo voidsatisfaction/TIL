@@ -339,6 +339,18 @@ AWS SDK나 CLI에 임시 자격 증명을 넣어서 AWS의 리소스에 접근�
 }
 ```
 
+- 정책 참조
+  - Principal
+    - `AWS`
+      - AWS 계정 및 루트 사용자
+      - IAM role
+      - IAM user
+    - `Federated`
+      - AWS STS `AssumeRoleWithWebIdentity`작업을 사용하여 발생하는 세션 보안 주체
+      - e.g) "Federated": "accounts.google.com"
+    - `Service`
+      - AWS 서비스
+
 ### Policy 평가 로직
 
 - 개요
