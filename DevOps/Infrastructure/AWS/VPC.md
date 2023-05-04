@@ -227,3 +227,44 @@ Site to Site VPN connection
     - Security group 설정 해주기
   - Customer Gateway Device(On-premises)
     - 인터넷에 연결된 IP 주소 할당해주기
+
+## Direct Connect(DX)
+
+Direct Connect
+
+![](./images/vpc/direct_connect1.png)
+
+Multi Region Direct Connect
+
+![](./images/vpc/direct_connect2.png)
+
+- 개요
+  - 외부 네트워크에서 VPC로 사설 연결망을 제공 가능
+    - DC와 AWS Direct Connect location을 연결
+- 특징
+  - VPC에 Virtual Private Gateway를 설정해야 함
+  - bandwidth와 throughput에 유리함(large data)
+  - consistent network(real time data)
+  - 같은 계정의 여러 region에서 Direct Connect를 설정해야 하는 경우
+    - Direct Connect Gateway를 반드시 이용해야 함
+  - 설치하는데에 1달 이상이 걸릴 수도 있음
+- 종류
+  - Dedicated Connections
+  - Hosted Connections
+- 백업
+  - DX를 사용하는 경우, DX연결이 실패하는 경우를 대비해서, site to site VPN을 backup으로 두는 경우도 존재함
+
+## Transit Gateway
+
+Transit Gateway의 예시
+
+![](./images/vpc/transit_gateway1.png)
+
+- 개요
+  - 수천개의 VPC피어링과 on-remise gateway를 연결하기 위한 hub 게이트웨이
+- 특징
+  - regional 리소스여서, cross-region가능
+  - cross account도 가능
+  - route table로 VPC끼리의 커뮤니케이션을 정함
+  - DX와 VPN연결 지원 가능
+  - IP Multicast가능
