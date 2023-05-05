@@ -268,3 +268,7 @@ Transit Gateway의 예시
   - route table로 VPC끼리의 커뮤니케이션을 정함
   - DX와 VPN연결 지원 가능
   - IP Multicast가능
+- 활용
+  - 1 수천개의 VPC피어링과 on-remise gateway를 연결하기 위한 hub 게이트웨이
+  - 2 여러개의 VPN 성능 향상
+  - 3 DX를 서로 다른 계정의 VPC와 연결하기 위함
