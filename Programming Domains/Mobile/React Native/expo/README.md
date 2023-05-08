@@ -20,6 +20,13 @@
   - Manifest
     - Manifest 파일을 expo dev server가 반환하고, 내부의 bundleUrl 필드에 있는 프로젝트 스크립트 코드 url을 이용해서 다운로드 받음
     - 다운 받은 코드는 js engine으로 실행
+- EAS Build
+  - Expo 바이너리 앱을 만들기 위한 호스팅된 서비스
+  - 기능
+    - 앱 빌드와 배포가 쉬워짐
+    - signing credential도 처리해줌
+    - 팀에서 빌드를 공유하기 쉬워짐
+    - 앱스토어 배포와도 연동됨
 
 ## 용어
 
