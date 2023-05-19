@@ -21,6 +21,14 @@ VPC 컴포넌트 다이어그램
 
 ![](./images/vpc/vpc_components_diagram1.png)
 
+VPC 섹션 요약
+
+![](./images/vpc/vpc_section_summary1.png)
+
+![](./images/vpc/vpc_section_summary2.png)
+
+![](./images/vpc/vpc_section_summary3.png)
+
 - public IP
   - 아래 private IP제외하고 전부
 - private IP
@@ -272,3 +280,13 @@ Transit Gateway의 예시
   - 1 수천개의 VPC피어링과 on-remise gateway를 연결하기 위한 hub 게이트웨이
   - 2 여러개의 VPN 성능 향상
   - 3 DX를 서로 다른 계정의 VPC와 연결하기 위함
+
+## Egress-only Internet Gateway
+
+VPC내부의 Egress Only Gateway의 설정 방식
+
+![](./images/vpc/egress_only_gateway1.png)
+
+- 개요
+  - VPC내부의 인스턴스가 IPv6 아웃바운드 커넥션만을(인바운드x) 맺을 수 있도록 하는 게이트웨이(IPv4의 NAT gateway와 유사)
+    - Route table을 IPv4에서는 NAT Gateway로 보내듯이, egress-only Internet Gateway 업데이트가 필수
