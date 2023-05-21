@@ -9,7 +9,7 @@
   - 참고
     - https://docs.expo.dev/versions/latest/sdk/pedometer/
     - https://github.com/expo/expo/issues/16605
-    -
+    - https://reactnative.dev/docs/permissionsandroid
 
 ## 구현
 
