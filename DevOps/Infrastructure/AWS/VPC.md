@@ -12,6 +12,11 @@
 - VPC Peering
 - VPC Endpoints
 - VPC Flow Logs
+- Site to Site VPN, Virtual Private Gateway, Customer Gateway
+- Direct Connect(DX)
+- Transit Gateway
+- Egress-only Internet Gateway
+- 비용
 
 ## 의문
 
@@ -290,3 +295,22 @@ VPC내부의 Egress Only Gateway의 설정 방식
 - 개요
   - VPC내부의 인스턴스가 IPv6 아웃바운드 커넥션만을(인바운드x) 맺을 수 있도록 하는 게이트웨이(IPv4의 NAT gateway와 유사)
     - Route table을 IPv4에서는 NAT Gateway로 보내듯이, egress-only Internet Gateway 업데이트가 필수
+
+## 비용
+
+- VPC레벨에서 Inbound traffic은 일반적으로 무료, Outbound traffic을 줄이는 것이 효과적
+  - 특히 같은 AZ로 두면 가격이 많이 줄어든다
+- S3 비용
+  - ingress
+    - 무료
+  - egress
+    - $0.09/GB
+    - Transfer Acceleration(50 - 500% 속도 향상)
+      - egress기본료 + $0.04~0.08
+  - S3 to CloudFront
+    - 무료
+  - CloudFront to Internet
+    - $0.085
+    - 캐싱 가능
+  - Cross Region Replication
+    - $0.02/GB
