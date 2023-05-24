@@ -298,6 +298,10 @@ VPC내부의 Egress Only Gateway의 설정 방식
 
 ## 비용
 
+NAT Gateway vs VPC Endpoint 비용 비교
+
+![](./images/vpc/nat_gateway_vs_vpc_endpoint_cost.png)
+
 - VPC레벨에서 Inbound traffic은 일반적으로 무료, Outbound traffic을 줄이는 것이 효과적
   - 특히 같은 AZ로 두면 가격이 많이 줄어든다
 - S3 비용
