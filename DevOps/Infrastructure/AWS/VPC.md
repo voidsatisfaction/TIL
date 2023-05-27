@@ -17,6 +17,7 @@
 - Transit Gateway
 - Egress-only Internet Gateway
 - 비용
+- AWS Network Firewall
 
 ## 의문
 
@@ -318,3 +319,28 @@ NAT Gateway vs VPC Endpoint 비용 비교
     - 캐싱 가능
   - Cross Region Replication
     - $0.02/GB
+
+## AWS Network Firewall
+
+- 개요
+  - VPC 내부를 외부로부터 보호하는 방화벽
+- 특징
+  - nertwork 레이어에서 application layer까지 방어
+  - 방향
+    - VPC to VPC
+    - Outbound to internet
+    - Inbound from internet
+    - To / from Direct Connect & Site-to-Site VPN
+  - 내부적으로 AWS Gateway Load Balancer를 사용하여 구현됨
+  - Rule을 설정하여 관리
+    - IP & port
+      - 10000개 이상 필터링
+    - Protocol
+      - 프로토콜 자체를 블로킹
+    - domain list
+      - e.g) `*.mycorp.com`으로 가는 outbound traffic만 허용
+    - 패턴매칭
+      - e.g) regex
+  - 필터링
+    - 룰에 맞는 경우에 Allow, drop, alert 가능
+    - S3, Cloud Watch Logs, Kinesis Data Firehose로 로그를 보낼수도 있음
