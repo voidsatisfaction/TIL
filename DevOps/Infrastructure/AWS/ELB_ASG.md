@@ -10,6 +10,7 @@
   - GLB
 - ELB의 기능
   - Sticky Sessions(Session Affinity)
+- ASG
 
 ## 의문
 
@@ -176,3 +177,24 @@ ELB 컴포넌트 아키텍처
   - Duration-based Cookies
     - ALB에 의해서 생성된 쿠키
     - `AWSALB`라는 쿠키명을 갖고 있음
+
+## ASG
+
+![](./images/elb_asg/auto_scaling_group1.png)
+
+- 속성
+  - launch template
+    - AMI + instance type
+    - EC2 User Data
+    - EBS Volumes
+    - Security Groups
+    - SSH Key Pair
+    - IAM Roles for EC2 Instances
+    - Network + Subnets Information
+    - Load Balancer Information
+  - size
+    - min / max / initial
+  - scaling policies
+- 오토스케일링
+  - Cloud watch alarm
+    - CPU, Memory 등의 메트릭으로 오토 스케일링 가능
