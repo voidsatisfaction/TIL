@@ -198,3 +198,25 @@ ELB 컴포넌트 아키텍처
 - 오토스케일링
   - Cloud watch alarm
     - CPU, Memory 등의 메트릭으로 오토 스케일링 가능
+
+### Scaling policy
+
+- 개요
+  - Target Tracking Scaling
+    - e.g) 평균 ASG CPU를 40% 정도로 유지하고 싶다
+  - Simple / Step Scaling
+    - 클라우드 워치 알람을 설정하고, 각 단계마다 얼마나 추가할지 설정
+      - e.g) CPU > 70% 알람이 울리면 2인스턴스 추가하기
+  - Scheduled Actions
+    - e.g) min capacity를 금요일 5시 오후에 10으로 두기
+  - Predictive Scaling
+    - ML을 사용해서 AWS에서 제공되는 예측 오토 스케일링
+- 메트릭
+  - CPU Utilization
+    - AVG CPU 사용량
+  - Memory Utilization
+  - RPS(Request Per Second)
+  - Average Network In / Out
+- Scaling 쿨다운
+  - 오토스케일링이 일어나면 기본 300초 동안은 cooldown period로, ASG는 새로 인스턴스를 만들거나 없애지 않음
+    - 당분간은 오토 스케일링 효과를 관찰하는 기간을 갖음
