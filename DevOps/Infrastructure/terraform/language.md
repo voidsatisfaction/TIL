@@ -7,6 +7,7 @@
   - Dependency Lock File
 - Resources
   - Meta-Arguments
+- Data Source
 - Variables and Outputs
   - Input Variables
   - Output Variables
@@ -65,7 +66,7 @@ resource "aws_instance" "example" {
     - argument 이름, 블록 타입 이름등이 모두 identifiers
 - 컨벤션
   - 위의 기본 컨벤션 코드 참조
-  - *Avoid separating multiple blocks of the same type with other blocks of a different type, unless the block types are defined by semantics to form a family. (For example: root_block_device, ebs_block_device and ephemeral_block_device on aws_instance form a family of block types describing AWS block devices, and can therefore be grouped together and mixed.)*
+  - _Avoid separating multiple blocks of the same type with other blocks of a different type, unless the block types are defined by semantics to form a family. (For example: root_block_device, ebs_block_device and ephemeral_block_device on aws_instance form a family of block types describing AWS block devices, and can therefore be grouped together and mixed.)_
 
 ## 파일과 디렉터리
 
@@ -174,6 +175,56 @@ resource "aws_instance" "example" {
     - `replace_triggered_by`
       - 설정한 리소스나 attribute가 변경되면 리소스를 새로 대체함
 
+## Data Source
+
+```tf
+// 1. 같은 테라폼 리소스
+data "terraform_remote_state" "bastion" {
+  backend = "s3"
+  config = {
+    region = ...
+    bucket = ...
+    key    = ...
+  }
+}
+
+// 2. AWS 자원(GCP 등)
+data "aws_ami" "example" {
+  most_recent = true
+
+  owners = ["self"]
+  tags = {
+    Name   = "app-server"
+    Tested = "true"
+  }
+}
+
+// 3. 정보 사용
+data "aws_iam_policy_document" "access_incubator_s3" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:*"
+    ]
+    resources = [
+      aws_s3_bucket.maysnow_gratitude_diary_image_storage.arn,
+      "${aws_s3_bucket.maysnow_gratitude_diary_image_storage.arn}/*",
+
+      aws_s3_bucket.maysnow_selfcare_image_storage.arn,
+      "${aws_s3_bucket.maysnow_selfcare_image_storage.arn}/*"
+    ]
+  }
+}
+```
+
+- 개요
+  - 테라폼의 외부에서 정의되거나, 다른 별도의 테라폼 구성으로 정의되거나, function으로 수정된 정보를 사용할 수 있음
+  - managed인 resource와는 다르게, data source는 테라폼이 외부로부터 데이터를 읽기만 하는 오브젝트
+- 데이터 소스 종류
+  1. 같은 테라폼 리소스
+  2. AWS 자원(GCP 등)
+  3. 정보 사용
+
 ## Variables and Outputs
 
 - Input Variables
@@ -275,8 +326,8 @@ locals {
       - 숫자, 부동소수점
     - `bool`
       - 불린 값
-        - `true`는 "true"로 *필요에 의해서* 변환될 수 있음
-          - *언제가 필요에 의한 것인지?*
+        - `true`는 "true"로 _필요에 의해서_ 변환될 수 있음
+          - _언제가 필요에 의한 것인지?_
   - complex type
     - collection type(dynamic, flexible)
       - `list(...)`
